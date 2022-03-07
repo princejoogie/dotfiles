@@ -2,6 +2,7 @@
 
 call plug#begin(stdpath('data'))
 
+Plug 'AndrewRadev/tagalong.vim'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'ThePrimeagen/harpoon'
 Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -36,6 +37,7 @@ let mapleader = " "
 let g:airline#extensions#tabline#enabled = 1
 
 " FZF SETTINGS
+
 nnoremap <C-f> :Rg 
 
 " TELESCOPE SETTINGS
@@ -65,6 +67,7 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
     \ quit | endif
 
 let g:NERDTreeGitStatusWithFlags = 1
+let g:NERDTreeShowHidden=1
 let g:NERDTreeIgnore = ['^node_modules$']
 
 " CLOSETAG SETTINGS
@@ -154,8 +157,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <leader>rn <Plug>(coc-rename)
 
 " Format code
-xmap <leader>f  <Plug>(coc-format)
-nmap <leader>f  <Plug>(coc-format)
+xmap <leader>f <Plug>(coc-format)
+nmap <leader>f <Plug>(coc-format)
 
 augroup mygroup
   autocmd!
@@ -206,21 +209,23 @@ filetype plugin on
 
 inoremap jj <Esc>
 noremap <C-s> :w<CR>
-nmap <C-z> <Nop>
+nnoremap <C-z> <Nop>
 
 " RESIZE WINDOW
 nnoremap <leader>- :resize +5<CR>
 nnoremap <leader>= :resize -5<CR>
 nnoremap <leader>< :vertical resize +5<CR>
 nnoremap <leader>> :vertical resize -5<CR>
+nnoremap <leader><TAB> :bnext<CR>
+nnoremap <leader><S-TAB> :bprev<CR>
 
 vmap <C-c> "*y<CR>
 
-map <C-n> :noh<CR>
-map <leader>h <C-w>h
-map <leader>j <C-w>j
-map <leader>k <C-w>k
-map <leader>l <C-w>l
+nnoremap <C-n> :noh<CR>
+nnoremap <leader>h <C-w>h
+nnoremap <leader>j <C-w>j
+nnoremap <leader>k <C-w>k
+nnoremap <leader>l <C-w>l
 
 syntax on
 set background=dark
