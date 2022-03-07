@@ -14,6 +14,7 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/vim-vsnip'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
 Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'neovim/nvim-lspconfig'
@@ -40,8 +41,9 @@ let mapleader=' '
 lua require('lsp-config')
 lua require('cmp-config')
 
-" PRETTEIR SETTINGS
+" OVERRIDES
 nmap <leader>f :Prettier<CR>
+nmap <leader>mm :MarkdownPreview<CR>
 
 " TELESCOPE SETTINGS
 nnoremap <C-p> <cmd>lua require('telescope.builtin').find_files()<cr>
