@@ -1,3 +1,4 @@
+" github.com/princejoogie/dotfiles
 " Plugins ---------------
 
 call plug#begin(stdpath('data'))
