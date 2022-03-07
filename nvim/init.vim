@@ -1,6 +1,7 @@
 " github.com/princejoogie/dotfiles
 " Plugins ---------------
 
+set rtp+="$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim"
 call plug#begin(stdpath('data'))
 
 Plug 'AndrewRadev/tagalong.vim'
@@ -25,7 +26,6 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline'
-Plug 'yaegassy/coc-tailwindcss',  {'do': 'npm install && npm run build', 'branch': 'feat/support-v3-and-use-server-pkg'}
 
 call plug#end()
 
@@ -244,7 +244,6 @@ set noshowmode
 set noswapfile
 set nowritebackup
 set nu rnu
-set runtimepath+=C:\Users\prince.juguilon\AppData\Local\nvim-data\coc-tailwindcss
 set shiftwidth=2
 set shortmess+=c
 set showcmd
@@ -257,5 +256,4 @@ set t_Co=256
 set tabstop=2
 set termguicolors
 set updatetime=300
-colorscheme night-owl
-
+colorscheme joogie-dark

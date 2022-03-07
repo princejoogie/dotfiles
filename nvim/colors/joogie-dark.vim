@@ -1,7 +1,7 @@
-" File:       kuroi.vim
-" Maintainer: aonemd
-" URL:        https://github.com/aonemd/kuroi.vim
-" Modified:   04 April 2019 02:38 PM EET
+" File:       joogie-dark.vim
+" Maintainer: princejoogie
+" URL:        https://github.com/princejoogie/joogie-dark.vim
+" Modified:   03 March 2022 02:33 PM PST
 " License:    MIT
 
 " Initialisation:"{{{
@@ -15,7 +15,7 @@ endif
 
 let s:style = 'dark'
 
-let g:colors_name = "kuroi"
+let g:colors_name = "joogie-dark"
 
 "}}}
 " GUI And Cterm Palettes:"{{{
@@ -24,7 +24,7 @@ let g:colors_name = "kuroi"
 let s:palette = {'gui' : {} , 'cterm' : {}}
 
 "let s:gui_background = "#1b1918"
-let s:gui_background = "#171717"
+let s:gui_background = "#000000"
 let s:gui_foreground = "#c5c8c6"
 let s:gui_selection  = "#373b41"
 let s:gui_line       = "#282a2e"
@@ -404,10 +404,7 @@ let &background = s:style
 " }}}
 " Legal:"{{{
 " ----------------------------------------------------------------------------
-" Copyright (c) 2011 Ethan Schoonover
-" Copyright (c) 2009-2012 NanoTech
-" Copyright (c) 2012 w0ng
-" Copyright (c) 2019 aonemd
+" Copyright (c) 2022 princejoogie
 "
 " Permission is hereby granted, free of charge, to any per‐
 " son obtaining a copy of this software and associated doc‐
