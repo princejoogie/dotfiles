@@ -2,8 +2,11 @@
 
 call plug#begin(stdpath('data'))
 
+Plug 'AndrewRadev/tagalong.vim'
 Plug 'ThePrimeagen/harpoon'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'alvan/vim-closetag'
+Plug 'ap/vim-css-color'
 Plug 'github/copilot.vim'
 Plug 'haishanh/night-owl.vim'
 Plug 'hrsh7th/cmp-buffer'
@@ -44,6 +47,15 @@ lua require('telescope-config')
 " AIRLINE SETTINGS
 let g:airline_theme='deus'
 
+" CLOSETAG SETTINGS
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.jsx,*.tsx,*.js'
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx,*.js'
+let g:closetag_filetypes = 'html,xhtml,phtml,jsx,tsx,js'
+let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx,js'
+let g:closetag_emptyTags_caseSensitive = 1
+let g:closetag_shortcut = '>'
+let g:closetag_close_shortcut = '<leader>>'
+
 " NERDTREE SETTINGS
 nnoremap <C-b> :NERDTreeToggle<CR>
 let g:NERDTreeShowHidden = 1
@@ -81,6 +93,7 @@ filetype plugin on
 syntax on
 syntax enable
 
+set autoindent
 set background=dark
 set encoding=UTF-8
 set hlsearch
