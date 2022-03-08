@@ -15,7 +15,6 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
-Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/plenary.nvim'
@@ -58,7 +57,7 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 let g:NERDToggleCheckAllLines = 1
 
-"  GENERAL SETTINGS ----------------------
+" GENERAL SETTINGS ----------------------
 nmap <leader>f :Prettier<CR>
 nmap <leader>mm :MarkdownPreview<CR>
 
@@ -90,7 +89,7 @@ set nobackup
 set noshowmode
 set noswapfile
 set nowritebackup
-set rnu
+set nu rnu
 set shiftwidth=2
 set smartcase
 set smarttab
