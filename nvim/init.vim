@@ -67,6 +67,7 @@ nnoremap <leader>< :vertical resize +5<CR>
 nnoremap <leader>> :vertical resize -5<CR>
 nnoremap <leader><TAB> :bnext<CR>
 nnoremap <leader><S-TAB> :bprev<CR>
+nnoremap <leader>ch <cmd>lua require('telescope.builtin').command_history()<CR>
 
 inoremap jj <Esc>
 nnoremap <C-n> :noh<CR>
