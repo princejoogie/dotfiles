@@ -1,6 +1,5 @@
 " https://github.com/princejoogie/dotfiles
 
-" set rtp+="$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim"
 call plug#begin(stdpath('data'))
 
 Plug 'ThePrimeagen/harpoon'
@@ -25,6 +24,7 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
+Plug 'puremourning/vimspector'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
@@ -35,32 +35,19 @@ Plug 'williamboman/nvim-lsp-installer'
 call plug#end()
 
 let mapleader=' '
-
+     
 " LUA CONFIGURATIONS
-lua require('lsp-config')
 lua require('cmp-config')
-
-" OVERRIDES
-nmap <leader>f :Prettier<CR>
-nmap <leader>mm :MarkdownPreview<CR>
-
-" TELESCOPE SETTINGS
-nnoremap <C-p> <cmd>lua require('telescope.builtin').find_files()<cr>
-nnoremap <C-f> <cmd>lua require('telescope.builtin').live_grep()<cr>
-nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
-nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
-
-" HARPOON SETTINGS ----------------------
-nnoremap <leader>hh <cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>
-nnoremap <leader>hn <cmd>lua require('harpoon.ui').nav_next()<CR>
-nnoremap <leader>hp <cmd>lua require('harpoon.ui').nav_prev()<CR>
-nnoremap <leader>ha <cmd>lua require('harpoon.mark').add_file()<CR>
+lua require('harpoon-config')
+lua require('lsp-config')
+lua require('telescope-config')
 
 " AIRLINE SETTINGS
 let g:airline_theme='deus'
 
 " NERDTREE SETTINGS
 nnoremap <C-b> :NERDTreeToggle<CR>
+let g:NERDTreeShowHidden = 1
 let g:NERDCreateDefaultMappings = 1
 let g:NERDSpaceDelims = 1
 let g:NERDCompactSexyComs = 1
@@ -72,11 +59,8 @@ let g:NERDTrimTrailingWhitespace = 1
 let g:NERDToggleCheckAllLines = 1
 
 "  GENERAL SETTINGS ----------------------
-colorscheme night-owl
-filetype on
-filetype plugin on
-syntax on
-syntax enable
+nmap <leader>f :Prettier<CR>
+nmap <leader>mm :MarkdownPreview<CR>
 
 nnoremap <leader>- :resize +5<CR>
 nnoremap <leader>= :resize -5<CR>
@@ -90,6 +74,12 @@ nnoremap <C-n> :noh<CR>
 nnoremap <C-z> <Nop>
 noremap <C-s> :w<CR>
 vmap <C-c> "*y<CR>
+
+colorscheme night-owl
+filetype on
+filetype plugin on
+syntax on
+syntax enable
 
 set background=dark
 set encoding=UTF-8

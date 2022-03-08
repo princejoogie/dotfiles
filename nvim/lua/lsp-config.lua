@@ -23,10 +23,12 @@ local on_attach = function(client, bufnr)
 end
 
 local lsp_installer = require("nvim-lsp-installer")
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 lsp_installer.on_server_ready(function(server)
 		local opts = {
 			on_attach = on_attach,
+			capabilities = capabilities
 		}
 		server:setup(opts)
 end)
