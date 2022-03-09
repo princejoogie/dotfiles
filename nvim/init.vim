@@ -6,6 +6,7 @@ Plug 'AndrewRadev/tagalong.vim'
 Plug 'ThePrimeagen/harpoon'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'alvan/vim-closetag'
+Plug 'andweeb/presence.nvim'
 Plug 'ap/vim-css-color'
 Plug 'github/copilot.vim'
 Plug 'haishanh/night-owl.vim'
@@ -43,6 +44,16 @@ lua require('cmp-config')
 lua require('harpoon-config')
 lua require('lsp-config')
 lua require('telescope-config')
+
+" Rich Presence text options
+let g:presence_buttons             = 0
+let g:presence_editing_text        = "Editing %s"
+let g:presence_file_explorer_text  = "Browsing %s"
+let g:presence_git_commit_text     = "Committing changes"
+let g:presence_plugin_manager_text = "Managing plugins"
+let g:presence_reading_text        = "Reading %s"
+let g:presence_workspace_text      = "Working on %s"
+let g:presence_line_number_text    = "Line %s out of %s"
 
 " AIRLINE SETTINGS
 let g:airline_theme='deus'
