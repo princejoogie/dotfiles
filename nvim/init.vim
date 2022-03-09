@@ -46,6 +46,7 @@ lua require('telescope-config')
 
 " AIRLINE SETTINGS
 let g:airline_theme='deus'
+let g:airline#extensions#tabline#enabled = 1
 
 " CLOSETAG SETTINGS
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.jsx,*.tsx,*.js'
@@ -54,7 +55,6 @@ let g:closetag_filetypes = 'html,xhtml,phtml,jsx,tsx,js'
 let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx,js'
 let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
-let g:closetag_close_shortcut = '<leader>>'
 
 " NERDTREE SETTINGS
 nnoremap <C-b> :NERDTreeToggle<CR>
@@ -80,6 +80,7 @@ nnoremap <leader>> :vertical resize -5<CR>
 nnoremap <leader><TAB> :bnext<CR>
 nnoremap <leader><S-TAB> :bprev<CR>
 nnoremap <leader>ch <cmd>lua require('telescope.builtin').command_history()<CR>
+nnoremap <leader>r :NERDTreeFind<CR>zz
 
 inoremap jj <Esc>
 nnoremap <C-n> :noh<CR>
@@ -96,9 +97,13 @@ syntax enable
 set autoindent
 set background=dark
 set encoding=UTF-8
+set foldmethod=syntax
+set foldnestmax=10
+set foldlevel=2
 set hlsearch
 set ignorecase
 set incsearch
+set nofoldenable
 set nobackup
 set noshowmode
 set noswapfile
