@@ -28,7 +28,7 @@ chmod +x clean
 
 > run `:checkhealth` to see remaining dependencies
 
-<img src="./assets/nvim_preview.gif" width="100%" alt="nvim preview" />
+TODO
 
 ### ZSH
 
@@ -37,5 +37,5 @@ chmod +x clean
 - [x] [zsh-snap](https://github.com/marlonrichert/zsh-snap)
 - [x] [powerlevel10k](https://github.com/romkatv/powerlevel10k)
 
-<img src="./assets/zsh_preview.png" width="100%" alt="nvim preview" />
+TODO
 
