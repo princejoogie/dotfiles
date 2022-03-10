@@ -28,6 +28,7 @@ export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
 # Aliases
 alias cls=clear
 alias so=source
+alias open=wslview
 
 # Functions
 pat() { echo "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" }
