@@ -2,20 +2,27 @@
 
 my dotfiles config
 
+## Usage
 
-## Installation
+```bash
+git clone https://github.com/princejoogie/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+```
+
+### Installation
 
 ```bash
 chmod +x install
 ./install
 ```
 
-## Clean
+### Clean
 
 ```bash
 chmod +x clean
 ./clean
 ```
+---
 
 ### NVIM
 
