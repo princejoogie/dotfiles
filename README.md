@@ -2,9 +2,23 @@
 
 my dotfiles config
 
-## NVIM
+## Installation
 
-### Prerequisutes 
+```bash
+chmod +x install
+./install
+```
+
+## Reset
+
+```bash
+chmod +x clean
+./clean
+```
+
+### NVIM
+
+#### Prerequisutes 
 
 - [x] [vim-plug](https://github.com/junegunn/vim-plug)
 - [x] ripgrep

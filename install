@@ -3,3 +3,6 @@
 stow -D nvim
 stow nvim
 
+stow -D zsh
+stow zsh
+

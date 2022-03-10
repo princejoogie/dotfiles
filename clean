@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
 
 stow -D nvim
+stow -D zsh
 
