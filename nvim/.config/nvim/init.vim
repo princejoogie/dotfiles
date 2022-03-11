@@ -2,13 +2,37 @@
 
 call plug#begin(stdpath('data'))
 
+" QOL
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'ThePrimeagen/harpoon'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
 Plug 'ap/vim-css-color'
 Plug 'github/copilot.vim'
 Plug 'haishanh/night-owl.vim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+Plug 'jiangmiao/auto-pairs'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'preservim/nerdcommenter'
+Plug 'preservim/nerdtree'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
+Plug 'rhysd/vim-clang-format'
+Plug 'ryanoasis/vim-devicons'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" Debugging
+Plug 'mfussenegger/nvim-dap'
+Plug 'nvim-telescope/telescope-dap.nvim'
+Plug 'rcarriga/nvim-dap-ui'
+Plug 'theHamsta/nvim-dap-virtual-text'
+
+" LSP
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -16,23 +40,8 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/vim-vsnip'
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
-Plug 'jiangmiao/auto-pairs'
 Plug 'neovim/nvim-lspconfig'
 Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'preservim/nerdcommenter'
-Plug 'preservim/nerdtree'
-Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
-Plug 'puremourning/vimspector'
-Plug 'rhysd/vim-clang-format'
-Plug 'ryanoasis/vim-devicons'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'williamboman/nvim-lsp-installer'
 
 call plug#end()
@@ -41,9 +50,11 @@ let mapleader=' '
      
 " LUA CONFIGURATIONS
 lua require('cmp-config')
+lua require('dap-config')
 lua require('harpoon-config')
 lua require('lsp-config')
 lua require('telescope-config')
+lua require('term-config')
 
 " AIRLINE SETTINGS
 let g:airline_theme='deus'
@@ -103,6 +114,7 @@ set foldmethod=syntax
 set foldnestmax=10
 set foldlevel=2
 set hlsearch
+set hidden
 set ignorecase
 set incsearch
 set nofoldenable

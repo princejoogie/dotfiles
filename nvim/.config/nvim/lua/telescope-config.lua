@@ -1,10 +1,12 @@
 local telescope = require('telescope')
 
-telescope.setup{
+telescope.setup {
 	defaults = {},
 	pickers = {},
 	extensions = {}
 }
+
+telescope.load_extension('dap')
 
 local opts = { noremap = true }
 local builtin = '<cmd>lua require("telescope.builtin").'

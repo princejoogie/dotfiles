@@ -37,6 +37,17 @@ chmod +x clean
 
 [nvim preview]
 
+**DAP Configuration**
+
+- Node
+
+```bash
+git clone https://github.com/microsoft/vscode-node-debug2.git "$HOME/.local/share/nvim/vscode-node-debug2"
+cd "$HOME/.local/share/nvim/vscode-node-debug2"
+npm install
+npm run build
+```
+
 ### ZSH
 
 #### Prerequisutes
