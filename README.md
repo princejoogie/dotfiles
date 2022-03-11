@@ -22,11 +22,12 @@ chmod +x install
 chmod +x clean
 ./clean
 ```
+
 ---
 
 ### NVIM
 
-#### Prerequisutes 
+#### Prerequisutes
 
 - [x] [vim-plug](https://github.com/junegunn/vim-plug)
 - [x] [ripgrep](https://github.com/BurntSushi/ripgrep)
@@ -62,6 +63,27 @@ sudo apt install lldb
 - [x] [powerlevel10k](https://github.com/romkatv/powerlevel10k)
 
 ![zsh preview]
+
+### TMUX
+
+Cheat Sheet
+
+| Command     | Description                                    |
+| ----------- | ---------------------------------------------- |
+| `Ctrl+a c`  | Create a new window (with shell)               |
+| `Ctrl+a w`  | Choose window from a list                      |
+| `Ctrl+a s`  | Choose session from a list                     |
+| `Ctrl+a 0`  | Switch to window 0 (by number)                 |
+| `Ctrl+a ,`  | Rename the current window                      |
+| `Ctrl+a |`  | Split current pane horizontally into two panes |
+| `Ctrl+a -`  | Split current pane vertically into two panes   |
+| `Ctrl+a o`  | Go to the next pane                            |
+| `Ctrl+a ;`  | Toggle between the current and previous pane   |
+| `Ctrl+a x`  | Close the current pane                         |
+| `M+Left`    | Switch to left pane                            |
+| `M+Right`   | Switch to right pane                           |
+| `M+Up`      | Switch to up pane                              |
+| `M+Down`    | Switch to down pane                            |
 
 [nvim thumbnail]: https://user-images.githubusercontent.com/47204120/157621808-7ff30e77-d579-4879-8aab-8e1bafeac2ad.jpg
 [nvim preview]: https://user-images.githubusercontent.com/47204120/157621486-7138e25c-c288-4e28-b30f-c2896bff48b1.mp4
