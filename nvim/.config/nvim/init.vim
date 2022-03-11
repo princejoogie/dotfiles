@@ -33,6 +33,7 @@ Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
 
 " LSP
+Plug 'f3fora/cmp-spell'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -69,7 +70,7 @@ let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 
 " NERDTREE SETTINGS
-nnoremap <C-b> :NERDTreeToggle<CR>
+nnoremap <leader>b :NERDTreeToggle<CR>
 let g:NERDTreeShowHidden = 1
 let g:NERDCreateDefaultMappings = 1
 let g:NERDSpaceDelims = 1

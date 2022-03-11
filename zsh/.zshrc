@@ -10,12 +10,14 @@ znap source romkatv/powerlevel10k
 export ZSH="$HOME/.oh-my-zsh"
 
 # ZSH_THEME="powerlevel10k/powerlevel10k"
+# ZSH_TMUX_AUTOSTART=true
 CASE_SENSITIVE="false"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 
 plugins=(
 	git
+	tmux
 	z
 	zsh-autosuggestions
 )
@@ -29,6 +31,7 @@ export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
 alias cls=clear
 alias so=source
 alias open=wslview
+alias tmux="TERM=screen-256color-bce tmux"
 
 # Functions
 work() { cd "/mnt/c/Users/prince.juguilon/Documents/Work/" }
