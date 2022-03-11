@@ -1,0 +1,36 @@
+#!/usr/bin/env zsh
+
+echo "[  ] installing ripgrep and bat"
+sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
+if [ $? -eq 0 ]; then
+	echo "[OK] installed ripgrep and bat"
+else
+	echo "[X]  ripgrep and bat failed to install"
+fi
+
+echo "------------------------"
+echo "[  ] installing fd"
+sudo apt install fd-find
+if [ $? -eq 0 ]; then
+	ln -s $(which fdfind) ~/.local/bin/fd
+	if [ $? -eq 0 ]; then
+		echo "[OK] installed and linked fd"
+	else
+		echo "[X]  fd failed to link"
+	fi
+else
+	echo "[X]  fd failed to install "
+fi
+
+deps=('fzf' 'lldb')
+
+for dep in $deps; do
+	echo "------------------------"
+	echo "[  ] installing $dep"
+	sudo apt install $dep -y
+	if [ $? -eq 0 ]; then
+		echo "[OK] $dep installed"
+	else
+		echo "[X]  $dep failed to install"
+	fi
+done
