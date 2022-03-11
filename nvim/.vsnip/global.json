@@ -1,0 +1,27 @@
+{
+  "rfc": {
+    "prefix": ["rfc"],
+    "body": [
+      "import React from \"react\";",
+			"",
+			"export const $1 = () => {",
+			"\treturn <div>$1</div>;",
+			"};",
+			""
+    ],
+    "description": "Class definition template."
+  },
+  "rfce": {
+    "prefix": ["rfce"],
+    "body": [
+      "import React from \"react\";",
+			"",
+			"const $1 = () => {",
+			"\treturn <div>$1</div>;",
+			"};",
+			"",
+			"export default $1;"
+    ],
+    "description": "Class definition template."
+  }
+}
