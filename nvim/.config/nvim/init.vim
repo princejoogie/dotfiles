@@ -69,7 +69,7 @@ let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 
 " NERDTREE SETTINGS
-nnoremap <leader>b :NERDTreeToggle<CR>
+nnoremap <C-b> <cmd>NERDTreeToggle<CR>
 let g:NERDTreeShowHidden = 1
 let g:NERDCreateDefaultMappings = 1
 let g:NERDSpaceDelims = 1
