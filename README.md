@@ -75,7 +75,7 @@ Cheat Sheet
 | `Ctrl+a s`  | Choose session from a list                     |
 | `Ctrl+a 0`  | Switch to window 0 (by number)                 |
 | `Ctrl+a ,`  | Rename the current window                      |
-| `Ctrl+a |`  | Split current pane horizontally into two panes |
+| `Ctrl+a \|` | Split current pane horizontally into two panes |
 | `Ctrl+a -`  | Split current pane vertically into two panes   |
 | `Ctrl+a o`  | Go to the next pane                            |
 | `Ctrl+a ;`  | Toggle between the current and previous pane   |

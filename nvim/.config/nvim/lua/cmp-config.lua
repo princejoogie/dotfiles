@@ -20,20 +20,15 @@ cmp.setup({
 	sources = cmp.config.sources({
 			{ name = 'nvim_lsp' },
 			{ name = 'vsnip' },
-			{ name = 'spell' },
 		}, {
 			{ name = 'buffer' },
 	})
 })
 
-vim.opt.spell = true
-vim.opt.spelllang = { 'en_us' }
-
 -- Set configuration for specific filetype.
 cmp.setup.filetype('gitcommit', {
 	sources = cmp.config.sources({
 		{ name = 'cmp_git' },
-		{ name = 'spell' },
 	}, {
 		{ name = 'buffer' },
 	})
@@ -43,7 +38,6 @@ cmp.setup.filetype('gitcommit', {
 cmp.setup.cmdline('/', {
 	sources = {
 		{ name = 'buffer' },
-		{ name = 'spell' },
 	}
 })
 
@@ -51,7 +45,6 @@ cmp.setup.cmdline('/', {
 cmp.setup.cmdline(':', {
 	sources = cmp.config.sources({
 			{ name = 'path' },
-		  { name = 'spell' },
 		}, {
 			{ name = 'cmdline' }
 	})
