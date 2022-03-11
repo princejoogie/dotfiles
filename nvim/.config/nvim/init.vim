@@ -56,6 +56,7 @@ lua require('harpoon-config')
 lua require('lsp-config')
 lua require('telescope-config')
 lua require('term-config')
+lua require('treesitter-config')
 
 " AIRLINE SETTINGS
 let g:airline_theme='deus'

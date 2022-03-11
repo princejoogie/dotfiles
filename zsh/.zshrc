@@ -35,6 +35,8 @@ alias tmux="TERM=screen-256color-bce tmux"
 
 # Functions
 work() { cd "/mnt/c/Users/prince.juguilon/Documents/Work/" }
+pqs() { sudo service postgresql start }
+pqr() { sudo service postgresql restart }
 
 # Variables
 NVIM_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
