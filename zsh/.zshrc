@@ -10,7 +10,7 @@ znap source romkatv/powerlevel10k
 export ZSH="$HOME/.oh-my-zsh"
 
 # ZSH_THEME="powerlevel10k/powerlevel10k"
-# ZSH_TMUX_AUTOSTART=true
+ZSH_TMUX_AUTOSTART=true
 CASE_SENSITIVE="false"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
