@@ -22,9 +22,11 @@ require('nvim-dap-virtual-text').setup {
 	commented = false,
 	virt_text_pos = 'eol',
 }
-require('dapui').setup()
 
-local dap, dapui = require('dap'), require('dapui')
+local dapui = require('dapui')
+local dap = require('dap')
+
+dapui.setup()
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
 	dapui.open()
@@ -57,7 +59,6 @@ dap.configurations.javascript = {
     console = 'integratedTerminal',
   },
   {
-    -- For this to work you need to make sure the node process is started with the `--inspect` flag.
     name = 'Attach to process',
     type = 'node2',
     request = 'attach',
@@ -71,3 +72,21 @@ dap.adapters.lldb = {
   command = '/usr/bin/lldb-vscode-10', -- adjust as needed
   name = "lldb"
 }
+
+dap.configurations.cpp = {
+  {
+    name = "Launch",
+    type = "lldb",
+    request = "launch",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    cwd = '${workspaceFolder}',
+    stopOnEntry = false,
+    args = {},
+    runInTerminal = false,
+  },
+}
+
+dap.configurations.c = dap.configurations.cpp
+dap.configurations.rust = dap.configurations.cpp

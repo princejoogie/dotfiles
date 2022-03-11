@@ -48,6 +48,12 @@ npm install
 npm run build
 ```
 
+- C++/C/Rust (via lldb)
+
+```bash
+sudo apt install lldb
+```
+
 ### ZSH
 
 #### Prerequisutes
