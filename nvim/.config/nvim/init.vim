@@ -19,9 +19,8 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
-Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
-Plug 'rhysd/vim-clang-format'
 Plug 'ryanoasis/vim-devicons'
+Plug 'sbdchd/neoformat'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline'
@@ -84,8 +83,7 @@ let g:NERDTrimTrailingWhitespace = 1
 let g:NERDToggleCheckAllLines = 1
 
 " GENERAL SETTINGS ----------------------
-autocmd FileType cpp nmap <leader>f <cmd>ClangFormat<CR>
-nmap <leader>f <cmd>Prettier<CR>
+nmap <leader>f <cmd>Neoformat<CR>
 nmap <leader>mm <cmd>MarkdownPreview<CR>
 
 nnoremap <leader>- :resize +5<CR>
