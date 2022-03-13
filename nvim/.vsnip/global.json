@@ -3,25 +3,30 @@
     "prefix": ["rfc"],
     "body": [
       "import React from \"react\";",
-			"",
-			"export const $1 = () => {",
-			"\treturn <div>$1</div>;",
-			"};",
-			""
+      "",
+      "export const $1 = () => {",
+      "\treturn <div>$1</div>;",
+      "};",
+      ""
     ],
-    "description": "Class definition template."
+    "description": "React functional component named export"
   },
   "rfce": {
     "prefix": ["rfce"],
     "body": [
       "import React from \"react\";",
-			"",
-			"const $1 = () => {",
-			"\treturn <div>$1</div>;",
-			"};",
-			"",
-			"export default $1;"
+      "",
+      "const $1 = () => {",
+      "\treturn <div>$1</div>;",
+      "};",
+      "",
+      "export default $1;"
     ],
-    "description": "Class definition template."
+    "description": "React functional component default export"
+  },
+  "clg": {
+    "prefix": ["clg"],
+    "body": ["console.log($1);"],
+    "description": "Console log"
   }
 }
