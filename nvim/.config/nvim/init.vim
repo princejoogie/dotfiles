@@ -83,6 +83,7 @@ let g:NERDTrimTrailingWhitespace = 1
 let g:NERDToggleCheckAllLines = 1
 
 " GENERAL SETTINGS ----------------------
+autocmd FileType prisma nmap <leader>f :!npx prisma format<CR>
 nmap <leader>f <cmd>Neoformat<CR>
 nmap <leader>mm <cmd>MarkdownPreview<CR>
 
