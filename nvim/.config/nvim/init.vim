@@ -4,13 +4,15 @@ call plug#begin(stdpath('data'))
 
 " QOL
 Plug 'AndrewRadev/tagalong.vim'
+Plug 'MunifTanjim/nui.nvim'
 Plug 'ThePrimeagen/harpoon'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'airblade/vim-gitgutter'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
+Plug 'Shatur/neovim-ayu'
 Plug 'ap/vim-css-color'
 Plug 'github/copilot.vim'
-Plug 'haishanh/night-owl.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
 Plug 'nvim-lua/plenary.nvim'
@@ -25,6 +27,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'vuki656/package-info.nvim'
 
 " Debugging
 Plug 'mfussenegger/nvim-dap'
@@ -53,9 +56,17 @@ lua require('cmp-config')
 lua require('dap-config')
 lua require('harpoon-config')
 lua require('lsp-config')
+lua require('package-info-config')
 lua require('telescope-config')
 lua require('term-config')
 lua require('treesitter-config')
+
+" GITGUTTER SETTINGS
+autocmd BufWritePost * GitGutter 
+autocmd BufEnter * GitGutterLineNrHighlightsEnable
+let g:gitgutter_grep = 'rg'
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plug>(GitGutterPrevHunk)
 
 " AIRLINE SETTINGS
 let g:airline_theme='deus'
@@ -102,7 +113,7 @@ nnoremap <C-z> <Nop>
 noremap <C-s> :w<CR>
 vmap <C-c> "*y<CR>
 
-colorscheme night-owl
+colorscheme joogie-dark
 filetype on
 filetype plugin on
 syntax on
@@ -112,6 +123,7 @@ set autoindent
 set background=dark
 set encoding=UTF-8
 set foldmethod=syntax
+set clipboard=unnamedplus
 set foldnestmax=10
 set foldlevel=2
 set hlsearch
