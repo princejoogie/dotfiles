@@ -121,17 +121,18 @@ syntax enable
 
 set autoindent
 set background=dark
-set encoding=UTF-8
-set foldmethod=syntax
 set clipboard=unnamedplus
-set foldnestmax=10
+set encoding=UTF-8
 set foldlevel=2
-set hlsearch
+set foldmethod=syntax
+set foldnestmax=10
 set hidden
+set hlsearch
 set ignorecase
 set incsearch
-set nofoldenable
+set mouse=a
 set nobackup
+set nofoldenable
 set noshowmode
 set noswapfile
 set nowritebackup
