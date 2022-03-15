@@ -1,6 +1,9 @@
 #!/usr/bin/env zsh
 
-stow -D nvim
-stow -D tmux
-stow -D zsh
+STOW_FOLDERS="nvim,tmux,zsh"
+
+for folder in $(echo $STOW_FOLDERS | sed "s/,/ /g"); do
+	echo "Removing $folder"
+	stow -D $folder
+done
 

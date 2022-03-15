@@ -1,11 +1,9 @@
 #!/usr/bin/env zsh
 
-stow -D nvim
-stow nvim
+STOW_FOLDERS="nvim,tmux,zsh"
 
-stow -D tmux
-stow tmux
-
-stow -D zsh
-stow zsh
+for folder in $(echo $STOW_FOLDERS | sed "s/,/ /g"); do
+	stow -D $folder
+	stow $folder
+done
 
