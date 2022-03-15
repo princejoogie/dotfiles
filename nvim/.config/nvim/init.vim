@@ -5,12 +5,12 @@ call plug#begin(stdpath('data'))
 " QOL
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'MunifTanjim/nui.nvim'
+Plug 'Shatur/neovim-ayu'
 Plug 'ThePrimeagen/harpoon'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'airblade/vim-gitgutter'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
-Plug 'Shatur/neovim-ayu'
 Plug 'ap/vim-css-color'
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
@@ -25,6 +25,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'sbdchd/neoformat'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
+Plug 'unkiwii/vim-nerdtree-sync'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vuki656/package-info.nvim'
@@ -92,6 +93,8 @@ let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
 let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 let g:NERDToggleCheckAllLines = 1
+let g:nerdtree_sync_cursorline = 1
+let g:NERDTreeHighlightCursorline = 1
 
 " GENERAL SETTINGS ----------------------
 autocmd FileType prisma nmap <leader>f :!npx prisma format<CR>
