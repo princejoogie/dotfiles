@@ -2,7 +2,11 @@ local telescope = require('telescope')
 
 telescope.setup {
 	defaults = {},
-	pickers = {},
+	pickers = {
+		find_files = {
+			hidden = true,
+		},
+	},
 	extensions = {}
 }
 
