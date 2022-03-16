@@ -68,6 +68,10 @@ let g:gitgutter_grep = 'rg'
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
 
+" FUGITIVE SETTINGS
+nmap <leader>gh <cmd>diffget //3<CR>
+nmap <leader>gf <cmd>diffget //2<CR>
+
 " AIRLINE SETTINGS
 let g:airline_theme='deus'
 let g:airline#extensions#tabline#enabled = 1
