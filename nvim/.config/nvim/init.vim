@@ -127,7 +127,8 @@ inoremap jj <Esc>
 nnoremap <C-n> :noh<CR>
 nnoremap <C-z> <Nop>
 noremap <C-s> :w<CR>
-vmap <C-c> "*y<CR>
+vnoremap <C-c> "*y<CR>
+inoremap <C-v> "*p<CR>
 
 colorscheme joogie-dark
 filetype on
