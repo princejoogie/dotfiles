@@ -65,8 +65,8 @@ lua require('treesitter-config')
 autocmd BufWritePost * GitGutter 
 autocmd BufEnter * GitGutterLineNrHighlightsEnable
 let g:gitgutter_grep = 'rg'
-nmap ]h <Plug>(GitGutterNextHunk)
-nmap [h <Plug>(GitGutterPrevHunk)
+nmap g<leader>j <Plug>(GitGutterNextHunk)
+nmap g<leader>k <Plug>(GitGutterPrevHunk)
 
 " FUGITIVE SETTINGS
 nmap <leader>gh <cmd>diffget //3<CR>
