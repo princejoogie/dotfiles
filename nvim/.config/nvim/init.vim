@@ -137,9 +137,10 @@ set nu rnu
 set shiftwidth=2
 set smartcase
 set smarttab
+set softtabstop=0 noexpandtab
+set t_Co=256
 set tabstop=2
 set termguicolors
-set t_Co=256
 
 filetype on
 filetype plugin on

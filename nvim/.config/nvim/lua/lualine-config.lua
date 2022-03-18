@@ -1,11 +1,8 @@
 ---@diagnostic disable: duplicate-index
--- Eviline config for lualine
--- Author: shadmansaleh
--- Credit: glepnir
 local lualine = require('lualine')
+local package = require("package-info")
 
 -- Color table for highlights
--- stylua: ignore
 local colors = {
   bg       = '#282C34',
   fg       = '#bbc2cf',
@@ -144,6 +141,13 @@ ins_left {
 }
 
 -- Add components to right sections
+ins_right {
+	function ()
+		return package.get_status()
+	end,
+  color = { fg = colors.green, gui = 'bold' },
+}
+
 ins_right {
   'o:encoding', -- option component same as &encoding in viml
   cond = conditions.hide_in_width,
