@@ -8,6 +8,7 @@ source $HOME/.cargo/env
 znap source romkatv/powerlevel10k
 
 export ZSH="$HOME/.oh-my-zsh"
+export TERM=xterm-256color
 
 # ZSH_THEME="powerlevel10k/powerlevel10k"
 ZSH_TMUX_AUTOSTART=true
