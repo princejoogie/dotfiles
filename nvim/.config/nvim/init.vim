@@ -134,12 +134,6 @@ noremap <C-s> :w<CR>
 vnoremap <C-c> "*y<CR>
 inoremap <C-v> "*p<CR>
 
-filetype on
-filetype plugin on
-syntax on
-syntax enable
-colorscheme joogie-dark
-
 set autoindent
 set background=dark
 set clipboard=unnamedplus
@@ -164,4 +158,10 @@ set smarttab
 set tabstop=2
 set termguicolors
 set t_Co=256
+
+filetype on
+filetype plugin on
+syntax on
+syntax enable
+colorscheme joogie-dark
 
