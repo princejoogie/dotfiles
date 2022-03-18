@@ -159,6 +159,10 @@ set tabstop=2
 set termguicolors
 set t_Co=256
 
+" NIGHTLY SETTINGS
+set laststatus=3
+highlight WinSeparator guibg=None guifg=#444444
+
 filetype on
 filetype plugin on
 syntax on
