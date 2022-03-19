@@ -99,8 +99,10 @@ let g:NERDTreeHighlightCursorline = 1
 " GENERAL SETTINGS ----------------------
 autocmd FileType prisma nmap <leader>f :!npx prisma format<CR>
 nmap <leader>f <cmd>Neoformat<CR>
+vnoremap <silent> <leader>f :Neoformat<CR>
 nmap <leader>mm <cmd>MarkdownPreview<CR>
 
+nnoremap <leader>va <S-v>$hh%k<CR>
 nnoremap <leader>- :resize +5<CR>
 nnoremap <leader>= :resize -5<CR>
 nnoremap <leader>< :vertical resize +5<CR>

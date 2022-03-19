@@ -1,3 +1,13 @@
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+	vim.lsp.diagnostic.on_publish_diagnostics, {
+		signs = true,
+		underline = true,
+		virtual_text = true,
+		show_diagnostic_autocmds = { 'InsertLeave', 'TextChanged' },
+		diagnostic_delay = 500
+	}
+)
+
 local opts = { noremap=true, silent=true }
 vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
 vim.api.nvim_set_keymap('n', '<leader>dk', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
