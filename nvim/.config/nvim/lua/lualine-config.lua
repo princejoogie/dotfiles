@@ -1,6 +1,51 @@
 ---@diagnostic disable: duplicate-index
 local lualine = require('lualine')
 local package = require("package-info")
+require("bufferline").setup({
+	options = {
+		diagnostics = "nvim_lsp",
+		diagnostics_indicator = function(_, _, diagnostics_dict, _)
+			local s = " "
+			for e, n in pairs(diagnostics_dict) do
+				local sym = e == "error" and " "
+					or (e == "warning" and " " or " " )
+				s = s .. n .. sym
+			end
+			return s
+		end,
+		enforce_regular_tabs = true,
+		diagnostics_update_in_insert = false,
+		enforce_regular_tabs = true,
+		separator_style = "thick"
+	},
+	highlights = {
+		fill = { guibg = '#282C34', },
+		separator = { guibg = '#112630', },
+		background = { guibg = '#282C34', },
+		close_button = { guibg = '#282C34', },
+		close_button_selected = { guibg = '#000000', },
+		diagnostic = { guibg = '#282C34', },
+		diagnostic_selected = { guibg = '#000000', },
+		info = { guibg = '#282C34', },
+		info_selected = { guibg = '#000000', },
+		info_diagnostic = { guibg = '#282C34', },
+		info_diagnostic_selected = { guibg = '#000000', },
+		warning = { guibg = '#282C34', },
+		warning_selected = { guibg = '#000000', },
+		warning_diagnostic = { guibg = '#282C34', },
+		warning_diagnostic_selected = { guibg = '#000000', },
+		error = { guibg = '#282C34', },
+		error_selected = { guibg = '#000000', },
+		error_diagnostic = { guibg = '#282C34', },
+		error_diagnostic_selected = { guibg = '#000000', },
+		modified = { guibg = '#282C34', },
+		modified_selected = { guibg = '#000000', },
+		duplicate = { guibg = '#282C34', },
+		duplicate_selected = { guibg = '#000000', },
+		separator = { guibg = '#282C34', },
+		separator_selected = { guibg = '#000000', },
+	},
+})
 
 -- Color table for highlights
 local colors = {
