@@ -16,7 +16,7 @@ require("bufferline").setup({
 		enforce_regular_tabs = true,
 		diagnostics_update_in_insert = false,
 		enforce_regular_tabs = true,
-		separator_style = "thick"
+		separator_style = "thin"
 	},
 	highlights = {
 		fill = { guibg = '#282C34', },
@@ -43,7 +43,8 @@ require("bufferline").setup({
 		duplicate = { guibg = '#282C34', },
 		duplicate_selected = { guibg = '#000000', },
 		separator = { guibg = '#282C34', },
-		separator_selected = { guibg = '#000000', },
+		separator_selected = { guibg = '#282C34', },
+		indicator_selected = { guibg = '#C678DD', },
 	},
 })
 
