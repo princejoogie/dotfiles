@@ -11,12 +11,12 @@ Plug 'airblade/vim-gitgutter'
 Plug 'akinsho/bufferline.nvim'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
-Plug 'ap/vim-css-color'
 Plug 'arkav/lualine-lsp-progress'
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
 Plug 'kyazdani42/nvim-web-devicons'
+Plug 'norcalli/nvim-colorizer.lua'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lualine/lualine.nvim'
@@ -55,17 +55,6 @@ call plug#end()
 
 let mapleader=' '
      
-" LUA CONFIGURATIONS
-lua require('cmp-config')
-lua require('dap-config')
-lua require('harpoon-config')
-lua require('lsp-config')
-lua require('lualine-config')
-lua require('package-info-config')
-lua require('telescope-config')
-lua require('term-config')
-lua require('treesitter-config')
-
 " BUFFERLINE SETTINGS
 nnoremap <silent><leader>1 <Cmd>BufferLineGoToBuffer 1<CR>
 nnoremap <silent><leader>2 <Cmd>BufferLineGoToBuffer 2<CR>
@@ -169,6 +158,18 @@ filetype plugin on
 syntax on
 syntax enable
 colorscheme joogie-dark
+
+" LUA CONFIGURATIONS
+lua require('cmp-config')
+lua require('colorizer-config')
+lua require('dap-config')
+lua require('harpoon-config')
+lua require('lsp-config')
+lua require('lualine-config')
+lua require('package-info-config')
+lua require('telescope-config')
+lua require('term-config')
+lua require('treesitter-config')
 
 " NIGHTLY SETTINGS
 set laststatus=3

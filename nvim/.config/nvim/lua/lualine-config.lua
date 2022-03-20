@@ -191,10 +191,8 @@ ins_left {
 	display_components = { 'spinner', { 'title', 'progress', 'message' } },
 	timer = { progress_enddelay = 500, spinner = 100, lsp_client_name_enddelay = 1000 },
 	spinner_symbols = { '⣾', '⣷', '⣯', '⣟', '⡿', '⢿', '⣻', '⣽' },
-	-- spinner_symbols = { '🌑 ', '🌒 ', '🌓 ', '🌔 ', '🌕 ', '🌖 ', '🌗 ', '🌘 ' },
 }
 
--- Add components to right sections
 ins_right {
 	function ()
 		return package.get_status()
@@ -203,19 +201,18 @@ ins_right {
 }
 
 ins_right {
-  'o:encoding', -- option component same as &encoding in viml
+  'o:encoding',
   cond = conditions.hide_in_width,
   color = { fg = colors.green, gui = 'bold' },
 }
 
 ins_right {
   'fileformat',
-  icons_enabled = false, -- I think icons are cool but Eviline doesn't have them. sigh
+  icons_enabled = false,
   color = { fg = colors.green, gui = 'bold' },
 }
 
 ins_right {
-  -- filesize component
   'filesize',
   cond = conditions.buffer_not_empty,
 }
@@ -224,6 +221,5 @@ ins_right { 'location' }
 
 ins_right{ 'progress', color = { fg = colors.fg, gui = 'bold' } }
 
--- Now don't forget to initialize lualine
 lualine.setup(config)
 
