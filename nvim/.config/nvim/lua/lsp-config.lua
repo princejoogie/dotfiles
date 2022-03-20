@@ -71,6 +71,12 @@ lsp_installer.settings({
 	}
 })
 
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = '●',
+  }
+})
+
 lsp_installer.on_server_ready(function(server)
 	local lspOpts = {
 		on_attach = on_attach,

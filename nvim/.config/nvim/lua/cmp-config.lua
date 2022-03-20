@@ -1,4 +1,5 @@
 local cmp = require('cmp')
+local lspkind = require('lspkind')
 
 cmp.setup({
 	snippet = {
@@ -22,7 +23,17 @@ cmp.setup({
 			{ name = 'vsnip' },
 		}, {
 			{ name = 'buffer' },
-	})
+			{ name = "spell" },
+	}),
+	formatting = {
+		format = lspkind.cmp_format({
+			mode = 'symbol_text',
+			maxwidth = 60,
+			before = function (_, vim_item)
+				return vim_item
+			end
+		})
+	}
 })
 
 -- Set configuration for specific filetype.

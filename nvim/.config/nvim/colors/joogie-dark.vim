@@ -50,7 +50,7 @@ hi Normal guifg=#d6deeb ctermfg=253 guibg=#000000 ctermbg=233 gui=NONE cterm=NON
 hi NormalFloat guibg=#112630 ctermbg=233 gui=NONE cterm=NONE
 hi Operator guifg=#9cdcfe ctermfg=176 gui=NONE cterm=NONE
 hi PMenu guibg=#112630 ctermbg=236 gui=NONE cterm=NONE
-hi PMenuSel guibg=#9cdcfe ctermbg=176 gui=NONE cterm=NONE
+hi PMenuSel guibg=#444444 ctermbg=176 gui=NONE cterm=NONE
 hi PreProc guifg=#9cdcfe ctermfg=176 gui=NONE cterm=NONE
 hi Search guifg=#000000 ctermfg=233 guibg=#ce9178 ctermbg=222 gui=NONE cterm=NONE
 hi SignColumn guifg=NONE ctermfg=NONE guibg=#000000 ctermbg=233 gui=NONE cterm=NONE

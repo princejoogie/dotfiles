@@ -11,6 +11,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
 Plug 'ap/vim-css-color'
+Plug 'arkav/lualine-lsp-progress'
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
@@ -18,8 +19,10 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lualine/lualine.nvim'
+Plug 'nvim-telescope/telescope-github.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'onsails/lspkind-nvim'
 Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
 Plug 'ryanoasis/vim-devicons'
@@ -101,6 +104,8 @@ autocmd FileType prisma nmap <leader>f :!npx prisma format<CR>
 nmap <leader>f <cmd>Neoformat<CR>
 nmap <leader>mm <cmd>MarkdownPreview<CR>
 nnoremap gf <C-W>f
+vnoremap <silent> <A-j> :move '>+1<CR>gv-gv
+vnoremap <silent> <A-k> :move '<-2<CR>gv-gv
 vnoremap <silent> <leader>f :Neoformat<CR>
 vnoremap gf <C-W>f
 

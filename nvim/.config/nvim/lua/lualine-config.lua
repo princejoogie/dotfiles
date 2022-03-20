@@ -77,7 +77,7 @@ local function ins_right(component)
   table.insert(config.sections.lualine_x, component)
 end
 
-ins_left { 
+ins_left {
 	'mode',
 	color = function()
 		-- auto change color according to neovims mode
@@ -138,6 +138,14 @@ ins_left {
 		color_warn = { fg = colors.yellow },
 		color_info = { fg = colors.cyan },
 	},
+}
+
+ins_left {
+	'lsp_progress',
+	display_components = { 'spinner', { 'title', 'progress', 'message' } },
+	timer = { progress_enddelay = 500, spinner = 100, lsp_client_name_enddelay = 1000 },
+	spinner_symbols = { '⣾', '⣷', '⣯', '⣟', '⡿', '⢿', '⣻', '⣽' },
+	-- spinner_symbols = { '🌑 ', '🌒 ', '🌓 ', '🌔 ', '🌕 ', '🌖 ', '🌗 ', '🌘 ' },
 }
 
 -- Add components to right sections
