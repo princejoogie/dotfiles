@@ -14,13 +14,13 @@ vim.api.nvim_set_keymap('n', '<leader>dr', base..'repl.toggle()<CR>', opts)
 vim.api.nvim_set_keymap('n', '<leader>dt', ui..'toggle()<CR>', opts)
 
 require('nvim-dap-virtual-text').setup {
-	enabled = true,
-	enabled_commands = true,
-	highlight_changed_variables = true,
-	highlight_new_as_changed = true,
-	show_stop_reason = true,
-	commented = false,
-	virt_text_pos = 'eol',
+  enabled = true,
+  enabled_commands = true,
+  highlight_changed_variables = true,
+  highlight_new_as_changed = true,
+  show_stop_reason = true,
+  commented = false,
+  virt_text_pos = 'eol',
 }
 
 local dapui = require('dapui')
@@ -29,22 +29,22 @@ local dap = require('dap')
 dapui.setup()
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
-	dapui.open()
+  dapui.open()
 end
 
 dap.listeners.before.event_terminated["dapui_config"] = function()
-	dapui.close()
+  dapui.close()
 end
 
 dap.listeners.before.event_exited["dapui_config"] = function()
-	dapui.close()
+  dapui.close()
 end
 
 -- Node
 dap.adapters.node2 = {
   type = 'executable',
-	command = 'node',
-	args = {os.getenv('HOME')..'/.local/share/nvim/vscode-node-debug2/out/src/nodeDebug.js'}
+  command = 'node',
+  args = {os.getenv('HOME')..'/.local/share/nvim/vscode-node-debug2/out/src/nodeDebug.js'}
 }
 
 dap.configurations.javascript = {

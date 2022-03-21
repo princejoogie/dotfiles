@@ -6,15 +6,15 @@ telescope.load_extension('gh')
 telescope.load_extension('dap')
 
 telescope.setup {
-	defaults = {
-		sorting_stratey = 'ascending',
-	},
-	pickers = {
-		find_files = {
-			hidden = true,
-		},
-	},
-	extensions = {}
+  defaults = {
+    sorting_stratey = 'ascending',
+  },
+  pickers = {
+    find_files = {
+      hidden = true,
+    },
+  },
+  extensions = {}
 }
 
 local gopts = { noremap = true }

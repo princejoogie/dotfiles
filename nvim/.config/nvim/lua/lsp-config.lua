@@ -71,22 +71,22 @@ vim.diagnostic.config({
 })
 
 lsp_installer.on_server_ready(function(server)
-	local lspOpts = {
-		on_attach = on_attach,
-		capabilities = capabilities,
-		settings = {
-			Lua = {
-				diagnostics = {
-					globals = { 'vim' }
-				}
-			}
-		}
-	}
+  local lspOpts = {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+      Lua = {
+        diagnostics = {
+          globals = { 'vim' }
+        }
+      }
+    }
+  }
 
-	if server.name == 'emmet_ls' then
-		lspOpts.filetypes = { "html", "css", "typescriptreact", "javascriptreact" }
-	end
+  if server.name == 'emmet_ls' then
+    lspOpts.filetypes = { "html", "css", "typescriptreact", "javascriptreact" }
+  end
 
-	server:setup(lspOpts)
+  server:setup(lspOpts)
 end)
 

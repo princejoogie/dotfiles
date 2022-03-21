@@ -9,67 +9,66 @@ local bufferColors = {
 }
 
 require("bufferline").setup({
-	options = {
-		diagnostics = "nvim_lsp",
-		diagnostics_indicator = function(_, _, diagnostics_dict, _)
-			local s = " "
-			for e, n in pairs(diagnostics_dict) do
-				local sym = e == "error" and " "
-					or (e == "warning" and " " or " " )
-				s = s .. n .. sym
-			end
-			return s
-		end,
-		enforce_regular_tabs = true,
-		diagnostics_update_in_insert = false,
-		enforce_regular_tabs = true,
-		separator_style = "thin"
-	},
-	highlights = {
-		fill = { guibg = bufferColors.primary },
-		background = { guibg = bufferColors.primary },
-		buffer_selected = { guibg = bufferColors.black },
-		buffer_visible = { guibg = bufferColors.primary },
-		close_button = { guibg = bufferColors.primary },
-		close_button_visible = { guibg = bufferColors.primary },
-		close_button_selected = { guibg = bufferColors.black },
-		diagnostic = { guibg = bufferColors.primary },
-		diagnostic_visible = { guibg = bufferColors.primary },
-		diagnostic_selected = { guibg = bufferColors.black },
-		duplicate = { guibg = bufferColors.primary },
-		duplicate_visible = { guibg = bufferColors.primary },
-		duplicate_selected = { guibg = bufferColors.black },
-		error = { guibg = bufferColors.primary },
-		error_visible = { guibg = bufferColors.primary },
-		error_selected = { guibg = bufferColors.black },
-		error_diagnostic = { guibg = bufferColors.primary },
-		error_diagnostic_visible = { guibg = bufferColors.primary },
-		error_diagnostic_selected = { guibg = bufferColors.black },
-		indicator_selected = { guibg = bufferColors.black },
-		pick = { guibg = bufferColors.primary },
-		pick_visible = { guibg = bufferColors.primary },
-		pick_selected = { guibg = bufferColors.black },
-		info = { guibg = bufferColors.primary },
-		info_visible = { guibg = bufferColors.primary },
-		info_selected = { guibg = bufferColors.black },
-		info_diagnostic = { guibg = bufferColors.primary },
-		info_diagnostic_visible = { guibg = bufferColors.primary },
-		info_diagnostic_selected = { guibg = bufferColors.black },
-		modified = { guibg = bufferColors.primary },
-		modified_visible = { guibg = bufferColors.primary },
-		modified_selected = { guibg = bufferColors.black },
-		separator = { guibg = bufferColors.secondary },
-		separator_visible = { guibg = bufferColors.secondary },
-		separator_selected = { guibg = bufferColors.primary },
-		tab = { guibg = bufferColors.primary },
-		tab_selected = { guibg = bufferColors.black },
-		warning = { guibg = bufferColors.primary },
-		warning_visible = { guibg = bufferColors.primary },
-		warning_selected = { guibg = bufferColors.black },
-		warning_diagnostic = { guibg = bufferColors.primary },
-		warning_diagnostic_visible = { guibg = bufferColors.primary },
-		warning_diagnostic_selected = { guibg = bufferColors.black },
-	},
+  options = {
+    diagnostics = "nvim_lsp",
+    diagnostics_indicator = function(_, _, diagnostics_dict, _)
+      local s = " "
+      for e, n in pairs(diagnostics_dict) do
+        local sym = e == "error" and " " or (e == "warning" and " " or " " )
+        s = s .. n .. sym
+      end
+      return s
+    end,
+    enforce_regular_tabs = true,
+    diagnostics_update_in_insert = false,
+    enforce_regular_tabs = true,
+    separator_style = "thin"
+  },
+  highlights = {
+    fill = { guibg = bufferColors.primary },
+    background = { guibg = bufferColors.primary },
+    buffer_selected = { guibg = bufferColors.black },
+    buffer_visible = { guibg = bufferColors.primary },
+    close_button = { guibg = bufferColors.primary },
+    close_button_visible = { guibg = bufferColors.primary },
+    close_button_selected = { guibg = bufferColors.black },
+    diagnostic = { guibg = bufferColors.primary },
+    diagnostic_visible = { guibg = bufferColors.primary },
+    diagnostic_selected = { guibg = bufferColors.black },
+    duplicate = { guibg = bufferColors.primary },
+    duplicate_visible = { guibg = bufferColors.primary },
+    duplicate_selected = { guibg = bufferColors.black },
+    error = { guibg = bufferColors.primary },
+    error_visible = { guibg = bufferColors.primary },
+    error_selected = { guibg = bufferColors.black },
+    error_diagnostic = { guibg = bufferColors.primary },
+    error_diagnostic_visible = { guibg = bufferColors.primary },
+    error_diagnostic_selected = { guibg = bufferColors.black },
+    indicator_selected = { guibg = bufferColors.black },
+    pick = { guibg = bufferColors.primary },
+    pick_visible = { guibg = bufferColors.primary },
+    pick_selected = { guibg = bufferColors.black },
+    info = { guibg = bufferColors.primary },
+    info_visible = { guibg = bufferColors.primary },
+    info_selected = { guibg = bufferColors.black },
+    info_diagnostic = { guibg = bufferColors.primary },
+    info_diagnostic_visible = { guibg = bufferColors.primary },
+    info_diagnostic_selected = { guibg = bufferColors.black },
+    modified = { guibg = bufferColors.primary },
+    modified_visible = { guibg = bufferColors.primary },
+    modified_selected = { guibg = bufferColors.black },
+    separator = { guibg = bufferColors.secondary },
+    separator_visible = { guibg = bufferColors.secondary },
+    separator_selected = { guibg = bufferColors.primary },
+    tab = { guibg = bufferColors.primary },
+    tab_selected = { guibg = bufferColors.black },
+    warning = { guibg = bufferColors.primary },
+    warning_visible = { guibg = bufferColors.primary },
+    warning_selected = { guibg = bufferColors.black },
+    warning_diagnostic = { guibg = bufferColors.primary },
+    warning_diagnostic_visible = { guibg = bufferColors.primary },
+    warning_diagnostic_selected = { guibg = bufferColors.black },
+  },
 })
 
 -- Color table for highlights
@@ -148,33 +147,33 @@ local function ins_right(component)
 end
 
 ins_left {
-	'mode',
-	color = function()
-		-- auto change color according to neovims mode
-		local mode_color = {
-			n = colors.red,
-			i = colors.green,
-			v = colors.blue,
-			[''] = colors.blue,
-			V = colors.blue,
-			c = colors.magenta,
-			no = colors.red,
-			s = colors.orange,
-			S = colors.orange,
-			[''] = colors.orange,
-			ic = colors.yellow,
-			R = colors.violet,
-			Rv = colors.violet,
-			cv = colors.red,
-			ce = colors.red,
-			r = colors.cyan,
-			rm = colors.cyan,
-			['r?'] = colors.cyan,
-			['!'] = colors.red,
-			t = colors.red,
-		}
-		return { bg = mode_color[vim.fn.mode()], fg = colors.black}
-	end,
+  'mode',
+  color = function()
+    -- auto change color according to neovims mode
+    local mode_color = {
+      n = colors.red,
+      i = colors.green,
+      v = colors.blue,
+      [''] = colors.blue,
+      V = colors.blue,
+      c = colors.magenta,
+      no = colors.red,
+      s = colors.orange,
+      S = colors.orange,
+      [''] = colors.orange,
+      ic = colors.yellow,
+      R = colors.violet,
+      Rv = colors.violet,
+      cv = colors.red,
+      ce = colors.red,
+      r = colors.cyan,
+      rm = colors.cyan,
+      ['r?'] = colors.cyan,
+      ['!'] = colors.red,
+      t = colors.red,
+    }
+    return { bg = mode_color[vim.fn.mode()], fg = colors.black}
+  end,
 }
 
 ins_left {
@@ -196,31 +195,31 @@ ins_left {
     modified = { fg = colors.orange },
     removed = { fg = colors.red },
   },
-	cond = conditions.hide_in_width,
+  cond = conditions.hide_in_width,
 }
 
 ins_left {
   'diagnostics',
   sources = { 'nvim_diagnostic' },
-	symbols = { error = ' ', warn = ' ', info = ' ' },
-	diagnostics_color = {
-		color_error = { fg = colors.red },
-		color_warn = { fg = colors.yellow },
-		color_info = { fg = colors.cyan },
-	},
+  symbols = { error = ' ', warn = ' ', info = ' ' },
+  diagnostics_color = {
+    color_error = { fg = colors.red },
+    color_warn = { fg = colors.yellow },
+    color_info = { fg = colors.cyan },
+  },
 }
 
 ins_left {
-	'lsp_progress',
-	display_components = { 'spinner', { 'title', 'progress', 'message' } },
-	timer = { progress_enddelay = 500, spinner = 100, lsp_client_name_enddelay = 1000 },
-	spinner_symbols = { '⣾', '⣷', '⣯', '⣟', '⡿', '⢿', '⣻', '⣽' },
+  'lsp_progress',
+  display_components = { 'spinner', { 'title', 'progress', 'message' } },
+  timer = { progress_enddelay = 500, spinner = 100, lsp_client_name_enddelay = 1000 },
+  spinner_symbols = { '⣾', '⣷', '⣯', '⣟', '⡿', '⢿', '⣻', '⣽' },
 }
 
 ins_right {
-	function ()
-		return package.get_status()
-	end,
+  function ()
+    return package.get_status()
+  end,
   color = { fg = colors.green, gui = 'bold' },
 }
 
