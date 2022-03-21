@@ -12,6 +12,7 @@ Plug 'akinsho/bufferline.nvim'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
 Plug 'arkav/lualine-lsp-progress'
+Plug 'folke/todo-comments.nvim'
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
@@ -171,6 +172,7 @@ lua require('lualine-config')
 lua require('package-info-config')
 lua require('telescope-config')
 lua require('term-config')
+lua require('todo-config')
 lua require('treesitter-config')
 
 " NIGHTLY SETTINGS
