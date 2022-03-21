@@ -45,7 +45,7 @@ require("bufferline").setup({
 		error_diagnostic = { guibg = bufferColors.primary },
 		error_diagnostic_visible = { guibg = bufferColors.primary },
 		error_diagnostic_selected = { guibg = bufferColors.black },
-		indicator_selected = { guibg = '#C678DD', },
+		indicator_selected = { guibg = bufferColors.black },
 		pick = { guibg = bufferColors.primary },
 		pick_visible = { guibg = bufferColors.primary },
 		pick_selected = { guibg = bufferColors.black },
@@ -226,7 +226,7 @@ ins_right {
 
 ins_right {
   'filetype',
-  color = { fg = colors.green, bg = '#282C34', gui = 'bold' },
+  color = { fg = colors.green, bg = bufferColors.primary, gui = 'bold' },
 }
 
 ins_right {
