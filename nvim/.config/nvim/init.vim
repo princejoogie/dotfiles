@@ -17,6 +17,7 @@ Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
 Plug 'kyazdani42/nvim-web-devicons'
+Plug 'mhartington/formatter.nvim'
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
@@ -29,7 +30,6 @@ Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
 Plug 'princejoogie/tailwind-highlight.nvim', {'branch': 'dev'}
 Plug 'ryanoasis/vim-devicons'
-Plug 'sbdchd/neoformat'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'unkiwii/vim-nerdtree-sync'
@@ -102,14 +102,11 @@ let g:nerdtree_sync_cursorline = 1
 let g:NERDTreeHighlightCursorline = 1
 
 " GENERAL SETTINGS ----------------------
-autocmd FileType prisma nmap <leader>f :!npx prisma format<CR>
-nmap <leader>f <cmd>Neoformat<CR>
 nmap <leader>mm <cmd>MarkdownPreview<CR>
 nnoremap gf <C-W>f
+vnoremap gf <C-W>f
 vnoremap <silent> <A-j> :move '>+1<CR>gv-gv
 vnoremap <silent> <A-k> :move '<-2<CR>gv-gv
-vnoremap <silent> <leader>f :Neoformat<CR>
-vnoremap gf <C-W>f
 
 nnoremap <leader>va <S-v>$hh%k<CR>
 nnoremap <leader>- :resize +5<CR>
@@ -165,6 +162,7 @@ colorscheme joogie-dark
 lua require('cmp-config')
 lua require('colorizer-config')
 lua require('dap-config')
+lua require('formatter-config')
 lua require('harpoon-config')
 lua require('lsp-config')
 lua require('lualine-config')

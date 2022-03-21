@@ -1,22 +1,24 @@
-local package = require('package-info')
+local package = require("package-info")
 
-package.setup({
-  colors = {
-    up_to_date = "#637777",
-    outdated = "#637777",
-  },
-  icons = {
-    enable = true,
-    style = {
-      up_to_date = "=> ",
-      outdated = "=> ",
+package.setup(
+  {
+    colors = {
+      up_to_date = "#637777",
+      outdated = "#637777"
     },
-  },
-  hide_up_to_date = true,
-  hide_unstable_versions = true,
-});
+    icons = {
+      enable = true,
+      style = {
+        up_to_date = "=> ",
+        outdated = "=> "
+      }
+    },
+    hide_up_to_date = true,
+    hide_unstable_versions = true
+  }
+)
 
-local opts = { silent = true, noremap = true }
+local opts = {silent = true, noremap = true}
 
 -- Show package versions
 vim.api.nvim_set_keymap("n", "<leader>ns", ":lua require('package-info').show()<CR>", opts)
@@ -32,4 +34,3 @@ vim.api.nvim_set_keymap("n", "<leader>ni", ":lua require('package-info').install
 vim.api.nvim_set_keymap("n", "<leader>nr", ":lua require('package-info').reinstall()<CR>", opts)
 -- Install a different package version
 vim.api.nvim_set_keymap("n", "<leader>np", ":lua require('package-info').change_version()<CR>", opts)
-
