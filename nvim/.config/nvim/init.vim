@@ -26,7 +26,7 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'onsails/lspkind-nvim'
 Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
-Plug 'princejoogie/tailwind-highlight.nvim'
+Plug 'princejoogie/tailwind-highlight.nvim', {'branch': 'dev'}
 Plug 'ryanoasis/vim-devicons'
 Plug 'sbdchd/neoformat'
 Plug 'tpope/vim-fugitive'
