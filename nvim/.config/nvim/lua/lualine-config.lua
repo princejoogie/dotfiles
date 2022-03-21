@@ -225,6 +225,11 @@ ins_right {
 }
 
 ins_right {
+  'filetype',
+  color = { fg = colors.green, bg = '#282C34', gui = 'bold' },
+}
+
+ins_right {
   'o:encoding',
   cond = conditions.hide_in_width,
   color = { fg = colors.green, gui = 'bold' },
