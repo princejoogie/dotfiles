@@ -132,6 +132,7 @@ set autoindent
 set background=dark
 set clipboard=unnamedplus
 set encoding=UTF-8
+set expandtab
 set foldlevel=2
 set foldmethod=syntax
 set foldnestmax=10
@@ -149,7 +150,7 @@ set nu rnu
 set shiftwidth=2
 set smartcase
 set smarttab
-set softtabstop=0 noexpandtab
+set softtabstop=0
 set t_Co=256
 set tabstop=2
 set termguicolors
