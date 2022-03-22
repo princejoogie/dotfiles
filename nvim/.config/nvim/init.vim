@@ -10,6 +10,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'airblade/vim-gitgutter'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
+Plug 'djoshea/vim-autoread'
 Plug 'folke/todo-comments.nvim'
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
@@ -119,6 +120,7 @@ vnoremap <C-c> "*y<CR>
 inoremap <C-v> "*p<CR>
 
 set autoindent
+set autoread
 set background=dark
 set clipboard=unnamedplus
 set encoding=UTF-8

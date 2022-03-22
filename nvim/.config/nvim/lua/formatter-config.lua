@@ -8,6 +8,16 @@ local prettier = {
   end
 }
 
+local prismafmt = {
+  function()
+    return {
+      exe = "./node_modules/.bin/prisma format",
+      args = {"", vim.fn.fnameescape(vim.api.nvim_buf_get_name(0))},
+      stdin = true
+    }
+  end
+}
+
 local rustfmt = {
   function()
     return {
@@ -63,6 +73,7 @@ require("formatter").setup(
       json = prettier,
       lua = luafmt,
       python = autopep8,
+      prisma = prismafmt,
       rust = rustfmt
     }
   }
@@ -71,4 +82,3 @@ require("formatter").setup(
 local opts = {noremap = true, silent = true}
 
 vim.api.nvim_set_keymap("n", "<leader>f", ":Format<CR>", opts)
-
