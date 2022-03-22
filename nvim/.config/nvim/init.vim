@@ -10,7 +10,6 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'airblade/vim-gitgutter'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
-Plug 'arkav/lualine-lsp-progress'
 Plug 'folke/todo-comments.nvim'
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
@@ -25,7 +24,6 @@ Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-telescope/telescope-github.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'onsails/lspkind-nvim'
 Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
 Plug 'princejoogie/tailwind-highlight.nvim', {'branch': 'dev'}
@@ -43,6 +41,7 @@ Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
 
 " LSP
+Plug 'arkav/lualine-lsp-progress'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -51,6 +50,7 @@ Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'neovim/nvim-lspconfig'
+Plug 'onsails/lspkind-nvim'
 Plug 'williamboman/nvim-lsp-installer'
 
 call plug#end()
