@@ -16,6 +16,7 @@ Plug 'folke/todo-comments.nvim'
 Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
+Plug 'kdheepak/lazygit.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'mhartington/formatter.nvim'
 Plug 'norcalli/nvim-colorizer.lua'
@@ -73,6 +74,11 @@ autocmd BufEnter * GitGutterLineNrHighlightsEnable
 let g:gitgutter_grep = 'rg'
 nmap g<leader>j <Plug>(GitGutterNextHunk)
 nmap g<leader>k <Plug>(GitGutterPrevHunk)
+nnoremap <leader>lg <cmd>LazyGit<CR>
+
+if has('nvim') && executable('nvr')
+  let $GIT_EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
+endif
 
 " FUGITIVE SETTINGS
 nmap <leader>gh <cmd>diffget //3<CR>
