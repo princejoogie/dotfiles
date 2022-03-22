@@ -8,7 +8,6 @@ Plug 'Shatur/neovim-ayu'
 Plug 'ThePrimeagen/harpoon'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'airblade/vim-gitgutter'
-Plug 'akinsho/bufferline.nvim'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
 Plug 'arkav/lualine-lsp-progress'
@@ -30,6 +29,7 @@ Plug 'onsails/lspkind-nvim'
 Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
 Plug 'princejoogie/tailwind-highlight.nvim', {'branch': 'dev'}
+Plug 'romgrk/barbar.nvim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
@@ -57,17 +57,6 @@ call plug#end()
 
 let mapleader=' '
      
-" BUFFERLINE SETTINGS
-nnoremap <silent><leader>1 <Cmd>BufferLineGoToBuffer 1<CR>
-nnoremap <silent><leader>2 <Cmd>BufferLineGoToBuffer 2<CR>
-nnoremap <silent><leader>3 <Cmd>BufferLineGoToBuffer 3<CR>
-nnoremap <silent><leader>4 <Cmd>BufferLineGoToBuffer 4<CR>
-nnoremap <silent><leader>5 <Cmd>BufferLineGoToBuffer 5<CR>
-nnoremap <silent><leader>6 <Cmd>BufferLineGoToBuffer 6<CR>
-nnoremap <silent><leader>7 <Cmd>BufferLineGoToBuffer 7<CR>
-nnoremap <silent><leader>8 <Cmd>BufferLineGoToBuffer 8<CR>
-nnoremap <silent><leader>9 <Cmd>BufferLineGoToBuffer 9<CR>
-
 " GITGUTTER SETTINGS
 autocmd BufWritePost * GitGutter 
 autocmd BufEnter * GitGutterLineNrHighlightsEnable
@@ -93,19 +82,12 @@ let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 
 " NERDTREE SETTINGS
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && v:this_session == '' | NERDTree | endif
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 nnoremap <C-b> <cmd>NERDTreeToggle<CR>
-let g:NERDTreeShowHidden = 1
-let g:NERDCreateDefaultMappings = 1
-let g:NERDSpaceDelims = 1
-let g:NERDCompactSexyComs = 1
-let g:NERDDefaultAlign = 'left'
-let g:NERDAltDelims_java = 1
-let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
-let g:NERDCommentEmptyLines = 1
-let g:NERDTrimTrailingWhitespace = 1
-let g:NERDToggleCheckAllLines = 1
-let g:nerdtree_sync_cursorline = 1
-let g:NERDTreeHighlightCursorline = 1
+let g:NERDTreeDirArrowExpandable = '►'
+let g:NERDTreeDirArrowCollapsible = '▼'
 
 " GENERAL SETTINGS ----------------------
 nmap <leader>mm <cmd>MarkdownPreview<CR>
@@ -119,10 +101,6 @@ nnoremap <leader>- :resize +5<CR>
 nnoremap <leader>= :resize -5<CR>
 nnoremap <leader>< :vertical resize +5<CR>
 nnoremap <leader>> :vertical resize -5<CR>
-nnoremap <leader><TAB> :bnext<CR>
-nnoremap <leader><S-TAB> :bprev<CR>
-nnoremap <leader>ch <cmd>lua require('telescope.builtin').command_history()<CR>
-nnoremap <leader>r :NERDTreeFind<CR>zz
 
 inoremap jj <Esc>
 nnoremap <C-n> :noh<CR>
@@ -165,6 +143,7 @@ syntax enable
 colorscheme joogie-dark
 
 " LUA CONFIGURATIONS
+lua require('barbar-config')
 lua require('cmp-config')
 lua require('colorizer-config')
 lua require('dap-config')
@@ -181,4 +160,8 @@ lua require('treesitter-config')
 " NIGHTLY SETTINGS
 set laststatus=3
 highlight WinSeparator guibg=None guifg=#444444
+
+if exists('g:loaded_webdevicons')
+  call webdevicons#refresh()
+endif
 

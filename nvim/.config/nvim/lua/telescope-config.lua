@@ -27,6 +27,7 @@ vim.api.nvim_set_keymap("n", "<leader>fb", builtin .. "current_buffer_fuzzy_find
 vim.api.nvim_set_keymap("n", "<leader>fh", builtin .. "help_tags()<CR>", gopts)
 vim.api.nvim_set_keymap("n", "<leader>gs", builtin .. "git_status()<CR>", gopts)
 vim.api.nvim_set_keymap("n", "<leader>ts", builtin .. "treesitter()<CR>", gopts)
+vim.api.nvim_set_keymap("n", "<leader>ch", builtin .. "command_history()<CR>", gopts)
 -- vim.api.nvim_set_keymap('n', '<leader>q', builtin..'diagnostics()<CR>', gopts)
 
 vim.api.nvim_set_keymap("n", "<leader>gi", '<cmd>lua require("telescope-config").gh_issues()<CR>', gopts)

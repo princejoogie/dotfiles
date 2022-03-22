@@ -2,77 +2,6 @@
 local lualine = require("lualine")
 local package = require("package-info")
 
-local bufferColors = {
-  primary = "#282C34",
-  secondary = "#112630",
-  black = "#000000"
-}
-
-require("bufferline").setup(
-  {
-    options = {
-      diagnostics = "nvim_lsp",
-      diagnostics_indicator = function(_, _, diagnostics_dict, _)
-        local s = " "
-        for e, n in pairs(diagnostics_dict) do
-          local sym = e == "error" and " " or (e == "warning" and " " or " ")
-          s = s .. n .. sym
-        end
-        return s
-      end,
-      enforce_regular_tabs = true,
-      diagnostics_update_in_insert = false,
-      enforce_regular_tabs = true,
-      separator_style = "thin"
-    },
-    highlights = {
-      fill = {guibg = bufferColors.primary},
-      background = {guibg = bufferColors.primary},
-      buffer_selected = {guibg = bufferColors.black},
-      buffer_visible = {guibg = bufferColors.primary},
-      close_button = {guibg = bufferColors.primary},
-      close_button_visible = {guibg = bufferColors.primary},
-      close_button_selected = {guibg = bufferColors.black},
-      diagnostic = {guibg = bufferColors.primary},
-      diagnostic_visible = {guibg = bufferColors.primary},
-      diagnostic_selected = {guibg = bufferColors.black},
-      duplicate = {guibg = bufferColors.primary},
-      duplicate_visible = {guibg = bufferColors.primary},
-      duplicate_selected = {guibg = bufferColors.black},
-      error = {guibg = bufferColors.primary},
-      error_visible = {guibg = bufferColors.primary},
-      error_selected = {guibg = bufferColors.black},
-      error_diagnostic = {guibg = bufferColors.primary},
-      error_diagnostic_visible = {guibg = bufferColors.primary},
-      error_diagnostic_selected = {guibg = bufferColors.black},
-      indicator_selected = {guibg = bufferColors.black},
-      pick = {guibg = bufferColors.primary},
-      pick_visible = {guibg = bufferColors.primary},
-      pick_selected = {guibg = bufferColors.black},
-      info = {guibg = bufferColors.primary},
-      info_visible = {guibg = bufferColors.primary},
-      info_selected = {guibg = bufferColors.black},
-      info_diagnostic = {guibg = bufferColors.primary},
-      info_diagnostic_visible = {guibg = bufferColors.primary},
-      info_diagnostic_selected = {guibg = bufferColors.black},
-      modified = {guibg = bufferColors.primary},
-      modified_visible = {guibg = bufferColors.primary},
-      modified_selected = {guibg = bufferColors.black},
-      separator = {guibg = bufferColors.secondary},
-      separator_visible = {guibg = bufferColors.secondary},
-      separator_selected = {guibg = bufferColors.primary},
-      tab = {guibg = bufferColors.primary},
-      tab_selected = {guibg = bufferColors.black},
-      warning = {guibg = bufferColors.primary},
-      warning_visible = {guibg = bufferColors.primary},
-      warning_selected = {guibg = bufferColors.black},
-      warning_diagnostic = {guibg = bufferColors.primary},
-      warning_diagnostic_visible = {guibg = bufferColors.primary},
-      warning_diagnostic_selected = {guibg = bufferColors.black}
-    }
-  }
-)
-
 -- Color table for highlights
 local colors = {
   bg = "#282C34",
@@ -227,7 +156,7 @@ ins_right {
 
 ins_right {
   "filetype",
-  color = {fg = colors.green, bg = bufferColors.primary, gui = "bold"}
+  color = {fg = colors.green, bg = colors.bg, gui = "bold"}
 }
 
 ins_right {
