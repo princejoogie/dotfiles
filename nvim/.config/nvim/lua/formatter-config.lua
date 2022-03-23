@@ -12,7 +12,6 @@ local prismafmt = {
   function()
     return {
       exe = "./node_modules/.bin/prisma format",
-      args = {"", vim.fn.fnameescape(vim.api.nvim_buf_get_name(0))},
       stdin = false
     }
   end
@@ -69,8 +68,8 @@ require("formatter").setup(
       javascriptreact = prettier,
       typescript = prettier,
       typescriptreact = prettier,
-      cpp = clang_format,
       json = prettier,
+      cpp = clang_format,
       lua = luafmt,
       python = autopep8,
       prisma = prismafmt,
