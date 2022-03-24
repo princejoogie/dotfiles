@@ -36,6 +36,9 @@ Plug 'tpope/vim-surround'
 Plug 'unkiwii/vim-nerdtree-sync'
 Plug 'vuki656/package-info.nvim'
 
+"Color schemes
+Plug 'tiagovla/tokyodark.nvim'
+
 " Debugging
 Plug 'mfussenegger/nvim-dap'
 Plug 'nvim-telescope/telescope-dap.nvim'
@@ -152,7 +155,11 @@ filetype on
 filetype plugin on
 syntax on
 syntax enable
-colorscheme joogie-dark
+
+
+let g:tokyodark_enable_italic_comment = 0
+let g:tokyodark_enable_italic = 0
+colorscheme tokyodark
 
 " LUA CONFIGURATIONS
 lua require('barbar-config')
@@ -171,7 +178,7 @@ lua require('treesitter-config')
 
 " NIGHTLY SETTINGS
 set laststatus=3
-highlight WinSeparator guibg=None guifg=#444444
+highlight WinSeparator guibg=None guifg=#1A1B2A
 
 if exists('g:loaded_webdevicons')
   call webdevicons#refresh()

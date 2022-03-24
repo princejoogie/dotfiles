@@ -4,7 +4,7 @@ local package = require("package-info")
 
 -- Color table for highlights
 local colors = {
-  bg = "#282C34",
+  bg = "#1A1B2A",
   fg = "#bbc2cf",
   yellow = "#ECBE7B",
   cyan = "#008080",
