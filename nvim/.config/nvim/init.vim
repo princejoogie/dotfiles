@@ -25,6 +25,7 @@ Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-telescope/telescope-github.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/playground'
 Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
 Plug 'princejoogie/tailwind-highlight.nvim', {'branch': 'dev'}
