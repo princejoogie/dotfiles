@@ -38,6 +38,9 @@ Plug 'vuki656/package-info.nvim'
 
 "Color schemes
 Plug 'tiagovla/tokyodark.nvim'
+Plug 'mhartington/oceanic-next'
+Plug 'bluz71/vim-moonfly-colors'
+Plug 'Shatur/neovim-ayu'
 
 " Debugging
 Plug 'mfussenegger/nvim-dap'
@@ -52,7 +55,7 @@ Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-vsnip'
-Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/nvim-cmp', {'branch': 'dev'}
 Plug 'hrsh7th/vim-vsnip'
 Plug 'neovim/nvim-lspconfig'
 Plug 'onsails/lspkind-nvim'
@@ -160,6 +163,12 @@ syntax enable
 let g:tokyodark_enable_italic_comment = 0
 let g:tokyodark_enable_italic = 0
 colorscheme tokyodark
+
+" let g:oceanic_next_terminal_bold = 1
+" let g:oceanic_next_terminal_italic = 1
+" colorscheme OceanicNext
+
+" colorscheme moonfly
 
 " LUA CONFIGURATIONS
 lua require('barbar-config')

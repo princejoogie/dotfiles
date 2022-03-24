@@ -8,6 +8,7 @@ cmp.setup(
         vim.fn["vsnip#anonymous"](args.body)
       end
     },
+    win_mode = "rounded",
     mapping = {
       ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), {"i", "c"}),
       ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), {"i", "c"}),
@@ -41,6 +42,14 @@ cmp.setup(
           end
         }
       )
+    },
+    window = {
+      completion = {
+        border = {"╭", "─", "╮", "│", "╯", "─", "╰", "│"}
+      },
+      documentation = {
+        border = {"╭", "─", "╮", "│", "╯", "─", "╰", "│"}
+      }
     }
   }
 )
