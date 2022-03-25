@@ -38,9 +38,6 @@ Plug 'vuki656/package-info.nvim'
 
 "Color schemes
 Plug 'tiagovla/tokyodark.nvim'
-Plug 'mhartington/oceanic-next'
-Plug 'bluz71/vim-moonfly-colors'
-Plug 'Shatur/neovim-ayu'
 
 " Debugging
 Plug 'mfussenegger/nvim-dap'
@@ -123,8 +120,15 @@ inoremap jj <Esc>
 nnoremap <C-n> :noh<CR>
 nnoremap <C-z> <Nop>
 noremap <C-s> :w<CR>
-vnoremap <C-c> "*y<CR>
-inoremap <C-v> "*p<CR>
+
+" WSL Yank support
+let s:clip = '/mnt/c/Windows/System32/clip.exe'
+if executable(s:clip)
+  augroup WSLYank
+    autocmd!
+    autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
+  augroup END
+endif
 
 set autoindent
 set autoread
@@ -159,16 +163,9 @@ filetype plugin on
 syntax on
 syntax enable
 
-
 let g:tokyodark_enable_italic_comment = 0
 let g:tokyodark_enable_italic = 0
 colorscheme tokyodark
-
-" let g:oceanic_next_terminal_bold = 1
-" let g:oceanic_next_terminal_italic = 1
-" colorscheme OceanicNext
-
-" colorscheme moonfly
 
 " LUA CONFIGURATIONS
 lua require('barbar-config')
