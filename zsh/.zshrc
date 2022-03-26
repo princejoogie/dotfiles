@@ -50,7 +50,9 @@ alias tmux="TERM=screen-256color-bce tmux"
 # Functions
 work() { cd "/mnt/c/Users/prince.juguilon/Documents/Work/" }
 pqs() { sudo service postgresql start }
+pqc() { sudo service postgresql stop }
 pqr() { sudo service postgresql restart }
+lsix() { montage -tile 7x1 -label %f -background black -fill white "$@" gif:- | convert - -colors 16 sixel:-; }
 
 # Variables
 NVIM_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
@@ -60,6 +62,9 @@ export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# go
+export PATH=$PATH:/usr/local/go/bin
 
 # bun completions
 [ -s "/home/joogie/.bun/_bun" ] && source "/home/joogie/.bun/_bun"

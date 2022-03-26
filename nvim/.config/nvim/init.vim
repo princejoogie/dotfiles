@@ -7,7 +7,6 @@ Plug 'MunifTanjim/nui.nvim'
 Plug 'Shatur/neovim-ayu'
 Plug 'ThePrimeagen/harpoon'
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'airblade/vim-gitgutter'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
 Plug 'djoshea/vim-autoread'
@@ -17,6 +16,7 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
 Plug 'kdheepak/lazygit.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
+Plug 'lewis6991/gitsigns.nvim'
 Plug 'mhartington/formatter.nvim'
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'nvim-lua/plenary.nvim'
@@ -61,14 +61,6 @@ Plug 'williamboman/nvim-lsp-installer'
 call plug#end()
 
 let mapleader=' '
-     
-" GITGUTTER SETTINGS
-autocmd BufWritePost * GitGutter 
-autocmd BufEnter * GitGutterLineNrHighlightsEnable
-let g:gitgutter_grep = 'rg'
-nmap g<leader>j <Plug>(GitGutterNextHunk)
-nmap g<leader>k <Plug>(GitGutterPrevHunk)
-nnoremap <leader>lg <cmd>LazyGit<CR>
 
 if has('nvim') && executable('nvr')
   let $GIT_EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
@@ -173,6 +165,7 @@ lua require('cmp-config')
 lua require('colorizer-config')
 lua require('dap-config')
 lua require('formatter-config')
+lua require('gitsigns-config')
 lua require('harpoon-config')
 lua require('lsp-config')
 lua require('lualine-config')
