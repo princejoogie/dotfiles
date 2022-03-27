@@ -34,11 +34,12 @@ chmod +x clean
 - [x] [fzf](https://github.com/junegunn/fzf)
 - [x] [fd](https://github.com/sharkdp/fd)
 
-> run `:checkhealth` to see remaining dependencie
+> run `:checkhealth` to see remaining dependencies
 
-![preview](https://user-images.githubusercontent.com/47204120/160265288-63b22c73-c4f9-4177-ac96-70fc727f9f0f.png)
+![nvim_preview](https://user-images.githubusercontent.com/47204120/160265678-c9218945-cfa1-449e-9898-2a5abe15c67e.png)
 
 **DAP Configuration**
+
 
 - Node
 
