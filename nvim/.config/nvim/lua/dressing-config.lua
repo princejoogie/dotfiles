@@ -14,7 +14,7 @@ dressing.setup(
       width = nil,
       max_width = {140, 0.9},
       min_width = {20, 0.2},
-      winblend = 100,
+      winblend = 0,
       winhighlight = "",
       override = function(conf)
         return conf
