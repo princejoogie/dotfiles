@@ -2,19 +2,14 @@
 local lualine = require("lualine")
 local package = require("package-info")
 
--- barbar overrides
--- set highlight BufferVisible background to #1A1B2A
--- set highlight BufferVisible foreground to #FFFFFF
-
 local p = require("tokyodark.palette")
 
 -- Color table for highlights
 local colors = {
   bg = p.bg1,
-  black = "#000000",
+  black = p.bg0,
   blue = p.blue,
   cyan = p.cyan,
-  darkblue = "#081633",
   fg = p.fg,
   green = p.green,
   grey = p.grey,
