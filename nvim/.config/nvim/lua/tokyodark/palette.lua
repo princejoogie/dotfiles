@@ -29,6 +29,7 @@ local colors = {
   grey = "#4A5057",
   none = "NONE"
 }
+
 local function gamma_correction(colors)
   local colors_corrected = {}
   for k, v in pairs(colors) do

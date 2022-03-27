@@ -17,6 +17,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'kdheepak/lazygit.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'lewis6991/gitsigns.nvim'
+Plug 'lewis6991/impatient.nvim'
 Plug 'mhartington/formatter.nvim'
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'nvim-lua/plenary.nvim'
@@ -31,6 +32,7 @@ Plug 'preservim/nerdtree'
 Plug 'princejoogie/tailwind-highlight.nvim', {'branch': 'dev'}
 Plug 'romgrk/barbar.nvim'
 Plug 'ryanoasis/vim-devicons'
+Plug 'stevearc/dressing.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'unkiwii/vim-nerdtree-sync'
@@ -157,10 +159,12 @@ let g:tokyodark_enable_italic = 0
 colorscheme tokyodark
 
 " LUA CONFIGURATIONS
+lua require('impatient').enable_profile()
 lua require('barbar-config')
 lua require('cmp-config')
 lua require('colorizer-config')
 lua require('dap-config')
+lua require('dressing-config')
 lua require('formatter-config')
 lua require('gitsigns-config')
 lua require('harpoon-config')
