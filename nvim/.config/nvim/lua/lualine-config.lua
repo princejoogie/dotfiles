@@ -2,20 +2,28 @@
 local lualine = require("lualine")
 local package = require("package-info")
 
+-- barbar overrides
+-- set highlight BufferVisible background to #1A1B2A
+-- set highlight BufferVisible foreground to #FFFFFF
+
+local p = require("tokyodark.palette")
+
 -- Color table for highlights
 local colors = {
-  bg = "#1A1B2A",
-  fg = "#bbc2cf",
-  yellow = "#ECBE7B",
-  cyan = "#008080",
+  bg = p.bg1,
+  black = "#000000",
+  blue = p.blue,
+  cyan = p.cyan,
   darkblue = "#081633",
-  green = "#98be65",
-  orange = "#FF8800",
-  violet = "#a9a1e1",
+  fg = p.fg,
+  green = p.green,
+  grey = p.grey,
   magenta = "#c678dd",
-  blue = "#51afef",
-  red = "#ec5f67",
-  black = "#000000"
+  orange = "#FF8800",
+  purple = p.purple,
+  red = p.red,
+  violet = "#a9a1e1",
+  yellow = p.yellow
 }
 
 local conditions = {
@@ -39,9 +47,6 @@ local config = {
     component_separators = "",
     section_separators = "",
     theme = {
-      -- We are going to use lualine_c an lualine_x as left and
-      -- right section. Both are highlighted by c theme .  So we
-      -- are just setting default looks o statusline
       normal = {c = {fg = colors.fg, bg = colors.bg}},
       inactive = {c = {fg = colors.fg, bg = colors.bg}}
     }

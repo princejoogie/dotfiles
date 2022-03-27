@@ -36,9 +36,6 @@ Plug 'tpope/vim-surround'
 Plug 'unkiwii/vim-nerdtree-sync'
 Plug 'vuki656/package-info.nvim'
 
-"Color schemes
-Plug 'tiagovla/tokyodark.nvim'
-
 " Debugging
 Plug 'mfussenegger/nvim-dap'
 Plug 'nvim-telescope/telescope-dap.nvim'
