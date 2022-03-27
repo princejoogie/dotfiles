@@ -36,7 +36,7 @@ chmod +x clean
 
 > run `:checkhealth` to see remaining dependencie
 
-[nvim preview]
+![preview](https://user-images.githubusercontent.com/47204120/160265288-63b22c73-c4f9-4177-ac96-70fc727f9f0f.png)
 
 **DAP Configuration**
 
