@@ -157,6 +157,7 @@ hl.plugins.lsp = {
   LspDiagnosticsUnderlineHint = {underline = true, sp = u.color_gamma(p.purple, 0.5)},
   LspDiagnosticsUnderlineInformation = {underline = true, sp = u.color_gamma(p.blue, 0.5)},
   LspDiagnosticsUnderlineWarning = {underline = true, sp = u.color_gamma(p.yellow, 0.5)},
+  FloatBorder = {fg = p.fg, bg = p.bg0},
   DiagnosticSignError = {fg = u.color_gamma(p.red, 0.5)},
   DiagnosticSignHint = {fg = u.color_gamma(p.purple, 0.5)},
   DiagnosticSignInfo = {fg = u.color_gamma(p.blue, 0.5)},
