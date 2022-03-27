@@ -4,7 +4,6 @@ call plug#begin(stdpath('data'))
 " QOL
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'MunifTanjim/nui.nvim'
-Plug 'Shatur/neovim-ayu'
 Plug 'ThePrimeagen/harpoon'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'akinsho/toggleterm.nvim'
