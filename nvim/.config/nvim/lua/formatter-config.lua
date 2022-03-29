@@ -11,8 +11,9 @@ local prettier = {
 local prismafmt = {
   function()
     return {
-      exe = "./node_modules/.bin/prisma format",
-      stdin = false
+      exe = "prisma-fmt",
+      args = {"format", "-i", vim.fn.fnameescape(vim.api.nvim_buf_get_name(0))},
+      stdin = true
     }
   end
 }
