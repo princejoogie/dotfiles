@@ -55,6 +55,7 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/nvim-cmp', {'branch': 'dev'}
 Plug 'hrsh7th/vim-vsnip'
+Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'onsails/lspkind-nvim'
 Plug 'williamboman/nvim-lsp-installer'

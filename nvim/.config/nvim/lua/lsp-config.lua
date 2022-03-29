@@ -103,3 +103,27 @@ lsp_installer.on_server_ready(
     server:setup(lspOpts)
   end
 )
+
+local null_ls = require("null-ls")
+local ca = null_ls.builtins.code_actions
+local diag = null_ls.builtins.diagnostics
+local hvr = null_ls.builtins.hover
+
+null_ls.setup(
+  {
+    sources = {
+      -- CODE ACTIONS
+      ca.gitsigns,
+      ca.shellcheck,
+      -- DIAGNOSTICS
+      diag.cppcheck,
+      diag.eslint,
+      diag.hadolint,
+      diag.misspell,
+      diag.shellcheck,
+      diag.tsc,
+      -- HOVER
+      hvr.dictionary
+    }
+  }
+)

@@ -85,6 +85,7 @@ require("formatter").setup(
       javascriptreact = prettier,
       typescript = prettier,
       typescriptreact = prettier,
+      markdown = prettier,
       json = prettier,
       cpp = clang_format,
       lua = luafmt,
@@ -97,4 +98,4 @@ require("formatter").setup(
 
 local opts = {noremap = true, silent = true}
 
-vim.api.nvim_set_keymap("n", "<leader>f", ":Format<CR>", opts)
+vim.api.nvim_set_keymap("n", "<leader>p", ":Format<CR>", opts)

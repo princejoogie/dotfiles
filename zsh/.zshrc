@@ -72,3 +72,7 @@ export PATH=$PATH:/usr/local/go/bin
 # Bun
 export BUN_INSTALL="/home/joogie/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Fly.io
+export FLYCTL_INSTALL="/home/joogie/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
