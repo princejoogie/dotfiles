@@ -124,6 +124,10 @@ null_ls.setup(
       diag.tsc,
       -- HOVER
       hvr.dictionary
-    }
+    },
+    should_attach = function(bufnr)
+      -- disable shellcheck for .env files
+      return vim.api.nvim_buf_get_name(bufnr):match("^.env")
+    end
   }
 )
