@@ -126,8 +126,9 @@ null_ls.setup(
       hvr.dictionary
     },
     should_attach = function(bufnr)
-      -- disable shellcheck for .env files
-      return vim.api.nvim_buf_get_name(bufnr):match("^.env")
+      local filename = vim.api.nvim_buf_get_name(bufnr)
+      local will_attach = not string.match(filename, ".env")
+      return will_attach
     end
   }
 )
