@@ -14,10 +14,10 @@ gitsigns.setup(
       -- Navigation
       map(
         "n",
-        "g<leader>j",
+        "[c",
         function()
           if vim.wo.diff then
-            return "g<leader>j"
+            return "[c"
           else
             vim.schedule(
               function()
@@ -32,10 +32,10 @@ gitsigns.setup(
 
       map(
         "n",
-        "g<leader>k",
+        "]c",
         function()
           if vim.wo.diff then
-            return "g<leader>k"
+            return "]c"
           else
             vim.schedule(
               function()

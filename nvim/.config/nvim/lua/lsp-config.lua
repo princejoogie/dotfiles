@@ -113,15 +113,16 @@ null_ls.setup(
   {
     sources = {
       -- CODE ACTIONS
+      ca.eslint.with({prefer_local = "node_modules/.bin"}),
       ca.gitsigns,
       ca.shellcheck,
       -- DIAGNOSTICS
       diag.cppcheck,
-      diag.eslint,
+      diag.eslint.with({prefer_local = "node_modules/.bin"}),
       diag.hadolint,
       diag.misspell,
       diag.shellcheck,
-      diag.tsc,
+      diag.tsc.with({prefer_local = "node_modules/.bin"}),
       -- HOVER
       hvr.dictionary
     },
