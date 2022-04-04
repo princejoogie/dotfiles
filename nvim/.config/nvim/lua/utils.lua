@@ -11,7 +11,7 @@ local M = {}
 -- ```lua
 -- map('n', '<leader>o', ':Open<CR>')
 -- ```
-M.map = function(mode, lhs, rhs, opts)
+M.kmap = function(mode, lhs, rhs, opts)
   local def_opts = { noremap = true, silent = true }
   if opts == nil then
     opts = {}
