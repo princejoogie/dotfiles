@@ -13,6 +13,16 @@ source ~/.config/nvim/plugins.vim
 
 let mapleader=' '
 
+" Check highlight group
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+
+nnoremap <leader>hg :call SynStack()<CR>
+
 " WSL Yank support
 let s:clip = '/mnt/c/Windows/System32/clip.exe'
 if executable(s:clip)
