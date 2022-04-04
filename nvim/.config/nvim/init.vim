@@ -165,21 +165,8 @@ colorscheme tokyodark
 
 " LUA CONFIGURATIONS
 lua require('impatient').enable_profile()
-lua require('barbar-config')
-lua require('cmp-config')
-lua require('colorizer-config')
-lua require('dap-config')
-lua require('dressing-config')
-lua require('formatter-config')
-lua require('gitsigns-config')
-lua require('harpoon-config')
-lua require('lsp-config')
-lua require('lualine-config')
-lua require('package-info-config')
-lua require('telescope-config')
-lua require('term-config')
-lua require('todo-config')
-lua require('treesitter-config')
+lua require('config-init')
+lua require('keymaps')
 
 " NIGHTLY SETTINGS
 set laststatus=3

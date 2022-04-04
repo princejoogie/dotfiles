@@ -48,7 +48,6 @@ alias open=wslview
 alias tmux="TERM=screen-256color-bce tmux"
 
 # Functions
-work() { cd "/mnt/c/Users/prince.juguilon/Documents/Work/" }
 pqs() { sudo service postgresql start }
 pqc() { sudo service postgresql stop }
 pqr() { sudo service postgresql restart }
@@ -56,10 +55,6 @@ lsix() { montage -tile 7x1 -label %f -background black -fill white "$@" gif:- | 
 
 # Variables
 NVIM_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
-
-export NVM_DIR="$HOME/.config/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -76,3 +71,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # Fly.io
 export FLYCTL_INSTALL="/home/joogie/.fly"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"
+
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

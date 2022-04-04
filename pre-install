@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 
+# Binaries
 echo "[  ] installing ripgrep and bat"
 sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
 if [ $? -eq 0 ]; then
@@ -22,7 +23,7 @@ else
 	echo "[X]  fd failed to install "
 fi
 
-deps=('fzf' 'lldb')
+deps=('fzf' 'lldb' 'curl')
 
 for dep in $deps; do
 	echo "------------------------"
@@ -34,3 +35,17 @@ for dep in $deps; do
 		echo "[X]  $dep failed to install"
 	fi
 done
+
+# NVM
+rm -rf ~/.npm ~/.config/nvm
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+
+nvm install 14
+
+NPM_PACKAGES="commitizen,depcheck,eslint,graphql,graphql-language-service-cli,license,lua-fmt,neovim,pm2,prettier,remark,serve,tslib,typescript,yarn"
+
+for package in $(echo $NPM_PACKAGES | sed "s/,/ /g"); do
+  npm install -g $package
+done
+

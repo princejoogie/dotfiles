@@ -1,18 +1,3 @@
-local base = '<cmd>lua require("dap").'
-local ui = '<cmd>lua require("dapui").'
-
-local opts = {}
-
-vim.api.nvim_set_keymap("n", "<leader>dp", base .. "continue()<CR>", opts)
-vim.api.nvim_set_keymap("n", "<leader>do", base .. "step_over()<CR>", opts)
-vim.api.nvim_set_keymap("n", "<leader>dn", base .. "step_into()<CR>", opts)
-vim.api.nvim_set_keymap("n", "<leader>dN", base .. "step_out()<CR>", opts)
-vim.api.nvim_set_keymap("n", "<leader>db", base .. "toggle_breakpoint()<CR>", opts)
-vim.api.nvim_set_keymap("n", "<leader>dB", base .. 'set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>', opts)
-vim.api.nvim_set_keymap("n", "<leader>dr", base .. "repl.toggle()<CR>", opts)
-
-vim.api.nvim_set_keymap("n", "<leader>dt", ui .. "toggle()<CR>", opts)
-
 require("nvim-dap-virtual-text").setup {
   enabled = true,
   enabled_commands = true,

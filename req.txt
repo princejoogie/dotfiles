@@ -1,0 +1,4 @@
+/home/joogie/.config/nvm/versions/node/v14.19.0/lib
+
+commitizen,corepack,depcheck,eslint,graphql,graphql-language-service-cli,license,lua-fmt,neovim,npm,pm2,prettier,remark,serve,tslib,typescript,yarn
+
