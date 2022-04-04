@@ -30,9 +30,9 @@ local colors = {
   none = "NONE"
 }
 
-local function gamma_correction(colors)
+local function gamma_correction(c)
   local colors_corrected = {}
-  for k, v in pairs(colors) do
+  for k, v in pairs(c) do
     colors_corrected[k] = color_gamma(v, gamma)
   end
   return colors_corrected
