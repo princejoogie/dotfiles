@@ -26,10 +26,11 @@ kmap("n", "<leader>p", ":Format<CR>")
 
 -- LSP
 -- see configs/lsp-config.lua
-kmap("n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>")
-kmap("n", "<leader>dk", "<cmd>lua vim.diagnostic.goto_prev()<CR>")
-kmap("n", "<leader>dj", "<cmd>lua vim.diagnostic.goto_next()<CR>")
-kmap("n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>")
+local diag = "<cmd>lua vim.diagnostic."
+kmap("n", "<leader>e", diag .. "open_float()<CR>")
+kmap("n", "<leader>dk", diag .. "goto_prev()<CR>")
+kmap("n", "<leader>dj", diag .. "goto_next()<CR>")
+kmap("n", "<leader>q", diag .. "setloclist()<CR>")
 
 -- FUGITIVE
 kmap("n", "<leader>gh", "<cmd>diffget //3<CR>")
@@ -51,21 +52,21 @@ kmap("n", "<leader>gp", tconfig .. "gh_prs()<CR>")
 kmap("n", "<leader>gi", tconfig .. "gh_issues()<CR>")
 
 -- BARBAR
-kmap("n", "<leader><S-TAB>", ":BufferPrevious<CR>")
-kmap("n", "<leader><TAB>", ":BufferNext<CR>")
-kmap("n", "<A-h>", ":BufferMovePrevious<CR>")
-kmap("n", "<A-l>", " :BufferMoveNext<CR>")
-kmap("n", "<leader>1", ":BufferGoto 1<CR>")
-kmap("n", "<leader>2", ":BufferGoto 2<CR>")
-kmap("n", "<leader>3", ":BufferGoto 3<CR>")
-kmap("n", "<leader>4", ":BufferGoto 4<CR>")
-kmap("n", "<leader>5", ":BufferGoto 5<CR>")
-kmap("n", "<leader>6", ":BufferGoto 6<CR>")
-kmap("n", "<leader>7", ":BufferGoto 7<CR>")
-kmap("n", "<leader>8", ":BufferGoto 8<CR>")
-kmap("n", "<leader>9", ":BufferGoto 9<CR>")
-kmap("n", "<leader>0", ":BufferLast<CR>")
-kmap("n", "<leader>bc", ":BufferClose<CR>")
+kmap("n", "<leader><S-TAB>", "<cmd>BufferPrevious<CR>")
+kmap("n", "<leader><TAB>", "<cmd>BufferNext<CR>")
+kmap("n", "<A-h>", "<cmd>BufferMovePrevious<CR>")
+kmap("n", "<A-l>", " <cmd>BufferMoveNext<CR>")
+kmap("n", "<leader>1", "<cmd>BufferGoto 1<CR>")
+kmap("n", "<leader>2", "<cmd>BufferGoto 2<CR>")
+kmap("n", "<leader>3", "<cmd>BufferGoto 3<CR>")
+kmap("n", "<leader>4", "<cmd>BufferGoto 4<CR>")
+kmap("n", "<leader>5", "<cmd>BufferGoto 5<CR>")
+kmap("n", "<leader>6", "<cmd>BufferGoto 6<CR>")
+kmap("n", "<leader>7", "<cmd>BufferGoto 7<CR>")
+kmap("n", "<leader>8", "<cmd>BufferGoto 8<CR>")
+kmap("n", "<leader>9", "<cmd>BufferGoto 9<CR>")
+kmap("n", "<leader>0", "<cmd>BufferLast<CR>")
+kmap("n", "<leader>bc", "<cmd>BufferClose<CR>")
 
 -- NVIM-DAP
 local dap_base = '<cmd>lua require("dap").'
@@ -92,10 +93,11 @@ kmap("n", "<leader>hp", harpoon_ui .. "nav_prev()<CR>")
 kmap("n", "<leader>ha", harpoon_mark .. "add_file()<CR>")
 
 -- PACKAGE-INFO
-kmap("n", "<leader>ns", ":lua require('package-info').show()<CR>")
-kmap("n", "<leader>nc", ":lua require('package-info').hide()<CR>")
-kmap("n", "<leader>nu", ":lua require('package-info').update()<CR>")
-kmap("n", "<leader>nd", ":lua require('package-info').delete()<CR>")
-kmap("n", "<leader>ni", ":lua require('package-info').install()<CR>")
-kmap("n", "<leader>nr", ":lua require('package-info').reinstall()<CR>")
-kmap("n", "<leader>np", ":lua require('package-info').change_version()<CR>")
+local pi_base = '<cmd>lua require("package-info").'
+kmap("n", "<leader>ns", pi_base .. "show()<CR>")
+kmap("n", "<leader>nc", pi_base .. "hide()<CR>")
+kmap("n", "<leader>nu", pi_base .. "update()<CR>")
+kmap("n", "<leader>nd", pi_base .. "delete()<CR>")
+kmap("n", "<leader>ni", pi_base .. "install()<CR>")
+kmap("n", "<leader>nr", pi_base .. "reinstall()<CR>")
+kmap("n", "<leader>np", pi_base .. "change_version()<CR>")
