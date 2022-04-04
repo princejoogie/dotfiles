@@ -1,11 +1,17 @@
-" https://github.com/princejoogie/dotfiles
+"    ___   ________   ________   ________   ___   _______      
+"   |\  \ |\   __  \ |\   __  \ |\   ____\ |\  \ |\  ___ \     
+"   \ \  \\ \  \|\  \\ \  \|\  \\ \  \___| \ \  \\ \   __/|
+" __ \ \  \\ \  \\\  \\ \  \\\  \\ \  \  ___\ \  \\ \  \_|/__  
+"|\  \\_\  \\ \  \\\  \\ \  \\\  \\ \  \|\  \\ \  \\ \  \_|\ \ 
+"\ \________\\ \_______\\ \_______\\ \_______\\ \__\\ \_______\
+" \|________| \|_______| \|_______| \|_______| \|__| \|_______|
+"
+" https://github.com/princejoogie/dotfiles.git
+
+" Load Plugins
 source ~/.config/nvim/plugins.vim
 
 let mapleader=' '
-
-if has('nvim') && executable('nvr')
-  let $GIT_EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
-endif
 
 " WSL Yank support
 let s:clip = '/mnt/c/Windows/System32/clip.exe'
