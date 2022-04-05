@@ -1,5 +1,5 @@
 local utils = require("utils")
-local bmap = utils.bmap
+local keymap = utils.keymap
 local bopts = utils.bopts
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] =
@@ -21,25 +21,20 @@ local opts = {noremap = true, silent = true}
 local tw_highlight = require("tailwind-highlight")
 
 local on_attach = function(client, bufnr)
+  opts.buffer = bufnr
   bopts(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-  bmap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-  bmap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
-  bmap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-  bmap(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
-  bmap(bufnr, "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
-  bmap(bufnr, "n", "gt", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
-  bmap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
-  bmap(bufnr, "n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
-  bmap(bufnr, "n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
-  bmap(
-    bufnr,
-    "n",
-    "<leader>wl",
-    "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>",
-    opts
-  )
-  bmap(bufnr, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-  bmap(bufnr, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+  keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+  keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
+  keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+  keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
+  keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+  keymap("n", "gt", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
+  keymap("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+  keymap("n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
+  keymap("n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
+  keymap("n", "<leader>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>", opts)
+  keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+  keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
 
   tw_highlight.setup(client, bufnr)
 end
