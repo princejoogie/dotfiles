@@ -1,5 +1,5 @@
 local utils = require("utils")
-local kmap = utils.kmap
+local keymap = utils.keymap
 
 -- OTHER DEFAULT KEYMAPS
 -- configs/cmp-config.lua
@@ -7,97 +7,103 @@ local kmap = utils.kmap
 -- configs/term-config.lua
 
 -- GENERAL KEYMAPS
-kmap("n", "<leader>mm", "<cmd>MarkdownPreview<CR>")
-kmap("n", "<leader>va", "<S-v>$hh%k<CR>")
-kmap("n", "<leader>-", ":resize +5<CR>")
-kmap("n", "<leader>=", ":resize -5<CR>")
-kmap("n", "<leader><", ":vertical resize +5<CR>")
-kmap("n", "<leader>>", ":vertical resize -5<CR>")
-kmap("n", "gf", "<C-W>f")
-kmap("v", "gf", "<C-W>f")
-kmap("v", "<A-j>", ":move '>+1<CR>gv-gv")
-kmap("v", "<A-k>", ":move '<-2<CR>gv-gv")
-kmap("i", "jj", "<Esc>")
-kmap("n", "<C-n>", ":noh<CR>")
-kmap("n", "<C-z>", "<Nop>")
-kmap("n", "<C-s>", ":w<CR>")
-kmap("n", "<C-b>", "<cmd>NERDTreeToggle<CR>", {})
-kmap("n", "<leader>p", ":Format<CR>")
+keymap("n", "<leader>mm", ":MarkdownPreview<CR>")
+keymap("n", "<leader>va", "<S-v>$hh%k<CR>")
+keymap("n", "<leader>-", ":resize +5<CR>")
+keymap("n", "<leader>=", ":resize -5<CR>")
+keymap("n", "<leader><", ":vertical resize +5<CR>")
+keymap("n", "<leader>>", ":vertical resize -5<CR>")
+keymap("n", "gf", "<C-W>f")
+keymap("v", "gf", "<C-W>f")
+keymap("v", "<A-j>", ":move '>+1<CR>gv-gv")
+keymap("v", "<A-k>", ":move '<-2<CR>gv-gv")
+keymap("i", "jj", "<Esc>")
+keymap("n", "<C-n>", ":noh<CR>")
+keymap("n", "<C-z>", "<Nop>")
+keymap("n", "<C-s>", ":w<CR>")
+keymap("n", "<C-b>", ":NERDTreeToggle<CR>", {})
+keymap("n", "<leader>p", ":Format<CR>")
 
 -- LSP
 -- see configs/lsp-config.lua
-local diag = "<cmd>lua vim.diagnostic."
-kmap("n", "<leader>e", diag .. "open_float()<CR>")
-kmap("n", "<leader>dk", diag .. "goto_prev()<CR>")
-kmap("n", "<leader>dj", diag .. "goto_next()<CR>")
-kmap("n", "<leader>q", diag .. "setloclist()<CR>")
+local diag = vim.diagnostic
+keymap("n", "<leader>e", diag.open_float)
+keymap("n", "<leader>dk", diag.goto_prev)
+keymap("n", "<leader>dj", diag.goto_next)
+keymap("n", "<leader>q", diag.setloclist)
 
 -- FUGITIVE
-kmap("n", "<leader>gh", "<cmd>diffget //3<CR>")
-kmap("n", "<leader>gf", "<cmd>diffget //2<CR>")
+keymap("n", "<leader>gh", ":diffget //3<CR>")
+keymap("n", "<leader>gf", ":diffget //2<CR>")
 
 -- TELESCOPE
-local builtin = '<cmd>lua require("telescope.builtin").'
-local tconfig = '<cmd>lua require("configs.telescope-config").'
-kmap("n", "<C-p>", builtin .. "find_files()<CR>")
-kmap("n", "<C-f>", builtin .. "live_grep()<CR>")
-kmap("n", "<leader>fw", builtin .. "grep_string()<CR>")
-kmap("n", "<leader>fb", builtin .. "current_buffer_fuzzy_find()<CR>")
-kmap("n", "<leader>fh", builtin .. "help_tags()<CR>")
-kmap("n", "<leader>gs", builtin .. "git_status()<CR>")
-kmap("n", "<leader>ts", builtin .. "treesitter()<CR>")
-kmap("n", "<leader>ch", builtin .. "command_history()<CR>")
-kmap("n", "<leader>gi", tconfig .. "gh_issues()<CR>")
-kmap("n", "<leader>gp", tconfig .. "gh_prs()<CR>")
-kmap("n", "<leader>gi", tconfig .. "gh_issues()<CR>")
+local builtin = require("telescope.builtin")
+local tconfig = require("configs.telescope-config")
+keymap("n", "<C-p>", builtin.find_files)
+keymap("n", "<C-f>", builtin.live_grep)
+keymap("n", "<leader>fw", builtin.grep_string)
+keymap("n", "<leader>fb", builtin.current_buffer_fuzzy_find)
+keymap("n", "<leader>fh", builtin.help_tags)
+keymap("n", "<leader>gs", builtin.git_status)
+keymap("n", "<leader>ts", builtin.treesitter)
+keymap("n", "<leader>ch", builtin.command_history)
+keymap("n", "<leader>gi", tconfig.gh_issues)
+keymap("n", "<leader>gp", tconfig.gh_prs)
+keymap("n", "<leader>gi", tconfig.gh_issues)
 
 -- BARBAR
-kmap("n", "<leader><S-TAB>", "<cmd>BufferPrevious<CR>")
-kmap("n", "<leader><TAB>", "<cmd>BufferNext<CR>")
-kmap("n", "<A-h>", "<cmd>BufferMovePrevious<CR>")
-kmap("n", "<A-l>", " <cmd>BufferMoveNext<CR>")
-kmap("n", "<leader>1", "<cmd>BufferGoto 1<CR>")
-kmap("n", "<leader>2", "<cmd>BufferGoto 2<CR>")
-kmap("n", "<leader>3", "<cmd>BufferGoto 3<CR>")
-kmap("n", "<leader>4", "<cmd>BufferGoto 4<CR>")
-kmap("n", "<leader>5", "<cmd>BufferGoto 5<CR>")
-kmap("n", "<leader>6", "<cmd>BufferGoto 6<CR>")
-kmap("n", "<leader>7", "<cmd>BufferGoto 7<CR>")
-kmap("n", "<leader>8", "<cmd>BufferGoto 8<CR>")
-kmap("n", "<leader>9", "<cmd>BufferGoto 9<CR>")
-kmap("n", "<leader>0", "<cmd>BufferLast<CR>")
-kmap("n", "<leader>bc", "<cmd>BufferClose<CR>")
+keymap("n", "<leader><S-TAB>", ":BufferPrevious<CR>")
+keymap("n", "<leader><TAB>", ":BufferNext<CR>")
+keymap("n", "<A-h>", ":BufferMovePrevious<CR>")
+keymap("n", "<A-l>", " :BufferMoveNext<CR>")
+keymap("n", "<leader>1", ":BufferGoto 1<CR>")
+keymap("n", "<leader>2", ":BufferGoto 2<CR>")
+keymap("n", "<leader>3", ":BufferGoto 3<CR>")
+keymap("n", "<leader>4", ":BufferGoto 4<CR>")
+keymap("n", "<leader>5", ":BufferGoto 5<CR>")
+keymap("n", "<leader>6", ":BufferGoto 6<CR>")
+keymap("n", "<leader>7", ":BufferGoto 7<CR>")
+keymap("n", "<leader>8", ":BufferGoto 8<CR>")
+keymap("n", "<leader>9", ":BufferGoto 9<CR>")
+keymap("n", "<leader>0", ":BufferLast<CR>")
+keymap("n", "<leader>bc", ":BufferClose<CR>")
 
 -- NVIM-DAP
-local dap_base = '<cmd>lua require("dap").'
-local dap_ui = '<cmd>lua require("dapui").'
-kmap("n", "<leader>dp", dap_base .. "continue()<CR>")
-kmap("n", "<leader>do", dap_base .. "step_over()<CR>")
-kmap("n", "<leader>dn", dap_base .. "step_into()<CR>")
-kmap("n", "<leader>dN", dap_base .. "step_out()<CR>")
-kmap("n", "<leader>db", dap_base .. "toggle_breakpoint()<CR>")
-kmap("n", "<leader>dB", dap_base .. 'set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>')
-kmap("n", "<leader>dr", dap_base .. "repl.toggle()<CR>")
-kmap("n", "<leader>dt", dap_ui .. "toggle()<CR>")
+local dap_base = require("dap")
+local dap_ui = require("dapui")
+keymap("n", "<leader>dp", dap_base.continue)
+keymap("n", "<leader>do", dap_base.step_over)
+keymap("n", "<leader>dn", dap_base.step_into)
+keymap("n", "<leader>dN", dap_base.step_out)
+keymap("n", "<leader>db", dap_base.toggle_breakpoint)
+keymap(
+  "n",
+  "<leader>dB",
+  function()
+    dap_base.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+  end
+)
+keymap("n", "<leader>dr", dap_base.repl.toggle)
+keymap("n", "<leader>dt", dap_ui.toggle)
 
 -- TODO-COMMENTS
-kmap("n", "<leader>tl", ":TodoQuickFix<CR>")
-kmap("n", "<leader>tt", ":TodoTelescope<CR>")
+keymap("n", "<leader>tl", ":TodoQuickFix<CR>")
+keymap("n", "<leader>tt", ":TodoTelescope<CR>")
 
 -- HARPOON
-local harpoon_ui = '<cmd>lua require("harpoon.ui").'
-local harpoon_mark = '<cmd>lua require("harpoon.mark").'
-kmap("n", "<leader>hh", harpoon_ui .. "toggle_quick_menu()<CR>")
-kmap("n", "<leader>hn", harpoon_ui .. "nav_next()<CR>")
-kmap("n", "<leader>hp", harpoon_ui .. "nav_prev()<CR>")
-kmap("n", "<leader>ha", harpoon_mark .. "add_file()<CR>")
+local harpoon_ui = require("harpoon.ui")
+local harpoon_mark = require("harpoon.mark")
+keymap("n", "<leader>hh", harpoon_ui.toggle_quick_menu)
+keymap("n", "<leader>hn", harpoon_ui.nav_next)
+keymap("n", "<leader>hp", harpoon_ui.nav_prev)
+keymap("n", "<leader>ha", harpoon_mark.add_file)
 
 -- PACKAGE-INFO
-local pi_base = '<cmd>lua require("package-info").'
-kmap("n", "<leader>ns", pi_base .. "show()<CR>")
-kmap("n", "<leader>nc", pi_base .. "hide()<CR>")
-kmap("n", "<leader>nu", pi_base .. "update()<CR>")
-kmap("n", "<leader>nd", pi_base .. "delete()<CR>")
-kmap("n", "<leader>ni", pi_base .. "install()<CR>")
-kmap("n", "<leader>nr", pi_base .. "reinstall()<CR>")
-kmap("n", "<leader>np", pi_base .. "change_version()<CR>")
+local pi_base = require("package-info")
+keymap("n", "<leader>ns", pi_base.show)
+keymap("n", "<leader>nc", pi_base.hide)
+keymap("n", "<leader>nu", pi_base.update)
+keymap("n", "<leader>nd", pi_base.delete)
+keymap("n", "<leader>ni", pi_base.install)
+keymap("n", "<leader>nr", pi_base.reinstall)
+keymap("n", "<leader>np", pi_base.change_version)
