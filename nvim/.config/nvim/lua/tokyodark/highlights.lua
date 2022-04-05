@@ -256,6 +256,12 @@ hl.plugins.barbar = {
   BufferVisibleTarget = {fg = p.bg4, bg = p.bg1}
 }
 
+hl.plugins.indent_blankline = {
+  IndentBlanklineChar = {fg = p.bg1},
+  IndentBlanklineContextChar = {fg = p.bg4},
+  IndentBlanklineContextStart = {}
+}
+
 hl.plugins.gitsigns = {
   GitSignsAdd = hl.predef.Green,
   GitSignsAddLn = hl.predef.Green,
