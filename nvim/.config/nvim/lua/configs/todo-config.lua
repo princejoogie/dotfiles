@@ -1,7 +1,7 @@
 local todo = require("todo-comments")
 todo.setup(
   {
-    signs = false,
+    signs = true,
     sign_priority = 8,
     keywords = {
       FIX = {
