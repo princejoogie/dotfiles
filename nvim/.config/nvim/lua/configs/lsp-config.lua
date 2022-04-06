@@ -1,6 +1,7 @@
 local utils = require("utils")
 local keymap = utils.keymap
 local bopts = utils.bopts
+local icons = utils.icons
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] =
   vim.lsp.with(
@@ -44,7 +45,7 @@ local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protoco
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- Gutter Signs
-local signs = {Error = " ", Warn = " ", Hint = " ", Info = " "}
+local signs = {Error = icons.Error, Warn = icons.Warn, Hint = icons.Hint, Info = icons.Info}
 for type, icon in pairs(signs) do
   local hl = "DiagnosticSign" .. type
   vim.fn.sign_define(hl, {text = icon, texthl = hl, numhl = hl})
@@ -96,32 +97,35 @@ lsp_installer.on_server_ready(
   end
 )
 
-local null_ls = require("null-ls")
-local ca = null_ls.builtins.code_actions
-local diag = null_ls.builtins.diagnostics
-local hvr = null_ls.builtins.hover
-
-null_ls.setup(
-  {
-    sources = {
-      -- CODE ACTIONS
-      ca.eslint.with({prefer_local = "node_modules/.bin"}),
-      ca.gitsigns,
-      ca.shellcheck,
-      -- DIAGNOSTICS
-      diag.cppcheck,
-      diag.eslint.with({prefer_local = "node_modules/.bin"}),
-      diag.hadolint,
-      diag.misspell,
-      diag.shellcheck,
-      diag.tsc.with({prefer_local = "node_modules/.bin"}),
-      -- HOVER
-      hvr.dictionary
-    },
-    should_attach = function(bufnr)
-      local filename = vim.api.nvim_buf_get_name(bufnr)
-      local will_attach = not string.match(filename, ".env")
-      return will_attach
-    end
-  }
-)
+-- Slows down nvim on big projects
+--[[
+   [ local null_ls = require("null-ls")
+   [ local ca = null_ls.builtins.code_actions
+   [ local diag = null_ls.builtins.diagnostics
+   [ local hvr = null_ls.builtins.hover
+   [
+   [ null_ls.setup(
+   [   {
+   [     sources = {
+   [       -- CODE ACTIONS
+   [       ca.eslint.with({prefer_local = "node_modules/.bin"}),
+   [       ca.gitsigns,
+   [       ca.shellcheck,
+   [       -- DIAGNOSTICS
+   [       diag.cppcheck,
+   [       diag.eslint.with({prefer_local = "node_modules/.bin"}),
+   [       diag.hadolint,
+   [       diag.misspell,
+   [       diag.shellcheck,
+   [       -- diag.tsc.with({prefer_local = "node_modules/.bin"}),
+   [       -- HOVER
+   [       hvr.dictionary
+   [     },
+   [     should_attach = function(bufnr)
+   [       local filename = vim.api.nvim_buf_get_name(bufnr)
+   [       local will_attach = not string.match(filename, ".env")
+   [       return will_attach
+   [     end
+   [   }
+   [ )
+   ]]

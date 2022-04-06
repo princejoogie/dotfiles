@@ -27,6 +27,8 @@ local colors = {
   cyan = "#38A89D",
   purple = "#A485DD",
   grey = "#4A5057",
+  magenta = "#C678DD",
+  violet = "#A9A1E1",
   none = "NONE"
 }
 

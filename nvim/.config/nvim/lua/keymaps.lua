@@ -1,5 +1,4 @@
-local utils = require("utils")
-local keymap = utils.keymap
+local keymap = require("utils").keymap
 
 -- OTHER DEFAULT KEYMAPS
 -- configs/cmp-config.lua

@@ -1,6 +1,7 @@
 ---@diagnostic disable: duplicate-index
 local lualine = require("lualine")
 local package = require("package-info")
+local icons = require("utils").icons
 
 local p = require("tokyodark.palette")
 
@@ -13,11 +14,11 @@ local colors = {
   fg = p.fg,
   green = p.green,
   grey = p.grey,
-  magenta = "#c678dd",
-  orange = "#FF8800",
+  magenta = p.magenta,
+  orange = p.orange,
   purple = p.purple,
   red = p.red,
-  violet = "#a9a1e1",
+  violet = p.violet,
   yellow = p.yellow
 }
 
@@ -132,7 +133,7 @@ ins_left {
 ins_left {
   "diagnostics",
   sources = {"nvim_diagnostic"},
-  symbols = {error = " ", warn = " ", hint = " ", info = " "},
+  symbols = {error = icons.Error, warn = icons.Warn, hint = icons.Hint, info = icons.Info},
   diagnostics_color = {
     color_error = {fg = colors.red},
     color_warn = {fg = colors.yellow},
@@ -143,8 +144,8 @@ ins_left {
 ins_left {
   "lsp_progress",
   display_components = {"spinner", {"title", "progress", "message"}},
-  timer = {progress_enddelay = 500, spinner = 100, lsp_client_name_enddelay = 1000},
-  spinner_symbols = {"⣾", "⣷", "⣯", "⣟", "⡿", "⢿", "⣻", "⣽"}
+  timer = {progress_enddelay = 500, spinner = 500, lsp_client_name_enddelay = 1000},
+  spinner_symbols = icons.Spinner
 }
 
 ins_right {
