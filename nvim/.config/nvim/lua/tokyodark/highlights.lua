@@ -304,6 +304,10 @@ hl.langs.markdown = {
   markdownUrlTitleDelimiter = hl.predef.Green
 }
 
+hl.langs.sh = {
+  bashTSConstant = {fg = p.fg}
+}
+
 hl.langs.scala = {
   scalaNameDefinition = hl.predef.Fg,
   scalaInterpolationBoundary = hl.predef.Purple,
