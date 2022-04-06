@@ -7,23 +7,23 @@ end
 
 vim.cmd(
   [[
-    let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.jsx,*.tsx,*.js'
-    let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx,*.js'
-    let g:closetag_filetypes = 'html,xhtml,phtml,jsx,tsx,js'
-    let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx,js'
-    let g:closetag_emptyTags_caseSensitive = 1
-    let g:closetag_shortcut = '>'
-    let g:NERDTreeDirArrowExpandable = ''
-    let g:NERDTreeDirArrowCollapsible = ''
-    let g:NERDTreeShowHidden = 1
-    let g:NERDCreateDefaultMappings = 1
-    let g:NERDSpaceDelims = 1
-    let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
     let g:NERDCommentEmptyLines = 1
-    let g:NERDTrimTrailingWhitespace = 1
+    let g:NERDCreateDefaultMappings = 1
+    let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+    let g:NERDSpaceDelims = 1
     let g:NERDToggleCheckAllLines = 1
-    let g:nerdtree_sync_cursorline = 1
+    let g:NERDTreeDirArrowCollapsible = ''
+    let g:NERDTreeDirArrowExpandable = ''
     let g:NERDTreeHighlightCursorline = 1
+    let g:NERDTreeShowHidden = 1
+    let g:NERDTrimTrailingWhitespace = 1
+    let g:closetag_emptyTags_caseSensitive = 1
+    let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.jsx,*.tsx,*.js'
+    let g:closetag_filetypes = 'html,xhtml,phtml,jsx,tsx,js'
+    let g:closetag_shortcut = '>'
+    let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx,*.js'
+    let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx,js'
+    let g:nerdtree_sync_cursorline = 1
 ]]
 )
 
