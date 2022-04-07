@@ -305,7 +305,11 @@ hl.langs.markdown = {
 }
 
 hl.langs.sh = {
-  bashTSConstant = {fg = p.fg}
+  bashTSConstant = hl.predef.Fg
+}
+
+hl.langs.yaml = {
+  yamlTSField = hl.predef.Fg
 }
 
 hl.langs.scala = {

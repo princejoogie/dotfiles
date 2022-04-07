@@ -7,6 +7,10 @@ local keymap = require("utils").keymap
 
 -- GENERAL KEYMAPS
 keymap("i", "jj", "<Esc>")
+keymap("n", "<A-h>", "<C-w>h")
+keymap("n", "<A-j>", "<C-w>j")
+keymap("n", "<A-k>", "<C-w>k")
+keymap("n", "<A-l>", "<C-w>l")
 keymap("n", "<C-b>", ":NERDTreeToggle<CR>", {})
 keymap("n", "<C-n>", ":noh<CR>")
 keymap("n", "<C-s>", ":w<CR>")
@@ -51,8 +55,6 @@ keymap("n", "<leader>gs", builtin.git_status)
 keymap("n", "<leader>ts", builtin.treesitter)
 
 -- BARBAR
-keymap("n", "<A-h>", ":BufferMovePrevious<CR>")
-keymap("n", "<A-l>", " :BufferMoveNext<CR>")
 keymap("n", "<leader>0", ":BufferLast<CR>")
 keymap("n", "<leader>1", ":BufferGoto 1<CR>")
 keymap("n", "<leader>2", ":BufferGoto 2<CR>")
