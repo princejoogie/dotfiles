@@ -20,6 +20,35 @@ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.s
 
 local opts = {noremap = true, silent = true}
 local tw_highlight = require("tailwind-highlight")
+require("lsp_signature").setup(
+  {
+    debug = false,
+    log_path = vim.fn.stdpath("cache") .. "/lsp_signature.log",
+    verbose = false,
+    bind = true,
+    doc_lines = 0,
+    floating_window = true,
+    floating_window_above_cur_line = true,
+    floating_window_off_x = 1,
+    floating_window_off_y = 1,
+    fix_pos = false,
+    hint_enable = true,
+    hint_prefix = "🐼 ",
+    hint_scheme = "String",
+    hi_parameter = "LspSignatureActiveParameter",
+    max_height = 12,
+    max_width = 80,
+    handler_opts = {border = "rounded"},
+    always_trigger = false,
+    auto_close_after = nil,
+    extra_trigger_chars = {},
+    zindex = 200,
+    padding = "",
+    transparency = nil,
+    timer_interval = 200,
+    toggle_key = "<M-x>"
+  }
+)
 
 local on_attach = function(client, bufnr)
   opts.buffer = bufnr

@@ -30,6 +30,7 @@ Plug 'nvim-treesitter/playground'
 Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
 Plug 'princejoogie/tailwind-highlight.nvim', {'branch': 'dev'}
+Plug 'ray-x/lsp_signature.nvim'
 Plug 'romgrk/barbar.nvim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'stevearc/dressing.nvim'
