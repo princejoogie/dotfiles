@@ -40,7 +40,7 @@ require("lsp_signature").setup(
     max_width = 80,
     handler_opts = {border = "rounded"},
     always_trigger = false,
-    auto_close_after = nil,
+    auto_close_after = 3,
     extra_trigger_chars = {},
     zindex = 200,
     padding = "",
