@@ -110,6 +110,7 @@ lsp_installer.on_server_ready(
       on_attach = on_attach,
       capabilities = capabilities,
       settings = {
+        json = {schemas = require("schemastore").json.schemas()},
         Lua = {
           diagnostics = {
             globals = {"vim"}

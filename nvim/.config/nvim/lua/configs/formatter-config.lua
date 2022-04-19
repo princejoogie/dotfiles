@@ -86,6 +86,7 @@ require("formatter").setup(
       typescript = prettier,
       typescriptreact = prettier,
       markdown = prettier,
+      css = prettier,
       json = prettier,
       cpp = clang_format,
       lua = luafmt,

@@ -50,6 +50,7 @@ Plug 'theHamsta/nvim-dap-virtual-text'
 
 " LSP
 Plug 'arkav/lualine-lsp-progress'
+Plug 'b0o/schemastore.nvim'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/cmp-emoji'
