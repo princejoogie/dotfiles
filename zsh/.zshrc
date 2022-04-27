@@ -46,6 +46,7 @@ alias cls=clear
 alias so=source
 alias open=wslview
 alias tmux="TERM=screen-256color-bce tmux"
+alias astudio="~/applications/android-studio/bin/studio.sh"
 
 # Functions
 pqs() { sudo service postgresql start }
