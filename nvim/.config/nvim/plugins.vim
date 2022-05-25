@@ -13,6 +13,7 @@ Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/gv.vim'
+Plug 'justinmk/vim-sneak'
 Plug 'kdheepak/lazygit.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'lewis6991/gitsigns.nvim'

@@ -79,36 +79,6 @@ local function ins_right(component)
 end
 
 ins_left {
-  "mode",
-  color = function()
-    -- auto change color according to neovims mode
-    local mode_color = {
-      n = colors.red,
-      i = colors.green,
-      v = colors.blue,
-      [""] = colors.blue,
-      V = colors.blue,
-      c = colors.magenta,
-      no = colors.red,
-      s = colors.orange,
-      S = colors.orange,
-      [""] = colors.orange,
-      ic = colors.yellow,
-      R = colors.violet,
-      Rv = colors.violet,
-      cv = colors.red,
-      ce = colors.red,
-      r = colors.cyan,
-      rm = colors.cyan,
-      ["r?"] = colors.cyan,
-      ["!"] = colors.red,
-      t = colors.red
-    }
-    return {bg = mode_color[vim.fn.mode()], fg = colors.black}
-  end
-}
-
-ins_left {
   "branch",
   icon = "",
   color = {fg = colors.green, gui = "bold"}
@@ -173,12 +143,33 @@ ins_right {
 }
 
 ins_right {
-  "filesize",
-  cond = conditions.buffer_not_empty
+  "mode",
+  color = function()
+    -- auto change color according to neovims mode
+    local mode_color = {
+      n = colors.red,
+      i = colors.green,
+      v = colors.blue,
+      [""] = colors.blue,
+      V = colors.blue,
+      c = colors.magenta,
+      no = colors.red,
+      s = colors.orange,
+      S = colors.orange,
+      [""] = colors.orange,
+      ic = colors.yellow,
+      R = colors.violet,
+      Rv = colors.violet,
+      cv = colors.red,
+      ce = colors.red,
+      r = colors.cyan,
+      rm = colors.cyan,
+      ["r?"] = colors.cyan,
+      ["!"] = colors.red,
+      t = colors.red
+    }
+    return {bg = mode_color[vim.fn.mode()], fg = colors.black}
+  end
 }
-
-ins_right {"location"}
-
-ins_right {"progress", color = {fg = colors.fg, gui = "bold"}}
 
 lualine.setup(config)
