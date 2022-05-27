@@ -1,6 +1,6 @@
 # dotfiles
 
-my dotfiles config
+![nvim_preview](https://user-images.githubusercontent.com/47204120/170640452-607474b9-32de-464f-a366-5343073f2b51.jpg)
 
 ## Usage
 
@@ -36,7 +36,6 @@ chmod +x clean
 
 > run `:checkhealth` to see remaining dependencies
 
-![nvim_preview](https://user-images.githubusercontent.com/47204120/170640452-607474b9-32de-464f-a366-5343073f2b51.jpg)
 
 <!-- ![nvim_preview](https://user-images.githubusercontent.com/47204120/160265678-c9218945-cfa1-449e-9898-2a5abe15c67e.png) -->
 
