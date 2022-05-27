@@ -50,7 +50,7 @@ lua require('keymaps')
 
 " NIGHTLY SETTINGS
 set laststatus=3
-highlight WinSeparator guibg=None guifg=#1A1B2A
+highlight WinSeparator guibg=None guifg=#4B5563
 
 if exists('g:loaded_webdevicons')
   call webdevicons#refresh()

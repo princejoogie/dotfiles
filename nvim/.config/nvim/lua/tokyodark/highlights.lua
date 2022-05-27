@@ -253,7 +253,19 @@ hl.plugins.barbar = {
   BufferVisibleIndex = {fg = p.bg4, bg = p.bg1},
   BufferVisibleMod = {fg = p.bg4, bg = p.bg1},
   BufferVisibleSign = {fg = p.bg4, bg = p.bg1},
-  BufferVisibleTarget = {fg = p.bg4, bg = p.bg1}
+  BufferVisibleTarget = {fg = p.bg4, bg = p.bg1},
+  BufferCurrent = {fg = p.white, bg = p.bg1},
+  BufferCurrentIndex = {fg = p.bg4, bg = p.bg1},
+  BufferCurrentMod = {fg = p.bg4, bg = p.bg1},
+  BufferCurrentSign = {fg = p.bg4, bg = p.bg1},
+  BufferCurrentTarget = {fg = p.bg4, bg = p.bg1},
+  BufferInactive = {fg = p.bg4, bg = p.bg1},
+  BufferInactiveIndex = {fg = p.bg4, bg = p.bg1},
+  BufferInactiveMod = {fg = p.bg4, bg = p.bg1},
+  BufferInactiveSign = {fg = p.bg4, bg = p.bg1},
+  BufferInactiveTarget = {fg = p.bg4, bg = p.bg1},
+  BufferTabpages = {fg = p.bg4, bg = p.bg1},
+  BufferTabpageFill = {fg = p.bg4, bg = p.bg1}
 }
 
 hl.plugins.indent_blankline = {

@@ -5,23 +5,6 @@ local icons = require("utils").icons
 
 local p = require("tokyodark.palette")
 
--- Color table for highlights
-local colors = {
-  bg = p.bg1,
-  black = p.bg0,
-  blue = p.blue,
-  cyan = p.cyan,
-  fg = p.fg,
-  green = p.green,
-  grey = p.grey,
-  magenta = p.magenta,
-  orange = p.orange,
-  purple = p.purple,
-  red = p.red,
-  violet = p.violet,
-  yellow = p.yellow
-}
-
 local conditions = {
   buffer_not_empty = function()
     return vim.fn.empty(vim.fn.expand("%:t")) ~= 1
@@ -43,8 +26,8 @@ local config = {
     component_separators = "",
     section_separators = "",
     theme = {
-      normal = {c = {fg = colors.fg, bg = colors.bg}},
-      inactive = {c = {fg = colors.fg, bg = colors.bg}}
+      normal = {c = {fg = p.fg, bg = p.bg1}},
+      inactive = {c = {fg = p.fg, bg = p.bg1}}
     }
   },
   sections = {
@@ -81,21 +64,21 @@ end
 ins_left {
   "branch",
   icon = "",
-  color = {fg = colors.green, gui = "bold"}
+  color = {fg = p.green, gui = "bold"}
 }
 
 ins_left {
   "filename",
   cond = conditions.buffer_not_empty,
-  color = {fg = colors.magenta, gui = "bold"}
+  color = {fg = p.magenta, gui = "bold"}
 }
 
 ins_left {
   "diff",
   diff_color = {
-    added = {fg = colors.green},
-    modified = {fg = colors.orange},
-    removed = {fg = colors.red}
+    added = {fg = p.green},
+    modified = {fg = p.orange},
+    removed = {fg = p.red}
   },
   cond = conditions.hide_in_width
 }
@@ -105,9 +88,9 @@ ins_left {
   sources = {"nvim_diagnostic"},
   symbols = {error = icons.Error, warn = icons.Warn, hint = icons.Hint, info = icons.Info},
   diagnostics_color = {
-    color_error = {fg = colors.red},
-    color_warn = {fg = colors.yellow},
-    color_info = {fg = colors.cyan}
+    color_error = {fg = p.red},
+    color_warn = {fg = p.yellow},
+    color_info = {fg = p.cyan}
   }
 }
 
@@ -122,54 +105,29 @@ ins_right {
   function()
     return package.get_status()
   end,
-  color = {fg = colors.green, gui = "bold"}
+  color = {fg = p.green, gui = "bold"}
 }
 
 ins_right {
   "filetype",
-  color = {fg = colors.green, bg = colors.bg, gui = "bold"}
+  color = {fg = p.green, bg = p.bg1, gui = "bold"}
 }
 
 ins_right {
   "o:encoding",
   cond = conditions.hide_in_width,
-  color = {fg = colors.green, gui = "bold"}
+  color = {fg = p.green, gui = "bold"}
 }
 
 ins_right {
   "fileformat",
   icons_enabled = false,
-  color = {fg = colors.green, gui = "bold"}
+  color = {fg = p.green, gui = "bold"}
 }
 
 ins_right {
   "mode",
-  color = function()
-    -- auto change color according to neovims mode
-    local mode_color = {
-      n = colors.red,
-      i = colors.green,
-      v = colors.blue,
-      [""] = colors.blue,
-      V = colors.blue,
-      c = colors.magenta,
-      no = colors.red,
-      s = colors.orange,
-      S = colors.orange,
-      [""] = colors.orange,
-      ic = colors.yellow,
-      R = colors.violet,
-      Rv = colors.violet,
-      cv = colors.red,
-      ce = colors.red,
-      r = colors.cyan,
-      rm = colors.cyan,
-      ["r?"] = colors.cyan,
-      ["!"] = colors.red,
-      t = colors.red
-    }
-    return {bg = mode_color[vim.fn.mode()], fg = colors.black}
-  end
+  color = {fg = p.magenta}
 }
 
 lualine.setup(config)

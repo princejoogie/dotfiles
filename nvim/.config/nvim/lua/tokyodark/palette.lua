@@ -3,7 +3,9 @@ local gamma = require("tokyodark.config").gamma
 
 local colors = {
   black = "#06080A",
-  bg0 = "#000000",
+  white = "#FFFFFF",
+  -- bg0 = "#000000",
+  bg0 = "NONE",
   bg1 = "#1A1B2A",
   bg2 = "#212234",
   bg3 = "#353945",
