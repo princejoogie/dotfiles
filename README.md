@@ -36,7 +36,9 @@ chmod +x clean
 
 > run `:checkhealth` to see remaining dependencies
 
-![nvim_preview](https://user-images.githubusercontent.com/47204120/160265678-c9218945-cfa1-449e-9898-2a5abe15c67e.png)
+![nvim_preview](https://user-images.githubusercontent.com/47204120/170640452-607474b9-32de-464f-a366-5343073f2b51.jpg)
+
+<!-- ![nvim_preview](https://user-images.githubusercontent.com/47204120/160265678-c9218945-cfa1-449e-9898-2a5abe15c67e.png) -->
 
 **DAP Configuration**
 
@@ -63,7 +65,11 @@ sudo apt install lldb
 - [x] [zsh-snap](https://github.com/marlonrichert/zsh-snap)
 - [x] [powerlevel10k](https://github.com/romkatv/powerlevel10k)
 
-![zsh preview]
+
+
+![WindowsTerminal_agA6SNyJoN](https://user-images.githubusercontent.com/47204120/170641003-4a40b00b-bb89-45f4-9d2a-da78b8bb7019.jpg)
+
+<!-- ![zsh preview] -->
 
 ### TMUX
 
