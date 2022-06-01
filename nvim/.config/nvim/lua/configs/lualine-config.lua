@@ -64,13 +64,13 @@ end
 ins_left {
   "branch",
   icon = "",
-  color = {fg = p.green, gui = "bold"}
+  color = {fg = p.green}
 }
 
 ins_left {
   "filename",
   cond = conditions.buffer_not_empty,
-  color = {fg = p.magenta, gui = "bold"}
+  color = {fg = p.magenta}
 }
 
 ins_left {
@@ -105,24 +105,24 @@ ins_right {
   function()
     return package.get_status()
   end,
-  color = {fg = p.green, gui = "bold"}
+  color = {fg = p.green}
 }
 
 ins_right {
   "filetype",
-  color = {fg = p.green, bg = p.bg1, gui = "bold"}
+  color = {fg = p.green}
 }
 
 ins_right {
   "o:encoding",
   cond = conditions.hide_in_width,
-  color = {fg = p.green, gui = "bold"}
+  color = {fg = p.green}
 }
 
 ins_right {
   "fileformat",
   icons_enabled = false,
-  color = {fg = p.green, gui = "bold"}
+  color = {fg = p.green}
 }
 
 ins_right {
