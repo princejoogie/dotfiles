@@ -269,8 +269,8 @@ hl.plugins.barbar = {
 }
 
 hl.plugins.indent_blankline = {
-  IndentBlanklineChar = {fg = p.bg1},
-  IndentBlanklineContextChar = {fg = p.bg4},
+  IndentBlanklineChar = {fg = p.bg3},
+  IndentBlanklineContextChar = {fg = p.blue},
   IndentBlanklineContextStart = {}
 }
 
