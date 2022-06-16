@@ -43,7 +43,7 @@ keymap("n", "<leader>gh", ":diffget //3<CR>")
 
 -- TELESCOPE
 local builtin = require("telescope.builtin")
-local tconfig = require("configs.telescope-config")
+local tconfig = require("configs.telescope")
 keymap("n", "<C-f>", builtin.live_grep)
 keymap("n", "<C-p>", builtin.find_files)
 keymap("n", "<leader>ch", builtin.command_history)
