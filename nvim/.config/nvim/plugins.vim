@@ -4,7 +4,6 @@ call plug#begin(stdpath('data'))
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'MunifTanjim/nui.nvim'
 Plug 'ThePrimeagen/harpoon'
-Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'alvan/vim-closetag'
 Plug 'djoshea/vim-autoread'
@@ -30,7 +29,6 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
 Plug 'preservim/nerdcommenter'
-Plug 'preservim/nerdtree'
 Plug 'princejoogie/tailwind-highlight.nvim', {'branch': 'dev'}
 Plug 'ray-x/lsp_signature.nvim'
 Plug 'romgrk/barbar.nvim'
@@ -41,7 +39,6 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
-Plug 'unkiwii/vim-nerdtree-sync'
 Plug 'vuki656/package-info.nvim'
 
 " Debugging

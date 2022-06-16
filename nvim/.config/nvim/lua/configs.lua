@@ -12,10 +12,6 @@ vim.cmd(
     let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
     let g:NERDSpaceDelims = 1
     let g:NERDToggleCheckAllLines = 1
-    let g:NERDTreeDirArrowCollapsible = ''
-    let g:NERDTreeDirArrowExpandable = ''
-    let g:NERDTreeHighlightCursorline = 1
-    let g:NERDTreeShowHidden = 1
     let g:NERDTrimTrailingWhitespace = 1
     let g:closetag_emptyTags_caseSensitive = 1
     let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.jsx,*.tsx,*.js'
@@ -23,15 +19,6 @@ vim.cmd(
     let g:closetag_shortcut = '>'
     let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx,*.js'
     let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx,js'
-    let g:nerdtree_sync_cursorline = 1
-]]
-)
-
-vim.cmd(
-  [[
-    autocmd StdinReadPre * let s:std_in=1
-    autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && v:this_session == '' | NERDTree | endif
-    autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 ]]
 )
 
