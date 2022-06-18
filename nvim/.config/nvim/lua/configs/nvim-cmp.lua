@@ -90,8 +90,7 @@ cmp.setup.cmdline(
       {
         {
           name = "cmdline",
-          keyword_pattern = [=[[^[:blank:]\!]*]=],
-          keyword_length = 3
+          keyword_pattern = [=[[^[:blank:]\!]*]=]
         }
       }
     )
