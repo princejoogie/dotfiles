@@ -88,7 +88,11 @@ cmp.setup.cmdline(
         {name = "path"}
       },
       {
-        {name = "cmdline"}
+        {
+          name = "cmdline",
+          keyword_pattern = [=[[^[:blank:]\!]*]=],
+          keyword_length = 3
+        }
       }
     )
   }
