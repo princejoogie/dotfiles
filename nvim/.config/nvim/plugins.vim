@@ -2,10 +2,10 @@ call plug#begin(stdpath('data'))
 
 " QOL
 Plug 'AndrewRadev/tagalong.vim'
+Plug 'JoosepAlviste/nvim-ts-context-commentstring'
 Plug 'MunifTanjim/nui.nvim'
 Plug 'ThePrimeagen/harpoon'
 Plug 'akinsho/toggleterm.nvim'
-Plug 'windwp/nvim-ts-autotag'
 Plug 'djoshea/vim-autoread'
 Plug 'folke/todo-comments.nvim'
 Plug 'github/copilot.vim'
@@ -21,6 +21,7 @@ Plug 'lewis6991/impatient.nvim'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'mhartington/formatter.nvim'
 Plug 'norcalli/nvim-colorizer.lua'
+Plug 'numToStr/Comment.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lualine/lualine.nvim'
@@ -28,7 +29,6 @@ Plug 'nvim-telescope/telescope-github.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
-Plug 'preservim/nerdcommenter'
 Plug 'princejoogie/tailwind-highlight.nvim', {'branch': 'dev'}
 Plug 'ray-x/lsp_signature.nvim'
 Plug 'romgrk/barbar.nvim'
@@ -40,6 +40,7 @@ Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vuki656/package-info.nvim'
+Plug 'windwp/nvim-ts-autotag'
 
 " Debugging
 Plug 'mfussenegger/nvim-dap'

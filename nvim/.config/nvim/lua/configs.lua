@@ -5,17 +5,6 @@ for _, file in pairs(paths) do
   vim.cmd("source " .. file)
 end
 
-vim.cmd(
-  [[
-    let g:NERDCommentEmptyLines = 1
-    let g:NERDCreateDefaultMappings = 1
-    let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
-    let g:NERDSpaceDelims = 1
-    let g:NERDToggleCheckAllLines = 1
-    let g:NERDTrimTrailingWhitespace = 1
-]]
-)
-
 vim.opt.autoindent = true
 vim.opt.autoread = true
 vim.opt.background = "dark"

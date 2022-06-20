@@ -4,6 +4,7 @@ require("nvim-treesitter.configs").setup(
     sync_install = true,
     highlight = {enable = true, additional_vim_regex_highlighting = true},
     indent = {enable = true},
+    context_commentstring = {enable = true},
     playground = {
       enable = true,
       disable = {},
