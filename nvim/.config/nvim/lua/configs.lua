@@ -1,4 +1,4 @@
-local paths = vim.split(vim.fn.glob("~/.config/nvim/lua/*/*lua"), "\n")
+local paths = vim.split(vim.fn.glob("~/.config/nvim/lua/*/*.lua"), "\n")
 
 -- Source all files under the lua/configs directory
 for _, file in pairs(paths) do
@@ -13,12 +13,6 @@ vim.cmd(
     let g:NERDSpaceDelims = 1
     let g:NERDToggleCheckAllLines = 1
     let g:NERDTrimTrailingWhitespace = 1
-    let g:closetag_emptyTags_caseSensitive = 1
-    let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.jsx,*.tsx,*.js'
-    let g:closetag_filetypes = 'html,xhtml,phtml,jsx,tsx,js'
-    let g:closetag_shortcut = '>'
-    let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx,*.js'
-    let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx,js'
 ]]
 )
 
