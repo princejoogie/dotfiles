@@ -1,6 +1,7 @@
 call plug#begin(stdpath('data'))
 
 " QOL
+" Plug 'github/copilot.vim'
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'JoosepAlviste/nvim-ts-context-commentstring'
 Plug 'MunifTanjim/nui.nvim'
@@ -8,7 +9,6 @@ Plug 'ThePrimeagen/harpoon'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'djoshea/vim-autoread'
 Plug 'folke/todo-comments.nvim'
-Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/gv.vim'
@@ -31,6 +31,7 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
 Plug 'princejoogie/tailwind-highlight.nvim', {'branch': 'dev'}
 Plug 'ray-x/lsp_signature.nvim'
+Plug 'rcarriga/nvim-notify'
 Plug 'romgrk/barbar.nvim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'stevearc/dressing.nvim'

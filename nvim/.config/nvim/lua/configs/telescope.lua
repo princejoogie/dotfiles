@@ -4,6 +4,7 @@ local M = {}
 
 telescope.load_extension("gh")
 telescope.load_extension("dap")
+telescope.load_extension("notify")
 
 telescope.setup {
   defaults = {

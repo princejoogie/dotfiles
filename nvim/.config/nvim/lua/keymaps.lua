@@ -1,9 +1,9 @@
 local keymap = require("utils").keymap
 
 -- OTHER DEFAULT KEYMAPS
--- configs/cmp-config.lua
--- configs/gitsigns-config.lua
--- configs/term-config.lua
+-- configs/nvim-cmp.lua
+-- configs/gitsigns.lua
+-- configs/term.lua
 
 -- GENERAL KEYMAPS
 keymap("i", "jj", "<Esc>")
@@ -54,6 +54,7 @@ keymap("n", "<leader>gi", tconfig.gh_issues)
 keymap("n", "<leader>gp", tconfig.gh_prs)
 keymap("n", "<leader>gs", builtin.git_status)
 keymap("n", "<leader>ts", builtin.treesitter)
+keymap("n", "<leader>nh", ":Telescope notify<CR>")
 
 -- BARBAR
 keymap("n", "<leader>0", ":BufferLast<CR>")

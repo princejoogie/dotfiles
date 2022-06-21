@@ -1,5 +1,14 @@
 local paths = vim.split(vim.fn.glob("~/.config/nvim/lua/*/*.lua"), "\n")
 
+local notify = require("notify")
+notify.setup(
+  {
+    background_colour = "#000000",
+    fps = 60
+  }
+)
+vim.notify = notify
+
 -- Source all files under the lua/configs directory
 for _, file in pairs(paths) do
   vim.cmd("source " .. file)
