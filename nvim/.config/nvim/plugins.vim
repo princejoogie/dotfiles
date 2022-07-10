@@ -1,7 +1,6 @@
 call plug#begin(stdpath('data'))
 
 " QOL
-" Plug 'github/copilot.vim'
 Plug 'AndrewRadev/tagalong.vim'
 Plug 'JoosepAlviste/nvim-ts-context-commentstring'
 Plug 'MunifTanjim/nui.nvim'
@@ -9,6 +8,7 @@ Plug 'ThePrimeagen/harpoon'
 Plug 'akinsho/toggleterm.nvim'
 Plug 'djoshea/vim-autoread'
 Plug 'folke/todo-comments.nvim'
+Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/gv.vim'
