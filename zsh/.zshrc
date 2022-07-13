@@ -1,10 +1,9 @@
+source ~/codes/github/zsh-snap/znap.zsh
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-source $HOME/zsh-snap/znap.zsh
-source $HOME/.cargo/env
-
+source $HOME/codes/github/zsh-snap/znap.zsh
 znap source romkatv/powerlevel10k
 
 export ZSH="$HOME/.oh-my-zsh"
@@ -46,7 +45,6 @@ alias cls=clear
 alias so=source
 alias open=wslview
 alias tmux="TERM=screen-256color-bce tmux"
-alias astudio="~/applications/android-studio/bin/studio.sh"
 
 # Functions
 pqs() { sudo service postgresql start }
@@ -58,20 +56,6 @@ lsix() { montage -tile 7x1 -label %f -background black -fill white "$@" gif:- | 
 NVIM_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# go
-export PATH=$PATH:/usr/local/go/bin
-
-# bun completions
-[ -s "/home/joogie/.bun/_bun" ] && source "/home/joogie/.bun/_bun"
-
-# Bun
-export BUN_INSTALL="/home/joogie/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# Fly.io
-export FLYCTL_INSTALL="/home/joogie/.fly"
-export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

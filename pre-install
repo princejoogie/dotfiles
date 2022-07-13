@@ -1,5 +1,8 @@
 #!/usr/bin/env zsh
 
+# vim-plug
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
 # Binaries
 echo "[  ] installing ripgrep and bat"
 sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
@@ -41,9 +44,10 @@ rm -rf ~/.npm ~/.config/nvm
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
-nvm install 14
+nvm install --lts
+nvm use --lts
 
-NPM_PACKAGES="commitizen,depcheck,eslint,graphql,graphql-language-service-cli,license,lua-fmt,neovim,pm2,prettier,remark,serve,tslib,typescript,yarn"
+NPM_PACKAGES="depcheck,eslint,graphql,graphql-language-service-cli,license,lua-fmt,neovim,pm2,prettier,typescript,yarn"
 
 for package in $(echo $NPM_PACKAGES | sed "s/,/ /g"); do
   npm install -g $package
