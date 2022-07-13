@@ -19,6 +19,13 @@ M.keymap = function(mode, lhs, rhs, opts)
 
   local keyopts = vim.tbl_extend("force", def_opts, opts)
   -- vim.api.nvim_set_keymap(mode, lhs, rhs, keyopts)
+  if lhs == nil then
+    lhs = ""
+  end
+
+  if rhs == nil then
+    rhs = ""
+  end
   vim.keymap.set(mode, lhs, rhs, keyopts)
 end
 

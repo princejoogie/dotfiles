@@ -15,8 +15,8 @@ package.setup(
         outdated = "|  "
       }
     },
-    autostart = false,
-    hide_up_to_date = true,
+    autostart = true,
+    hide_up_to_date = false,
     hide_unstable_versions = false
   }
 )
