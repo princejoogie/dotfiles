@@ -3,6 +3,7 @@ local M = {}
 --- Maps a key to a command. (requires neovim >0.7)
 ---
 -- @param mode {string|array} - <n|i|v|x|...>
+
 -- @param lhs {string} - left hand side of the keymap
 -- @param rhs {string|function} - right hand side of the keymap
 -- @param opts {table} - see :map-arguments
@@ -15,11 +16,14 @@ M.keymap = function(mode, lhs, rhs, opts)
   local def_opts = {noremap = true, silent = true}
   if opts == nil then
     opts = {}
+
   end
+
 
   local keyopts = vim.tbl_extend("force", def_opts, opts)
   -- vim.api.nvim_set_keymap(mode, lhs, rhs, keyopts)
   if lhs == nil then
+
     lhs = ""
   end
 
@@ -29,7 +33,9 @@ M.keymap = function(mode, lhs, rhs, opts)
   vim.keymap.set(mode, lhs, rhs, keyopts)
 end
 
+
 --- Maps a key to a command in a specific buffer.
+
 ---
 -- @param bufnr - buffer number
 -- @param mode - <n|i|v|x|...>
@@ -42,6 +48,7 @@ end
 -- map('n', '<leader>o', ':Open<CR>')
 -- ```
 M.bmap = function(bufnr, mode, lhs, rhs, opts)
+
   local def_opts = {noremap = true, silent = true}
   if opts == nil then
     opts = {}
@@ -54,7 +61,9 @@ end
 --- Sets option for a specific buffer.
 ---
 -- @param bufnr - buffer number
+
 -- @param lhs - left hand side of the keymap
+
 -- @param rhs - right hand side of the keymap
 --
 -- @example
@@ -75,6 +84,7 @@ M.icons = {
     "⣷",
     "⣯",
     "⣟",
+
     "⡿",
     "⢿",
     "⣻",

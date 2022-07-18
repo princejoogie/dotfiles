@@ -1,3 +1,4 @@
+local M = {}
 require("toggleterm").setup {
   -- size can be a number or function which is passed the current terminal
   size = function(term)
@@ -37,3 +38,6 @@ function _G.set_terminal_keymaps()
 end
 
 vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
+
+return M
+
