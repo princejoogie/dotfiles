@@ -3,7 +3,6 @@ local M = {}
 --- Maps a key to a command. (requires neovim >0.7)
 ---
 -- @param mode {string|array} - <n|i|v|x|...>
-
 -- @param lhs {string} - left hand side of the keymap
 -- @param rhs {string|function} - right hand side of the keymap
 -- @param opts {table} - see :map-arguments
@@ -31,7 +30,6 @@ M.keymap = function(mode, lhs, rhs, opts)
 end
 
 --- Maps a key to a command in a specific buffer.
-
 ---
 -- @param bufnr - buffer number
 -- @param mode - <n|i|v|x|...>
@@ -56,9 +54,7 @@ end
 --- Sets option for a specific buffer.
 ---
 -- @param bufnr - buffer number
-
 -- @param lhs - left hand side of the keymap
-
 -- @param rhs - right hand side of the keymap
 --
 -- @example
