@@ -1,8 +1,5 @@
 #!/usr/bin/env zsh
 
-# vim-plug
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-
 # Binaries
 echo "[  ] installing ripgrep and bat"
 sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
