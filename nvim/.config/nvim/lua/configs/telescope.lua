@@ -2,9 +2,9 @@ local telescope = require("telescope")
 
 local M = {}
 
-pcall(require('telescope').load_extension, 'gh')
-pcall(require('telescope').load_extension, 'dap')
-pcall(require('telescope').load_extension, 'notify')
+pcall(require("telescope").load_extension, "gh")
+pcall(require("telescope").load_extension, "dap")
+pcall(require("telescope").load_extension, "notify")
 
 telescope.setup {
   defaults = {

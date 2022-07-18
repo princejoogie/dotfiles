@@ -16,14 +16,11 @@ M.keymap = function(mode, lhs, rhs, opts)
   local def_opts = {noremap = true, silent = true}
   if opts == nil then
     opts = {}
-
   end
-
 
   local keyopts = vim.tbl_extend("force", def_opts, opts)
   -- vim.api.nvim_set_keymap(mode, lhs, rhs, keyopts)
   if lhs == nil then
-
     lhs = ""
   end
 
@@ -32,7 +29,6 @@ M.keymap = function(mode, lhs, rhs, opts)
   end
   vim.keymap.set(mode, lhs, rhs, keyopts)
 end
-
 
 --- Maps a key to a command in a specific buffer.
 
@@ -48,7 +44,6 @@ end
 -- map('n', '<leader>o', ':Open<CR>')
 -- ```
 M.bmap = function(bufnr, mode, lhs, rhs, opts)
-
   local def_opts = {noremap = true, silent = true}
   if opts == nil then
     opts = {}
@@ -84,7 +79,6 @@ M.icons = {
     "⣷",
     "⣯",
     "⣟",
-
     "⡿",
     "⢿",
     "⣻",

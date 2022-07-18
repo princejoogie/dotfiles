@@ -9,14 +9,14 @@
 -- Instagram - @princecaarlo
 -- Twitter   - @princecaarlo
 
-vim.cmd[[
-	let s:clip = '/mnt/c/Windows/System32/clip.exe'
-	if executable(s:clip)
-		augroup WSLYank
-			autocmd!
-			autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
-		augroup end
-	endif
+vim.cmd [[
+  let s:clip = '/mnt/c/Windows/System32/clip.exe'
+  if executable(s:clip)
+    augroup WSLYank
+      autocmd!
+      autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
+    augroup end
+  endif
 ]]
 
 vim.g.mapleader = " "
@@ -48,7 +48,7 @@ vim.opt.softtabstop = 0
 vim.opt.tabstop = 2
 vim.opt.termguicolors = true
 
-vim.cmd[[
+vim.cmd [[
   filetype on
   filetype plugin on
   syntax on

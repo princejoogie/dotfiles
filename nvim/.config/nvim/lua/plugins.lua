@@ -47,7 +47,7 @@ return require("packer").startup(
     use {"nvim-lualine/lualine.nvim", requires = {'vuki656/package-info.nvim'}, config = function() require("configs/lualine") end}
     use {"nvim-treesitter/playground", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"vuki656/package-info.nvim", config = function() require("configs/package-info") end}
-    use {"windwp/nvim-ts-autotag", config = function() require("configs/nvim-ts-autotag") end}
+    use {"windwp/nvim-ts-autotag", config = function() require("nvim-ts-autotag").setup() end}
     use {"tpope/vim-dispatch", opt = true, cmd = {"Dispatch", "Make", "Focus", "Start"}}
     use {
       "nvim-telescope/telescope.nvim",
