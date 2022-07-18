@@ -44,7 +44,7 @@ return require("packer").startup(
     use {"mhartington/formatter.nvim", config = function() require("configs/formatter") end}
     use {"norcalli/nvim-colorizer.lua", config = function() require("configs/colorizer") end}
     use {"numToStr/Comment.nvim", config = function() require("configs/comment") end}
-    use {"nvim-lualine/lualine.nvim", configs = function() require("configs/lualine") end}
+    use {"nvim-lualine/lualine.nvim", requires = {'vuki656/package-info.nvim'}, config = function() require("configs/lualine") end}
     use {"nvim-treesitter/playground", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"vuki656/package-info.nvim", config = function() require("configs/package-info") end}
     use {"windwp/nvim-ts-autotag", config = function() require("configs/nvim-ts-autotag") end}
