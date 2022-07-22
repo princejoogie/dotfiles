@@ -46,12 +46,6 @@ alias so=source
 alias open=wslview
 alias tmux="TERM=screen-256color-bce tmux"
 
-# Functions
-pqs() { sudo service postgresql start }
-pqc() { sudo service postgresql stop }
-pqr() { sudo service postgresql restart }
-lsix() { montage -tile 7x1 -label %f -background black -fill white "$@" gif:- | convert - -colors 16 sixel:-; }
-
 # Variables
 NVIM_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
 
