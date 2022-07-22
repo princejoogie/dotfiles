@@ -127,6 +127,15 @@ lsp_installer.on_server_ready(
   end
 )
 
+local win = require("lspconfig.ui.windows")
+local _default_opts = win.default_opts
+
+win.default_opts = function(options)
+  local lopts = _default_opts(options)
+  lopts.border = "single"
+  return lopts
+end
+
 -- Slows down nvim on big projects
 --[[
    [ local null_ls = require("null-ls")
