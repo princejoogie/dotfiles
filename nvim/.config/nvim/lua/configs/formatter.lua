@@ -28,6 +28,16 @@ local rustfmt = {
   end
 }
 
+local gofmt = {
+  function()
+    return {
+      exe = "gofmt",
+      args = {},
+      stdin = true
+    }
+  end
+}
+
 local luafmt = {
   function()
     return {
@@ -76,7 +86,8 @@ require("formatter").setup(
       lua = luafmt,
       python = autopep8,
       prisma = prismafmt,
-      rust = rustfmt
+      rust = rustfmt,
+      go = gofmt
     }
   }
 )
