@@ -9,8 +9,9 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] =
   {
     signs = true,
     underline = true,
-    virtual_text = true,
-    show_diagnostic_autocmds = {"InsertLeave", "TextChanged"},
+    virtual_text = false,
+    -- show_diagnostic_autocmds = {"InsertLeave", "TextChanged"},
+    update_in_insert = false,
     diagnostic_delay = 500
   }
 )
@@ -94,9 +95,10 @@ lsp_installer.settings(
 
 vim.diagnostic.config(
   {
-    virtual_text = {
-      prefix = "●"
-    },
+    -- virtual_text = {
+    --   prefix = "●"
+    -- },
+    virtual_text = nil,
     float = {
       border = "rounded"
     },
