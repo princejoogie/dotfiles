@@ -136,6 +136,12 @@ return require("packer").startup(
         vim.notify = notify
       end
     }
+    use {
+      "yamatsum/nvim-cursorline",
+      config = function()
+        require("configs/nvim-cursorline")
+      end
+    }
 
     -- Debugging
     use "rcarriga/nvim-dap-ui"
