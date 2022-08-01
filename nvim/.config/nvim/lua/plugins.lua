@@ -26,6 +26,7 @@ return require("packer").startup(
     use "ray-x/lsp_signature.nvim"
     use "romgrk/barbar.nvim"
     use "ryanoasis/vim-devicons"
+    use "segeljakt/vim-silicon"
     use "tpope/vim-fugitive"
     use "tpope/vim-repeat"
     use "tpope/vim-rhubarb"
