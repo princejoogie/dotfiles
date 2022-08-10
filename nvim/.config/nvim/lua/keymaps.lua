@@ -95,7 +95,7 @@ pcall(
   end
 )
 
--- TODO-COMMENTS
+-- TOD\O-COMMENTS
 keymap("n", "<leader>tl", ":TodoQuickFix<CR>")
 keymap("n", "<leader>tt", ":TodoTelescope<CR>")
 
