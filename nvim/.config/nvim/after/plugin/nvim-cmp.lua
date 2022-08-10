@@ -1,5 +1,7 @@
-local cmp = require("cmp")
-local lspkind = require("lspkind")
+local stat1, cmp = pcall(require, "cmp")
+if (not stat1) then return end
+local stat2, lspkind = pcall(require, "lspkind")
+if (not stat2) then return end
 
 cmp.setup(
   {

@@ -1,4 +1,5 @@
-local package = require("package-info")
+local status, package = pcall(require, "package-info")
+if (not status) then return end
 
 package.setup(
   {

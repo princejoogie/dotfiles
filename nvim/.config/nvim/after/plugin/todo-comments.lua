@@ -1,4 +1,6 @@
-local todo = require("todo-comments")
+local status, todo = pcall(require, "todo-comments")
+if (not status) then return end
+
 todo.setup(
   {
     signs = true,

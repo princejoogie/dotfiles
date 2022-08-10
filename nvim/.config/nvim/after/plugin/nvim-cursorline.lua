@@ -1,4 +1,7 @@
-require("nvim-cursorline").setup {
+local status, cursor = pcall(require, "nvim-cursorline")
+if (not status) then return end
+
+cursor.setup {
   cursorline = {
     enable = false,
     timeout = 500,

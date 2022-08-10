@@ -72,7 +72,10 @@ local autopep8 = {
   end
 }
 
-require("formatter").setup(
+local status, formatter = pcall(require, "formatter")
+if (not status) then return end
+
+formatter.setup(
   {
     filetype = {
       javascript = prettier,

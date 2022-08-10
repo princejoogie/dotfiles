@@ -10,124 +10,58 @@ return require("packer").startup(
   function(use)
     use "wbthomason/packer.nvim"
     use "nvim-lua/plenary.nvim"
+    use "folke/tokyonight.nvim"
 
     -- General
     use "AndrewRadev/tagalong.vim"
     use "MunifTanjim/nui.nvim"
+    use "akinsho/toggleterm.nvim"
     use "djoshea/vim-autoread"
+    use "folke/todo-comments.nvim"
     use "github/copilot.vim"
     use "jiangmiao/auto-pairs"
     use "junegunn/gv.vim"
     use "justinmk/vim-sneak"
+    use "kyazdani42/nvim-tree.lua"
     use "kyazdani42/nvim-web-devicons"
     use "lewis6991/impatient.nvim"
+    use "lukas-reineke/indent-blankline.nvim"
+    use "mhartington/formatter.nvim"
+    use "norcalli/nvim-colorizer.lua"
+    use "numToStr/Comment.nvim"
     use "nvim-lua/popup.nvim"
     use "princejoogie/tailwind-highlight.nvim"
     use "ray-x/lsp_signature.nvim"
     use "romgrk/barbar.nvim"
     use "ryanoasis/vim-devicons"
     use "segeljakt/vim-silicon"
+    use "stevearc/dressing.nvim"
     use "tpope/vim-fugitive"
     use "tpope/vim-repeat"
     use "tpope/vim-rhubarb"
     use "tpope/vim-surround"
     use "tpope/vim-unimpaired"
-    use {
-      "iamcco/markdown-preview.nvim",
-      run = "cd app && npm install",
-      cmd = "MarkdownPreview"
-    }
-    use {
-      "nvim-treesitter/nvim-treesitter",
-      run = ":TSUpdate",
-      config = function()
-        require("configs/treesitter")
-      end
-    }
-    use {
-      "stevearc/dressing.nvim",
-      config = function()
-        require("configs/dressing")
-      end
-    }
+    use "vuki656/package-info.nvim"
+    use "yamatsum/nvim-cursorline"
+
     use {"JoosepAlviste/nvim-ts-context-commentstring", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"ThePrimeagen/harpoon", requires = {"nvim-lua/plenary.nvim"}}
-    use {
-      "akinsho/toggleterm.nvim",
-      config = function()
-        require("configs/term")
-      end
-    }
-    use {
-      "folke/todo-comments.nvim",
-      config = function()
-        require("configs/todo-comments")
-      end
-    }
-    use {
-      "kyazdani42/nvim-tree.lua",
-      config = function()
-        require("configs/nvim-tree")
-      end
-    }
-    use {
-      "lewis6991/gitsigns.nvim",
-      requires = {"nvim-lua/plenary.nvim"},
-      config = function()
-        require("configs/gitsigns")
-      end
-    }
-    use {
-      "lukas-reineke/indent-blankline.nvim",
-      config = function()
-        require("configs/indent-blankline")
-      end
-    }
-    use {
-      "mhartington/formatter.nvim",
-      config = function()
-        require("configs/formatter")
-      end
-    }
-    use {
-      "norcalli/nvim-colorizer.lua",
-      config = function()
-        require("configs/colorizer")
-      end
-    }
-    use {
-      "numToStr/Comment.nvim",
-      config = function()
-        require("configs/comment")
-      end
-    }
-    use {
-      "nvim-lualine/lualine.nvim",
-      requires = {"vuki656/package-info.nvim"},
-      config = function()
-        require("configs/lualine")
-      end
-    }
+    use {"iamcco/markdown-preview.nvim", run = "cd app && npm install", cmd = "MarkdownPreview"}
+    use {"lewis6991/gitsigns.nvim", requires = {"nvim-lua/plenary.nvim"}}
+    use {"nvim-lualine/lualine.nvim", requires = {"vuki656/package-info.nvim"}}
+    use {"nvim-treesitter/nvim-treesitter", run = ":TSUpdate"}
     use {"nvim-treesitter/playground", requires = {"nvim-treesitter/nvim-treesitter"}}
-    use {
-      "vuki656/package-info.nvim",
-      config = function()
-        require("configs/package-info")
-      end
-    }
+    use {"tpope/vim-dispatch", opt = true, cmd = {"Dispatch", "Make", "Focus", "Start"}}
+
     use {
       "windwp/nvim-ts-autotag",
       config = function()
         require("nvim-ts-autotag").setup()
       end
     }
-    use {"tpope/vim-dispatch", opt = true, cmd = {"Dispatch", "Make", "Focus", "Start"}}
     use {
       "nvim-telescope/telescope.nvim",
-      requires = {"nvim-lua/plenary.nvim", "nvim-telescope/telescope-dap.nvim", "nvim-telescope/telescope-github.nvim"},
-      config = function()
-        require("configs/telescope")
-      end
+      requires = {"nvim-lua/plenary.nvim", "nvim-telescope/telescope-dap.nvim", "nvim-telescope/telescope-github.nvim"}
     }
     use {
       "rcarriga/nvim-notify",
@@ -137,37 +71,22 @@ return require("packer").startup(
         vim.notify = notify
       end
     }
-    use {
-      "yamatsum/nvim-cursorline",
-      config = function()
-        require("configs/nvim-cursorline")
-      end
-    }
 
     -- Debugging
     use "rcarriga/nvim-dap-ui"
     use "theHamsta/nvim-dap-virtual-text"
-    use {
-      "mfussenegger/nvim-dap",
-      config = function()
-        require("configs/nvim-dap")
-      end
-    }
+    use "mfussenegger/nvim-dap"
 
     -- LSP
     use "arkav/lualine-lsp-progress"
     use "b0o/schemastore.nvim"
     use "hrsh7th/vim-vsnip"
     use "jose-elias-alvarez/null-ls.nvim"
+    use "neovim/nvim-lspconfig"
     use "onsails/lspkind-nvim"
     use "williamboman/nvim-lsp-installer"
     use {"hrsh7th/cmp-vsnip", requires = {"onsails/lspkind-nvim"}}
-    use {
-      "neovim/nvim-lspconfig",
-      config = function()
-        require("configs/lsp")
-      end
-    }
+
     use {
       "hrsh7th/nvim-cmp",
       requires = {
@@ -177,10 +96,7 @@ return require("packer").startup(
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-vsnip"
-      },
-      config = function()
-        require("configs/nvim-cmp")
-      end
+      }
     }
 
     if is_bootstrap then

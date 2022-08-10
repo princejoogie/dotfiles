@@ -1,4 +1,11 @@
-require("nvim-dap-virtual-text").setup {
+local stat1, dapui = pcall(require, "dapui")
+if (not stat1) then return end
+local stat2, dap = pcall(require, "dap")
+if (not stat2) then return end
+local stat3, vtext = pcall(require, "nvim-dap-virtual-text")
+if (not stat3) then return end
+
+vtext.setup {
   enabled = true,
   enabled_commands = true,
   highlight_changed_variables = true,
@@ -7,9 +14,6 @@ require("nvim-dap-virtual-text").setup {
   commented = false,
   virt_text_pos = "eol"
 }
-
-local dapui = require("dapui")
-local dap = require("dap")
 
 dapui.setup()
 
@@ -47,7 +51,7 @@ dap.configurations.javascript = {
     name = "Attach to process",
     type = "node2",
     request = "attach",
-    processId = require "dap.utils".pick_process
+    processId = require("dap.utils").pick_process
   }
 }
 

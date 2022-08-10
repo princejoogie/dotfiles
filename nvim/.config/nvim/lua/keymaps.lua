@@ -1,10 +1,5 @@
 local keymap = require("utils").keymap
 
--- OTHER DEFAULT KEYMAPS
--- configs/nvim-cmp.lua
--- configs/gitsigns.lua
--- configs/term.lua
-
 -- GENERAL KEYMAPS
 keymap("i", "jj", "<Esc>")
 keymap("n", "<A-h>", "<C-w>h")
@@ -50,15 +45,12 @@ keymap("n", "<leader>gh", ":diffget //3<CR>")
 pcall(
   function()
     local builtin = require("telescope.builtin")
-    local tconfig = require("configs.telescope")
     keymap("n", "<C-f>", builtin.live_grep)
     keymap("n", "<C-p>", builtin.find_files)
     keymap("n", "<leader>ch", builtin.command_history)
     keymap("n", "<leader>fb", builtin.current_buffer_fuzzy_find)
     keymap("n", "<leader>fh", builtin.help_tags)
     keymap("n", "<leader>fw", builtin.grep_string)
-    keymap("n", "<leader>gi", tconfig.gh_issues)
-    keymap("n", "<leader>gp", tconfig.gh_prs)
     keymap("n", "<leader>gs", builtin.git_status)
     keymap("n", "<leader>ts", builtin.treesitter)
     keymap("n", "<leader>nh", ":Telescope notify<CR>")

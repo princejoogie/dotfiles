@@ -1,4 +1,6 @@
-local telescope = require("telescope")
+local keymap = require("utils").keymap
+local status, telescope = pcall(require, "telescope")
+if (not status) then return end
 
 local M = {}
 
@@ -18,7 +20,6 @@ telescope.setup {
   extensions = {}
 }
 
--- requires GitHub extension
 function M.gh_issues()
   local opts = {}
   opts.prompt_title = " Issues"
@@ -30,6 +31,8 @@ function M.gh_prs()
   opts.prompt_title = " Pull Requests"
   require("telescope").extensions.gh.pull_request(opts)
 end
--- end github functions
+
+keymap("n", "<leader>gi", M.gh_issues)
+keymap("n", "<leader>gp", M.gh_prs)
 
 return M

@@ -1,4 +1,7 @@
-require("nvim-tree").setup(
+local status, nvim_tree = pcall(require, "nvim-tree")
+if (not status) then return end
+
+nvim_tree.setup(
   {
     view = {width = 40},
     update_focused_file = {
