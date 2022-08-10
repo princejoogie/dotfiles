@@ -30,7 +30,6 @@ keymap("v", "<A-k>", ":move '<-2<CR>gv-gv")
 keymap("v", "gf", "<C-W>f")
 
 -- LSP
--- see configs/lsp-config.lua
 local diag = vim.diagnostic
 keymap("n", "<leader>dj", diag.goto_next)
 keymap("n", "<leader>dk", diag.goto_prev)
