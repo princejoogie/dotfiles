@@ -31,7 +31,6 @@ return require("packer").startup(
     use "numToStr/Comment.nvim"
     use "nvim-lua/popup.nvim"
     use "princejoogie/tailwind-highlight.nvim"
-    use "ray-x/lsp_signature.nvim"
     use "romgrk/barbar.nvim"
     use "ryanoasis/vim-devicons"
     use "segeljakt/vim-silicon"
