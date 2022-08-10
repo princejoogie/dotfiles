@@ -30,35 +30,6 @@ local on_attach = function(client, bufnr)
   end
 end
 
-local protocol = require("vim.lsp.protocol")
-protocol.CompletionItemKind = {
-  "", -- Text
-  "", -- Method
-  "", -- Function
-  "", -- Constructor
-  "", -- Field
-  "", -- Variable
-  "", -- Class
-  "ﰮ", -- Interface
-  "", -- Module
-  "", -- Property
-  "", -- Unit
-  "", -- Value
-  "", -- Enum
-  "", -- Keyword
-  "﬌", -- Snippet
-  "", -- Color
-  "", -- File
-  "", -- Reference
-  "", -- Folder
-  "", -- EnumMember
-  "", -- Constant
-  "", -- Struct
-  "", -- Event
-  "ﬦ", -- Operator
-  "" -- TypeParameter
-}
-
 local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
@@ -118,13 +89,14 @@ vim.diagnostic.config(
   }
 )
 
-local win = require("lspconfig.ui.windows")
-local _default_opts = win.default_opts
-
-win.default_opts = function(options)
-  local lopts = _default_opts(options)
-  lopts.border = "single"
-  return lopts
+local win_status, win = pcall(require, "lspconfig.ui.windows")
+if (win_status) then
+  local _default_opts = win.default_opts
+  win.default_opts = function(options)
+    local lopts = _default_opts(options)
+    lopts.border = "single"
+    return lopts
+  end
 end
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] =
