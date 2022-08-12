@@ -53,7 +53,6 @@ if (lsp_status) then
         on_attach = on_attach,
         capabilities = capabilities,
         settings = {
-          json = {schemas = require("schemastore").json.schemas()},
           Lua = {
             diagnostics = {
               globals = {"vim"}
@@ -61,6 +60,14 @@ if (lsp_status) then
           }
         }
       }
+
+      local schema_status, schema_store = pcall(require, "schemastore")
+      if (schema_status) then
+        lspOpts.settings.json = {
+          schema_store.json.schemas(),
+          validate = {enable = true}
+        }
+      end
 
       if server.name == "emmet_ls" then
         lspOpts.filetypes = {"html", "css", "typescriptreact", "javascriptreact"}
