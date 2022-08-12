@@ -40,6 +40,7 @@ return require("packer").startup(
     use "tpope/vim-surround"
     use "tpope/vim-unimpaired"
     use "vuki656/package-info.nvim"
+    use "windwp/nvim-ts-autotag"
     use "yamatsum/nvim-cursorline"
 
     use {"JoosepAlviste/nvim-ts-context-commentstring", requires = {"nvim-treesitter/nvim-treesitter"}}
@@ -52,14 +53,12 @@ return require("packer").startup(
     use {"tpope/vim-dispatch", opt = true, cmd = {"Dispatch", "Make", "Focus", "Start"}}
 
     use {
-      "windwp/nvim-ts-autotag",
-      config = function()
-        require("nvim-ts-autotag").setup()
-      end
-    }
-    use {
       "nvim-telescope/telescope.nvim",
-      requires = {"nvim-lua/plenary.nvim", "nvim-telescope/telescope-dap.nvim", "nvim-telescope/telescope-github.nvim"}
+      requires = {
+        "nvim-lua/plenary.nvim",
+        "nvim-telescope/telescope-dap.nvim",
+        "nvim-telescope/telescope-github.nvim"
+      }
     }
     use {
       "rcarriga/nvim-notify",
