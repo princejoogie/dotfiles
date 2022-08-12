@@ -6,22 +6,10 @@ local M = {}
 local hl = {langs = {}, plugins = {}}
 
 local highlight = vim.api.nvim_set_hl
-local set_hl_ns = vim.api.nvim__set_hl_ns or vim.api.nvim_set_hl_ns
-local ns = vim.api.nvim_create_namespace("tokyodark")
 
 local function load_highlights(highlights)
   for group_name, group_settings in pairs(highlights) do
-    highlight(ns, group_name, group_settings)
-  end
-end
-
-local function load_highlights_legacy(highlights)
-  local bg, fg, hl_cmd
-  for group_name, group_settings in pairs(highlights) do
-    bg = group_settings.bg and "guibg=" .. group_settings.bg or "guibg=NONE"
-    fg = group_settings.fg and "guifg=" .. group_settings.fg or "guifg=NONE"
-    hl_cmd = "highlight " .. group_name .. " " .. bg .. " " .. fg
-    vim.cmd(hl_cmd)
+    highlight(0, group_name, group_settings)
   end
 end
 
@@ -39,13 +27,6 @@ hl.predef = {
   OrangeItalic = {fg = p.orange, italic = cfg.italic},
   RedItalic = {fg = p.red, italic = cfg.italic},
   YellowItalic = {fg = p.yellow, italic = cfg.italic}
-}
-
-hl.legacy = {
-  Normal = {fg = p.fg, bg = cfg.bg and p.none or p.bg0},
-  LspReferenceRead = {bg = p.bg3},
-  LspReferenceWrite = {bg = p.bg3},
-  LspReferenceText = {bg = p.bg3}
 }
 
 hl.common = {
@@ -76,6 +57,7 @@ hl.common = {
   MoreMsg = {fg = p.blue, bold = true},
   IncSearch = {fg = p.bg0, bg = p.bg_red},
   Search = {fg = p.bg0, bg = p.bg4},
+  CurSearch = {fg = p.bg0, bg = p.bg_red},
   MatchParen = {fg = p.none, bg = p.bg4},
   NonText = {fg = p.bg4},
   Whitespace = {fg = p.bg4},
@@ -104,7 +86,8 @@ hl.common = {
   Debug = {fg = p.yellow},
   debugPC = {fg = p.bg0, bg = p.green},
   debugBreakpoint = {fg = p.bg0, bg = p.red},
-  ToolbarButton = {fg = p.bg0, bg = p.bg_blue}
+  ToolbarButton = {fg = p.bg0, bg = p.bg_blue},
+  FocusedSymbol = {bg = p.bg3}
 }
 
 hl.syntax = {
@@ -333,13 +316,7 @@ hl.langs.scala = {
   scalaKeywordModifier = hl.predef.Red
 }
 
-function M.clear_namespace()
-  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-  set_hl_ns(0)
-end
-
 local function load_sync()
-  load_highlights_legacy(hl.legacy)
   load_highlights(hl.predef)
   load_highlights(hl.common)
   load_highlights(hl.syntax)
@@ -349,29 +326,10 @@ local function load_sync()
   for _, group in pairs(hl.plugins) do
     load_highlights(group)
   end
-  set_hl_ns(ns)
 end
-
-local load_async
-load_async =
-  vim.loop.new_async(
-  vim.schedule_wrap(
-    function()
-      for _, group in pairs(hl.langs) do
-        load_highlights(group)
-      end
-      for _, group in pairs(hl.plugins) do
-        load_highlights(group)
-      end
-      set_hl_ns(ns)
-      load_async:close()
-    end
-  )
-)
 
 function M.setup()
   load_sync()
-  -- load_async:send() TODO: find why it does not work with v0.5 anymore
 end
 
 return M
