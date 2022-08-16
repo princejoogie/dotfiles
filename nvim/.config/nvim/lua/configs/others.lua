@@ -41,60 +41,6 @@ M.toggleterm = function()
   vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 end
 
-M.todo_comments = function()
-  local status, todo = pcall(require, "todo-comments")
-  if (not status) then
-    return
-  end
-
-  todo.setup(
-    {
-      signs = true,
-      sign_priority = 8,
-      keywords = {
-        FIX = {
-          icon = " ",
-          color = "error",
-          alt = {"FIXME", "BUG", "FIXIT", "ISSUE"}
-        },
-        TODO = {icon = " ", color = "info"},
-        HACK = {icon = " ", color = "warning"},
-        WARN = {icon = " ", color = "warning", alt = {"WARNING", "XXX"}},
-        PERF = {icon = " ", alt = {"OPTIM", "PERFORMANCE", "OPTIMIZE"}},
-        NOTE = {icon = " ", color = "hint", alt = {"INFO"}}
-      },
-      merge_keywords = true,
-      highlight = {
-        before = "",
-        keyword = "wide",
-        after = "fg",
-        pattern = [[.*<(KEYWORDS)\s*:]],
-        comments_only = true,
-        max_line_len = 400,
-        exclude = {}
-      },
-      colors = {
-        error = {"DiagnosticError", "ErrorMsg", "#DC2626"},
-        warning = {"DiagnosticWarning", "WarningMsg", "#FBBF24"},
-        info = {"DiagnosticInfo", "#2563EB"},
-        hint = {"DiagnosticHint", "#10B981"},
-        default = {"Identifier", "#7C3AED"}
-      },
-      search = {
-        command = "rg",
-        args = {
-          "--color=never",
-          "--no-heading",
-          "--with-filename",
-          "--line-number",
-          "--column"
-        },
-        pattern = [[\b(KEYWORDS):]]
-      }
-    }
-  )
-end
-
 M.nvim_tree = function()
   local status, nvim_tree = pcall(require, "nvim-tree")
   if (not status) then
@@ -126,6 +72,18 @@ M.indent_blankline = function()
 
   indent.setup(
     {
+      filetype_exclude = {
+        "help",
+        "terminal",
+        "alpha",
+        "packer",
+        "lspinfo",
+        "TelescopePrompt",
+        "TelescopeResults",
+        "mason",
+        ""
+      },
+      buftype_exclude = {"terminal"},
       space_char_blankline = " ",
       show_current_context = true,
       show_current_context_start = false
@@ -142,10 +100,15 @@ M.nvim_colorizer = function()
   colorizer.setup(
     {"*"},
     {
-      rgb_fn = true,
-      hsl_fn = true,
-      RRGGBBAA = true,
-      names = false
+      RGB = true, -- #RGB hex codes
+      RRGGBB = true, -- #RRGGBB hex codes
+      names = false, -- "Name" codes like Blue
+      RRGGBBAA = false, -- #RRGGBBAA hex codes
+      rgb_fn = false, -- CSS rgb() and rgba() functions
+      hsl_fn = false, -- CSS hsl() and hsla() functions
+      css = false, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+      css_fn = false, -- Enable all CSS *functions*: rgb_fn, hsl_fn
+      mode = "background" -- Set the display mode.
     }
   )
 end

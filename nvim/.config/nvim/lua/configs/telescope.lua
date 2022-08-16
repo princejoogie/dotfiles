@@ -6,22 +6,42 @@ end
 
 local M = {}
 
-pcall(require("telescope").load_extension, "gh")
-pcall(require("telescope").load_extension, "dap")
-pcall(require("telescope").load_extension, "notify")
-
 M.setup = function()
-  telescope.setup {
-    defaults = {
-      sorting_stratey = "ascending"
-    },
-    pickers = {
-      find_files = {
-        hidden = true
+  telescope.setup(
+    {
+      defaults = {
+        vimgrep_arguments = {
+          "rg",
+          "--color=never",
+          "--no-heading",
+          "--with-filename",
+          "--line-number",
+          "--column",
+          "--smart-case"
+        },
+        prompt_prefix = "   ",
+        selection_caret = "  ",
+        entry_prefix = "  ",
+        initial_mode = "insert",
+        selection_strategy = "reset",
+        sorting_stratey = "ascending",
+        file_ignore_patterns = {"node_modules"},
+        file_previewer = require("telescope.previewers").vim_buffer_cat.new,
+        grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
+        qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new
       }
-    },
-    extensions = {}
-  }
+    }
+  )
+
+  local extensions = {"gh", "dap", "notify"}
+
+  pcall(
+    function()
+      for _, ext in ipairs(extensions) do
+        telescope.load_extension(ext)
+      end
+    end
+  )
 end
 
 function M.gh_issues()

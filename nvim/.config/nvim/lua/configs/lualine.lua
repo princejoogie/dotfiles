@@ -1,10 +1,8 @@
 ---@diagnostic disable: duplicate-index
 local stat1, lualine = pcall(require, "lualine")
-if (not stat1) then
-  return
-end
 local stat2, package = pcall(require, "package-info")
-if (not stat2) then
+
+if not (stat1 and stat2) then
   return
 end
 

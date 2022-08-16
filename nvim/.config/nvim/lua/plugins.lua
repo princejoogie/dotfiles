@@ -46,12 +46,6 @@ return require("packer").startup(
       end
     }
     use {
-      "folke/todo-comments.nvim",
-      config = function()
-        require("configs.others").todo_comments()
-      end
-    }
-    use {
       "kyazdani42/nvim-tree.lua",
       config = function()
         require("configs.others").nvim_tree()
