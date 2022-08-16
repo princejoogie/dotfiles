@@ -62,5 +62,9 @@ vim.cmd [[
   highlight WinSeparator guibg=None guifg=#4B5563
 ]]
 
+local status = pcall(require, "impatient")
+if (not status) then
+  vim.notify("impatient not found")
+end
 require("plugins")
 require("keymaps")
