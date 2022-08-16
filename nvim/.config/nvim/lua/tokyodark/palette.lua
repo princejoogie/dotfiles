@@ -31,7 +31,9 @@ local colors = {
   grey = "#4A5057",
   magenta = "#C678DD",
   violet = "#A9A1E1",
-  none = "NONE"
+  none = "NONE",
+  warning = "#F6955B",
+  info = "#D7A65F"
 }
 
 local function gamma_correction(c)

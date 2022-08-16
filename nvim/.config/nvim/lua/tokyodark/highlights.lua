@@ -141,6 +141,7 @@ hl.plugins.lsp = {
   LspDiagnosticsUnderlineInformation = {underline = true, sp = u.color_gamma(p.blue, 0.5)},
   LspDiagnosticsUnderlineWarning = {underline = true, sp = u.color_gamma(p.yellow, 0.5)},
   FloatBorder = {fg = p.fg, bg = p.bg0},
+  VertSplit = {fg = p.bg5},
   DiagnosticSignError = {fg = u.color_gamma(p.red, 0.5)},
   DiagnosticSignHint = {fg = u.color_gamma(p.purple, 0.5)},
   DiagnosticSignInfo = {fg = u.color_gamma(p.blue, 0.5)},
@@ -152,6 +153,11 @@ hl.plugins.whichkey = {
   WhichKeyDesc = hl.predef.Blue,
   WhichKeyGroup = hl.predef.Orange,
   WhichKeySeperator = hl.predef.Green
+}
+
+hl.plugins.telescope = {
+  TelescopeBorder = {fg = p.fg, bg = p.none},
+  TelescopeNormal = {fg = p.fg, bg = p.none}
 }
 
 hl.plugins.gitgutter = {
@@ -232,23 +238,23 @@ hl.plugins.coc = {
 }
 
 hl.plugins.barbar = {
-  BufferVisible = {fg = p.bg4, bg = p.bg1},
-  BufferVisibleIndex = {fg = p.bg4, bg = p.bg1},
-  BufferVisibleMod = {fg = p.bg4, bg = p.bg1},
-  BufferVisibleSign = {fg = p.bg4, bg = p.bg1},
-  BufferVisibleTarget = {fg = p.bg4, bg = p.bg1},
-  BufferCurrent = {fg = p.white, bg = p.bg1},
-  BufferCurrentIndex = {fg = p.bg4, bg = p.bg1},
-  BufferCurrentMod = {fg = p.bg4, bg = p.bg1},
-  BufferCurrentSign = {fg = p.bg4, bg = p.bg1},
-  BufferCurrentTarget = {fg = p.bg4, bg = p.bg1},
-  BufferInactive = {fg = p.bg4, bg = p.bg1},
-  BufferInactiveIndex = {fg = p.bg4, bg = p.bg1},
-  BufferInactiveMod = {fg = p.bg4, bg = p.bg1},
-  BufferInactiveSign = {fg = p.bg4, bg = p.bg1},
-  BufferInactiveTarget = {fg = p.bg4, bg = p.bg1},
-  BufferTabpages = {fg = p.bg4, bg = p.bg1},
-  BufferTabpageFill = {fg = p.bg4, bg = p.bg1}
+  BufferCurrent = {bg = p.bg3, fg = p.white},
+  BufferCurrentIndex = {bg = p.bg3, fg = p.info},
+  BufferCurrentMod = {bg = p.bg3, fg = p.warning},
+  BufferCurrentSign = {bg = p.bg3, fg = p.info},
+  BufferCurrentTarget = {bg = p.bg3, fg = p.red},
+  BufferVisible = {bg = p.bg1, fg = p.fg},
+  BufferVisibleIndex = {bg = p.bg1, fg = p.info},
+  BufferVisibleMod = {bg = p.bg1, fg = p.warning},
+  BufferVisibleSign = {bg = p.bg1, fg = p.info},
+  BufferVisibleTarget = {bg = p.bg1, fg = p.red},
+  BufferInactive = {bg = p.bg1, fg = p.fg},
+  BufferInactiveIndex = {bg = p.bg1, fg = p.fg},
+  BufferInactiveMod = {bg = p.bg1, fg = p.warning},
+  BufferInactiveSign = {bg = p.bg1, fg = p.warning},
+  BufferInactiveTarget = {bg = p.bg1, fg = p.red},
+  BufferTabpages = {bg = p.bg1, fg = p.none},
+  BufferTabpage = {bg = p.bg1, fg = p.none}
 }
 
 hl.plugins.indent_blankline = {
