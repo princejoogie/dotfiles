@@ -29,6 +29,7 @@ vim.opt.expandtab = true
 vim.opt.foldlevel = 2
 vim.opt.foldmethod = "syntax"
 vim.opt.foldnestmax = 10
+vim.opt.laststatus = 3
 vim.opt.hidden = true
 vim.opt.hlsearch = true
 vim.opt.ignorecase = true
@@ -57,9 +58,6 @@ vim.cmd [[
   let g:tokyodark_enable_italic_comment = 0
   let g:tokyodark_enable_italic = 0
   colorscheme tokyodark
-
-  set laststatus=3
-  highlight WinSeparator guibg=None guifg=#4B5563
 ]]
 
 local status = pcall(require, "impatient")

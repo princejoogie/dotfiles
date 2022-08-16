@@ -72,18 +72,6 @@ M.indent_blankline = function()
 
   indent.setup(
     {
-      filetype_exclude = {
-        "help",
-        "terminal",
-        "alpha",
-        "packer",
-        "lspinfo",
-        "TelescopePrompt",
-        "TelescopeResults",
-        "mason",
-        ""
-      },
-      buftype_exclude = {"terminal"},
       space_char_blankline = " ",
       show_current_context = true,
       show_current_context_start = false
@@ -181,27 +169,6 @@ M.nvim_ts_autotag = function()
   end
 
   autotag.setup()
-end
-
-M.nvim_cursorline = function()
-  local status, cursor = pcall(require, "nvim-cursorline")
-  if (not status) then
-    return
-  end
-
-  cursor.setup {
-    cursorline = {
-      enable = false,
-      timeout = 500,
-      number = false
-    },
-    cursorword = {
-      enable = true,
-      min_length = 3,
-      -- hl = {underline = true}
-      hl = {bold = true, underline = false}
-    }
-  }
 end
 
 return M

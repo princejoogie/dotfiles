@@ -14,8 +14,7 @@ return require("packer").startup(
       "lewis6991/impatient.nvim",
       config = function()
         require("impatient")
-      end
-    }
+      end }
 
     -- General
     use "AndrewRadev/tagalong.vim"
@@ -84,12 +83,6 @@ return require("packer").startup(
       "windwp/nvim-ts-autotag",
       config = function()
         require("configs.others").nvim_ts_autotag()
-      end
-    }
-    use {
-      "yamatsum/nvim-cursorline",
-      config = function()
-        require("configs.others").nvim_cursorline()
       end
     }
 
