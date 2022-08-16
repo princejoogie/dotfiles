@@ -1,3 +1,10 @@
+local status, formatter = pcall(require, "formatter")
+if (not status) then
+  return
+end
+
+local M = {}
+
 local prettier = {
   function()
     return {
@@ -72,25 +79,26 @@ local autopep8 = {
   end
 }
 
-local status, formatter = pcall(require, "formatter")
-if (not status) then return end
-
-formatter.setup(
-  {
-    filetype = {
-      javascript = prettier,
-      javascriptreact = prettier,
-      typescript = prettier,
-      typescriptreact = prettier,
-      markdown = prettier,
-      css = prettier,
-      json = prettier,
-      cpp = clang_format,
-      lua = luafmt,
-      python = autopep8,
-      prisma = prismafmt,
-      rust = rustfmt,
-      go = gofmt
+M.setup = function()
+  formatter.setup(
+    {
+      filetype = {
+        javascript = prettier,
+        javascriptreact = prettier,
+        typescript = prettier,
+        typescriptreact = prettier,
+        markdown = prettier,
+        css = prettier,
+        json = prettier,
+        cpp = clang_format,
+        lua = luafmt,
+        python = autopep8,
+        prisma = prismafmt,
+        rust = rustfmt,
+        go = gofmt
+      }
     }
-  }
-)
+  )
+end
+
+return M

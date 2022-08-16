@@ -10,56 +10,137 @@ return require("packer").startup(
   function(use)
     use "wbthomason/packer.nvim"
     use "nvim-lua/plenary.nvim"
+    use "lewis6991/impatient.nvim"
 
     -- General
     use "AndrewRadev/tagalong.vim"
     use "MunifTanjim/nui.nvim"
-    use "akinsho/toggleterm.nvim"
     use "djoshea/vim-autoread"
-    use "folke/todo-comments.nvim"
     use "github/copilot.vim"
     use "jiangmiao/auto-pairs"
     use "junegunn/gv.vim"
     use "justinmk/vim-sneak"
-    use "kyazdani42/nvim-tree.lua"
     use "kyazdani42/nvim-web-devicons"
-    use "lewis6991/impatient.nvim"
-    use "lukas-reineke/indent-blankline.nvim"
-    use "mhartington/formatter.nvim"
-    use "norcalli/nvim-colorizer.lua"
-    use "numToStr/Comment.nvim"
     use "nvim-lua/popup.nvim"
     use "princejoogie/tailwind-highlight.nvim"
     use "romgrk/barbar.nvim"
     use "ryanoasis/vim-devicons"
     use "segeljakt/vim-silicon"
-    use "stevearc/dressing.nvim"
     use "tpope/vim-fugitive"
     use "tpope/vim-repeat"
     use "tpope/vim-rhubarb"
     use "tpope/vim-surround"
     use "tpope/vim-unimpaired"
-    use "vuki656/package-info.nvim"
-    use "windwp/nvim-ts-autotag"
-    use "yamatsum/nvim-cursorline"
 
     use {"JoosepAlviste/nvim-ts-context-commentstring", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"ThePrimeagen/harpoon", requires = {"nvim-lua/plenary.nvim"}}
     use {"iamcco/markdown-preview.nvim", run = "cd app && npm install", cmd = "MarkdownPreview"}
-    use {"lewis6991/gitsigns.nvim", requires = {"nvim-lua/plenary.nvim"}}
-    use {"nvim-lualine/lualine.nvim", requires = {"vuki656/package-info.nvim"}}
-    use {"nvim-treesitter/nvim-treesitter", run = ":TSUpdate"}
     use {"nvim-treesitter/playground", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"tpope/vim-dispatch", opt = true, cmd = {"Dispatch", "Make", "Focus", "Start"}}
 
+    -- Short Setups
+    use {
+      "akinsho/toggleterm.nvim",
+      config = function()
+        require("configs.others").toggleterm()
+      end
+    }
+    use {
+      "folke/todo-comments.nvim",
+      config = function()
+        require("configs.others").todo_comments()
+      end
+    }
+    use {
+      "kyazdani42/nvim-tree.lua",
+      config = function()
+        require("configs.others").nvim_tree()
+      end
+    }
+    use {
+      "lukas-reineke/indent-blankline.nvim",
+      config = function()
+        require("configs.others").indent_blankline()
+      end
+    }
+    use {
+      "norcalli/nvim-colorizer.lua",
+      config = function()
+        require("configs.others").nvim_colorizer()
+      end
+    }
+    use {
+      "numToStr/Comment.nvim",
+      config = function()
+        require("configs.others").comment()
+      end
+    }
+    use {
+      "vuki656/package-info.nvim",
+      config = function()
+        require("configs.others").package_info()
+      end
+    }
+    use {
+      "windwp/nvim-ts-autotag",
+      config = function()
+        require("configs.others").nvim_ts_autotag()
+      end
+    }
+    use {
+      "yamatsum/nvim-cursorline",
+      config = function()
+        require("configs.others").nvim_cursorline()
+      end
+    }
+
+    -- Long Setups
+    use {
+      "mhartington/formatter.nvim",
+      config = function()
+        require("configs.formatter").setup()
+      end
+    }
+    use {
+      "stevearc/dressing.nvim",
+      config = function()
+        require("configs.dressing").setup()
+      end
+    }
+
+    use {
+      "lewis6991/gitsigns.nvim",
+      config = function()
+        require("configs.gitsigns").setup()
+      end,
+      requires = {"nvim-lua/plenary.nvim"}
+    }
+    use {
+      "nvim-lualine/lualine.nvim",
+      config = function()
+        require("configs.lualine").setup()
+      end,
+      requires = {"vuki656/package-info.nvim"}
+    }
     use {
       "nvim-telescope/telescope.nvim",
+      config = function()
+        require("configs.telescope").setup()
+      end,
       requires = {
         "nvim-lua/plenary.nvim",
         "nvim-telescope/telescope-dap.nvim",
         "nvim-telescope/telescope-github.nvim"
       }
     }
+    use {
+      "nvim-treesitter/nvim-treesitter",
+      config = function()
+        require("configs.treesitter").setup()
+      end,
+      run = ":TSUpdate"
+    }
+
     use {
       "rcarriga/nvim-notify",
       config = function()
@@ -72,7 +153,12 @@ return require("packer").startup(
     -- Debugging
     use "rcarriga/nvim-dap-ui"
     use "theHamsta/nvim-dap-virtual-text"
-    use "mfussenegger/nvim-dap"
+    use {
+      "mfussenegger/nvim-dap",
+      config = function()
+        require("configs.nvim-dap").setup()
+      end
+    }
 
     -- LSP
     use "arkav/lualine-lsp-progress"
@@ -86,6 +172,9 @@ return require("packer").startup(
 
     use {
       "hrsh7th/nvim-cmp",
+      config = function()
+        require("configs.nvim-cmp").setup()
+      end,
       requires = {
         "hrsh7th/cmp-buffer",
         "hrsh7th/cmp-cmdline",
