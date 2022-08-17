@@ -14,7 +14,8 @@ return require("packer").startup(
       "lewis6991/impatient.nvim",
       config = function()
         require("impatient")
-      end }
+      end
+    }
 
     -- General
     use "AndrewRadev/tagalong.vim"
@@ -43,6 +44,13 @@ return require("packer").startup(
     use {"tpope/vim-dispatch", opt = true, cmd = {"Dispatch", "Make", "Focus", "Start"}}
 
     -- Short Setups
+    use {
+      "samodostal/image.nvim",
+      requires = {"nvim-lua/plenary.nvim"},
+      config = function()
+        require("image").setup()
+      end
+    }
     use {
       "akinsho/toggleterm.nvim",
       config = function()
