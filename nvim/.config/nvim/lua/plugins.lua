@@ -1,9 +1,33 @@
 local install_path = vim.fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
-local is_bootstrap = false
 
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-  is_bootstrap = true
-  vim.fn.execute("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
+  PACKER_BOOTSTRAP =
+    vim.fn.system(
+    {
+      "git",
+      "clone",
+      "--depth",
+      "1",
+      "https://github.com/wbthomason/packer.nvim",
+      install_path
+    }
+  )
+
+  print("Installing packer close and reopen Neovim...")
+  vim.cmd([[packadd packer.nvim]])
+end
+
+-- Autocommand that reloads neovim whenever you save the plugins.lua file
+vim.cmd [[
+  augroup packer_user_config
+    autocmd!
+    autocmd BufWritePost plugins.lua source <afile> | PackerSync
+  augroup end
+]]
+
+local status_ok = pcall(require, "packer")
+if not status_ok then
+  return
 end
 
 return require("packer").startup(
@@ -48,7 +72,11 @@ return require("packer").startup(
       "samodostal/image.nvim",
       requires = {"nvim-lua/plenary.nvim"},
       config = function()
-        require("image").setup()
+        require("image").setup(
+          {
+            render_using_dither = true
+          }
+        )
       end
     }
     use {
@@ -180,12 +208,13 @@ return require("packer").startup(
         "hrsh7th/cmp-cmdline",
         "hrsh7th/cmp-emoji",
         "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/cmp-nvim-lua",
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-vsnip"
       }
     }
 
-    if is_bootstrap then
+    if PACKER_BOOTSTRAP then
       require("packer").sync()
     end
   end
