@@ -25,6 +25,7 @@ vim.opt.autoread = true
 vim.opt.background = "dark"
 vim.opt.clipboard = "unnamedplus"
 vim.opt.encoding = "UTF-8"
+vim.opt.cursorline = true
 vim.opt.expandtab = true
 vim.opt.foldlevel = 2
 vim.opt.foldmethod = "syntax"

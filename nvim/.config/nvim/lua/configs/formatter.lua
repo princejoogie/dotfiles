@@ -88,6 +88,7 @@ M.setup = function()
         typescript = prettier,
         typescriptreact = prettier,
         markdown = prettier,
+        html = prettier,
         css = prettier,
         json = prettier,
         cpp = clang_format,
