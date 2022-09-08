@@ -59,6 +59,8 @@ vim.cmd [[
   let g:tokyodark_enable_italic_comment = 0
   let g:tokyodark_enable_italic = 0
   colorscheme tokyodark
+
+  autocmd TermOpen * setlocal nonumber norelativenumber
 ]]
 
 local status = pcall(require, "impatient")
