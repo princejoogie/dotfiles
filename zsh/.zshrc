@@ -5,6 +5,7 @@ fi
 
 source $HOME/codes/github/zsh-snap/znap.zsh
 znap source romkatv/powerlevel10k
+znap source zsh-users/zsh-autosuggestions
 
 export ZSH="$HOME/.oh-my-zsh"
 # export TERM=xterm-256color
@@ -19,7 +20,6 @@ plugins=(
 	git
 	tmux
 	z
-	zsh-autosuggestions
 	vi-mode
 )
 
