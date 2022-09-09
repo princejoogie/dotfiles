@@ -29,7 +29,7 @@ colors:
     text: '#a0a8cd'
 
 shell:
-  program: ubuntu2204.exe
+  program: ubuntu.exe
 
 font:
   normal:
