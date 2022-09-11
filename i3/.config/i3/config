@@ -23,8 +23,10 @@ font pango:monospace 8
 # https://wiki.archlinux.org/index.php/XDG_Autostart
 exec --no-startup-id dex --autostart --environment i3
 
-# change refresh rate
+# custom exec
 exec --no-startup-id xrandr --output DP-0 --mode 3440x1440 --rate 144.00
+exec_always --no-startup-id picom &
+exec_always --no-startup-id feh --bg-scale /home/joogie/dotfiles/wallpapers/w7.jpg
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
