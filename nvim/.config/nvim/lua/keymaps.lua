@@ -45,7 +45,7 @@ pcall(
   function()
     local builtin = require("telescope.builtin")
     keymap("n", "<C-f>", builtin.live_grep)
-    keymap("n", "<C-p>", builtin.find_files)
+    keymap("n", "<C-p>", "<cmd>Telescope find_files hidden=true<CR>")
     keymap("n", "<leader>ch", builtin.command_history)
     keymap("n", "<leader>fb", builtin.current_buffer_fuzzy_find)
     keymap("n", "<leader>fh", builtin.help_tags)
@@ -93,10 +93,6 @@ pcall(
     keymap("n", "<leader>dt", dap_ui.toggle)
   end
 )
-
--- TOD\O-COMMENTS
-keymap("n", "<leader>tl", ":TodoQuickFix<CR>")
-keymap("n", "<leader>tt", ":TodoTelescope<CR>")
 
 -- HARPOON
 pcall(
