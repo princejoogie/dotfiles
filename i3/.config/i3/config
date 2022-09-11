@@ -24,7 +24,7 @@ font pango:FiraCode NF, 8
 exec --no-startup-id dex --autostart --environment i3
 
 # custom config
-exec --no-startup-id xrandr --output DP-0 --mode 3440x1440 --rate 144.00
+exec_always --no-startup-id xrandr --output DP-0 --mode 3440x1440 --rate 144.00
 exec_always --no-startup-id picom &
 exec_always --no-startup-id feh --bg-scale /home/joogie/dotfiles/wallpapers/w7.jpg
 
