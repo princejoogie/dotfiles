@@ -46,10 +46,11 @@ export NVM_DIR="$HOME/.config/nvm"
 export PATH=$PATH:/usr/local/go/bin
 
 # Android SDK
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 export PATH=$PATH:$JAVA_HOME/bin
 
-export ANDROID_HOME=$HOME/Android
-export PATH=$PATH:$ANDROID_HOME/tools
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
 
