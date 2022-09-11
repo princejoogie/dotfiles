@@ -35,7 +35,7 @@ module-margin-right = 2
 font-0 = DejaVuSansMono Nerd Font:style=Book:size=12
 font-1 = FiraCord NF:style=Regular:size=10
 
-modules-left = i3
+modules-left = i3 spotify
 modules-center = xwindow mpd
 modules-right = netup netdown pulseaudio memory cpu eth date
 
@@ -44,6 +44,18 @@ tray-padding = 2
 
 cursor-click = pointer
 cursor-scroll = ns-resize
+
+[module/spotify]
+type = custom/script
+interval = 1
+format-prefix = " "
+format = <label>
+exec = python3 $HOME/.config/polybar/spotify_status.py -f '{artist}: {song}'
+format-underline = ${colors.primary}
+
+click-left = playerctl --player=spotify play-pause 
+click-right = playerctl --player=spotify next 
+click-middle = playerctl --player=spotify previous
 
 [module/xwindow]
 type = internal/xwindow
