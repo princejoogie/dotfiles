@@ -63,7 +63,14 @@ return require("packer").startup(
 
     use {"JoosepAlviste/nvim-ts-context-commentstring", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"ThePrimeagen/harpoon", requires = {"nvim-lua/plenary.nvim"}}
-    use {"iamcco/markdown-preview.nvim", run = "cd app && npm install", cmd = "MarkdownPreview"}
+    use {
+      "iamcco/markdown-preview.nvim",
+      run = "cd app && yarn install",
+      setup = function()
+        vim.g.mkdp_filetypes = {"markdown"}
+      end,
+      ft = {"markdown"}
+    }
     use {"nvim-treesitter/playground", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"tpope/vim-dispatch", opt = true, cmd = {"Dispatch", "Make", "Focus", "Start"}}
 

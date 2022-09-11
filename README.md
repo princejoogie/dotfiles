@@ -1,6 +1,7 @@
 # dotfiles
 
-![nvim_preview](https://user-images.githubusercontent.com/47204120/170640452-607474b9-32de-464f-a366-5343073f2b51.jpg)
+<!-- ![nvim_preview](https://user-images.githubusercontent.com/47204120/170640452-607474b9-32de-464f-a366-5343073f2b51.jpg) -->
+![nvim_preview](./rr.png)
 
 ## Usage
 
