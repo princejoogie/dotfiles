@@ -28,9 +28,6 @@ colors:
     background: '#11121d'
     text: '#a0a8cd'
 
-shell:
-  program: ubuntu.exe
-
 font:
   normal:
     family: FiraCode NF

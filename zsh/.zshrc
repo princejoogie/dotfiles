@@ -1,9 +1,8 @@
-source ~/codes/github/zsh-snap/znap.zsh
+source $HOME/Documents/github/znap/zsh-snap/znap.zsh
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-source $HOME/codes/github/zsh-snap/znap.zsh
 znap source romkatv/powerlevel10k
 znap source zsh-users/zsh-autosuggestions
 
@@ -31,7 +30,7 @@ export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
 # Aliases
 alias cls=clear
 alias so=source
-alias open=wslview
+# alias open=wslview
 alias tmux="TERM=screen-256color-bce tmux"
 
 # Variables
