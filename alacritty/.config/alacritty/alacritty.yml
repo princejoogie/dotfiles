@@ -29,6 +29,7 @@ colors:
     text: '#a0a8cd'
 
 font:
+  size: 10
   normal:
     family: FiraCode NF
 
