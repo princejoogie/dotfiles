@@ -32,8 +32,8 @@ padding-right = 2
 module-margin-left = 0
 module-margin-right = 2
 
-font-0 = DejaVuSansMono Nerd Font:style=Book:size=12
-font-1 = FiraCord NF:style=Regular:size=10
+font-0 = DejaVuSansMono Nerd Font:style=Book:size=10
+; font-0 = FiraCode NF:style=Regular:size=20
 
 modules-left = i3 spotify
 modules-center = xwindow
