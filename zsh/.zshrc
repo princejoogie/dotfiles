@@ -7,10 +7,8 @@ znap source romkatv/powerlevel10k
 znap source zsh-users/zsh-autosuggestions
 
 export ZSH="$HOME/.oh-my-zsh"
-# export TERM=xterm-256color
 
-# ZSH_THEME="powerlevel10k/powerlevel10k"
-ZSH_TMUX_AUTOSTART=true
+ZSH_TMUX_AUTOSTART=false
 CASE_SENSITIVE="false"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
@@ -45,6 +43,9 @@ export NVM_DIR="$HOME/.config/nvm"
 
 # Golang
 export PATH=$PATH:/usr/local/go/bin
+
+# Rust
+source "$HOME/.cargo/env"
 
 # Android SDK
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
