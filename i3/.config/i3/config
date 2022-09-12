@@ -12,7 +12,7 @@ exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 for_window [class="^.*"] border pixel 2
 focus_follows_mouse no
 
-gaps inner 10
+gaps inner 5
 gaps bottom -5
 
 # END OF CUSTOM CONFIG ------------
