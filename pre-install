@@ -1,6 +1,10 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
-# Binaries
+if ! command -v nala >/dev/null 2>&1; then
+  echo "nala is not installed"
+  exit 1
+fi
+
 echo "[  ] installing ripgrep and bat"
 sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
 if [ $? -eq 0 ]; then
@@ -9,46 +13,9 @@ else
 	echo "[X]  ripgrep and bat failed to install"
 fi
 
-echo "------------------------"
-echo "[  ] installing fd"
-sudo apt install fd-find
-if [ $? -eq 0 ]; then
-	ln -s $(which fdfind) ~/.local/bin/fd
-	if [ $? -eq 0 ]; then
-		echo "[OK] installed and linked fd"
-	else
-		echo "[X]  fd failed to link"
-	fi
-else
-	echo "[X]  fd failed to install "
-fi
+GENERAL_DEPS="fzf curl fd-find zsh tmux"
+UBUNTO_DEPS="i3 feh ranger caca-utils highlight atool w3m poppler-utils mediainfo picom docker-ce docker-ce-cli containerd.io docker-compose-plugin pasystray lxappearance pavucontrol pavumeter polybar playerctl"
+ASTUDIO_DEPS="openjdk-11-jdk"
 
-deps=('fzf' 'lldb' 'curl')
-
-for dep in $deps; do
-	echo "------------------------"
-	echo "[  ] installing $dep"
-	sudo apt install $dep -y
-	if [ $? -eq 0 ]; then
-		echo "[OK] $dep installed"
-	else
-		echo "[X]  $dep failed to install"
-	fi
-done
-
-# NVM
-rm -rf ~/.npm ~/.config/nvm
-
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-
-source ~/.zshrc
-
-nvm install --lts
-nvm use --lts
-
-NPM_PACKAGES="depcheck,eslint,graphql,graphql-language-service-cli,license,lua-fmt,neovim,pm2,prettier,typescript,tree-sitter-cli,yarn"
-
-for package in $(echo $NPM_PACKAGES | sed "s/,/ /g"); do
-  npm install -g $package
-done
-
+sudo nala install $deps
+echo "[OK] Sucessfullt installed $deps"
