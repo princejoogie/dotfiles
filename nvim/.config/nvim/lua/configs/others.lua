@@ -144,10 +144,6 @@ M.package_info = function()
 
   package.setup(
     {
-      colors = {
-        up_to_date = "#637777",
-        outdated = "#637777"
-      },
       icons = {
         enable = true,
         style = {
@@ -156,7 +152,7 @@ M.package_info = function()
         }
       },
       autostart = true,
-      hide_up_to_date = false,
+      hide_up_to_date = true,
       hide_unstable_versions = false
     }
   )

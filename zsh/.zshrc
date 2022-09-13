@@ -8,7 +8,7 @@ znap source zsh-users/zsh-autosuggestions
 
 export ZSH="$HOME/.oh-my-zsh"
 
-ZSH_TMUX_AUTOSTART=false
+ZSH_TMUX_AUTOSTART=true
 CASE_SENSITIVE="false"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
