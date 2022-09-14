@@ -31,7 +31,7 @@ colors:
 font:
   size: 10
   normal:
-    family: FiraCode NF
+    family: FiraCode Nerd Font
 
 window:
   opacity: 0.95

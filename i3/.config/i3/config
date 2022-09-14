@@ -4,9 +4,9 @@ font pango:DejaVu Sans Mono, 10
 exec --no-startup-id dex --autostart --environment i3
 
 # START OF CUSTOM CONFIG ----------
-exec_always --no-startup-id picom
+exec_always --no-startup-id picom &
 exec_always --no-startup-id xrandr --output DP-0 --mode 3440x1440 --rate 144.00
-exec_always --no-startup-id feh --bg-scale $HOME/dotfiles/wallpapers/w7.jpg
+exec_always --no-startup-id feh --bg-scale $HOME/dotfiles/wallpapers/sun.png
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 for_window [class="^.*"] border pixel 2
@@ -33,7 +33,7 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec alacritty
 
 # kill focused window
 bindsym $mod+Shift+q kill
