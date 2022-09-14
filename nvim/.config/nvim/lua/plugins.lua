@@ -79,11 +79,7 @@ return require("packer").startup(
       "samodostal/image.nvim",
       requires = {"nvim-lua/plenary.nvim"},
       config = function()
-        require("image").setup(
-          {
-            render_using_dither = true
-          }
-        )
+        require("image").setup({render_using_dither = true})
       end
     }
     use {
