@@ -9,6 +9,7 @@ M.setup = function()
   treesitter.setup(
     {
       ensure_installed = {
+        "astro",
         "bash",
         "cpp",
         "css",
@@ -31,6 +32,7 @@ M.setup = function()
         "svelte",
         "tsx",
         "typescript",
+        "vim",
         "yaml"
       },
       sync_install = true,
