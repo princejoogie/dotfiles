@@ -167,4 +167,15 @@ M.nvim_ts_autotag = function()
   autotag.setup()
 end
 
+M.ts_context = function()
+  local status, ts_context = pcall(require, "treesitter-context")
+  if (not status) then
+    return
+  end
+
+  ts_context.setup({
+    enable = true,
+  })
+end
+
 return M

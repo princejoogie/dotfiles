@@ -74,7 +74,13 @@ return require("packer").startup(
     use {"nvim-treesitter/playground", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"tpope/vim-dispatch", opt = true, cmd = {"Dispatch", "Make", "Focus", "Start"}}
 
-    -- Short Setups
+    use {
+      "nvim-treesitter/nvim-treesitter-context",
+      requires = {"nvim-treesitter/nvim-treesitter"},
+      config = function()
+        require("configs.others").ts_context()
+      end
+    }
     use {
       "samodostal/image.nvim",
       requires = {"nvim-lua/plenary.nvim"},

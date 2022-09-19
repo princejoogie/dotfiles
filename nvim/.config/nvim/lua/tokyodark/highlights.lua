@@ -196,7 +196,8 @@ hl.plugins.diffview = {
 hl.plugins.treesitter = {
   commentTSDanger = hl.predef.RedItalic,
   commentTSNote = hl.predef.BlueItalic,
-  commentTSWarning = hl.predef.YellowItalic
+  commentTSWarning = hl.predef.YellowItalic,
+  TreesitterContext = hl.common.CursorColumn
 }
 
 hl.plugins.cmp = {
