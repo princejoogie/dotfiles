@@ -8,6 +8,7 @@ exec_always --no-startup-id picom &
 exec_always --no-startup-id xrandr --output DP-0 --mode 3440x1440 --rate 144.00
 exec_always --no-startup-id feh --bg-scale $HOME/dotfiles/wallpapers/sun.png
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+exec_always --no-startup-id flameshot
 bindsym Print exec flameshot gui
 
 for_window [class="^.*"] border pixel 2
