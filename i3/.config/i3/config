@@ -5,7 +5,8 @@ exec --no-startup-id dex --autostart --environment i3
 
 # START OF CUSTOM CONFIG ----------
 exec_always --no-startup-id picom &
-exec_always --no-startup-id xrandr --output DP-0 --mode 3440x1440 --rate 144.00
+# exec_always --no-startup-id xrandr --output DP-0 --mode 3440x1440 --rate 144.00
+exec_always --no-startup-id xrandr --output DP-0 --primary --mode 3440x1440 --rate 144.00 --pos 0x240 --rotate normal --output HDMI-0 --mode 1920x1080 --rate 60.00 --pos 3440x0 --rotate right
 exec_always --no-startup-id feh --bg-scale $HOME/dotfiles/wallpapers/sun.png
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id flameshot

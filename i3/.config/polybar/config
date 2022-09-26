@@ -8,7 +8,7 @@ secondary = #e60053
 alert = #bd2c40
 
 [bar/joogie]
-monitor = ${env:MONITOR:DP-0}
+monitor = ${env:MONITOR:}
 bottom = true
 width = 100%
 height = 30
