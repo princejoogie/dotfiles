@@ -13,6 +13,8 @@ else
 	echo "[X]  ripgrep and bat failed to install"
 fi
 
+wget -q https://raw.githubusercontent.com/GaZaTu/x11-emoji-picker/master/install.sh && sh install.sh
+
 GENERAL_DEPS="fzf curl fd-find zsh tmux"
 UBUNTO_DEPS="i3 feh ranger caca-utils highlight atool w3m poppler-utils mediainfo picom docker-ce docker-ce-cli containerd.io docker-compose-plugin pasystray lxappearance pavucontrol pavumeter polybar playerctl"
 ASTUDIO_DEPS="openjdk-11-jdk"
