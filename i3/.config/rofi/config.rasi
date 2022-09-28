@@ -2,9 +2,11 @@ configuration {
   display-drun: "ﬓ :";
   display-window: "ﬓ :";
   display-run: " :";
-  drun-display-format: "{name}";
+  drun-display-format: "{icon} {name}";
   font: "FiraCode Nerd Font 12";
   modi: "window,run,drun";
+  show-icons: true;
+  icon-theme: "tokyonight_dark";
 }
 
 @theme "/dev/null"
