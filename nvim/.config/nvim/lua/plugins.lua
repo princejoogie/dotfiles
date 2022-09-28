@@ -46,7 +46,6 @@ return require("packer").startup(
     use "MunifTanjim/nui.nvim"
     use "djoshea/vim-autoread"
     use "github/copilot.vim"
-    use "jiangmiao/auto-pairs"
     use "junegunn/gv.vim"
     use "justinmk/vim-sneak"
     use "kyazdani42/nvim-web-devicons"
@@ -61,6 +60,12 @@ return require("packer").startup(
     use "tpope/vim-surround"
     use "tpope/vim-unimpaired"
 
+    use {
+      "windwp/nvim-autopairs",
+      config = function()
+        require("nvim-autopairs").setup()
+      end
+    }
     use {"JoosepAlviste/nvim-ts-context-commentstring", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"ThePrimeagen/harpoon", requires = {"nvim-lua/plenary.nvim"}}
     use {
