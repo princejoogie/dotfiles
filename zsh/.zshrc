@@ -29,7 +29,9 @@ export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
 alias cls=clear
 alias so=source
 alias x=exit
+alias e=echo
 alias lla="ls -la"
+alias cl="xclip -selection c"
 # alias open=wslview
 alias tmux="TERM=screen-256color-bce tmux"
 
