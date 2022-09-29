@@ -60,13 +60,13 @@ vim.cmd [[
   colorscheme tokyodark
 
   autocmd TermOpen * setlocal nonumber norelativenumber
-
-  let g:bufferline = { 'closable': v:false }
 ]]
 
 local status = pcall(require, "impatient")
 if (not status) then
   vim.notify("impatient not found")
 end
+
 require("plugins")
 require("keymaps")
+require("lsp")
