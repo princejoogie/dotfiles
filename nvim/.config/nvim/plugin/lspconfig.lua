@@ -24,7 +24,7 @@ local on_attach = function(client, bufnr)
     tw_highlight.setup(client, bufnr)
   end
 
-  if (typescript_status and client.name == "tsserver") then
+  if (typescript_status) then
     typescript.setup(
       {
         disable_commands = false,
@@ -34,13 +34,13 @@ local on_attach = function(client, bufnr)
         }
       }
     )
-
-    u.buf_keymap(bufnr, "n", "<leader>rf", "<cmd>:TypescriptRenameFile<CR>")
-    u.buf_keymap(bufnr, "n", "<leader>io", "<cmd>:TypescriptOrganizeImports<CR>")
-    u.buf_keymap(bufnr, "n", "<leader>id", "<cmd>:TypescriptRemoveUnused<CR>")
-    u.buf_keymap(bufnr, "n", "<leader>ia", "<cmd>:TypescriptAddMissingImports<CR>")
-    u.buf_keymap(bufnr, "n", "<leader>gd", "<cmd>:TypescriptGoToSourceDefinition<CR>")
   end
+
+  u.buf_keymap(bufnr, "n", "<leader>rf", "<cmd>:TypescriptRenameFile<CR>")
+  u.buf_keymap(bufnr, "n", "<leader>io", "<cmd>:TypescriptOrganizeImports<CR>")
+  u.buf_keymap(bufnr, "n", "<leader>id", "<cmd>:TypescriptRemoveUnused<CR>")
+  u.buf_keymap(bufnr, "n", "<leader>ia", "<cmd>:TypescriptAddMissingImports<CR>")
+  u.buf_keymap(bufnr, "n", "<leader>gd", "<cmd>:TypescriptGoToSourceDefinition<CR>")
 end
 
 local lsp_status, lsp_installer = pcall(require, "nvim-lsp-installer")
