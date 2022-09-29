@@ -1,37 +1,47 @@
-local icons = require("utils").icons
+local u = require("utils")
 local tw_status, tw_highlight = pcall(require, "tailwind-highlight")
+local typescript_status, typescript = pcall(require, "typescript")
+
+local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
+capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...)
-    vim.api.nvim_buf_set_keymap(bufnr, ...)
-  end
-  local function buf_set_option(...)
-    vim.api.nvim_buf_set_option(bufnr, ...)
-  end
-
-  buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
-
-  local opts = {noremap = true, silent = true}
-  buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-  buf_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
-  buf_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
-  buf_set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
-  buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
-  buf_set_keymap("n", "gt", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
-  buf_set_keymap("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
-  buf_set_keymap("n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
-  buf_set_keymap("n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
-  buf_set_keymap("n", "<leader>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>", opts)
-  buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-  buf_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+  u.buf_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+  u.buf_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
+  u.buf_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
+  u.buf_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+  u.buf_keymap(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
+  u.buf_keymap(bufnr, "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
+  u.buf_keymap(bufnr, "n", "gt", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
+  u.buf_keymap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
+  u.buf_keymap(bufnr, "n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>")
+  u.buf_keymap(bufnr, "n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>")
+  u.buf_keymap(bufnr, "n", "<leader>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>")
+  u.buf_keymap(bufnr, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>")
+  u.buf_keymap(bufnr, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>")
 
   if (tw_status) then
     tw_highlight.setup(client, bufnr)
   end
-end
 
-local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
-capabilities.textDocument.completion.completionItem.snippetSupport = true
+  if (typescript_status and client.name == "tsserver") then
+    typescript.setup(
+      {
+        disable_commands = false,
+        debug = false,
+        go_to_source_definition = {
+          fallback = true
+        }
+      }
+    )
+
+    u.buf_keymap(bufnr, "n", "<leader>rf", "<cmd>:TypescriptRenameFile<CR>")
+    u.buf_keymap(bufnr, "n", "<leader>io", "<cmd>:TypescriptOrganizeImports<CR>")
+    u.buf_keymap(bufnr, "n", "<leader>id", "<cmd>:TypescriptRemoveUnused<CR>")
+    u.buf_keymap(bufnr, "n", "<leader>ia", "<cmd>:TypescriptAddMissingImports<CR>")
+    u.buf_keymap(bufnr, "n", "<leader>gd", "<cmd>:TypescriptGoToSourceDefinition<CR>")
+  end
+end
 
 local lsp_status, lsp_installer = pcall(require, "nvim-lsp-installer")
 if (lsp_status) then
@@ -79,7 +89,12 @@ if (lsp_status) then
 end
 
 -- Gutter Signs
-local signs = {Error = icons.Error, Warn = icons.Warn, Hint = icons.Hint, Info = icons.Info}
+local signs = {
+  Error = u.icons.Error,
+  Warn = u.icons.Warn,
+  Hint = u.icons.Hint,
+  Info = u.icons.Info
+}
 
 for type, icon in pairs(signs) do
   local hl = "DiagnosticSign" .. type
@@ -89,9 +104,7 @@ end
 vim.diagnostic.config(
   {
     virtual_text = nil,
-    float = {
-      border = "rounded"
-    },
+    float = {border = "rounded"},
     severity_sort = true
   }
 )

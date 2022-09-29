@@ -210,6 +210,7 @@ return require("packer").startup(
     use "neovim/nvim-lspconfig"
     use "onsails/lspkind-nvim"
     use "williamboman/nvim-lsp-installer"
+    use "jose-elias-alvarez/typescript.nvim"
     use {"hrsh7th/cmp-vsnip", requires = {"onsails/lspkind-nvim"}}
 
     use {
