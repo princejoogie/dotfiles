@@ -12,7 +12,7 @@ exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id flameshot
 bindsym Print exec --no-startup-id flameshot gui
 bindsym $mod+period exec --no-startup-id emoji-picker
-bindsym $mod+t exec --no-startup-id redshift -m randr -O 4000
+bindsym $mod+t exec --no-startup-id redshift -m randr -P -O 4000
 bindsym $mod+y exec --no-startup-id redshift -m randr -x
 
 for_window [class="^.*"] border pixel 2
