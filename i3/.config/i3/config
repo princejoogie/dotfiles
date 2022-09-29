@@ -17,6 +17,7 @@ bindsym $mod+t exec --no-startup-id redshift -m randr -P -O 4000
 bindsym $mod+y exec --no-startup-id redshift -m randr -x
 
 for_window [class="^.*"] border pixel 0
+for_window [class="Peek"] border pixel 5
 focus_follows_mouse no
 
 gaps inner 7
