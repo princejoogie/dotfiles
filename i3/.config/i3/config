@@ -5,7 +5,7 @@ exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id /usr/lib/geoclue-2.0/demos/agent
 
 # START OF CUSTOM CONFIG ----------
-exec_always --no-startup-id picom -b experimental-backends &
+exec_always --no-startup-id picom &
 exec_always --no-startup-id $HOME/.config/i3/screen.sh
 exec_always --no-startup-id feh --bg-fill $HOME/dotfiles/wallpapers/e.jpg
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh

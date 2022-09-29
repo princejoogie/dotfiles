@@ -8,7 +8,6 @@
 -- Github    - @princejoogie
 -- Instagram - @princecaarlo
 -- Twitter   - @princecaarlo
-
 vim.cmd [[
   let s:clip = '/mnt/c/Windows/System32/clip.exe'
   if executable(s:clip)
@@ -61,6 +60,8 @@ vim.cmd [[
   colorscheme tokyodark
 
   autocmd TermOpen * setlocal nonumber norelativenumber
+
+  let g:bufferline = { 'closable': v:false }
 ]]
 
 local status = pcall(require, "impatient")

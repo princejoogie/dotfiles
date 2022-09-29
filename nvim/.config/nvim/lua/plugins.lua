@@ -51,7 +51,6 @@ return require("packer").startup(
     use "kyazdani42/nvim-web-devicons"
     use "nvim-lua/popup.nvim"
     use "princejoogie/tailwind-highlight.nvim"
-    use "romgrk/barbar.nvim"
     use "ryanoasis/vim-devicons"
     use "segeljakt/vim-silicon"
     use "tpope/vim-fugitive"
@@ -60,6 +59,10 @@ return require("packer").startup(
     use "tpope/vim-surround"
     use "tpope/vim-unimpaired"
 
+    use {
+      "romgrk/barbar.nvim",
+      requires = {"kyazdani42/nvim-web-devicons"}
+    }
     use {
       "windwp/nvim-autopairs",
       config = function()
