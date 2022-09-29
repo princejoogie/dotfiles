@@ -25,12 +25,23 @@ vim.cmd [[
   augroup end
 ]]
 
-local status_ok = pcall(require, "packer")
+local status_ok, packer = pcall(require, "packer")
+
 if not status_ok then
   return
 end
 
-return require("packer").startup(
+packer.init(
+  {
+    display = {
+      open_fn = function()
+        return require("packer.util").float({border = "rounded"})
+      end
+    }
+  }
+)
+
+return packer.startup(
   function(use)
     use "wbthomason/packer.nvim"
     use "nvim-lua/plenary.nvim"
