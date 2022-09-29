@@ -18,7 +18,7 @@ bindsym $mod+y exec --no-startup-id redshift -m randr -x
 for_window [class="^.*"] border pixel 0
 focus_follows_mouse no
 
-gaps inner 10
+gaps inner 7
 # gaps inner 5
 # gaps bottom -5
 
