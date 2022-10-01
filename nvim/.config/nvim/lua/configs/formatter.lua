@@ -1,5 +1,5 @@
-local status, formatter = pcall(require, "formatter")
-if (not status) then
+local formatter = safe_require("formatter")
+if not formatter then
   return
 end
 

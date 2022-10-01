@@ -1,6 +1,6 @@
-local status, lspconfig_util = pcall(require, "lspconfig.util")
+local lspconfig_util = safe_require("lspconfig.util")
 
-if not status then
+if not lspconfig_util then
   return
 end
 

@@ -1,8 +1,8 @@
 local M = {}
 
 M.toggleterm = function()
-  local status, toggleterm = pcall(require, "toggleterm")
-  if (not status) then
+  local toggleterm = safe_require("toggleterm")
+  if (not toggleterm) then
     return
   end
 
@@ -41,9 +41,40 @@ M.toggleterm = function()
   vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 end
 
+M.nvim_autopairs = function()
+  local autopairs = safe_require("nvim-autopairs")
+  if (not autopairs) then
+    return
+  end
+
+  autopairs.setup {
+    check_ts = true,
+    ts_config = {
+      lua = {"string", "source"},
+      javascript = {"string", "template_string"},
+      java = false
+    },
+    disable_filetype = {"TelescopePrompt"}
+  }
+
+  local cmp_autopairs = safe_require("nvim-autopairs.completion.cmp")
+
+  if not cmp_autopairs then
+    return
+  end
+
+  local cmp = safe_require("cmp")
+
+  if not cmp then
+    return
+  end
+
+  cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({map_char = {tex = ""}}))
+end
+
 M.nvim_tree = function()
-  local status, nvim_tree = pcall(require, "nvim-tree")
-  if (not status) then
+  local nvim_tree = safe_require("nvim-tree")
+  if (not nvim_tree) then
     return
   end
 
@@ -66,8 +97,8 @@ M.nvim_tree = function()
 end
 
 M.indent_blankline = function()
-  local status, indent = pcall(require, "indent_blankline")
-  if (not status) then
+  local indent = safe_require("indent_blankline")
+  if (not indent) then
     return
   end
 
@@ -83,8 +114,8 @@ M.indent_blankline = function()
 end
 
 M.nvim_colorizer = function()
-  local status, colorizer = pcall(require, "colorizer")
-  if (not status) then
+  local colorizer = safe_require("colorizer")
+  if (not colorizer) then
     return
   end
 
@@ -105,8 +136,8 @@ M.nvim_colorizer = function()
 end
 
 M.comment = function()
-  local status, comment = pcall(require, "Comment")
-  if (not status) then
+  local comment = safe_require("Comment")
+  if (not comment) then
     return
   end
 
@@ -140,8 +171,8 @@ M.comment = function()
 end
 
 M.package_info = function()
-  local status, package = pcall(require, "package-info")
-  if (not status) then
+  local package = safe_require("package-info")
+  if (not package) then
     return
   end
 
@@ -162,8 +193,8 @@ M.package_info = function()
 end
 
 M.nvim_ts_autotag = function()
-  local status, autotag = pcall(require, "nvim-ts-autotag")
-  if (not status) then
+  local autotag = safe_require("nvim-ts-autotag")
+  if (not autotag) then
     return
   end
 
@@ -171,8 +202,8 @@ M.nvim_ts_autotag = function()
 end
 
 M.ts_context = function()
-  local status, ts_context = pcall(require, "treesitter-context")
-  if (not status) then
+  local ts_context = safe_require("treesitter-context")
+  if (not ts_context) then
     return
   end
 

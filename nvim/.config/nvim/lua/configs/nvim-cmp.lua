@@ -1,7 +1,8 @@
-local stat1, cmp = pcall(require, "cmp")
-local stat2, lspkind = pcall(require, "lspkind")
+local cmp = safe_require("cmp")
 
-if not (stat1 and stat2) then
+local lspkind = safe_require("lspkind")
+
+if not (cmp and lspkind) then
   return
 end
 
@@ -98,10 +99,7 @@ M.setup = function()
           {name = "path"}
         },
         {
-          {
-            name = "cmdline",
-            keyword_pattern = [=[[^[:blank:]\!]*]=]
-          }
+          {name = "cmdline"}
         }
       )
     }

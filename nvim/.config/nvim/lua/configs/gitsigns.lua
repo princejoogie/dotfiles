@@ -1,5 +1,5 @@
-local status, gitsigns = pcall(require, "gitsigns")
-if (not status) then
+local gitsigns = safe_require("gitsigns")
+if not gitsigns then
   return
 end
 

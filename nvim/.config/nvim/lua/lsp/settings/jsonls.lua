@@ -1,6 +1,6 @@
-local status, schemastore = pcall(require, "schemastore")
+local schemastore = safe_require("schemastore")
 
-if not status then
+if not schemastore then
   return
 end
 

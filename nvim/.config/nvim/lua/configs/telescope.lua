@@ -1,5 +1,5 @@
-local status, telescope = pcall(require, "telescope")
-if (not status) then
+local telescope = safe_require("telescope")
+if not telescope then
   return
 end
 

@@ -1,5 +1,5 @@
-local status, treesitter = pcall(require, "nvim-treesitter.configs")
-if (not status) then
+local treesitter = safe_require("nvim-treesitter.configs")
+if not treesitter then
   return
 end
 

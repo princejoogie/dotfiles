@@ -1,20 +1,20 @@
-local mason_status, mason = pcall(require, "mason")
+local mason = safe_require("mason")
 
-if not mason_status then
+if not mason then
   return
 end
 
 mason.setup({ui = {border = "rounded"}})
 
-local m_status, m = pcall(require, "mason-lspconfig")
+local m = safe_require("mason-lspconfig")
 
-if not m_status then
+if not m then
   return
 end
 
-local lsp_status, lspconfig = pcall(require, "lspconfig")
+local lspconfig = safe_require("lspconfig")
 
-if not lsp_status then
+if not lspconfig then
   return
 end
 
@@ -42,9 +42,9 @@ m.setup(
 
 require("lsp.config")
 
-local cmp_lsp_status, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+local cmp_nvim_lsp = safe_require("cmp_nvim_lsp")
 
-if not cmp_lsp_status then
+if not cmp_nvim_lsp then
   return
 end
 
@@ -56,18 +56,18 @@ local opts = {
   on_attach = require("lsp.on-attach").on_attach
 }
 
-local ts_status, typescript = pcall(require, "typescript")
+local typescript = safe_require("typescript")
 
-if not ts_status then
+if not typescript then
   return
 end
 
 m.setup_handlers(
   {
     function(server_name)
-      local has_custom_opts, custom_opts = pcall(require, "lsp.settings." .. server_name)
+      local custom_opts_status, custom_opts = pcall(require, "lsp.settings." .. server_name)
 
-      if has_custom_opts then
+      if custom_opts_status then
         opts = vim.tbl_deep_extend("force", custom_opts, opts)
       end
 

@@ -1,9 +1,9 @@
-local tw_status, tw_highlight = pcall(require, "tailwind-highlight")
+local tw_highlight = safe_require("tailwind-highlight")
 
 local M = {}
 
 M.on_attach = function(client, bufnr)
-  if tw_status then
+  if tw_highlight then
     tw_highlight.setup(client, bufnr)
   end
 

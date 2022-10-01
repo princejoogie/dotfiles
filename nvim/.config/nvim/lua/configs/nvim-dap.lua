@@ -1,8 +1,8 @@
-local stat1, dapui = pcall(require, "dapui")
-local stat2, dap = pcall(require, "dap")
-local stat3, vtext = pcall(require, "nvim-dap-virtual-text")
+local dapui = safe_require("dapui")
+local dap = safe_require("dap")
+local vtext = safe_require("nvim-dap-virtual-text")
 
-if not (stat1 and stat2 and stat3) then
+if not (dapui and dap and vtext) then
   return
 end
 

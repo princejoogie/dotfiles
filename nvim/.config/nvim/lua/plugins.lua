@@ -74,12 +74,6 @@ return packer.startup(
       "romgrk/barbar.nvim",
       requires = {"kyazdani42/nvim-web-devicons"}
     }
-    use {
-      "windwp/nvim-autopairs",
-      config = function()
-        require("nvim-autopairs").setup()
-      end
-    }
     use {"JoosepAlviste/nvim-ts-context-commentstring", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"ThePrimeagen/harpoon", requires = {"nvim-lua/plenary.nvim"}}
     use {
@@ -93,6 +87,12 @@ return packer.startup(
     use {"nvim-treesitter/playground", requires = {"nvim-treesitter/nvim-treesitter"}}
     use {"tpope/vim-dispatch", opt = true, cmd = {"Dispatch", "Make", "Focus", "Start"}}
 
+    use {
+      "windwp/nvim-autopairs",
+      config = function()
+        require("configs.others").nvim_autopairs()
+      end
+    }
     use {
       "nvim-treesitter/nvim-treesitter-context",
       requires = {"nvim-treesitter/nvim-treesitter"},
