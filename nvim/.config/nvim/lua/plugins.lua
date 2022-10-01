@@ -88,6 +88,13 @@ return packer.startup(
     use {"tpope/vim-dispatch", opt = true, cmd = {"Dispatch", "Make", "Focus", "Start"}}
 
     use {
+      "goolord/alpha-nvim",
+      requires = {"kyazdani42/nvim-web-devicons"},
+      config = function()
+        require("configs.alpha").setup()
+      end
+    }
+    use {
       "windwp/nvim-autopairs",
       config = function()
         require("configs.others").nvim_autopairs()
