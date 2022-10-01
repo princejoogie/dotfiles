@@ -10,6 +10,7 @@ exec_always --no-startup-id $HOME/.config/i3/screen.sh
 exec_always --no-startup-id feh --bg-fill $HOME/dotfiles/wallpapers/e.jpg
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always --no-startup-id flameshot
+exec_always --no-startup-id redshift -m randr -P -O 4000
 bindsym Print exec --no-startup-id flameshot gui
 bindsym $mod+Print exec --no-startup-id gnome-screenshot -i
 bindsym $mod+period exec --no-startup-id emoji-picker
