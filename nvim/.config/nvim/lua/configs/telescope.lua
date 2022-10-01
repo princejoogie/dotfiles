@@ -14,9 +14,10 @@ M.setup = function()
         file_ignore_patterns = {
           "node_modules/",
           ".git/",
-          "*.lock",
           "dist/",
-          "build/"
+          "build/",
+          "yarn.lock",
+          "package-lock.json",
         }
       }
     }
