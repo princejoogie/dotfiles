@@ -51,7 +51,8 @@ local opts = {
   smarttab = true,
   softtabstop = 0,
   tabstop = 2,
-  termguicolors = true
+  termguicolors = true,
+  ch = 0
 }
 
 for k, v in pairs(opts) do
