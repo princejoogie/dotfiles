@@ -2,6 +2,7 @@
 
 personal dotfiles
 
+![nvim_dashboard](./dashboard.png)
 ![nvim_preview](./demo.png)
 
 > installation scripts unfinished..
