@@ -8,8 +8,8 @@ end
 
 local config = {
   bg = get("transparent_background", false),
-  italic = get("enable_italic", true),
-  italic_comment = get("enable_italic_comment", true),
+  italic = get("enable_italic", false),
+  italic_comment = get("enable_italic_comment", false),
   gamma = get("color_gamma", "1.0")
 }
 

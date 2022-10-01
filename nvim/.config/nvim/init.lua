@@ -19,35 +19,42 @@ vim.cmd [[
 ]]
 
 vim.g.mapleader = " "
-vim.opt.autoindent = true
-vim.opt.autoread = true
-vim.opt.background = "dark"
-vim.opt.clipboard = "unnamedplus"
-vim.opt.encoding = "UTF-8"
-vim.opt.cursorline = true
-vim.opt.expandtab = true
-vim.opt.foldlevel = 2
-vim.opt.foldmethod = "syntax"
-vim.opt.foldnestmax = 10
-vim.opt.laststatus = 3
-vim.opt.hidden = true
-vim.opt.hlsearch = true
-vim.opt.ignorecase = true
-vim.opt.incsearch = true
-vim.opt.mouse = "a"
-vim.opt.backup = false
-vim.opt.foldenable = false
-vim.opt.showmode = false
-vim.opt.swapfile = false
-vim.opt.writebackup = false
-vim.opt.nu = true
-vim.opt.rnu = true
-vim.opt.shiftwidth = 2
-vim.opt.smartcase = true
-vim.opt.smarttab = true
-vim.opt.softtabstop = 0
-vim.opt.tabstop = 2
-vim.opt.termguicolors = true
+
+local options = {
+  autoindent = true,
+  autoread = true,
+  background = "dark",
+  clipboard = "unnamedplus",
+  encoding = "UTF-8",
+  cursorline = true,
+  expandtab = true,
+  foldlevel = 2,
+  foldmethod = "syntax",
+  foldnestmax = 10,
+  laststatus = 3,
+  hidden = true,
+  hlsearch = true,
+  ignorecase = true,
+  incsearch = true,
+  mouse = "a",
+  backup = false,
+  foldenable = false,
+  showmode = false,
+  swapfile = false,
+  writebackup = false,
+  nu = true,
+  rnu = true,
+  shiftwidth = 2,
+  smartcase = true,
+  smarttab = true,
+  softtabstop = 0,
+  tabstop = 2,
+  termguicolors = true
+}
+
+for k, v in pairs(options) do
+  vim.opt[k] = v
+end
 
 vim.cmd [[
   filetype on
@@ -55,13 +62,11 @@ vim.cmd [[
   syntax on
   syntax enable
 
-  let g:tokyodark_enable_italic_comment = 0
-  let g:tokyodark_enable_italic = 0
   colorscheme tokyodark
-
   autocmd TermOpen * setlocal nonumber norelativenumber
 ]]
 
+require("options")
 require("plugins")
 require("keymaps")
 require("lsp")
