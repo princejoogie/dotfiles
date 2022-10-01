@@ -7,7 +7,7 @@ if not (lualine and package) then
 end
 
 local icons = require("utils").icons
-local p = require("tokyodark.palette")
+local p = require("nabi.palette")
 
 local M = {}
 

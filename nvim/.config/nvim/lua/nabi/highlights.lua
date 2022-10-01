@@ -1,6 +1,6 @@
-local p = require("tokyodark.palette")
-local cfg = require("tokyodark.config")
-local u = require("tokyodark.utils")
+local p = require("nabi.palette")
+local cfg = require("nabi.config")
+local u = require("nabi.utils")
 
 local M = {}
 local hl = {langs = {}, plugins = {}}
@@ -62,8 +62,8 @@ hl.common = {
   NonText = {fg = p.bg4},
   Whitespace = {fg = p.bg4},
   SpecialKey = {fg = p.bg4},
-  Pmenu = {fg = p.fg, bg = p.bg0},
-  PmenuSbar = {fg = p.none, bg = p.bg0},
+  Pmenu = {fg = p.fg, bg = cfg.bg and p.none or p.bg0},
+  PmenuSbar = {fg = p.none, bg = cfg.bg and p.none or p.bg0},
   PmenuSel = {fg = p.bg0, bg = p.bg4},
   PmenuThumb = {fg = p.none, bg = p.bg2},
   WildMenu = {fg = p.bg0, bg = p.blue},
@@ -140,7 +140,7 @@ hl.plugins.lsp = {
   LspDiagnosticsUnderlineHint = {underline = true, sp = u.color_gamma(p.purple, 0.5)},
   LspDiagnosticsUnderlineInformation = {underline = true, sp = u.color_gamma(p.blue, 0.5)},
   LspDiagnosticsUnderlineWarning = {underline = true, sp = u.color_gamma(p.yellow, 0.5)},
-  FloatBorder = {fg = p.fg, bg = p.bg0},
+  FloatBorder = {fg = p.fg, bg = cfg.bg and p.none or p.bg0},
   VertSplit = {fg = p.bg5},
   DiagnosticSignError = {fg = u.color_gamma(p.red, 0.5)},
   DiagnosticSignHint = {fg = u.color_gamma(p.purple, 0.5)},

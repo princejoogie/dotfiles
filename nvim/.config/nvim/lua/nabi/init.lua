@@ -1,5 +1,5 @@
-local highlights = require("tokyodark.highlights")
-local terminal = require("tokyodark.terminal")
+local highlights = require("nabi.highlights")
+local terminal = require("nabi.terminal")
 
 local M = {}
 
@@ -10,7 +10,7 @@ function M.colorscheme()
   end
   vim.o.background = "dark"
   vim.o.termguicolors = true
-  vim.g.colors_name = "tokyodark"
+  vim.g.colors_name = "nabi"
   highlights.setup()
   terminal.setup()
 end

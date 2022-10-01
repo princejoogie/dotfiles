@@ -20,7 +20,7 @@ vim.cmd [[
 
 vim.g.mapleader = " "
 
-local options = {
+local opts = {
   autoindent = true,
   autoread = true,
   background = "dark",
@@ -52,9 +52,12 @@ local options = {
   termguicolors = true
 }
 
-for k, v in pairs(options) do
+for k, v in pairs(opts) do
   vim.opt[k] = v
 end
+
+vim.g.nabi_enable_italic = false
+vim.g.nabi_enable_italic_comment = false
 
 vim.cmd [[
   filetype on
@@ -62,11 +65,10 @@ vim.cmd [[
   syntax on
   syntax enable
 
-  colorscheme tokyodark
+  colorscheme nabi
   autocmd TermOpen * setlocal nonumber norelativenumber
 ]]
 
-require("options")
 require("plugins")
 require("keymaps")
 require("lsp")

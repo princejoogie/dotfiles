@@ -1,11 +1,11 @@
-local color_gamma = require("tokyodark.utils").color_gamma
-local gamma = require("tokyodark.config").gamma
+local color_gamma = require("nabi.utils").color_gamma
+local gamma = require("nabi.config").gamma
 
 local colors = {
   black = "#06080A",
   white = "#FFFFFF",
-  -- bg0 = "#000000",
-  bg0 = "NONE",
+  bg0 = "#000000",
+  --[[ bg0 = "NONE", ]]
   bg1 = "#1A1B2A",
   bg2 = "#212234",
   bg3 = "#353945",
