@@ -56,6 +56,7 @@ for k, v in pairs(opts) do
   vim.opt[k] = v
 end
 
+vim.g.nabi_transparent_background = true
 vim.g.nabi_enable_italic = false
 vim.g.nabi_enable_italic_comment = false
 
