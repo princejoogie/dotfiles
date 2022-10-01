@@ -62,11 +62,6 @@ vim.cmd [[
   autocmd TermOpen * setlocal nonumber norelativenumber
 ]]
 
-local status = pcall(require, "impatient")
-if (not status) then
-  vim.notify("impatient not found")
-end
-
 require("plugins")
 require("keymaps")
 require("lsp")

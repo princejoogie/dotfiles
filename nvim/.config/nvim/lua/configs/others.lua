@@ -49,7 +49,10 @@ M.nvim_tree = function()
 
   nvim_tree.setup(
     {
-      view = {width = 40},
+      view = {
+        width = 40,
+        hide_root_folder = true
+      },
       update_focused_file = {
         enable = true,
         update_cwd = false,
@@ -173,9 +176,7 @@ M.ts_context = function()
     return
   end
 
-  ts_context.setup({
-    enable = true,
-  })
+  ts_context.setup({enable = true})
 end
 
 return M
