@@ -1,4 +1,3 @@
-local keymap = require("utils").keymap
 local status, telescope = pcall(require, "telescope")
 if (not status) then
   return
@@ -10,26 +9,15 @@ M.setup = function()
   telescope.setup(
     {
       defaults = {
-        vimgrep_arguments = {
-          "rg",
-          "--color=never",
-          "--no-heading",
-          "--with-filename",
-          "--line-number",
-          "--column",
-          "--smart-case",
-          "--no-ignore",
-        },
         prompt_prefix = "   ",
-        selection_caret = "  ",
-        entry_prefix = "  ",
-        initial_mode = "insert",
-        selection_strategy = "reset",
         sorting_stratey = "ascending",
-        file_ignore_patterns = {"node_modules"},
-        file_previewer = require("telescope.previewers").vim_buffer_cat.new,
-        grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
-        qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new
+        file_ignore_patterns = {
+          "node_modules/",
+          ".git/",
+          "*.lock",
+          "dist/",
+          "build/"
+        }
       }
     }
   )
@@ -56,8 +44,5 @@ function M.gh_prs()
   opts.prompt_title = " Pull Requests"
   require("telescope").extensions.gh.pull_request(opts)
 end
-
-keymap("n", "<leader>gi", M.gh_issues)
-keymap("n", "<leader>gp", M.gh_prs)
 
 return M
