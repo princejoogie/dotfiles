@@ -63,6 +63,7 @@ return packer.startup(function(use)
 	use("tpope/vim-rhubarb")
 	use("tpope/vim-surround")
 	use("tpope/vim-unimpaired")
+	use("sudoerwx/vim-ray-so-beautiful")
 
 	use({
 		"romgrk/barbar.nvim",
@@ -202,7 +203,7 @@ return packer.startup(function(use)
 		"rcarriga/nvim-notify",
 		config = function()
 			local notify = require("notify")
-			notify.setup({ background_colour = "#000000", fps = 60 })
+			notify.setup({ background_colour = "#000000", fps = 60, level = 3, max_width = 80, max_height = 10 })
 			vim.notify = notify
 		end,
 	})
