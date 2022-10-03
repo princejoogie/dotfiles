@@ -99,6 +99,7 @@ M.setup = function()
 			html = prettier,
 			css = prettier,
 			json = prettier,
+      yaml = prettier,
 			cpp = clang_format,
 			lua = stylua,
 			python = autopep8,
