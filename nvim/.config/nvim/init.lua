@@ -50,6 +50,7 @@ local opts = {
 	smartcase = true,
 	smarttab = true,
 	softtabstop = 0,
+  scrolloff = 10,
 	tabstop = 2,
 	termguicolors = true,
 	ch = 0,
