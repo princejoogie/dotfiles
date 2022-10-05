@@ -88,25 +88,27 @@ local autopep8 = {
 	end,
 }
 
+M.filetype = {
+	javascript = prettier,
+	javascriptreact = prettier,
+	typescript = prettier,
+	typescriptreact = prettier,
+	markdown = prettier,
+	html = prettier,
+	css = prettier,
+	json = prettier,
+	yaml = prettier,
+	cpp = clang_format,
+	lua = stylua,
+	python = autopep8,
+	--[[ prisma = prismafmt, ]]
+	rust = rustfmt,
+	go = gofmt,
+}
+
 M.setup = function()
 	formatter.setup({
-		filetype = {
-			javascript = prettier,
-			javascriptreact = prettier,
-			typescript = prettier,
-			typescriptreact = prettier,
-			markdown = prettier,
-			html = prettier,
-			css = prettier,
-			json = prettier,
-      yaml = prettier,
-			cpp = clang_format,
-			lua = stylua,
-			python = autopep8,
-			prisma = prismafmt,
-			rust = rustfmt,
-			go = gofmt,
-		},
+		filetype = M.filetype,
 	})
 end
 

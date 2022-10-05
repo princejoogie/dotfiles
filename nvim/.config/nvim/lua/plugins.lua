@@ -46,6 +46,16 @@ return packer.startup(function(use)
 		end,
 	})
 
+	-- Custom
+	--[[ use({ ]]
+	--[[ 	"/home/joogie/Documents/codes/lua/plugins/mason-formatter.nvim", ]]
+	--[[ 	config = function() ]]
+	--[[ 		require("mason-formatter").setup({ ]]
+	--[[        ensure_installed = {"autopep8"}, ]]
+	--[[      }) ]]
+	--[[ 	end, ]]
+	--[[ }) ]]
+
 	-- General
 	use("AndrewRadev/tagalong.vim")
 	use("MunifTanjim/nui.nvim")
