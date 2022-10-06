@@ -50,25 +50,23 @@ export PATH=$PATH:/usr/local/go/bin
 source "$HOME/.cargo/env"
 export PATH=$PATH:$HOME/.cargo/bin
 
-if command apt > /dev/null; then
-  # Debian
-  export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-  export PATH=$PATH:$JAVA_HOME/bin
+case `uname` in
+  Linux)
+    export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+    export PATH=$PATH:$JAVA_HOME/bin
 
-  export ANDROID_HOME=$HOME/Android/Sdk
-  export PATH=$PATH:$ANDROID_HOME/emulator
-  export PATH=$PATH:$ANDROID_HOME/platform-tools
-  export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-# elif command freebsd-version > /dev/null; then
-elif [[ `uname` == "Darwin" ]]; then
-  # Mac OS X
-  export ANDROID_HOME=/Users/joogie/Library/Android/sdk
-  export PATH=$PATH:$ANDROID_HOME/emulator
-  export PATH=$PATH:$ANDROID_HOME/platform-tools
-  export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-else
-  # Windows
-fi
+    export ANDROID_HOME=$HOME/Android/Sdk
+    export PATH=$PATH:$ANDROID_HOME/emulator
+    export PATH=$PATH:$ANDROID_HOME/platform-tools
+    export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+  ;;
+  Darwin)
+    export ANDROID_HOME=/Users/joogie/Library/Android/sdk
+    export PATH=$PATH:$ANDROID_HOME/emulator
+    export PATH=$PATH:$ANDROID_HOME/platform-tools
+    export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+  ;;
+esac
 
 # direnv
 eval "$(direnv hook zsh)"
