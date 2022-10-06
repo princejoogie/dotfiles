@@ -2,10 +2,10 @@ local keymap = require("utils").keymap
 
 -- GENERAL KEYMAPS
 keymap("i", "jj", "<Esc>")
-keymap("n", "<A-j>", ":resize -5<CR>")
-keymap("n", "<A-k>", ":resize +5<CR>")
-keymap("n", "<A-l>", ":vertical resize -5<CR>")
-keymap("n", "<A-h>", ":vertical resize +5<CR>")
+keymap("n", "<M-j>", ":resize -5<CR>")
+keymap("n", "<M-k>", ":resize +5<CR>")
+keymap("n", "<M-l>", ":vertical resize -5<CR>")
+keymap("n", "<M-h>", ":vertical resize +5<CR>")
 keymap("n", "<C-b>", ":NvimTreeToggle<CR>")
 keymap("n", "<C-n>", ":noh<CR>")
 keymap("n", "<C-s>", ":w<CR>")
@@ -24,8 +24,8 @@ keymap("v", "<leader><Enter>", ":.!zsh<CR>")
 keymap("n", "<leader>va", "<S-v>$hh%k<CR>")
 keymap("n", "gG", "50%")
 keymap("n", "gf", "<C-W>f")
-keymap("v", "<A-j>", ":move '>+1<CR>gv-gv")
-keymap("v", "<A-k>", ":move '<-2<CR>gv-gv")
+keymap("v", "<M-j>", ":move '>+1<CR>gv-gv")
+keymap("v", "<M-k>", ":move '<-2<CR>gv-gv")
 keymap("v", "gf", "<C-W>f")
 
 -- LSP
