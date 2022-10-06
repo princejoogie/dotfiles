@@ -39,9 +39,6 @@ NVIM_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-export NVM_DIR="$HOME/.config/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Golang
 export PATH=$PATH:/usr/local/go/bin
@@ -52,6 +49,10 @@ export PATH=$PATH:$HOME/.cargo/bin
 
 case `uname` in
   Linux)
+    export NVM_DIR="$HOME/.config/nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
     export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
     export PATH=$PATH:$JAVA_HOME/bin
 
@@ -61,6 +62,11 @@ case `uname` in
     export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
   ;;
   Darwin)
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \. "$(brew --prefix)/opt/nvm/nvm.sh"
+    [ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm"
+
     export ANDROID_HOME=/Users/joogie/Library/Android/sdk
     export PATH=$PATH:$ANDROID_HOME/emulator
     export PATH=$PATH:$ANDROID_HOME/platform-tools
