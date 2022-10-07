@@ -22,14 +22,14 @@ colors:
     white: "#a0a8cd"
     yellow: "#d7a65f"
   primary:
-    background: "#000000"
+    background: "#06080a"
     foreground: "#a0a8cd"
   selection:
     background: "#11121d"
     text: "#a0a8cd"
 
 font:
-  size: 12
+  size: 14
   normal:
     family: FiraCode Nerd Font
 

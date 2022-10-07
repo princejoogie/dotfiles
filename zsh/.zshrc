@@ -1,4 +1,5 @@
 # Variables
+export EDITOR=nvim
 export PATH=$PATH:/usr/local/go/bin
 source "$HOME/.cargo/env"
 export PATH=$PATH:$HOME/.cargo/bin
@@ -23,7 +24,10 @@ case `uname` in
     [ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \. "$(brew --prefix)/opt/nvm/nvm.sh"
     [ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm"
 
-    export ANDROID_HOME=/Users/joogie/Library/Android/sdk
+    export PYTHON_PAT=$HOME/Library/Python/3.9/bin
+    export PATH=$PATH:$PYTHON_PATH
+
+    export ANDROID_HOME=$HOME/Library/Android/sdk
     export PATH=$PATH:$ANDROID_HOME/emulator
     export PATH=$PATH:$ANDROID_HOME/platform-tools
     export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
