@@ -60,6 +60,10 @@ for k, v in pairs(opts) do
 	vim.opt[k] = v
 end
 
+if os.getenv("CONDA_PREFIX") then
+  vim.g.python3_host_prog = os.getenv("CONDA_PREFIX") .. "/bin/python"
+end
+
 vim.g.nabi_transparent_background = true
 vim.g.nabi_enable_italic = false
 vim.g.nabi_enable_italic_comment = false
