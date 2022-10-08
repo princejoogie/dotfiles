@@ -19,12 +19,15 @@ case `uname` in
     export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
   ;;
   Darwin)
+    alias python=python3
+    alias pip=pip3
+
     eval "$(/opt/homebrew/bin/brew shellenv)"
     export NVM_DIR="$HOME/.nvm"
     [ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \. "$(brew --prefix)/opt/nvm/nvm.sh"
     [ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm"
 
-    export PYTHON_PAT=$HOME/Library/Python/3.9/bin
+    export PYTHON_PATH=$HOME/Library/Python/3.9/bin
     export PATH=$PATH:$PYTHON_PATH
 
     export ANDROID_HOME=$HOME/Library/Android/sdk

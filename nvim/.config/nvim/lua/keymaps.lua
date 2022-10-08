@@ -54,6 +54,30 @@ pcall(function()
 	keymap("n", "<leader>p", FormatBuffer)
 end)
 
+pcall(function()
+	local jsExtensions = {
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact",
+	}
+
+	local RenameBuffer = function()
+		if not vim.tbl_contains(jsExtensions, vim.bo.filetype) then
+			vim.ui.input({
+				prompt = "New path:",
+				default = vim.api.nvim_buf_get_name(0),
+			}, function(input)
+				vim.lsp.util.rename(vim.api.nvim_buf_get_name(0), input)
+			end)
+		else
+			vim.cmd("TypescriptRenameFile")
+		end
+	end
+
+	keymap("n", "<leader>rf", RenameBuffer)
+end)
+
 -- TELESCOPE
 pcall(function()
 	local builtin = require("telescope.builtin")
