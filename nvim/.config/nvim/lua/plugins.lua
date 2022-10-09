@@ -127,6 +127,7 @@ return packer.startup(function(use)
 	})
 	use({
 		"kyazdani42/nvim-tree.lua",
+    commit = "7282f7de8aedf861fe0162a559fc2b214383c51c",
 		config = function()
 			require("configs.others").nvim_tree()
 		end,
