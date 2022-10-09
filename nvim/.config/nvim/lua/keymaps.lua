@@ -87,12 +87,7 @@ pcall(function()
 	_G.OpenExternally = function()
 		local ext = vim.fn.expand("%:e"):lower()
 		if vim.tbl_contains(mediaExts, ext) then
-			vim.ui.select({
-				"Yes",
-				"No",
-			}, {
-				prompt = "Open externally?",
-			}, function(choice)
+			vim.ui.select({ "Yes", "No" }, { prompt = "Open externally?" }, function(choice)
 				if choice == "Yes" then
 					local path = vim.fn.expand("%:p")
 					vim.cmd("silent !open " .. "'" .. path .. "'")
