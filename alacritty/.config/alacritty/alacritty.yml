@@ -25,8 +25,8 @@ colors:
     background: "#06080a"
     foreground: "#a0a8cd"
   selection:
-    background: "#11121d"
-    text: "#a0a8cd"
+    background: "#95c561"
+    text: "#000000"
 
 font:
   size: 14
