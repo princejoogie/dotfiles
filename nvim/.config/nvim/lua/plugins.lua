@@ -113,13 +113,6 @@ return packer.startup(function(use)
 		end,
 	})
 	use({
-		"samodostal/image.nvim",
-		requires = { "nvim-lua/plenary.nvim" },
-		config = function()
-			require("image").setup({ render_using_dither = true })
-		end,
-	})
-	use({
 		"akinsho/toggleterm.nvim",
 		config = function()
 			require("configs.others").toggleterm()

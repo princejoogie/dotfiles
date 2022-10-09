@@ -55,6 +55,57 @@ pcall(function()
 end)
 
 pcall(function()
+	local mediaExts = {
+		"mp4",
+		"mkv",
+		"avi",
+		"mp3",
+		"flac",
+		"ogg",
+		"webm",
+		"wav",
+		"m4a",
+		"aac",
+		"flv",
+		"mov",
+		"wmv",
+		"m4v",
+		"gif",
+		"jpg",
+		"jpeg",
+		"png",
+		"webp",
+		"pdf",
+		"doc",
+		"docx",
+		"xls",
+		"xlsx",
+		"ppt",
+		"pptx",
+	}
+
+	_G.OpenExternally = function()
+		local ext = vim.fn.expand("%:e"):lower()
+		if vim.tbl_contains(mediaExts, ext) then
+			vim.ui.select({
+				"Yes",
+				"No",
+			}, {
+				prompt = "Open externally?",
+			}, function(choice)
+				if choice == "Yes" then
+					local path = vim.fn.expand("%:p")
+					vim.cmd("silent !open " .. "'" .. path .. "'")
+					vim.cmd("silent! bd")
+				end
+			end)
+		end
+	end
+
+	vim.cmd("autocmd BufReadPost * lua OpenExternally()")
+end)
+
+pcall(function()
 	local jsExtensions = {
 		"javascript",
 		"javascriptreact",
