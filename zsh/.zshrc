@@ -29,7 +29,6 @@ case `uname` in
 
     export PYTHON_PATH=$HOME/Library/Python/3.9/bin
     export PATH=$PATH:$PYTHON_PATH
-
     export ANDROID_HOME=$HOME/Library/Android/sdk
     export PATH=$PATH:$ANDROID_HOME/emulator
     export PATH=$PATH:$ANDROID_HOME/platform-tools
@@ -97,3 +96,8 @@ NVIM_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
 
 # direnv
 eval "$(direnv hook zsh)"
+
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+# pnpm end
