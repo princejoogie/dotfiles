@@ -82,6 +82,9 @@ pcall(function()
 		"xlsx",
 		"ppt",
 		"pptx",
+		"zip",
+		"rar",
+		"7z",
 	}
 
 	_G.OpenExternally = function()

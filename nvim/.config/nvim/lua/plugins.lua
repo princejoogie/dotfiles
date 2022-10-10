@@ -169,7 +169,6 @@ return packer.startup(function(use)
 			require("configs.dressing").setup()
 		end,
 	})
-
 	use({
 		"lewis6991/gitsigns.nvim",
 		config = function()
