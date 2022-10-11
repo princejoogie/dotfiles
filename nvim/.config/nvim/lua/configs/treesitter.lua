@@ -18,6 +18,7 @@ M.setup = function()
 			"html",
 			"javascript",
 			"jsdoc",
+      "hcl",
 			"json",
 			"json5",
 			"lua",
