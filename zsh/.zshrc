@@ -19,9 +19,6 @@ case `uname` in
     export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
   ;;
   Darwin)
-    alias python=python3
-    alias pip=pip3
-
     eval "$(/opt/homebrew/bin/brew shellenv)"
     export NVM_DIR="$HOME/.nvm"
     [ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \. "$(brew --prefix)/opt/nvm/nvm.sh"
@@ -33,6 +30,7 @@ case `uname` in
     export PATH=$PATH:$ANDROID_HOME/emulator
     export PATH=$PATH:$ANDROID_HOME/platform-tools
     export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+    export PATH=$PATH:$(pyenv root)/shims
 
     # >>> conda initialize >>>
     # !! Contents within this block are managed by 'conda init' !!
