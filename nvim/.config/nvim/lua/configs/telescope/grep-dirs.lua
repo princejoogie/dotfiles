@@ -51,7 +51,12 @@ M.GrepInFolder = function(opts)
 		:find()
 end
 
-vim.api.nvim_create_user_command("GrepInFolder", M.GrepInFolder, {
+vim.api.nvim_create_user_command("GrepInFolder", function()
+	M.GrepInFolder({
+		hidden = true,
+		respect_gitignore = true,
+	})
+end, {
 	desc = "Live grep in selected folder",
 })
 
