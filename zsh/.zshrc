@@ -31,6 +31,7 @@ case `uname` in
     export PATH=$PATH:$ANDROID_HOME/platform-tools
     export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
     export PATH=$PATH:$(pyenv root)/shims
+    export PATH="`yarn global bin`:$PATH"
 
     # >>> conda initialize >>>
     # !! Contents within this block are managed by 'conda init' !!

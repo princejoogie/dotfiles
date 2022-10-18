@@ -78,7 +78,7 @@ vim.cmd([[
   autocmd TermOpen * setlocal nonumber norelativenumber
 ]])
 
-require("autocmds")
 require("plugins")
 require("keymaps")
 require("lsp")
+require("commands")
