@@ -133,6 +133,7 @@ pcall(function()
 	local builtin = require("telescope.builtin")
 	local custom = require("configs.telescope")
 	local grep_dir = require("configs.telescope.grep-dirs").GrepInFolder
+	local file_dir = require("configs.telescope.file-dirs").FileInFolder
 	keymap("n", "<C-f>", builtin.live_grep)
 	keymap("n", "<C-p>", "<cmd>Telescope find_files hidden=true no_ignore=true<CR>")
 	keymap("n", "<leader>ch", builtin.command_history)
@@ -146,6 +147,7 @@ pcall(function()
 	keymap("n", "<leader>gi", custom.gh_issues)
 	keymap("n", "<leader>gp", custom.gh_prs)
 	keymap("n", "<leader>fd", grep_dir)
+	keymap("n", "<leader>pd", file_dir)
 end)
 
 -- BARBAR

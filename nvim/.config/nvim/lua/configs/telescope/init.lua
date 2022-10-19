@@ -43,5 +43,6 @@ function M.gh_prs()
 end
 
 safe_require("configs.telescope.grep-dirs")
+safe_require("configs.telescope.file-dirs")
 
 return M
