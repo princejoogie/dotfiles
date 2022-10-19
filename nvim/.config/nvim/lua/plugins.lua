@@ -55,6 +55,13 @@ return packer.startup(function(use)
 	--[[      }) ]]
 	--[[ 	end, ]]
 	--[[ }) ]]
+	use({
+		"princejoogie/dir-telescope.nvim",
+		requires = { "nvim-telescope/telescope.nvim" },
+		config = function()
+			require("dir-telescope").setup()
+		end,
+	})
 
 	-- General
 	use("AndrewRadev/tagalong.vim")

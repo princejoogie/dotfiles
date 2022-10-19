@@ -42,7 +42,4 @@ function M.gh_prs()
 	require("telescope").extensions.gh.pull_request(opts)
 end
 
-safe_require("configs.telescope.grep-dirs")
-safe_require("configs.telescope.file-dirs")
-
 return M
