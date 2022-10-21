@@ -99,6 +99,7 @@ M.filetype = {
 	json = prettier,
 	yaml = prettier,
 	cpp = clang_format,
+  java = clang_format,
 	lua = stylua,
 	python = autopep8,
 	--[[ prisma = prismafmt, ]]
