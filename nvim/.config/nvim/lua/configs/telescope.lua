@@ -21,7 +21,7 @@ M.setup = function()
 		},
 	})
 
-	local extensions = { "gh", "dap", "notify" }
+	local extensions = { "gh", "dap", "notify", "dir" }
 
 	pcall(function()
 		for _, ext in ipairs(extensions) do
