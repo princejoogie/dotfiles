@@ -8,6 +8,29 @@ end
 
 local M = {}
 
+local lsp_icons = {
+  mode = "symbol",
+  symbol_map = {
+    NONE = "",
+    Array = "",
+    Boolean = "⊨",
+    Class = "",
+    Constructor = "",
+    Key = "",
+    Namespace = "",
+    Null = "NULL",
+    Number = "#",
+    Object = "⦿",
+    Package = "",
+    Property = "",
+    Reference = "",
+    Snippet = "",
+    String = "𝓐",
+    TypeParameter = "",
+    Unit = "",
+  },
+}
+
 M.setup = function()
 	cmp.setup({
 		snippet = {
@@ -38,13 +61,16 @@ M.setup = function()
 			{ name = "spell" },
 		}),
 		formatting = {
-			format = lspkind.cmp_format({
-				mode = "symbol_text",
-				maxwidth = 60,
-				before = function(_, vim_item)
-					return vim_item
-				end,
-			}),
+      fields = { "kind", "abbr", "menu" },
+      format = lspkind.cmp_format(lsp_icons)
+
+			--[[ format = lspkind.cmp_format({ ]]
+			--[[ 	mode = "symbol_text", ]]
+			--[[ 	maxwidth = 60, ]]
+			--[[ 	before = function(_, vim_item) ]]
+			--[[ 		return vim_item ]]
+			--[[ 	end, ]]
+			--[[ }), ]]
 		},
 		window = {
 			completion = {
