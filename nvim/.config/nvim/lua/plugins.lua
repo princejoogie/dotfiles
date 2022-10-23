@@ -82,10 +82,6 @@ return packer.startup(function(use)
 	use("tpope/vim-unimpaired")
 	use("sudoerwx/vim-ray-so-beautiful")
 
-	use({
-		"romgrk/barbar.nvim",
-		requires = { "kyazdani42/nvim-web-devicons" },
-	})
 	use({ "JoosepAlviste/nvim-ts-context-commentstring", requires = { "nvim-treesitter/nvim-treesitter" } })
 	use({ "ThePrimeagen/harpoon", requires = { "nvim-lua/plenary.nvim" } })
 	use({
@@ -105,6 +101,13 @@ return packer.startup(function(use)
 			require("leap").add_default_mappings()
 			vim.keymap.del({ "x", "o" }, "x")
 			vim.keymap.del({ "x", "o" }, "X")
+		end,
+	})
+	use({
+		"romgrk/barbar.nvim",
+		requires = { "kyazdani42/nvim-web-devicons" },
+		config = function()
+			require("configs.barbar").setup()
 		end,
 	})
 	use({
