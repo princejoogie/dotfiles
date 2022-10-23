@@ -11,24 +11,34 @@ M.setup = function()
 		animation = true,
 	})
 
-	vim.api.nvim_create_autocmd("BufWinEnter", {
-		pattern = "*",
-		callback = function()
-			if vim.bo.filetype == "NvimTree" then
-				local cwd = "  " .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t"):upper()
-				require("bufferline.api").set_offset(42, cwd)
-			end
-		end,
-	})
+	local tree = safe_require("nvim-tree")
 
-	vim.api.nvim_create_autocmd("BufWinLeave", {
-		pattern = "*",
-		callback = function()
-			if vim.fn.expand("<afile>"):match("NvimTree") then
-				require("bufferline.api").set_offset(0)
-			end
-		end,
-	})
+	if tree then
+		local Event = require("nvim-tree.api").events.Event
+		local tree_view = require("nvim-tree.view")
+		local tree_api = require("nvim-tree.api")
+		local barbar_api = require("bufferline.api")
+
+		local function get_tree_size()
+			return tree_view.View.width
+		end
+
+		local function get_folder_name()
+			return "  " .. vim.fn.fnamemodify(vim.fn.getcwd(), ":t"):upper()
+		end
+
+		tree_api.events.subscribe(Event.TreeOpen, function()
+			barbar_api.set_offset(get_tree_size() + 2, get_folder_name())
+		end)
+
+		tree_api.events.subscribe(Event.Resize, function()
+			barbar_api.set_offset(get_tree_size() + 2, get_folder_name())
+		end)
+
+		tree_api.events.subscribe(Event.TreeClose, function()
+			barbar_api.set_offset(0)
+		end)
+	end
 end
 
 return M
