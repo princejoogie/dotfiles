@@ -9,8 +9,6 @@ end
 library_table[vim.fn.expand("$VIMRUNTIME/lua")] = true
 library_table[vim.fn.stdpath("config") .. "/lua"] = true
 
-print(vim.inspect(library_table))
-
 return {
 	settings = {
 		Lua = {
