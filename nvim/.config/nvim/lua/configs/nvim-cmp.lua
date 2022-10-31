@@ -9,26 +9,36 @@ end
 local M = {}
 
 local lsp_icons = {
-  mode = "symbol",
-  symbol_map = {
-    NONE = "",
-    Array = "",
-    Boolean = "⊨",
-    Class = "",
-    Constructor = "",
-    Key = "",
-    Namespace = "",
-    Null = "NULL",
-    Number = "#",
-    Object = "⦿",
-    Package = "",
-    Property = "",
-    Reference = "",
-    Snippet = "",
-    String = "𝓐",
-    TypeParameter = "",
-    Unit = "",
-  },
+	mode = "symbol",
+  maxwidth = 50,
+	before = function(entry, vim_item)
+		vim_item.menu = ({
+			nvim_lsp = "[LSP]",
+			luasnip = "[Snippet]",
+			buffer = "[Buffer]",
+			path = "[Path]",
+		})[entry.source.name]
+		return vim_item
+	end,
+	symbol_map = {
+		NONE = "",
+		Array = "",
+		Boolean = "⊨",
+		Class = "",
+		Constructor = "",
+		Key = "",
+		Namespace = "",
+		Null = "NULL",
+		Number = "#",
+		Object = "⦿",
+		Package = "",
+		Property = "",
+		Reference = "",
+		Snippet = "",
+		String = "𝓐",
+		TypeParameter = "",
+		Unit = "",
+	},
 }
 
 M.setup = function()
@@ -61,8 +71,8 @@ M.setup = function()
 			{ name = "spell" },
 		}),
 		formatting = {
-      fields = { "kind", "abbr", "menu" },
-      format = lspkind.cmp_format(lsp_icons)
+			fields = { "kind", "abbr", "menu" },
+			format = lspkind.cmp_format(lsp_icons),
 
 			--[[ format = lspkind.cmp_format({ ]]
 			--[[ 	mode = "symbol_text", ]]

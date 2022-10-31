@@ -55,11 +55,15 @@ return packer.startup(function(use)
 	--[[      }) ]]
 	--[[ 	end, ]]
 	--[[ }) ]]
+
 	use({
+		--[[ "~/Documents/codes/lua/dir-telescope.nvim", ]]
 		"princejoogie/dir-telescope.nvim",
 		requires = { "nvim-telescope/telescope.nvim" },
+		branch = "dev",
 		config = function()
 			require("dir-telescope").setup()
+			--[[ { debug = true, } ]]
 		end,
 	})
 
