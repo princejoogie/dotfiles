@@ -131,10 +131,11 @@ end)
 -- TELESCOPE
 pcall(function()
 	local builtin = require("telescope.builtin")
+	local exts = require("telescope").extensions
 	local custom = require("configs.telescope")
 
 	keymap("n", "<C-f>", builtin.live_grep)
-	keymap("n", "<C-p>", "<cmd>Telescope find_files hidden=true no_ignore=true<CR>")
+	keymap("n", "<C-p>", builtin.find_files)
 	keymap("n", "<leader>ch", builtin.command_history)
 	keymap("n", "<leader>bf", builtin.buffers)
 	keymap("n", "<leader>fb", builtin.current_buffer_fuzzy_find)
@@ -142,11 +143,11 @@ pcall(function()
 	keymap("n", "<leader>fw", builtin.grep_string)
 	keymap("n", "<leader>gs", builtin.git_status)
 	keymap("n", "<leader>ts", builtin.treesitter)
-	keymap("n", "<leader>nh", "<cmd>Telescope notify<CR>")
 	keymap("n", "<leader>gi", custom.gh_issues)
 	keymap("n", "<leader>gp", custom.gh_prs)
-	keymap("n", "<leader>fd", "<cmd>GrepInDirectory<CR>")
-	keymap("n", "<leader>pd", "<cmd>FileInDirectory<CR>")
+	keymap("n", "<leader>nh", exts.notify.notify)
+	keymap("n", "<leader>fd", exts.dir.live_grep)
+	keymap("n", "<leader>pd", exts.dir.find_files)
 end)
 
 -- BARBAR
