@@ -5,18 +5,17 @@
 	helper = store
 [alias]
 	squash = "!f(){ git reset --soft HEAD~${1} && git commit --edit -m\"$(git log --format=%B --reverse HEAD..HEAD@{1})\";};f"
-
-# delta
 [core]
-    pager = delta
+  pager = delta
 [interactive]
-    diffFilter = delta --color-only
+  diffFilter = delta --color-only
 [add.interactive]
-    useBuiltin = false
+  useBuiltin = false
 [delta]
-    navigate = true
-    light = false
+  navigate = true
+  light = false
+  side-by-side = true
 [merge]
-    conflictstyle = diff3
+  conflictstyle = diff3
 [diff]
-    colorMoved = default
+  colorMoved = default
