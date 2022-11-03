@@ -1,7 +1,11 @@
 local telescope = safe_require("telescope")
+
 if not telescope then
 	return
 end
+
+local previewers = require("telescope.previewers")
+local builtin = require("telescope.builtin")
 
 local M = {}
 
@@ -45,6 +49,16 @@ M.setup = function()
 	end)
 end
 
+local delta = previewers.new_termopen_previewer({
+	get_command = function(entry)
+		if entry.status == "??" or "A " then
+			return { "git", "-c", "core.pager=delta", "-c", "delta.side-by-side=false", "diff", entry.value }
+		end
+
+		return { "git", "-c", "core.pager=delta", "-c", "delta.side-by-side=false", "diff", entry.value .. "^!" }
+	end,
+})
+
 function M.gh_issues()
 	local opts = {}
 	opts.prompt_title = " Issues"
@@ -55,6 +69,27 @@ function M.gh_prs()
 	local opts = {}
 	opts.prompt_title = " Pull Requests"
 	require("telescope").extensions.gh.pull_request(opts)
+end
+
+function M.git_status()
+	local opts = {}
+	opts.prompt_title = " Git Status"
+	opts.previewer = delta
+	builtin.git_status(opts)
+end
+
+function M.git_commits()
+	local opts = {}
+	opts.prompt_title = " Git Commits"
+	opts.previewer = delta
+	builtin.git_commits(opts)
+end
+
+function M.git_bcommits()
+	local opts = {}
+	opts.prompt_title = " Git Commits"
+	opts.previewer = delta
+	builtin.git_bcommits(opts)
 end
 
 return M
