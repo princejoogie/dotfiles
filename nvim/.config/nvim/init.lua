@@ -76,6 +76,9 @@ vim.cmd([[
 
   colorscheme nabi
   autocmd TermOpen * setlocal nonumber norelativenumber
+
+  command Z w | qa
+  cabbrev wqa Z
 ]])
 
 require("plugins")
