@@ -56,37 +56,7 @@ pcall(function()
 end)
 
 pcall(function()
-	local mediaExts = {
-		"mp4",
-		"mkv",
-		"avi",
-		"mp3",
-		"flac",
-		"ogg",
-		"webm",
-		"wav",
-		"m4a",
-		"aac",
-		"flv",
-		"mov",
-		"wmv",
-		"m4v",
-		"gif",
-		"jpg",
-		"jpeg",
-		"png",
-		"webp",
-		"pdf",
-		"doc",
-		"docx",
-		"xls",
-		"xlsx",
-		"ppt",
-		"pptx",
-		"zip",
-		"rar",
-		"7z",
-	}
+	local mediaExts = { "mp4", "mkv", "avi", "mp3", "flac", "ogg", "webm", "wav", "m4a", "aac", "flv", "mov", "wmv", "m4v", "gif", "jpg", "jpeg", "png", "webp", "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "zip", "rar", "7z", }
 
 	_G.OpenExternally = function()
 		local ext = vim.fn.expand("%:e"):lower()
