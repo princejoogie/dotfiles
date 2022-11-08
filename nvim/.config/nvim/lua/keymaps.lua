@@ -56,7 +56,37 @@ pcall(function()
 end)
 
 pcall(function()
-	local mediaExts = { "mp4", "mkv", "avi", "mp3", "flac", "ogg", "webm", "wav", "m4a", "aac", "flv", "mov", "wmv", "m4v", "gif", "jpg", "jpeg", "png", "webp", "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "zip", "rar", "7z", }
+	local mediaExts = {
+		"mp4",
+		"mkv",
+		"avi",
+		"mp3",
+		"flac",
+		"ogg",
+		"webm",
+		"wav",
+		"m4a",
+		"aac",
+		"flv",
+		"mov",
+		"wmv",
+		"m4v",
+		"gif",
+		"jpg",
+		"jpeg",
+		"png",
+		"webp",
+		"pdf",
+		"doc",
+		"docx",
+		"xls",
+		"xlsx",
+		"ppt",
+		"pptx",
+		"zip",
+		"rar",
+		"7z",
+	}
 
 	_G.OpenExternally = function()
 		local ext = vim.fn.expand("%:e"):lower()
@@ -106,6 +136,9 @@ pcall(function()
 
 	keymap("n", "<C-f>", builtin.live_grep)
 	keymap("n", "<C-p>", builtin.find_files)
+	keymap("n", "<leader>s", function()
+		builtin.spell_suggest(require("telescope.themes").get_cursor({}))
+	end)
 	keymap("n", "<leader>ch", builtin.command_history)
 	keymap("n", "<leader>bf", builtin.buffers)
 	keymap("n", "<leader>fb", builtin.current_buffer_fuzzy_find)
