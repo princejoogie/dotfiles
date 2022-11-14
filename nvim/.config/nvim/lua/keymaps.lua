@@ -2,6 +2,10 @@ local keymap = require("utils").keymap
 
 -- GENERAL KEYMAPS
 keymap("i", "jj", "<Esc>")
+keymap("n", "<C-u>", "<C-u>zz")
+keymap("n", "<C-d>", "<C-d>zz")
+keymap("n", "n", "nzz")
+keymap("n", "N", "Nzz")
 keymap("n", "<M-j>", ":resize -5<CR>")
 keymap("n", "<M-k>", ":resize +5<CR>")
 keymap("n", "<M-l>", ":vertical resize -5<CR>")
