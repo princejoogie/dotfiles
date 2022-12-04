@@ -155,9 +155,10 @@ pcall(function()
 	keymap("n", "<leader>gi", custom.gh_issues)
 	keymap("n", "<leader>gp", custom.gh_prs)
 	keymap("n", "<leader>nh", exts.notify.notify)
-	keymap("n", "<leader>fd", exts.dir.live_grep)
-	keymap("n", "<leader>pd", exts.dir.find_files)
 end)
+
+keymap("n", "<leader>fd", "<cmd>GrepInDirectory<CR>")
+keymap("n", "<leader>pd", "<cmd>FileInDirectory<CR>")
 
 -- BARBAR
 keymap("n", "<leader>0", ":BufferLast<CR>")

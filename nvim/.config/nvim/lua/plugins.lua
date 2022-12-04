@@ -50,7 +50,6 @@ return packer.startup(function(use)
 		"princejoogie/dir-telescope.nvim",
 		--[[ "~/Documents/codes/lua/dir-telescope.nvim", ]]
 		requires = { "nvim-telescope/telescope.nvim" },
-		branch = "dev",
 		config = function()
 			require("dir-telescope").setup()
 			--[[ { debug = true, } ]]
@@ -75,6 +74,7 @@ return packer.startup(function(use)
 	use("tpope/vim-surround")
 	use("tpope/vim-unimpaired")
 	use("sudoerwx/vim-ray-so-beautiful")
+	use("ThePrimeagen/vim-be-good")
 
 	use({ "JoosepAlviste/nvim-ts-context-commentstring", requires = { "nvim-treesitter/nvim-treesitter" } })
 	use({ "ThePrimeagen/harpoon", requires = { "nvim-lua/plenary.nvim" } })
@@ -214,14 +214,21 @@ return packer.startup(function(use)
 		run = ":TSUpdate",
 	})
 
-	use({
-		"rcarriga/nvim-notify",
-		config = function()
-			local notify = require("notify")
-			notify.setup({ background_colour = "#000000", fps = 60, level = 3, max_width = 120, max_height = 10 })
-			vim.notify = notify
-		end,
-	})
+	--[[ use({ ]]
+	--[[ 	"rcarriga/nvim-notify", ]]
+	--[[ 	config = function() ]]
+	--[[ 		local notify = require("notify") ]]
+	--[[ 		notify.setup({ ]]
+	--[[ 			background_colour = "#000000", ]]
+	--[[ 			fps = 60, ]]
+	--[[ 			level = 2, ]]
+	--[[ 			max_width = 120, ]]
+	--[[ 			max_height = 10, ]]
+	--[[        stages = "fade_in_slide_out", ]]
+	--[[ 		}) ]]
+	--[[ 		vim.notify = notify ]]
+	--[[ 	end, ]]
+	--[[ }) ]]
 
 	-- Debugging
 	use("rcarriga/nvim-dap-ui")

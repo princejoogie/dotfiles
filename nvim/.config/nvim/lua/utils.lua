@@ -5,7 +5,7 @@ _G.safe_require = function(module_name)
 	if not package_exists then
 		vim.defer_fn(function()
 			vim.schedule(function()
-				vim.notify("Could not load module: " .. module_name, "error", { title = "Module Not Found" })
+				vim.notify("Could not load module: " .. module_name, vim.log.levels.ERROR)
 			end)
 		end, 1000)
 		return nil
