@@ -46,19 +46,9 @@ return packer.startup(function(use)
 		end,
 	})
 
-	-- Custom
-	--[[ use({ ]]
-	--[[ 	"/home/joogie/Documents/codes/lua/plugins/mason-formatter.nvim", ]]
-	--[[ 	config = function() ]]
-	--[[ 		require("mason-formatter").setup({ ]]
-	--[[        ensure_installed = {"autopep8"}, ]]
-	--[[      }) ]]
-	--[[ 	end, ]]
-	--[[ }) ]]
-
 	use({
-		--[[ "princejoogie/dir-telescope.nvim", ]]
-		"~/Documents/codes/lua/dir-telescope.nvim",
+		"princejoogie/dir-telescope.nvim",
+		--[[ "~/Documents/codes/lua/dir-telescope.nvim", ]]
 		requires = { "nvim-telescope/telescope.nvim" },
 		branch = "dev",
 		config = function()
