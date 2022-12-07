@@ -19,8 +19,10 @@ M.setup = function()
 			width = nil,
 			max_width = { 140, 0.9 },
 			min_width = { 20, 0.2 },
-			winblend = 0,
-			winhighlight = "",
+			win_options = {
+				winblend = 0,
+				winhighlight = "",
+			},
 			override = function(conf)
 				return conf
 			end,
@@ -56,14 +58,16 @@ M.setup = function()
 				anchor = "NW",
 				border = "rounded",
 				relative = "editor",
-				winblend = 10,
-				winhighlight = "",
 				width = nil,
 				max_width = { 140, 0.8 },
 				min_width = { 40, 0.2 },
 				height = nil,
 				max_height = 0.9,
 				min_height = { 10, 0.2 },
+				win_options = {
+					winblend = 10,
+					winhighlight = "",
+				},
 				override = function(conf)
 					return conf
 				end,
