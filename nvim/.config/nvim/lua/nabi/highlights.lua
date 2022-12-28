@@ -280,6 +280,10 @@ hl.plugins.gitsigns = {
 	GitSignsDeleteNr = hl.predef.Red,
 }
 
+hl.plugins.which_key = {
+	WhichKeyFloat = { bg = p.bg0 },
+}
+
 hl.langs.markdown = {
 	markdownBlockquote = hl.predef.Grey,
 	markdownBold = { fg = p.none, bold = true },

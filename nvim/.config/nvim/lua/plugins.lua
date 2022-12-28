@@ -90,6 +90,12 @@ return packer.startup(function(use)
 	use({ "tpope/vim-dispatch", opt = true, cmd = { "Dispatch", "Make", "Focus", "Start" } })
 
 	use({
+		"folke/which-key.nvim",
+		config = function()
+			require("which-key").setup({})
+		end,
+	})
+	use({
 		"ggandor/leap.nvim",
 		config = function()
 			require("leap").add_default_mappings()

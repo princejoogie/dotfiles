@@ -1,5 +1,6 @@
 local M = {}
 
+---@diagnostic disable-next-line: duplicate-set-field
 _G.safe_require = function(module_name)
 	local package_exists, module = pcall(require, module_name)
 	if not package_exists then
@@ -29,6 +30,7 @@ M.keymap = function(mode, lhs, rhs, opts)
 	if rhs == nil then
 		rhs = ""
 	end
+
 	vim.keymap.set(mode, lhs, rhs, keyopts)
 end
 
