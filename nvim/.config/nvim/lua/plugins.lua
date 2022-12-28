@@ -214,21 +214,21 @@ return packer.startup(function(use)
 		run = ":TSUpdate",
 	})
 
-	--[[ use({ ]]
-	--[[ 	"rcarriga/nvim-notify", ]]
-	--[[ 	config = function() ]]
-	--[[ 		local notify = require("notify") ]]
-	--[[ 		notify.setup({ ]]
-	--[[ 			background_colour = "#000000", ]]
-	--[[ 			fps = 60, ]]
-	--[[ 			level = 2, ]]
-	--[[ 			max_width = 120, ]]
-	--[[ 			max_height = 10, ]]
-	--[[        stages = "fade_in_slide_out", ]]
-	--[[ 		}) ]]
-	--[[ 		vim.notify = notify ]]
-	--[[ 	end, ]]
-	--[[ }) ]]
+	use({
+		"rcarriga/nvim-notify",
+		config = function()
+			local notify = require("notify")
+			notify.setup({
+				background_colour = "#000000",
+				fps = 60,
+				level = vim.log.levels.ERROR,
+				max_width = 120,
+				max_height = 10,
+				stages = "fade_in_slide_out",
+			})
+			vim.notify = notify
+		end,
+	})
 
 	-- Debugging
 	use("rcarriga/nvim-dap-ui")

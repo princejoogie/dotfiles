@@ -50,7 +50,7 @@ local opts = {
 	smartcase = true,
 	smarttab = true,
 	softtabstop = 0,
-  scrolloff = 10,
+	scrolloff = 10,
 	tabstop = 2,
 	termguicolors = true,
 	ch = 0,
@@ -61,7 +61,7 @@ for k, v in pairs(opts) do
 end
 
 if os.getenv("CONDA_PREFIX") then
-  vim.g.python3_host_prog = os.getenv("CONDA_PREFIX") .. "/bin/python"
+	vim.g.python3_host_prog = os.getenv("CONDA_PREFIX") .. "/bin/python"
 end
 
 vim.g.nabi_transparent_background = true

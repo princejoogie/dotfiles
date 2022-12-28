@@ -17,6 +17,9 @@ case `uname` in
     export PATH=$PATH:$ANDROID_HOME/emulator
     export PATH=$PATH:$ANDROID_HOME/platform-tools
     export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+
+    export FLYCTL_INSTALL="/home/joogie/.fly"
+    export PATH="$FLYCTL_INSTALL/bin:$PATH"
   ;;
   Darwin)
     eval "$(/opt/homebrew/bin/brew shellenv)"
