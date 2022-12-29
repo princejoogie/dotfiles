@@ -56,6 +56,31 @@ return packer.startup(function(use)
 		end,
 	})
 
+	use({
+		"princejoogie/chafa.nvim",
+		requires = { "nvim-lua/plenary.nvim", "m00qek/baleia.nvim" },
+		config = function()
+			require("chafa").setup({
+				render = { min_padding = 5, show_label = true },
+				events = { update_on_nvim_resize = true },
+			})
+		end,
+	})
+
+	use({
+		"folke/zen-mode.nvim",
+		config = function()
+			require("zen-mode").setup({})
+		end,
+	})
+
+	use({
+		"folke/twilight.nvim",
+		config = function()
+			require("twilight").setup({})
+		end,
+	})
+
 	-- General
 	use("AndrewRadev/tagalong.vim")
 	use("MunifTanjim/nui.nvim")

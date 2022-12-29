@@ -32,7 +32,9 @@ keymap("n", "<leader>bd", ":bufdo bd<CR>", { desc = "Close all buffers" })
 keymap("v", "<M-j>", ":move '>+1<CR>gv-gv")
 keymap("v", "<M-k>", ":move '<-2<CR>gv-gv")
 keymap("v", "gf", "<C-W>f")
-keymap("n", "<leader>wk", "<cmd>WhichKey<CR>", { desc = "WhichKey" })
+keymap("n", "<leader>wk", "<cmd>WhichKey<CR>", { desc = "Which Key" })
+keymap("n", "<leader>aa", "<cmd>ZenMode<CR>", { desc = "Zen Mode" })
+keymap("n", "<leader>oe", "<cmd>silent !wslview %<CR>", { desc = "Open Externally" })
 
 -- LSP
 local diag = vim.diagnostic
@@ -61,55 +63,6 @@ pcall(function()
 end)
 
 pcall(function()
-	local mediaExts = {
-		"mp4",
-		"mkv",
-		"avi",
-		"mp3",
-		"flac",
-		"ogg",
-		"webm",
-		"wav",
-		"m4a",
-		"aac",
-		"flv",
-		"mov",
-		"wmv",
-		"m4v",
-		"gif",
-		"jpg",
-		"jpeg",
-		"png",
-		"webp",
-		"pdf",
-		"doc",
-		"docx",
-		"xls",
-		"xlsx",
-		"ppt",
-		"pptx",
-		"zip",
-		"rar",
-		"7z",
-	}
-
-	_G.OpenExternally = function()
-		local ext = vim.fn.expand("%:e"):lower()
-		if vim.tbl_contains(mediaExts, ext) then
-			vim.ui.select({ "Yes", "No" }, { prompt = "Open externally?" }, function(choice)
-				if choice == "Yes" then
-					local path = vim.fn.expand("%:p")
-					vim.cmd("silent !open " .. "'" .. path .. "'")
-					vim.cmd("silent! bd")
-				end
-			end)
-		end
-	end
-
-	vim.cmd("autocmd BufReadPost * lua OpenExternally()")
-end)
-
-pcall(function()
 	local jsExtensions = {
 		"javascript",
 		"javascriptreact",
@@ -130,7 +83,7 @@ pcall(function()
 		end
 	end
 
-	keymap("n", "<leader>rf", RenameBuffer)
+	keymap("n", "<leader>rf", RenameBuffer, { desc = "JS Rename file" })
 end)
 
 -- TELESCOPE
