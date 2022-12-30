@@ -66,6 +66,7 @@ M.setup = function()
 			{ name = "nvim_lua" },
 			{ name = "vsnip" },
 			{ name = "emoji", insert = true },
+			{ name = "path" },
 		}, {
 			{ name = "buffer" },
 			{ name = "spell" },

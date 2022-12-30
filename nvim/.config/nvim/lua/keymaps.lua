@@ -35,6 +35,7 @@ keymap("v", "gf", "<C-W>f")
 keymap("n", "<leader>wk", "<cmd>WhichKey<CR>", { desc = "Which Key" })
 keymap("n", "<leader>aa", "<cmd>ZenMode<CR>", { desc = "Zen Mode" })
 keymap("n", "<leader>oe", "<cmd>silent !wslview %<CR>", { desc = "Open Externally" })
+keymap("n", "<leader>vi", "<cmd>ViewImage<CR>", { desc = "Open Externally" })
 
 -- LSP
 local diag = vim.diagnostic
