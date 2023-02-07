@@ -234,7 +234,7 @@ return packer.startup(function(use)
 		end,
 		requires = {
 			"nvim-lua/plenary.nvim",
-			"nvim-telescope/telescope-dap.nvim",
+			--[[ "nvim-telescope/telescope-dap.nvim", ]]
 			"nvim-telescope/telescope-github.nvim",
 		},
 	})
@@ -263,14 +263,14 @@ return packer.startup(function(use)
 	})
 
 	-- Debugging
-	use("rcarriga/nvim-dap-ui")
-	use("theHamsta/nvim-dap-virtual-text")
-	use({
-		"mfussenegger/nvim-dap",
-		config = function()
-			require("configs.nvim-dap").setup()
-		end,
-	})
+	--[[ use("rcarriga/nvim-dap-ui") ]]
+	--[[ use("theHamsta/nvim-dap-virtual-text") ]]
+	--[[ use({ ]]
+	--[[ 	"mfussenegger/nvim-dap", ]]
+	--[[ 	config = function() ]]
+	--[[ 		require("configs.nvim-dap").setup() ]]
+	--[[ 	end, ]]
+	--[[ }) ]]
 
 	-- LSP
 	use("arkav/lualine-lsp-progress")
