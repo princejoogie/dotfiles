@@ -1,3 +1,4 @@
+---@diagnostic disable: different-requires
 local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
 
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
@@ -57,8 +58,8 @@ return packer.startup(function(use)
 	})
 
 	use({
-		"princejoogie/chafa.nvim",
-		--[[ "~/Documents/codes/lua/chafa.nvim", ]]
+		--[[ "princejoogie/chafa.nvim", ]]
+		"~/Documents/codes/lua/chafa.nvim",
 		requires = { "nvim-lua/plenary.nvim", "m00qek/baleia.nvim" },
 		config = function()
 			require("chafa").setup({
@@ -130,25 +131,18 @@ return packer.startup(function(use)
 		end,
 	})
 	use({
-		"romgrk/barbar.nvim",
-		requires = { "kyazdani42/nvim-web-devicons" },
-		config = function()
-			require("configs.barbar").setup()
-		end,
-	})
-	use({
 		"goolord/alpha-nvim",
 		requires = { "kyazdani42/nvim-web-devicons" },
 		config = function()
 			require("configs.alpha").setup()
 		end,
 	})
-	use({
-		"windwp/nvim-autopairs",
-		config = function()
-			require("configs.others").nvim_autopairs()
-		end,
-	})
+	--[[ use({ ]]
+	--[[ 	"windwp/nvim-autopairs", ]]
+	--[[ 	config = function() ]]
+	--[[ 		require("configs.others").nvim_autopairs() ]]
+	--[[ 	end, ]]
+	--[[ }) ]]
 	use({
 		"nvim-treesitter/nvim-treesitter-context",
 		requires = { "nvim-treesitter/nvim-treesitter" },
@@ -162,11 +156,36 @@ return packer.startup(function(use)
 			require("configs.others").toggleterm()
 		end,
 	})
+	--[[ use({ ]]
+	--[[ 	"nvim-tree/nvim-tree.lua", ]]
+	--[[ 	config = function() ]]
+	--[[ 		require("configs.others").nvim_tree() ]]
+	--[[ 	end, ]]
+	--[[ }) ]]
+	--[[ use({ ]]
+	--[[ 	"romgrk/barbar.nvim", ]]
+	--[[ 	requires = { "kyazdani42/nvim-web-devicons" }, ]]
+	--[[ 	config = function() ]]
+	--[[ 		require("configs.barbar").setup() ]]
+	--[[ 	end, ]]
+	--[[ }) ]]
 	use({
-		"nvim-tree/nvim-tree.lua",
-		--[[ commit = "7282f7de8aedf861fe0162a559fc2b214383c51c", ]]
+		"akinsho/bufferline.nvim",
+		requires = { "nvim-tree/nvim-web-devicons" },
 		config = function()
-			require("configs.others").nvim_tree()
+			require("configs.bufferline").setup()
+		end,
+	})
+	use({
+		"nvim-neo-tree/neo-tree.nvim",
+		requires = {
+			"nvim-lua/plenary.nvim",
+			"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+			"MunifTanjim/nui.nvim",
+			"mrbjarksen/neo-tree-diagnostics.nvim",
+		},
+		config = function()
+			require("configs.neo-tree").setup()
 		end,
 	})
 	use({

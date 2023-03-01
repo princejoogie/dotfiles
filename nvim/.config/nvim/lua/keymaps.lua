@@ -1,3 +1,4 @@
+---@diagnostic disable: different-requires
 local keymap = require("utils").keymap
 
 -- GENERAL KEYMAPS
@@ -10,7 +11,7 @@ keymap("n", "<M-j>", ":resize -5<CR>", { desc = "Decrease window height" })
 keymap("n", "<M-k>", ":resize +5<CR>", { desc = "Increase window height" })
 keymap("n", "<M-l>", ":vertical resize -5<CR>", { desc = "Decrease window width" })
 keymap("n", "<M-h>", ":vertical resize +5<CR>", { desc = "Increase window width" })
-keymap("n", "<C-b>", ":NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
+keymap("n", "<C-b>", ":Neotree toggle<CR>", { desc = "Toggle Neotree" })
 keymap("n", "<C-n>", ":noh<CR>", { desc = "Clear search highlights" })
 keymap("n", "<C-s>", ":w<CR>", { desc = "Save file" })
 keymap("n", "<C-z>", "<Nop>", { desc = "Disable undo" })
@@ -89,8 +90,8 @@ end)
 
 -- TELESCOPE
 pcall(function()
-	local builtin = require("telescope.builtin")
 	local exts = require("telescope").extensions
+	local builtin = require("telescope.builtin")
 	local custom = require("configs.telescope")
 
 	keymap("n", "<C-f>", builtin.live_grep, { desc = "Live grep" })
@@ -115,21 +116,9 @@ end)
 keymap("n", "<leader>fd", "<cmd>GrepInDirectory<CR>", { desc = "Grep in directory" })
 keymap("n", "<leader>pd", "<cmd>FileInDirectory<CR>", { desc = "File in directory" })
 
--- BARBAR
-keymap("n", "<leader>0", ":BufferLast<CR>")
-keymap("n", "<leader>1", ":BufferGoto 1<CR>")
-keymap("n", "<leader>2", ":BufferGoto 2<CR>")
-
-keymap("n", "<leader>3", ":BufferGoto 3<CR>")
-keymap("n", "<leader>4", ":BufferGoto 4<CR>")
-keymap("n", "<leader>5", ":BufferGoto 5<CR>")
-keymap("n", "<leader>6", ":BufferGoto 6<CR>")
-keymap("n", "<leader>7", ":BufferGoto 7<CR>")
-keymap("n", "<leader>8", ":BufferGoto 8<CR>")
-keymap("n", "<leader>9", ":BufferGoto 9<CR>")
-keymap("n", "<leader><S-TAB>", ":BufferPrevious<CR>", { desc = "Previous buffer" })
-keymap("n", "<leader><TAB>", ":BufferNext<CR>", { desc = "Next buffer" })
-keymap("n", "<leader>bc", ":BufferClose<CR>", { desc = "Close buffer" })
+keymap("n", "<leader><S-TAB>", ":bprevious<CR>", { desc = "Previous buffer" })
+keymap("n", "<leader><TAB>", ":bnext<CR>", { desc = "Next buffer" })
+keymap("n", "<leader>bc", ":bunload<CR>", { desc = "Close buffer" })
 
 -- NVIM-DAP
 pcall(function()
