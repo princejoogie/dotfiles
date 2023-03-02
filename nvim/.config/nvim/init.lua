@@ -68,6 +68,11 @@ vim.g.nabi_transparent_background = true
 vim.g.nabi_enable_italic = false
 vim.g.nabi_enable_italic_comment = false
 
+require("plugins")
+require("keymaps")
+require("lsp")
+require("commands")
+
 vim.cmd([[
   filetype on
   filetype plugin on
@@ -80,8 +85,3 @@ vim.cmd([[
   command Z w | qa
   cabbrev wqa Z
 ]])
-
-require("plugins")
-require("keymaps")
-require("lsp")
-require("commands")

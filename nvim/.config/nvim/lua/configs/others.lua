@@ -72,28 +72,6 @@ M.nvim_autopairs = function()
 	cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
 end
 
-M.nvim_tree = function()
-	local nvim_tree = safe_require("nvim-tree")
-	if not nvim_tree then
-		return
-	end
-
-	nvim_tree.setup({
-		view = {
-			width = 40,
-			hide_root_folder = true,
-		},
-		update_focused_file = {
-			enable = true,
-			update_cwd = false,
-			ignore_list = {},
-		},
-		renderer = {
-			highlight_opened_files = "current",
-		},
-	})
-end
-
 M.indent_blankline = function()
 	local indent = safe_require("indent_blankline")
 	if not indent then

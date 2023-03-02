@@ -3,5 +3,8 @@
     "Lua.diagnostics.disable": [
         "duplicate-set-field"
     ],
-    "Lua.workspace.checkThirdParty": false
+    "Lua.workspace.checkThirdParty": false,
+    "diagnostics.globals": [
+        "vim"
+    ]
 }

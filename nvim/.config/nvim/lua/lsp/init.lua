@@ -20,7 +20,7 @@ end
 
 m.setup({
 	ensure_installed = {
-		"sumneko_lua",
+		"lua_ls",
 		"emmet_ls",
 		"html",
 		"astro",
