@@ -137,6 +137,25 @@ return packer.startup(function(use)
 			require("configs.alpha").setup()
 		end,
 	})
+	use({
+		"akinsho/bufferline.nvim",
+		requires = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("configs.bufferline").setup()
+		end,
+	})
+	use({
+		"nvim-neo-tree/neo-tree.nvim",
+		requires = {
+			"nvim-lua/plenary.nvim",
+			"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+			"MunifTanjim/nui.nvim",
+			"mrbjarksen/neo-tree-diagnostics.nvim",
+		},
+		config = function()
+			require("configs.neo-tree").setup()
+		end,
+	})
 	--[[ use({ ]]
 	--[[ 	"windwp/nvim-autopairs", ]]
 	--[[ 	config = function() ]]
@@ -169,25 +188,6 @@ return packer.startup(function(use)
 	--[[ 		require("configs.barbar").setup() ]]
 	--[[ 	end, ]]
 	--[[ }) ]]
-	use({
-		"akinsho/bufferline.nvim",
-		requires = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			require("configs.bufferline").setup()
-		end,
-	})
-	use({
-		"nvim-neo-tree/neo-tree.nvim",
-		requires = {
-			"nvim-lua/plenary.nvim",
-			"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-			"MunifTanjim/nui.nvim",
-			"mrbjarksen/neo-tree-diagnostics.nvim",
-		},
-		config = function()
-			require("configs.neo-tree").setup()
-		end,
-	})
 	use({
 		"lukas-reineke/indent-blankline.nvim",
 		config = function()

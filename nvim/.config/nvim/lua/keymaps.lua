@@ -120,8 +120,8 @@ end)
 keymap("n", "<leader>fd", "<cmd>GrepInDirectory<CR>", { desc = "Grep in directory" })
 keymap("n", "<leader>pd", "<cmd>FileInDirectory<CR>", { desc = "File in directory" })
 
-keymap("n", "<leader><S-TAB>", ":bprevious<CR>", { desc = "Previous buffer" })
-keymap("n", "<leader><TAB>", ":bnext<CR>", { desc = "Next buffer" })
+keymap("n", "<leader><S-TAB>", ":BufferLineCyclePrev<CR>", { desc = "Previous buffer" })
+keymap("n", "<leader><TAB>", ":BufferLineCycleNext<CR>", { desc = "Next buffer" })
 keymap("n", "<leader>bc", ":BufferLinePickClose<CR>", { desc = "Close buffer" })
 
 -- NVIM-DAP
