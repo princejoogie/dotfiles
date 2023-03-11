@@ -4,9 +4,9 @@ echo "[✅] - Dependencies for polybar installed."
 
 
 echo "[⌛] - Installing polybar..."
-git clone --recursive https://github.com/polybar/polybar $INSTALL_DIR/polybar
-cd $INSTALL_DIR/polybar
-mkdir build && cd build
-cmake .. && make -j$(nproc)
+git clone --recursive https://github.com/polybar/polybar "$INSTALL_DIR"/polybar
+cd "$INSTALL_DIR"/polybar || exit
+mkdir build && cd build || exit
+cmake .. && make -j"$(nproc)"
 sudo make install
 echo "[✅] - Installed polybar."

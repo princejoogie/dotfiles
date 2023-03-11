@@ -4,8 +4,8 @@ echo "[✅] - Dependencies for picom installed."
 
 
 echo "[⌛] - Installing picom..."
-git clone https://github.com/yshui/picom $INSTALL_DIR/picom
-cd $INSTALL_DIR/picom
+git clone https://github.com/yshui/picom "$INSTALL_DIR"/picom
+cd "$INSTALL_DIR"/picom || exit
 git submodule update --init --recursive
 meson setup --buildtype=release . build
 ninja -C build

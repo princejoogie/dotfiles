@@ -53,7 +53,7 @@ local opts = {
 	scrolloff = 10,
 	tabstop = 2,
 	termguicolors = true,
-	ch = 0,
+	ch = 1,
 }
 
 for k, v in pairs(opts) do

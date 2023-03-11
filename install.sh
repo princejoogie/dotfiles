@@ -3,13 +3,22 @@
 export INSTALL_DIR=$HOME/.apps
 
 echo -n "Install bspwm?   (y/N): "
-read isBspwm
+read -r isBspwm
 echo -n "Install polybar? (y/N): "
-read isPolybar
+read -r isPolybar
 echo -n "Install picom?   (y/N): "
-read isPicom
+read -r isPicom
 echo -n "Install rofi?    (y/N): "
-read isRofi
+read -r isRofi
+
+DEPS=("stow" "feh" "dmenu" "curl" "alacritty")
+
+for dep in "${DEPS[@]}"; do
+  if ! [ -x "$(command -v "$dep")" ]; then
+    sudo apt install "$dep"
+  fi
+done
+
 
 if [[ $isBspwm = "y" || $isBspwm == "Y" ]]; then
   sh "$(pwd)/scripts/install-bspwm.sh"
