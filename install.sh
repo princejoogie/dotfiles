@@ -39,7 +39,7 @@ if ! [ -f "/usr/share/fonts/truetype/MesloLGSNF.ttf" ]; then
   fc-cache -v
 fi
 
-DEPS=("stow" "feh" "dmenu" "curl" "alacritty" "chafa")
+DEPS=("stow" "feh" "dmenu" "curl" "alacritty" "chafa" "lxappearance")
 
 for dep in "${DEPS[@]}"; do
   if ! [ -x "$(command -v "$dep")" ]; then
