@@ -11,8 +11,6 @@ read -r isPicom
 echo -n "Install rofi?    (y/N): "
 read -r isRofi
 
-DEPS=("stow" "feh" "dmenu" "curl" "alacritty")
-
 if ! [ -d "/usr/share/fonts/truetype/firacode" ]; then
   sudo mkdir /usr/share/fonts/truetype/firacode
   sudo cp ./fonts/firacode/* /usr/share/fonts/truetype/firacode
@@ -24,6 +22,8 @@ if ! [ -d "/usr/share/fonts/truetype/helvetica" ]; then
   sudo cp ./fonts/helvetica/* /usr/share/fonts/truetype/helvetica
   fc-cache -v
 fi
+
+DEPS=("stow" "feh" "dmenu" "curl" "alacritty" "chafa")
 
 for dep in "${DEPS[@]}"; do
   if ! [ -x "$(command -v "$dep")" ]; then

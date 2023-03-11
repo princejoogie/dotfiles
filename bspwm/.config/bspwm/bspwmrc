@@ -21,6 +21,6 @@ bspc config focus_follows_pointer true
 bspc config border_width 1
 
 xsetroot -cursor_name left_ptr &
-feh --bg-fill "$HOME"/dotfiles/wallpapers/e.jpg
+feh --bg-fill "$HOME"/dotfiles/wallpapers/d.jpg
 "$HOME"/.config/polybar/launch.sh
-picom --experimental-backends &
+"$HOME"/.config/picom/launch.sh
