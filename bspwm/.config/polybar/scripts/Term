@@ -24,6 +24,6 @@ case "$1" in
   --of)
     alacritty --hold --class Sysfetch,Alacritty -e ~/.local/bin/sysfetch    ;;
   *)
-    echo "Opción no válida";;
+    echo "Invalid option";;
 esac
 
