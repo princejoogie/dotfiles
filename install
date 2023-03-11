@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-STOW_FOLDERS="nvim,tmux,zsh,i3,polybar,alacritty"
-
-for folder in $(echo $STOW_FOLDERS | sed "s/,/ /g"); do
-	stow -D $folder
-	stow $folder
-done
-

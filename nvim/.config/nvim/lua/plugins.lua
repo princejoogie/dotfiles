@@ -58,8 +58,7 @@ return packer.startup(function(use)
 	})
 
 	use({
-		--[[ "princejoogie/chafa.nvim", ]]
-		"~/Documents/codes/lua/chafa.nvim",
+		"princejoogie/chafa.nvim",
 		requires = { "nvim-lua/plenary.nvim", "m00qek/baleia.nvim" },
 		config = function()
 			require("chafa").setup({
