@@ -84,5 +84,10 @@ fi
 
 stow bspwm
 stow alacritty
+stow zsh
+stow nvim
+stow tmux
+
+source ~/.zshrc
 
 sh "$(pwd)/scripts/config-terminal.sh"

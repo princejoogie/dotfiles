@@ -12,19 +12,11 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/themes/powerlevel10k
 
-stow zsh nvim tmux
-source ~/.zshrc
-
 cargo install tree-sitter-cli fnm bob-nvim
 
-echo "[⌛] - Configuring fnm..."
-fnm install 16.9.1
-fnm use 16.9.1
-
-echo "[⌛] - Configuring bob..."
-bob install stable
-bob use stable
-
 echo "[✅] - Configuration done."
-echo "  sudo chsh -s \$(which zsh)"
-echo "  then logout and login back in to take effect"
+sudo chsh -s \$(which zsh)
+echo "[⌛] - Changin shell..."
+echo "   run \`who\`"
+echo "   then pkill -KILL -u <user>"
+echo "   after logging back in, run ./scripts/post-install.sh"
