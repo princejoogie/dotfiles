@@ -39,11 +39,11 @@ if ! [ -f "/usr/share/fonts/truetype/MesloLGSNF.ttf" ]; then
   fc-cache -v
 fi
 
-DEPS=("stow" "feh" "dmenu" "curl" "alacritty" "chafa" "lxappearance")
+DEPS=("stow" "feh" "dmenu" "curl" "alacritty" "chafa" "lxappearance" "ripgrep")
 
 for dep in "${DEPS[@]}"; do
   if ! [ -x "$(command -v "$dep")" ]; then
-    sudo apt install "$dep"
+    sudo apt install "$dep" -y
   fi
 done
 
@@ -82,10 +82,7 @@ if [[ $isRofi = "y" || $isRofi == "Y" ]]; then
   echo "rofi: $(which rofi)"
 fi
 
-# STOW_FOLDERS="nvim,tmux,zsh,i3,polybar,alacritty"
-#
-# for folder in $(echo $STOW_FOLDERS | sed "s/,/ /g"); do
-# 	stow -D $folder
-# 	stow $folder
-# done
-#
+stow bspwm
+stow alacritty
+
+sh "$(pwd)/scripts/config-terminal.sh"
