@@ -15,7 +15,13 @@ DEPS=("stow" "feh" "dmenu" "curl" "alacritty")
 
 if ! [ -d "/usr/share/fonts/truetype/firacode" ]; then
   sudo mkdir /usr/share/fonts/truetype/firacode
-  sudo cp ./fonts* /usr/share/fonts/truetype/firacode
+  sudo cp ./fonts/firacode/* /usr/share/fonts/truetype/firacode
+  fc-cache -v
+fi
+
+if ! [ -d "/usr/share/fonts/truetype/helvetica" ]; then
+  sudo mkdir /usr/share/fonts/truetype/helvetica
+  sudo cp ./fonts/helvetica/* /usr/share/fonts/truetype/helvetica
   fc-cache -v
 fi
 
