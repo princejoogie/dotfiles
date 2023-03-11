@@ -17,9 +17,25 @@ if ! [ -d "/usr/share/fonts/truetype/firacode" ]; then
   fc-cache -v
 fi
 
+if ! [ -d "/usr/share/fonts/truetype/fontawesome" ]; then
+  sudo mkdir /usr/share/fonts/truetype/fontawesome
+  sudo cp ./fonts/fontawesome/* /usr/share/fonts/truetype/fontawesome
+  fc-cache -v
+fi
+
 if ! [ -d "/usr/share/fonts/truetype/helvetica" ]; then
   sudo mkdir /usr/share/fonts/truetype/helvetica
   sudo cp ./fonts/helvetica/* /usr/share/fonts/truetype/helvetica
+  fc-cache -v
+fi
+
+if ! [ -f "/usr/share/fonts/truetype/MaterialDesignIconsDesktop.ttf" ]; then
+  sudo cp ./fonts/MaterialDesignIconsDesktop.ttf /usr/share/fonts/truetype
+  fc-cache -v
+fi
+
+if ! [ -f "/usr/share/fonts/truetype/MesloLGSNF.ttf" ]; then
+  sudo cp ./fonts/MesloLGSNF.ttf /usr/share/fonts/truetype
   fc-cache -v
 fi
 
