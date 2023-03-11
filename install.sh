@@ -13,12 +13,17 @@ read -r isRofi
 
 DEPS=("stow" "feh" "dmenu" "curl" "alacritty")
 
+if ! [ -d "/usr/share/fonts/truetype/firacode" ]; then
+  sudo mkdir /usr/share/fonts/truetype/firacode
+  sudo cp ./fonts* /usr/share/fonts/truetype/firacode
+  fc-cache -v
+fi
+
 for dep in "${DEPS[@]}"; do
   if ! [ -x "$(command -v "$dep")" ]; then
     sudo apt install "$dep"
   fi
 done
-
 
 if [[ $isBspwm = "y" || $isBspwm == "Y" ]]; then
   sh "$(pwd)/scripts/install-bspwm.sh"
