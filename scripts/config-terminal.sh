@@ -15,8 +15,8 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-
 cargo install tree-sitter-cli fnm bob-nvim
 
 echo "[✅] - Configuration done."
-sudo chsh -s \$(which zsh)
-echo "[⌛] - Changin shell..."
+sudo chsh -s $(which zsh)
+echo "[⌛] - Changing shell..."
 echo "   run \`who\`"
 echo "   then pkill -KILL -u <user>"
 echo "   after logging back in, run ./scripts/post-install.sh"
