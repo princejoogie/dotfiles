@@ -12,7 +12,10 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/themes/powerlevel10k
 
-cargo install tree-sitter-cli fnm bob-nvim git-delta
-sudo chsh -s "$(which zsh)"
+rm -rf ~/.bashrc ~/.zshrc
+
+stow zsh
 
 echo "[✅] - Configuration done."
+echo "   Restart your terminal and run"
+echo "   $(pwd)/scripts/post-install.sh"

@@ -82,12 +82,12 @@ if [[ $isRofi = "y" || $isRofi == "Y" ]]; then
   echo "rofi: $(which rofi)"
 fi
 
-sudo rm ~/.bashrc -y
-
 stow bspwm
 stow alacritty
 stow nvim
 stow tmux
-stow zsh
 
-sh "$(pwd)/scripts/config-terminal.sh"
+echo "[✅] - Installation done."
+echo "   Restart your terminal and run"
+echo "   $(pwd)/scripts/config-terminal.sh"
+
