@@ -85,3 +85,4 @@ if [ -x "$(command -v zsh)" ]; then
   exec $IZSH -l
 fi
 
+. "$HOME/.cargo/env"

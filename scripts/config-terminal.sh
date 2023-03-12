@@ -2,7 +2,7 @@ export INSTALL_DIR=$HOME/.apps
 
 echo "[⌛] - Configuring terminal..."
 sudo apt install tmux zsh -y
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 export CHSH=no
 export RUNZSH=no
@@ -12,7 +12,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/themes/powerlevel10k
 
-cargo install tree-sitter-cli fnm bob-nvim
+cargo install tree-sitter-cli fnm bob-nvim git-delta
 sudo chsh -s "$(which zsh)"
 
 echo "[✅] - Configuration done."
