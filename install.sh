@@ -82,12 +82,12 @@ if [[ $isRofi = "y" || $isRofi == "Y" ]]; then
   echo "rofi: $(which rofi)"
 fi
 
+sudo rm ~/.bashrc -y
+
 stow bspwm
 stow alacritty
-stow zsh
 stow nvim
 stow tmux
-
-source ~/.zshrc
+stow zsh
 
 sh "$(pwd)/scripts/config-terminal.sh"

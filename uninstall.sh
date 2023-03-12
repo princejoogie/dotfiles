@@ -63,7 +63,7 @@ if [ -x "$(command -v rofi)" ]; then
   read -r isRofi
 
   if [[ $isRofi = "y" || $isRofi == "Y" ]]; then
-    sudo apt remove rofi
+    sudo apt remove rofi -y
     echo "[✅] - Uninstalled rofi."
   fi
 else

@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-#  ╔╦╗╔═╗╦═╗╔╦╗
-#   ║ ║╣ ╠╦╝║║║
-#   ╩ ╚═╝╩╚═╩ ╩
-#	Script to open with selected terminal
-#   Author: z0mbi3
-#	url: https://github.com/gh0stzk
 
 case "$1" in
   --ot)

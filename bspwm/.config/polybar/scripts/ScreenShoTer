@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-#  ╔═╗╔═╗╦═╗╔═╗╔═╗╔╗╔╔═╗╦ ╦╔═╗╔╦╗╔═╗╦═╗
-#  ╚═╗║  ╠╦╝║╣ ║╣ ║║║╚═╗╠═╣║ ║ ║ ║╣ ╠╦╝
-#  ╚═╝╚═╝╩╚═╚═╝╚═╝╝╚╝╚═╝╩ ╩╚═╝ ╩ ╚═╝╩╚═
-#	Modified by z0mbi3 https://github.com/gh0stzk
 
 time=$(date +%Y-%m-%d-%I-%M-%S)
 geometry=`xrandr | head -n1 | cut -d',' -f2 | tr -d '[:blank:],current'`
