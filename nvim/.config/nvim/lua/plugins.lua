@@ -77,6 +77,13 @@ return packer.startup(function(use)
 	})
 
 	use({
+		"folke/neodev.nvim",
+		config = function()
+			require("neodev").setup({})
+		end,
+	})
+
+	use({
 		"folke/twilight.nvim",
 		config = function()
 			require("twilight").setup({})
@@ -156,12 +163,12 @@ return packer.startup(function(use)
 			require("configs.neo-tree").setup()
 		end,
 	})
-	--[[ use({ ]]
-	--[[ 	"windwp/nvim-autopairs", ]]
-	--[[ 	config = function() ]]
-	--[[ 		require("configs.others").nvim_autopairs() ]]
-	--[[ 	end, ]]
-	--[[ }) ]]
+	use({
+		"windwp/nvim-autopairs",
+		config = function()
+			require("configs.others").nvim_autopairs()
+		end,
+	})
 	use({
 		"nvim-treesitter/nvim-treesitter-context",
 		requires = { "nvim-treesitter/nvim-treesitter" },
@@ -175,19 +182,6 @@ return packer.startup(function(use)
 			require("configs.others").toggleterm()
 		end,
 	})
-	--[[ use({ ]]
-	--[[ 	"nvim-tree/nvim-tree.lua", ]]
-	--[[ 	config = function() ]]
-	--[[ 		require("configs.others").nvim_tree() ]]
-	--[[ 	end, ]]
-	--[[ }) ]]
-	--[[ use({ ]]
-	--[[ 	"romgrk/barbar.nvim", ]]
-	--[[ 	requires = { "kyazdani42/nvim-web-devicons" }, ]]
-	--[[ 	config = function() ]]
-	--[[ 		require("configs.barbar").setup() ]]
-	--[[ 	end, ]]
-	--[[ }) ]]
 	use({
 		"lukas-reineke/indent-blankline.nvim",
 		config = function()

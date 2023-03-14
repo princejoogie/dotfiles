@@ -50,26 +50,26 @@ M.nvim_autopairs = function()
 	autopairs.setup({
 		check_ts = true,
 		ts_config = {
-			lua = { "string", "source" },
-			javascript = { "string", "template_string" },
+			lua = { "string" },
+			javascript = { "template_string" },
 			java = false,
 		},
-		disable_filetype = { "TelescopePrompt" },
+		disable_filetype = { "TelescopePrompt", "vim" },
 	})
 
-	local cmp_autopairs = safe_require("nvim-autopairs.completion.cmp")
-
-	if not cmp_autopairs then
-		return
-	end
-
-	local cmp = safe_require("cmp")
-
-	if not cmp then
-		return
-	end
-
-	cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
+	--[[ local cmp_autopairs = safe_require("nvim-autopairs.completion.cmp") ]]
+	--[[]]
+	--[[ if not cmp_autopairs then ]]
+	--[[ 	return ]]
+	--[[ end ]]
+	--[[]]
+	--[[ local cmp = safe_require("cmp") ]]
+	--[[]]
+	--[[ if not cmp then ]]
+	--[[ 	return ]]
+	--[[ end ]]
+	--[[]]
+	--[[ cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } })) ]]
 end
 
 M.indent_blankline = function()
