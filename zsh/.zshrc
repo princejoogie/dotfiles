@@ -4,7 +4,10 @@ export OPENAI_APIKEY=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
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:~/.local/share/bob/nvim-bin
 source "$HOME/.cargo/env"
+export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
 export PATH=$PATH:$HOME/.cargo/bin
+export NVIM_DATA=$HOME/.local/share/nvim
+export EDITOR=nvim
 
 case `uname` in
   Linux)
@@ -61,17 +64,14 @@ esac
 
 # Plugins
 
-source $HOME/Documents/github/znap/zsh-snap/znap.zsh
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-znap source romkatv/powerlevel10k
-znap source zsh-users/zsh-autosuggestions
-
 export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_TMUX_AUTOSTART=true
+ZSH_THEME="powerlevel10k/powerlevel10k"
 CASE_SENSITIVE="false"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
@@ -81,6 +81,7 @@ plugins=(
 	tmux
 	z
 	vi-mode
+  direnv
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -96,13 +97,7 @@ alias e=echo
 alias cl="xclip -selection c"
 alias ipv4="echo $(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}')"
 
-# Variables
-NVIM_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/nvim"
-
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# direnv
-eval "$(direnv hook zsh)"
 
 # pnpm
 export PNPM_HOME="/home/joogie/.local/share/pnpm"
@@ -111,3 +106,8 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# fnm
+export PATH="$HOME/.local/share/fnm:$PATH"
+eval "`fnm env`"
+# fnm end
