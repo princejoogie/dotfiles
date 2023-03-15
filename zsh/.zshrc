@@ -1,12 +1,11 @@
 # Variables
+source "$HOME/.cargo/env"
+
 export EDITOR=nvim
 export PATH=$PATH:/usr/local/go/bin
-export PATH=$PATH:~/.local/share/bob/nvim-bin
-source "$HOME/.cargo/env"
 export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
 export PATH=$PATH:$HOME/.cargo/bin
 export NVIM_DATA=$HOME/.local/share/nvim
-export EDITOR=nvim
 
 case `uname` in
   Linux)
