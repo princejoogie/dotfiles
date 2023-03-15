@@ -1,7 +1,16 @@
 export INSTALL_DIR=$HOME/.apps
 
 echo "[⌛] - Configuring terminal..."
-sudo apt install tmux zsh -y
+
+if ! [ -x "$(command -v apt)" ]; then
+  sudo apt install tmux zsh -y
+elif ! [ -x "$(command -v pacman)" ]; then
+  sudo pacman -Sy tmux zsh
+else
+  echo "[❌] - Package manager not found."
+  exit 1
+fi
+
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 export CHSH=no
