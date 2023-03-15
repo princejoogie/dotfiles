@@ -10,10 +10,6 @@ export EDITOR=nvim
 
 case `uname` in
   Linux)
-    export NVM_DIR="$HOME/.config/nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
     export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
     export PATH=$PATH:$JAVA_HOME/bin
 
@@ -27,10 +23,6 @@ case `uname` in
   ;;
   Darwin)
     eval "$(/opt/homebrew/bin/brew shellenv)"
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \. "$(brew --prefix)/opt/nvm/nvm.sh"
-    [ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm"
-
     export PYTHON_PATH=$HOME/Library/Python/3.9/bin
     export PATH=$PATH:$PYTHON_PATH
     export ANDROID_HOME=$HOME/Library/Android/sdk
