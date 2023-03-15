@@ -17,7 +17,7 @@ case $ID in
   arch)
     for dep in "${DEPS[@]}"; do
       if ! [ -x "$(command -v "$dep")" ]; then
-        sudo pacman -S "$dep"
+        yes | sudo pacman -S "$dep"
       fi
     done
   ;;
@@ -42,7 +42,7 @@ if [[ $isBspwm = "y" || $isBspwm == "Y" ]]; then
       sh "$(pwd)/scripts/install-bspwm.sh"
     ;;
     arch)
-      sudo pacman -S bspwm sxhkd
+      yes | sudo pacman -S bspwm sxhkd
     ;;
     *)
       echo "[❌] - Unsupported OS"
@@ -56,7 +56,7 @@ if [[ $isPolybar = "y" || $isPolybar == "Y" ]]; then
       sh "$(pwd)/scripts/install-polybar.sh"
     ;;
     arch)
-      sudo pacman -S polybar
+      yes | sudo pacman -S polybar
     ;;
     *)
       echo "[❌] - Unsupported OS"
@@ -70,7 +70,7 @@ if [[ $isPicom = "y" || $isPicom == "Y" ]]; then
       sh "$(pwd)/scripts/install-picom.sh"
     ;;
     arch)
-      sudo pacman -S picom
+      yes | sudo pacman -S picom
     ;;
     *)
       echo "[❌] - Unsupported OS"
@@ -84,7 +84,7 @@ if [[ $isRofi = "y" || $isRofi == "Y" ]]; then
       sh "$(pwd)/scripts/install-rofi.sh"
     ;;
     arch)
-      sudo pacman -S rofi
+      yes | sudo pacman -S rofi
     ;;
     *)
       echo "[❌] - Unsupported OS"

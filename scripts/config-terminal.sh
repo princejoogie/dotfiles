@@ -9,7 +9,7 @@ case $ID in
     sudo apt install tmux zsh -y
   ;;
   arch)
-    sudo pacman -S tmux zsh
+    yes | sudo pacman -S tmux zsh
   ;;
   *)
     echo "[❌] - Unsupported OS"
