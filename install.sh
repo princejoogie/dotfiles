@@ -2,7 +2,16 @@
 
 export INSTALL_DIR=$HOME/.apps
 
-DEPS=("stow" "feh" "dmenu" "curl" "alacritty" "chafa" "lxappearance" "ripgrep" "thunar")
+DEPS=("stow" "feh" "dmenu" "curl" "alacritty" "chafa" "lxappearance" "ripgrep" "thunar" "shellcheck" "btop")
+
+echo -n "Install bspwm?   (y/N): "
+read -r isBspwm
+echo -n "Install polybar? (y/N): "
+read -r isPolybar
+echo -n "Install picom?   (y/N): "
+read -r isPicom
+echo -n "Install rofi?    (y/N): "
+read -r isRofi
 
 . /etc/os-release
 
@@ -26,15 +35,6 @@ case $ID in
     exit 1
   ;;
 esac
-
-echo -n "Install bspwm?   (y/N): "
-read -r isBspwm
-echo -n "Install polybar? (y/N): "
-read -r isPolybar
-echo -n "Install picom?   (y/N): "
-read -r isPicom
-echo -n "Install rofi?    (y/N): "
-read -r isRofi
 
 if [[ $isBspwm = "y" || $isBspwm == "Y" ]]; then
   case $ID in
