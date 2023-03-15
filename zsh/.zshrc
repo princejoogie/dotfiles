@@ -1,6 +1,5 @@
 # Variables
 export EDITOR=nvim
-export OPENAI_APIKEY=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
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:~/.local/share/bob/nvim-bin
 source "$HOME/.cargo/env"
