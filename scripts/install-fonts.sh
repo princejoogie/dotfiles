@@ -6,14 +6,26 @@ if ! [ -d "$FONT_DIR" ]; then
   mkdir -p "$FONT_DIR"
 fi
 
-if ! [ -d "$FONT_DIR"/firacode ]; then
-  sudo mkdir "$FONT_DIR"/firacode
-  sudo cp ./fonts/firacode/* "$FONT_DIR"/firacode
-  fc-cache -v
-  echo "[✅] - firacode installed."
-else
-  echo "[  ] - firacode already installed, skipping."
-fi
+. /etc/os-release
+
+case $ID in
+  ubuntu)
+    if ! [ -d "$FONT_DIR"/firacode ]; then
+      sudo mkdir "$FONT_DIR"/firacode
+      sudo cp ./fonts/firacode/* "$FONT_DIR"/firacode
+      fc-cache -v
+      echo "[✅] - firacode installed."
+    else
+      echo "[  ] - firacode already installed, skipping."
+    fi
+  ;;
+  arch)
+    yes | sudo pacman -S ttf-fira-code
+  ;;
+  *)
+  ;;
+esac
+
 
 if ! [ -d "$FONT_DIR"/fontawesome ]; then
   sudo mkdir "$FONT_DIR"/fontawesome

@@ -31,7 +31,7 @@ colors:
 font:
   size: 14
   normal:
-    family: FiraCode Nerd Font
+    family: Fira Code
 
 window:
   opacity: 0.90
