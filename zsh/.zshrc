@@ -72,6 +72,7 @@ plugins=(
 	z
 	vi-mode
   direnv
+  zsh-autosuggestions
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -85,7 +86,6 @@ alias so=source
 alias x=exit
 alias e=echo
 alias cl="xclip -selection c"
-alias ipv4="echo $(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}')"
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
