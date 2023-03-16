@@ -2,7 +2,7 @@
 
 export INSTALL_DIR=$HOME/.apps
 
-DEPS=("stow" "feh" "dmenu" "curl" "alacritty" "chafa" "lxappearance" "ripgrep" "thunar" "shellcheck" "btop" "flameshot")
+DEPS=("stow" "feh" "dmenu" "curl" "alacritty" "chafa" "lxappearance" "ripgrep" "thunar" "shellcheck" "btop" "flameshot" "pavucontrol" "jq")
 
 echo -n "Install bspwm?   (y/N): "
 read -r isBspwm
