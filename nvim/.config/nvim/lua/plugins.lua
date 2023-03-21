@@ -89,6 +89,13 @@ return packer.startup(function(use)
 		end,
 	})
 
+	use({
+		"s1n7ax/nvim-window-picker",
+		config = function()
+			require("window-picker").setup({})
+		end,
+	})
+
 	-- General
 	use("AndrewRadev/tagalong.vim")
 	use("MunifTanjim/nui.nvim")
