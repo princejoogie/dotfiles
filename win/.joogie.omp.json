@@ -93,9 +93,7 @@
           "powerline_symbol": "\ue0b0",
           "foreground": "#ffffff",
           "background": "#059669",
-          "background_templates": [
-            "{{ if gt .Code 0 }}#EF4444{{ end }}"
-          ],
+          "background_templates": ["{{ if gt .Code 0 }}#EF4444{{ end }}"],
           "template": " \ue23a{{ if gt .Code 0 }}\uf00d{{ else }}\uf42e{{ end }} ",
           "properties": {
             "always_enabled": true
@@ -104,7 +102,15 @@
       ]
     },
     {
-      "type": "newline"
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "template": "\n"
+        }
+      ]
     },
     {
       "type": "prompt",
