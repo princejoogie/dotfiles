@@ -50,7 +50,7 @@ return packer.startup(function(use)
 		"catppuccin/nvim",
 		as = "catppuccin",
 		config = function()
-			require("configs.catpuccin").setup()
+			require("configs.catppuccin").setup()
 		end,
 	})
 
