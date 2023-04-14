@@ -46,6 +46,13 @@ return packer.startup(function(use)
 			require("impatient").enable_profile()
 		end,
 	})
+	use({
+		"catppuccin/nvim",
+		as = "catppuccin",
+		config = function()
+			require("configs.catpuccin").setup()
+		end,
+	})
 
 	use({
 		"princejoogie/dir-telescope.nvim",
@@ -242,7 +249,7 @@ return packer.startup(function(use)
 	use({
 		"nvim-lualine/lualine.nvim",
 		config = function()
-			require("configs.lualine").setup()
+			require("configs.lualine-new").setup()
 		end,
 		requires = { "vuki656/package-info.nvim" },
 	})

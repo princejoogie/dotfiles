@@ -494,6 +494,10 @@ local function load_sync()
 	for group, val in pairs(defaults) do
 		vim.api.nvim_set_hl(0, group, val)
 	end
+
+	for _, group in ipairs(vim.fn.getcompletion("@lsp", "highlight")) do
+		vim.api.nvim_set_hl(0, group, {})
+	end
 	-- END OF BREAKING CHANGES
 
 	for _, group in pairs(hl.langs) do

@@ -1,32 +1,74 @@
-# TokyoNight Alacritty Colors
 colors:
-  bright:
-    black: "#374151"
-    blue: "#7199ee"
-    cyan: "#38a89d"
-    green: "#95c561"
-    magenta: "#a485dd"
-    red: "#ee6d85"
-    white: "#a0a8cd"
-    yellow: "#d7a65f"
-  cursor:
-    cursor: "#a0a8cd"
-    text: "#11121d"
-  normal:
-    black: "#06080a"
-    blue: "#7199ee"
-    cyan: "#38a89d"
-    green: "#95c561"
-    magenta: "#a485dd"
-    red: "#ee6d85"
-    white: "#a0a8cd"
-    yellow: "#d7a65f"
   primary:
-    background: "#06080a"
-    foreground: "#a0a8cd"
+    background: "#11111B" # base
+    bright_foreground: "#CDD6F4" # text
+    dim_foreground: "#CDD6F4" # text
+    foreground: "#CDD6F4" # text
+
+  cursor:
+    cursor: "#F5E0DC" # rosewater
+    text: "#1E1E2E" # base
+
+  vi_mode_cursor:
+    cursor: "#B4BEFE" # lavender
+    text: "#1E1E2E" # base
+
+  search:
+    focused_match:
+      background: "#A6E3A1" # green
+      foreground: "#1E1E2E" # base
+    footer_bar:
+      background: "#A6ADC8" # subtext0
+      foreground: "#1E1E2E" # base
+    matches:
+      background: "#A6ADC8" # subtext0
+      foreground: "#1E1E2E" # base
+
+  hints:
+    end:
+      background: "#A6ADC8" # subtext0
+      foreground: "#1E1E2E" # base
+    start:
+      background: "#F9E2AF" # yellow
+      foreground: "#1E1E2E" # base
+
   selection:
-    background: "#95c561"
-    text: "#000000"
+    background: "#F5E0DC" # rosewater
+    text: "#1E1E2E" # base
+
+  normal:
+    black: "#45475A" # surface1
+    blue: "#89B4FA" # blue
+    cyan: "#94E2D5" # teal
+    green: "#A6E3A1" # green
+    magenta: "#F5C2E7" # pink
+    red: "#F38BA8" # red
+    white: "#BAC2DE" # subtext1
+    yellow: "#F9E2AF" # yellow
+
+  bright:
+    black: "#585B70" # surface2
+    blue: "#89B4FA" # blue
+    cyan: "#94E2D5" # teal
+    green: "#A6E3A1" # green
+    magenta: "#F5C2E7" # pink
+    red: "#F38BA8" # red
+    white: "#A6ADC8" # subtext0
+    yellow: "#F9E2AF" # yellow
+
+  dim:
+    black: "#45475A" # surface1
+    blue: "#89B4FA" # blue
+    cyan: "#94E2D5" # teal
+    green: "#A6E3A1" # green
+    magenta: "#F5C2E7" # pink
+    red: "#F38BA8" # red
+    white: "#BAC2DE" # subtext1
+    yellow: "#F9E2AF" # yellow
+
+  indexed_colors:
+    - { color: "#F5E0DC", index: 17 }
+    - { color: "#FAB387", index: 16 }
 
 font:
   size: 14
@@ -34,7 +76,7 @@ font:
     family: Fira Code
 
 window:
-  opacity: 0.90
+  opacity: 1
 
 alt_send_esc: false
 

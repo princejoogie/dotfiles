@@ -25,7 +25,6 @@ vim.g.mapleader = " "
 local opts = {
 	autoindent = true,
 	autoread = true,
-	background = "dark",
 	clipboard = "unnamedplus",
 	encoding = "UTF-8",
 	cursorline = true,
@@ -64,9 +63,9 @@ if os.getenv("CONDA_PREFIX") then
 	vim.g.python3_host_prog = os.getenv("CONDA_PREFIX") .. "/bin/python"
 end
 
-vim.g.nabi_transparent_background = true
-vim.g.nabi_enable_italic = false
-vim.g.nabi_enable_italic_comment = false
+--[[ vim.g.nabi_transparent_background = true ]]
+--[[ vim.g.nabi_enable_italic = false ]]
+--[[ vim.g.nabi_enable_italic_comment = false ]]
 
 require("plugins")
 require("keymaps")
@@ -79,7 +78,7 @@ vim.cmd([[
   syntax on
   syntax enable
 
-  colorscheme nabi
+  " colorscheme nabi
   autocmd TermOpen * setlocal nonumber norelativenumber
 
   command Z w | qa
