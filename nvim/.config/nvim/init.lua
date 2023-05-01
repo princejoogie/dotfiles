@@ -20,54 +20,24 @@ vim.cmd([[
   endif
 ]])
 
-vim.g.mapleader = " "
+require("options")
 
-local opts = {
-	autoindent = true,
-	autoread = true,
-	clipboard = "unnamedplus",
-	encoding = "UTF-8",
-	cursorline = true,
-	expandtab = true,
-	foldlevel = 2,
-	foldmethod = "manual",
-	foldnestmax = 10,
-	laststatus = 3,
-	hidden = true,
-	hlsearch = true,
-	ignorecase = true,
-	incsearch = true,
-	mouse = "a",
-	backup = false,
-	foldenable = false,
-	showmode = false,
-	swapfile = false,
-	writebackup = false,
-	nu = true,
-	rnu = true,
-	shiftwidth = 2,
-	smartcase = true,
-	smarttab = true,
-	softtabstop = 0,
-	scrolloff = 10,
-	tabstop = 2,
-	termguicolors = true,
-	ch = 1,
-}
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
-for k, v in pairs(opts) do
-	vim.opt[k] = v
+if not vim.loop.fs_stat(lazypath) then
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"--branch=stable",
+		"https://github.com/folke/lazy.nvim.git",
+		lazypath,
+	})
 end
 
-if os.getenv("CONDA_PREFIX") then
-	vim.g.python3_host_prog = os.getenv("CONDA_PREFIX") .. "/bin/python"
-end
+vim.opt.rtp:prepend(lazypath)
 
---[[ vim.g.nabi_transparent_background = true ]]
---[[ vim.g.nabi_enable_italic = false ]]
---[[ vim.g.nabi_enable_italic_comment = false ]]
-
-require("plugins")
+require("lazy").setup("plugins")
 require("keymaps")
 require("lsp")
 require("commands")
@@ -78,7 +48,6 @@ vim.cmd([[
   syntax on
   syntax enable
 
-  " colorscheme nabi
   autocmd TermOpen * setlocal nonumber norelativenumber
 
   command Z w | qa

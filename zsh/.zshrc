@@ -3,9 +3,11 @@ source "$HOME/.cargo/env"
 
 export EDITOR=nvim
 export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
 export PATH=$PATH:$HOME/.cargo/bin
 export NVIM_DATA=$HOME/.local/share/nvim
+export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
 
 case `uname` in
   Linux)
@@ -86,6 +88,8 @@ alias so=source
 alias x=exit
 alias e=echo
 alias cl="xclip -selection c"
+alias python=python3
+alias pip=pip3
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -101,3 +105,8 @@ esac
 export PATH="$HOME/.local/share/fnm:$PATH"
 eval "`fnm env`"
 # fnm end
+
+# deno
+export DENO_INSTALL="$HOME/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+# deno end

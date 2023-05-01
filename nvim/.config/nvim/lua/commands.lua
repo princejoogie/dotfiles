@@ -1,3 +1,5 @@
+local keymap = require("utils").keymap
+
 local M = {}
 
 M.RemoveQFItem = function()

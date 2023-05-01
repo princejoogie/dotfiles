@@ -1,7 +1,7 @@
 local M = {}
 
 M.toggleterm = function()
-	local toggleterm = safe_require("toggleterm")
+	local toggleterm = require("toggleterm")
 	if not toggleterm then
 		return
 	end
@@ -42,7 +42,7 @@ M.toggleterm = function()
 end
 
 M.nvim_autopairs = function()
-	local autopairs = safe_require("nvim-autopairs")
+	local autopairs = require("nvim-autopairs")
 	if not autopairs then
 		return
 	end
@@ -56,24 +56,10 @@ M.nvim_autopairs = function()
 		},
 		disable_filetype = { "TelescopePrompt", "vim" },
 	})
-
-	--[[ local cmp_autopairs = safe_require("nvim-autopairs.completion.cmp") ]]
-	--[[]]
-	--[[ if not cmp_autopairs then ]]
-	--[[ 	return ]]
-	--[[ end ]]
-	--[[]]
-	--[[ local cmp = safe_require("cmp") ]]
-	--[[]]
-	--[[ if not cmp then ]]
-	--[[ 	return ]]
-	--[[ end ]]
-	--[[]]
-	--[[ cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } })) ]]
 end
 
 M.indent_blankline = function()
-	local indent = safe_require("indent_blankline")
+	local indent = require("indent_blankline")
 	if not indent then
 		return
 	end
@@ -88,7 +74,7 @@ M.indent_blankline = function()
 end
 
 M.nvim_colorizer = function()
-	local colorizer = safe_require("colorizer")
+	local colorizer = require("colorizer")
 	if not colorizer then
 		return
 	end
@@ -107,7 +93,7 @@ M.nvim_colorizer = function()
 end
 
 M.comment = function()
-	local comment = safe_require("Comment")
+	local comment = require("Comment")
 	if not comment then
 		return
 	end
@@ -140,7 +126,7 @@ M.comment = function()
 end
 
 M.package_info = function()
-	local package = safe_require("package-info")
+	local package = require("package-info")
 	if not package then
 		return
 	end
@@ -157,24 +143,6 @@ M.package_info = function()
 		hide_up_to_date = true,
 		hide_unstable_versions = false,
 	})
-end
-
-M.nvim_ts_autotag = function()
-	local autotag = safe_require("nvim-ts-autotag")
-	if not autotag then
-		return
-	end
-
-	autotag.setup()
-end
-
-M.ts_context = function()
-	local ts_context = safe_require("treesitter-context")
-	if not ts_context then
-		return
-	end
-
-	ts_context.setup({ enable = true })
 end
 
 return M

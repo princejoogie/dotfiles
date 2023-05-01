@@ -53,50 +53,11 @@ keymap("n", "<leader>q", diag.setloclist, { desc = "Set loclist" })
 keymap("n", "<leader>gf", ":diffget //2<CR>")
 keymap("n", "<leader>gh", ":diffget //3<CR>")
 
--- FORMATTER
-pcall(function()
-	local filetypes = require("configs.formatter").filetype
-
-	local FormatBuffer = function()
-		if not filetypes[vim.bo.filetype] then
-			vim.lsp.buf.format()
-		else
-			vim.cmd("Format")
-		end
-	end
-
-	keymap("n", "<leader>p", FormatBuffer)
-end)
-
-pcall(function()
-	local jsExtensions = {
-		"javascript",
-		"javascriptreact",
-		"typescript",
-		"typescriptreact",
-	}
-
-	local RenameBuffer = function()
-		if not vim.tbl_contains(jsExtensions, vim.bo.filetype) then
-			vim.ui.input({
-				prompt = "New path:",
-				default = vim.api.nvim_buf_get_name(0),
-			}, function(input)
-				vim.lsp.util.rename(vim.api.nvim_buf_get_name(0), input)
-			end)
-		else
-			vim.cmd("TypescriptRenameFile")
-		end
-	end
-
-	keymap("n", "<leader>rf", RenameBuffer, { desc = "JS Rename file" })
-end)
-
 -- TELESCOPE
 pcall(function()
 	local exts = require("telescope").extensions
 	local builtin = require("telescope.builtin")
-	local custom = require("configs.telescope")
+	local custom = require("plugins.telescope").custom
 
 	keymap("n", "<C-f>", builtin.live_grep, { desc = "Live grep" })
 	keymap("n", "<C-p>", builtin.find_files, { desc = "Find files" })
@@ -124,22 +85,6 @@ keymap("n", "<leader><S-TAB>", ":BufferLineCyclePrev<CR>", { desc = "Previous bu
 keymap("n", "<leader><TAB>", ":BufferLineCycleNext<CR>", { desc = "Next buffer" })
 keymap("n", "<leader>bc", ":BufferLinePickClose<CR>", { desc = "Close buffer" })
 
--- NVIM-DAP
-pcall(function()
-	local dap_base = require("dap")
-	local dap_ui = require("dapui")
-	keymap("n", "<leader>dN", dap_base.step_out, { desc = "Step out" })
-	keymap("n", "<leader>db", dap_base.toggle_breakpoint, { desc = "Toggle breakpoint" })
-	keymap("n", "<leader>dn", dap_base.step_into, { desc = "Step into" })
-	keymap("n", "<leader>do", dap_base.step_over, { desc = "Step over" })
-	keymap("n", "<leader>dp", dap_base.continue, { desc = "Continue" })
-	keymap("n", "<leader>dB", function()
-		dap_base.set_breakpoint(vim.fn.input("Breakpoint condition: "))
-	end, { desc = "Set breakpoint" })
-	keymap("n", "<leader>dr", dap_base.repl.toggle, { desc = "Toggle repl" })
-	keymap("n", "<leader>dt", dap_ui.toggle, { desc = "Toggle dap ui" })
-end)
-
 -- HARPOON
 pcall(function()
 	local harpoon_ui = require("harpoon.ui")
@@ -160,4 +105,29 @@ pcall(function()
 	keymap("n", "<leader>nr", pi_base.reinstall, { desc = "Reinstall package" })
 	keymap("n", "<leader>ns", pi_base.show, { desc = "Show package info" })
 	keymap("n", "<leader>nu", pi_base.update, { desc = "Update package" })
+end)
+
+-- RENAME FILE
+pcall(function()
+	local jsExtensions = {
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact",
+	}
+
+	local RenameBuffer = function()
+		if not vim.tbl_contains(jsExtensions, vim.bo.filetype) then
+			vim.ui.input({
+				prompt = "New path:",
+				default = vim.api.nvim_buf_get_name(0),
+			}, function(input)
+				vim.lsp.util.rename(vim.api.nvim_buf_get_name(0), input, {})
+			end)
+		else
+			vim.cmd("TypescriptRenameFile")
+		end
+	end
+
+	keymap("n", "<leader>rf", RenameBuffer, { desc = "JS Rename file" })
 end)

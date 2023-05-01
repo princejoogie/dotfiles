@@ -1,53 +1,5 @@
-local telescope = safe_require("telescope")
-
-if not telescope then
-	return
-end
-
 local previewers = require("telescope.previewers")
 local builtin = require("telescope.builtin")
-
-local M = {}
-
-M.setup = function()
-	telescope.setup({
-		defaults = {
-			prompt_prefix = "   ",
-			sorting_stratey = "ascending",
-			file_ignore_patterns = {
-				"node_modules/",
-				".git/",
-				"dist/",
-				"build/",
-				"yarn.lock",
-				"package-lock.json",
-			},
-			vimgrep_arguments = {
-				"rg",
-				"--hidden",
-				"--color=never",
-				"--no-heading",
-				"--with-filename",
-				"--line-number",
-				"--column",
-				"--smart-case",
-			},
-		},
-		pickers = {
-			find_files = {
-				find_command = { "rg", "--files", "--hidden", "--glob", "!.git/*" },
-			},
-		},
-	})
-
-	local extensions = { "gh", "dap", "notify", "dir" }
-
-	pcall(function()
-		for _, ext in ipairs(extensions) do
-			telescope.load_extension(ext)
-		end
-	end)
-end
 
 local delta = previewers.new_termopen_previewer({
 	get_command = function(entry)
@@ -58,6 +10,8 @@ local delta = previewers.new_termopen_previewer({
 		return { "git", "-c", "core.pager=delta", "-c", "delta.side-by-side=false", "diff", entry.value .. "^!" }
 	end,
 })
+
+local M = {}
 
 function M.gh_issues()
 	local opts = {}
@@ -92,4 +46,52 @@ function M.git_bcommits()
 	builtin.git_bcommits(opts)
 end
 
-return M
+return {
+	"nvim-telescope/telescope.nvim",
+	custom = M,
+	dependencies = {
+		"nvim-lua/plenary.nvim",
+		"nvim-telescope/telescope-github.nvim",
+	},
+	config = function()
+		local telescope = require("telescope")
+
+		telescope.setup({
+			defaults = {
+				prompt_prefix = "   ",
+				sorting_stratey = "ascending",
+				file_ignore_patterns = {
+					"node_modules/",
+					".git/",
+					"dist/",
+					"build/",
+					"yarn.lock",
+					"package-lock.json",
+				},
+				vimgrep_arguments = {
+					"rg",
+					"--hidden",
+					"--color=never",
+					"--no-heading",
+					"--with-filename",
+					"--line-number",
+					"--column",
+					"--smart-case",
+				},
+			},
+			pickers = {
+				find_files = {
+					find_command = { "rg", "--files", "--hidden", "--glob", "!.git/*" },
+				},
+			},
+		})
+
+		local extensions = { "gh", "notify", "dir" }
+
+		pcall(function()
+			for _, ext in ipairs(extensions) do
+				telescope.load_extension(ext)
+			end
+		end)
+	end,
+}
