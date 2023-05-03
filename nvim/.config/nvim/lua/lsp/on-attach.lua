@@ -24,10 +24,6 @@ M.on_attach = function(client, bufnr)
 	keymap(bufnr, "n", "<leader>dk", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
 	keymap(bufnr, "n", "<leader>dj", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
 	keymap(bufnr, "n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
-	keymap(bufnr, "n", "<leader>io", "<cmd>TypescriptOrganizeImports<CR>", opts)
-	keymap(bufnr, "n", "<leader>id", "<cmd>TypescriptRemoveUnused<CR>", opts)
-	keymap(bufnr, "n", "<leader>ia", "<cmd>TypescriptAddMissingImports<CR>", opts)
-	keymap(bufnr, "n", "<leader>gd", "<cmd>TypescriptGoToSourceDefinition<CR>", opts)
 end
 
 return M

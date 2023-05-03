@@ -1,9 +1,10 @@
 return {
 	"nvim-lualine/lualine.nvim",
-	dependencies = { "vuki656/package-info.nvim" },
+	dependencies = { "vuki656/package-info.nvim", "f-person/git-blame.nvim" },
 	config = function()
 		local lualine = require("lualine")
 		local package = require("package-info")
+
 		lualine.setup({
 			options = {
 				icons_enabled = true,
@@ -28,7 +29,7 @@ return {
 			sections = {
 				lualine_a = { "mode" },
 				lualine_b = { "branch", "diff", "diagnostics" },
-				lualine_c = { "filename", "lsp_progress" },
+				lualine_c = { "filename" },
 				lualine_x = {
 					function()
 						return package.get_status()

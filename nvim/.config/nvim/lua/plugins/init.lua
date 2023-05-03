@@ -1,22 +1,21 @@
 return {
 	"nvim-lua/plenary.nvim",
+	"MunifTanjim/nui.nvim",
 
 	-- LSP
 	"AndrewRadev/tagalong.vim",
 	"b0o/schemastore.nvim",
+	"davidosomething/format-ts-errors.nvim",
+	"jose-elias-alvarez/typescript.nvim",
+	"jxnblk/vim-mdx-js",
 	"neovim/nvim-lspconfig",
 	"onsails/lspkind-nvim",
-	"jose-elias-alvarez/typescript.nvim",
-	"williamboman/mason.nvim",
 	"williamboman/mason-lspconfig.nvim",
-	"davidosomething/format-ts-errors.nvim",
-	"jxnblk/vim-mdx-js",
+	"williamboman/mason.nvim",
 
 	-- General
-	"MunifTanjim/nui.nvim",
 	"github/copilot.vim",
 	"junegunn/gv.vim",
-	"nvim-tree/nvim-web-devicons",
 	"nvim-lua/popup.nvim",
 	"princejoogie/tailwind-highlight.nvim",
 	"tpope/vim-fugitive",
@@ -24,6 +23,18 @@ return {
 	"tpope/vim-rhubarb",
 	"tpope/vim-surround",
 
+	{ "kevinhwang91/nvim-bqf", ft = { "qf" } },
+	{
+		"Wansmer/treesj",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		keys = {
+			{ "<leader>s", "<cmd>TSJSplit", desc = "Treesj split" },
+			{ "<leader>j", "<cmd>TSJJoin", desc = "Treesj join" },
+		},
+		config = function()
+			require("treesj").setup()
+		end,
+	},
 	{
 		"L3MON4D3/LuaSnip",
 		build = "make install_jsregexp",

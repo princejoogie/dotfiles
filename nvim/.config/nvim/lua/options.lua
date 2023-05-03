@@ -57,3 +57,7 @@ vim.env.PATH = vim.env.PATH .. (is_windows and ";" or ":") .. vim.fn.stdpath("da
 if os.getenv("CONDA_PREFIX") then
 	vim.g.python3_host_prog = os.getenv("CONDA_PREFIX") .. "/bin/python"
 end
+
+vim.g.gitblame_highlight_group = "GitBlame"
+vim.g.gitblame_enabled = 0
+vim.g.gitblame_date_format = "%r"

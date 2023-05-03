@@ -39,6 +39,7 @@ keymap("n", "<leader>wk", "<cmd>WhichKey<CR>", { desc = "Which Key" })
 keymap("n", "<leader>aa", "<cmd>ZenMode<CR>", { desc = "Zen Mode" })
 keymap("n", "<leader>oe", "<cmd>silent !wslview %<CR>", { desc = "Open Externally" })
 keymap("n", "<leader>vi", "<cmd>ViewImage<CR>", { desc = "Open Externally" })
+keymap("n", "<leader>bb", "<cmd>GitBlameToggle<CR>", { desc = "Toggle git blame" })
 
 -- LSP
 local diag = vim.diagnostic
@@ -59,7 +60,7 @@ pcall(function()
 
 	keymap("n", "<C-f>", builtin.live_grep, { desc = "Live grep" })
 	keymap("n", "<C-p>", builtin.find_files, { desc = "Find files" })
-	keymap("n", "<leader>s", function()
+	keymap("n", "<leader>?", function()
 		builtin.spell_suggest(require("telescope.themes").get_cursor({}))
 	end, { desc = "Spell suggest" })
 	keymap("n", "<leader>ch", builtin.command_history, { desc = "Command history" })

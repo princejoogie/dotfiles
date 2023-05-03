@@ -26,7 +26,8 @@ return {
 						CmpBorder = { fg = C.surface2 },
 						Pmenu = { bg = C.none },
 						TelescopeBorder = { link = "FloatBorder" },
-            CursorLine = { bg = "#181825" }
+						CursorLine = { bg = "#181825" },
+						GitBlame = { bg = "#181825", fg = C.surface2 },
 					}
 				end,
 			},
