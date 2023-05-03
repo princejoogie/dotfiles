@@ -1,6 +1,7 @@
 colors:
   primary:
-    background: "#11111B" # base
+    # background: "#11111B" # base
+    background: "#000000" # base
     bright_foreground: "#CDD6F4" # text
     dim_foreground: "#CDD6F4" # text
     foreground: "#CDD6F4" # text
@@ -76,7 +77,7 @@ font:
     family: Fira Code
 
 window:
-  opacity: 1
+  opacity: 0.95
 
 alt_send_esc: false
 

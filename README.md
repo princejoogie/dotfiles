@@ -1,6 +1,6 @@
 # dotfiles
 
-personal dotfiles
+***PERSONAL*** dotfiles
 
 ![demo_1](https://user-images.githubusercontent.com/47204120/225486926-1b283887-a449-4401-9585-26be480fd8fa.png)
 

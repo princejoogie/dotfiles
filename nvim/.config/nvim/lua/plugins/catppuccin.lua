@@ -10,12 +10,13 @@ return {
 			term_colors = false,
 			no_italic = true,
 			no_bold = true,
-			transparent_background = false,
+			transparent_background = true,
 			color_overrides = {
 				mocha = {
 					crust = "#1E1E2E",
 					mantle = "#181825",
-					base = "#11111B",
+					--[[ base = "#11111B", ]]
+					base = "#000000",
 				},
 			},
 			highlight_overrides = {
@@ -25,6 +26,7 @@ return {
 						CmpBorder = { fg = C.surface2 },
 						Pmenu = { bg = C.none },
 						TelescopeBorder = { link = "FloatBorder" },
+            CursorLine = { bg = "#181825" }
 					}
 				end,
 			},
