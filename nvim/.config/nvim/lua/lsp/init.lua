@@ -20,21 +20,23 @@ end
 
 mlsp.setup({
 	ensure_installed = {
-		"lua_ls",
-		"emmet_ls",
-		"html",
 		"astro",
-		"cssmodules_ls",
-		"cssls",
-		"tailwindcss",
 		"bashls",
-		"yamlls",
+		"cssls",
+		"cssmodules_ls",
 		"dockerls",
-		"prismals",
-		"jsonls",
-		"tsserver",
+		"emmet_ls",
 		"eslint",
 		"graphql",
+		"html",
+		"jsonls",
+		"lua_ls",
+		"prismals",
+		"pylsp",
+		"pyright",
+		"tailwindcss",
+		"tsserver",
+		"yamlls",
 	},
 })
 

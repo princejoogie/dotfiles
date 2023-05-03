@@ -21,6 +21,12 @@ case `uname` in
 
     export FLYCTL_INSTALL="/home/joogie/.fly"
     export PATH="$FLYCTL_INSTALL/bin:$PATH"
+
+    # miniconda
+    export MINICONDA_INSTALL="$HOME/miniconda3"
+    export PATH="$MINICONDA_INSTALL/bin:$PATH"
+    . "$MINICONDA_INSTALL/etc/profile.d/conda.sh"
+    # miniconda end
   ;;
   Darwin)
     eval "$(/opt/homebrew/bin/brew shellenv)"
