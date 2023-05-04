@@ -1,23 +1,43 @@
 return {
 	"nvim-lua/plenary.nvim",
-	"MunifTanjim/nui.nvim",
+	{
+		"rcarriga/nvim-notify",
+		config = function()
+			local notify = require("notify")
+			notify.setup({
+				background_colour = "#000000",
+				fps = 60,
+				max_width = 120,
+				max_height = 10,
+				stages = "fade_in_slide_out",
+			})
+
+			local banned_messages = {
+				"No information available",
+				"Toggling hidden files",
+			}
+
+			vim.notify = function(msg, ...)
+				for _, banned in ipairs(banned_messages) do
+					if string.find(msg, banned) then
+						return
+					end
+				end
+				return notify(msg, ...)
+			end
+		end,
+	},
 
 	-- LSP
 	"AndrewRadev/tagalong.vim",
-	"b0o/schemastore.nvim",
-	"davidosomething/format-ts-errors.nvim",
-	"jose-elias-alvarez/typescript.nvim",
 	"jxnblk/vim-mdx-js",
-	"neovim/nvim-lspconfig",
 	"onsails/lspkind-nvim",
-	"williamboman/mason-lspconfig.nvim",
-	"williamboman/mason.nvim",
 
 	-- General
+	"MunifTanjim/nui.nvim",
 	"github/copilot.vim",
 	"junegunn/gv.vim",
 	"nvim-lua/popup.nvim",
-	"princejoogie/tailwind-highlight.nvim",
 	"tpope/vim-fugitive",
 	"tpope/vim-repeat",
 	"tpope/vim-rhubarb",
@@ -33,23 +53,6 @@ return {
 		},
 		config = function()
 			require("treesj").setup()
-		end,
-	},
-	{
-		"L3MON4D3/LuaSnip",
-		build = "make install_jsregexp",
-		dependencies = {
-			"rafamadriz/friendly-snippets",
-			"saadparwaiz1/cmp_luasnip",
-		},
-		config = function()
-			require("luasnip.loaders.from_vscode").lazy_load()
-		end,
-	},
-	{
-		"j-hui/fidget.nvim",
-		config = function()
-			require("fidget").setup()
 		end,
 	},
 	{
@@ -87,12 +90,6 @@ return {
 		},
 		config = function()
 			require("zen-mode").setup()
-		end,
-	},
-	{
-		"folke/neodev.nvim",
-		config = function()
-			require("neodev").setup()
 		end,
 	},
 	{
@@ -170,33 +167,6 @@ return {
 		"vuki656/package-info.nvim",
 		config = function()
 			require("others").package_info()
-		end,
-	},
-	{
-		"rcarriga/nvim-notify",
-		config = function()
-			local notify = require("notify")
-			notify.setup({
-				background_colour = "#000000",
-				fps = 60,
-				max_width = 120,
-				max_height = 10,
-				stages = "fade_in_slide_out",
-			})
-
-			local banned_messages = {
-				"No information available",
-				"Toggling hidden files",
-			}
-
-			vim.notify = function(msg, ...)
-				for _, banned in ipairs(banned_messages) do
-					if string.find(msg, banned) then
-						return
-					end
-				end
-				return notify(msg, ...)
-			end
 		end,
 	},
 }

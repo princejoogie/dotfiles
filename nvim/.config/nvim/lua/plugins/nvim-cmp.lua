@@ -7,8 +7,17 @@ return {
 		"hrsh7th/cmp-nvim-lsp",
 		"hrsh7th/cmp-nvim-lua",
 		"hrsh7th/cmp-path",
-		"hrsh7th/cmp-vsnip",
 		"onsails/lspkind.nvim",
+		{
+			"L3MON4D3/LuaSnip",
+			dependencies = {
+				"rafamadriz/friendly-snippets",
+				"saadparwaiz1/cmp_luasnip",
+			},
+			config = function()
+				require("luasnip.loaders.from_vscode").lazy_load()
+			end,
+		},
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -97,7 +106,6 @@ return {
 			},
 		})
 
-		-- Set configuration for specific filetype.
 		cmp.setup.filetype("gitcommit", {
 			sources = cmp.config.sources({
 				{ name = "cmp_git" },
@@ -106,14 +114,12 @@ return {
 			}),
 		})
 
-		-- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 		cmp.setup.cmdline("/", {
 			sources = {
 				{ name = "buffer" },
 			},
 		})
 
-		-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 		cmp.setup.cmdline(":", {
 			sources = cmp.config.sources({
 				{ name = "path" },
