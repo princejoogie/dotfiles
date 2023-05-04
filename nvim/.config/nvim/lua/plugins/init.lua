@@ -12,6 +12,12 @@ return {
 	"tpope/vim-surround",
 	{ "kevinhwang91/nvim-bqf", ft = { "qf" } },
 	{
+		"nvim-pack/nvim-spectre",
+		config = function()
+			require("spectre").setup()
+		end,
+	},
+	{
 		"Wansmer/treesj",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		keys = {

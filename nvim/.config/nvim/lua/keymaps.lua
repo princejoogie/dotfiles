@@ -1,5 +1,5 @@
 ---@diagnostic disable: different-requires
-local keymap = require("utils").keymap
+local keymap = vim.keymap.set
 
 -- GENERAL KEYMAPS
 keymap("i", "jj", "<Esc>", { desc = "Exit insert mode" })
@@ -48,7 +48,21 @@ keymap("n", "<leader>dk", diag.goto_prev, { desc = "Previous diagnostic" })
 keymap("n", "<leader>e", diag.open_float, { desc = "Open float" })
 keymap("n", "<leader>q", diag.setloclist, { desc = "Set loclist" })
 keymap("n", "<leader>sy", "<cmd>SymbolsOutline<CR>", { desc = "Symbols outline" })
-keymap("n", "<leader>ba", "<cmd>lua require(\"barbecue.ui\").toggle()<CR>", { desc = "Toggle barbecue" })
+keymap("n", "<leader>ba", '<cmd>lua require("barbecue.ui").toggle()<CR>', { desc = "Toggle barbecue" })
+
+-- SPECTRE
+keymap("n", "<leader>S", '<cmd>lua require("spectre").open()<CR>', {
+	desc = "Open Spectre",
+})
+keymap("n", "<leader>sw", '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', {
+	desc = "Search current word",
+})
+keymap("v", "<leader>sw", '<esc><cmd>lua require("spectre").open_visual()<CR>', {
+	desc = "Search current word",
+})
+keymap("n", "<leader>sp", '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
+	desc = "Search on current file",
+})
 
 -- FUGITIVE
 keymap("n", "<leader>gf", ":diffget //2<CR>")
