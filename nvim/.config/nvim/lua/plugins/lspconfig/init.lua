@@ -37,10 +37,10 @@ local setupConfig = function()
 end
 
 local on_attach = function(client, bufnr)
-	local tw_highlight = require("tailwind-highlight")
+	require("tailwind-highlight").setup(client, bufnr)
 
-	if tw_highlight then
-		tw_highlight.setup(client, bufnr)
+	if client.server_capabilities.documentSymbolProvider then
+		require("nvim-navic").attach(client, bufnr)
 	end
 
 	local opts = { noremap = true, silent = true }
@@ -73,6 +73,9 @@ return {
 			end,
 		},
 		{ "j-hui/fidget.nvim", opts = {} },
+		"utilyre/barbecue.nvim",
+		"SmiteshP/nvim-navic",
+		"simrat39/symbols-outline.nvim",
 		"williamboman/mason-lspconfig.nvim",
 		"davidosomething/format-ts-errors.nvim",
 		"princejoogie/tailwind-highlight.nvim",
@@ -83,6 +86,9 @@ return {
 	config = function()
 		local mlsp = require("mason-lspconfig")
 		local lspconfig = require("lspconfig")
+
+		require("symbols-outline").setup({ width = 15, show_symbol_details = false })
+		require("barbecue").setup({ attach_navic = false })
 
 		mlsp.setup({
 			ensure_installed = {

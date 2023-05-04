@@ -47,6 +47,8 @@ keymap("n", "<leader>dj", diag.goto_next, { desc = "Next diagnostic" })
 keymap("n", "<leader>dk", diag.goto_prev, { desc = "Previous diagnostic" })
 keymap("n", "<leader>e", diag.open_float, { desc = "Open float" })
 keymap("n", "<leader>q", diag.setloclist, { desc = "Set loclist" })
+keymap("n", "<leader>sy", "<cmd>SymbolsOutline<CR>", { desc = "Symbols outline" })
+keymap("n", "<leader>ba", "<cmd>lua require(\"barbecue.ui\").toggle()<CR>", { desc = "Toggle barbecue" })
 
 -- FUGITIVE
 keymap("n", "<leader>gf", ":diffget //2<CR>")

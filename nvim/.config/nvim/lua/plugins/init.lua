@@ -1,39 +1,7 @@
 return {
 	"nvim-lua/plenary.nvim",
-	{
-		"rcarriga/nvim-notify",
-		config = function()
-			local notify = require("notify")
-			notify.setup({
-				background_colour = "#000000",
-				fps = 60,
-				max_width = 120,
-				max_height = 10,
-				stages = "fade_in_slide_out",
-			})
-
-			local banned_messages = {
-				"No information available",
-				"Toggling hidden files",
-			}
-
-			vim.notify = function(msg, ...)
-				for _, banned in ipairs(banned_messages) do
-					if string.find(msg, banned) then
-						return
-					end
-				end
-				return notify(msg, ...)
-			end
-		end,
-	},
-
-	-- LSP
 	"AndrewRadev/tagalong.vim",
 	"jxnblk/vim-mdx-js",
-	"onsails/lspkind-nvim",
-
-	-- General
 	"MunifTanjim/nui.nvim",
 	"github/copilot.vim",
 	"junegunn/gv.vim",
@@ -42,14 +10,13 @@ return {
 	"tpope/vim-repeat",
 	"tpope/vim-rhubarb",
 	"tpope/vim-surround",
-
 	{ "kevinhwang91/nvim-bqf", ft = { "qf" } },
 	{
 		"Wansmer/treesj",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		keys = {
-			{ "<leader>s", "<cmd>TSJSplit", desc = "Treesj split" },
-			{ "<leader>j", "<cmd>TSJJoin", desc = "Treesj join" },
+			{ "<leader>J", "<cmd>TSJSplit<CR>", desc = "Treesj split" },
+			{ "<leader>j", "<cmd>TSJJoin<CR>", desc = "Treesj join" },
 		},
 		config = function()
 			require("treesj").setup()
@@ -167,6 +134,33 @@ return {
 		"vuki656/package-info.nvim",
 		config = function()
 			require("others").package_info()
+		end,
+	},
+	{
+		"rcarriga/nvim-notify",
+		config = function()
+			local notify = require("notify")
+			notify.setup({
+				background_colour = "#000000",
+				fps = 60,
+				max_width = 120,
+				max_height = 10,
+				stages = "fade_in_slide_out",
+			})
+
+			local banned_messages = {
+				"No information available",
+				"Toggling hidden files",
+			}
+
+			vim.notify = function(msg, ...)
+				for _, banned in ipairs(banned_messages) do
+					if string.find(msg, banned) then
+						return
+					end
+				end
+				return notify(msg, ...)
+			end
 		end,
 	},
 }
