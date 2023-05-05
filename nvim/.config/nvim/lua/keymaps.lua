@@ -31,7 +31,6 @@ keymap("n", "<leader><Enter>", ":.!zsh<CR>", { desc = "Run zsh" })
 keymap("v", "<leader><Enter>", ":.!zsh<CR>", { desc = "Run zsh" })
 keymap("n", "gG", "50%", { desc = "Go to middle of file" })
 keymap("n", "gf", "<C-W>f", { desc = "Open file in new tab" })
-keymap("n", "<leader>bd", ":bufdo bd<CR>", { desc = "Close all buffers" })
 keymap("v", "<M-j>", ":move '>+1<CR>gv-gv")
 keymap("v", "<M-k>", ":move '<-2<CR>gv-gv")
 keymap("v", "gf", "<C-W>f")
@@ -98,7 +97,10 @@ keymap("n", "<leader>pd", "<cmd>FileInDirectory<CR>", { desc = "File in director
 
 keymap("n", "<leader><S-TAB>", ":BufferLineCyclePrev<CR>", { desc = "Previous buffer" })
 keymap("n", "<leader><TAB>", ":BufferLineCycleNext<CR>", { desc = "Next buffer" })
-keymap("n", "<leader>bc", ":BufferLinePickClose<CR>", { desc = "Close buffer" })
+--[[ keymap("n", "<leader>bc", ":BufferLinePickClose<CR>", { desc = "Close buffer" }) ]]
+keymap("n", "<leader>bc", function()
+	require("bufdelete").bufdelete(vim.api.nvim_get_current_buf(), true)
+end, { desc = "Close all buffers" })
 
 -- HARPOON
 pcall(function()

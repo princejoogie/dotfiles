@@ -18,10 +18,8 @@ local setupConfig = function()
 	end
 
 	local config = {
-		virtual_text = true,
-		signs = {
-			active = signs,
-		},
+		virtual_text = false,
+		signs = { active = signs },
 		update_in_insert = false,
 		underline = true,
 		severity_sort = true,

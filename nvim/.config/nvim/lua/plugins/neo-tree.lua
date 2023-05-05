@@ -13,15 +13,13 @@ return {
 		},
 	},
 	config = function()
-		local neotree = require("neo-tree")
-
 		vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
 		vim.fn.sign_define("DiagnosticSignError", { text = " ", texthl = "DiagnosticSignError" })
 		vim.fn.sign_define("DiagnosticSignWarn", { text = " ", texthl = "DiagnosticSignWarn" })
 		vim.fn.sign_define("DiagnosticSignInfo", { text = " ", texthl = "DiagnosticSignInfo" })
 		vim.fn.sign_define("DiagnosticSignHint", { text = "", texthl = "DiagnosticSignHint" })
 
-		neotree.setup({
+		require("neo-tree").setup({
 			sources = {
 				"filesystem",
 				"git_status",
@@ -38,6 +36,10 @@ return {
 			},
 			filesystem = {
 				follow_current_file = true,
+				filtered_items = {
+					hide_dotfiles = false,
+				},
+				hijack_netrw_behavior = "open_default",
 			},
 			diagnostics = {
 				auto_preview = {
