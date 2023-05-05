@@ -3,7 +3,7 @@ return {
 	config = function()
 		local formatter = require("formatter")
 		local util = require("formatter.util")
-		local keymap = require("utils").keymap
+		local keymap = vim.keymap.set
 
 		local prettier = {
 			function()

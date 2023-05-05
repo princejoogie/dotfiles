@@ -1,11 +1,16 @@
 local setupConfig = function()
-	local u = require("utils")
+	local icons = {
+		Error = " ",
+		Warn = " ",
+		Hint = " ",
+		Info = " ",
+	}
 
 	local signs = {
-		{ name = "DiagnosticSignError", text = u.icons.Error },
-		{ name = "DiagnosticSignWarn", text = u.icons.Warn },
-		{ name = "DiagnosticSignInfo", text = u.icons.Info },
-		{ name = "DiagnosticSignHint", text = u.icons.Hint },
+		{ name = "DiagnosticSignError", text = icons.Error },
+		{ name = "DiagnosticSignWarn", text = icons.Warn },
+		{ name = "DiagnosticSignInfo", text = icons.Info },
+		{ name = "DiagnosticSignHint", text = icons.Hint },
 	}
 
 	for _, sign in ipairs(signs) do
@@ -13,7 +18,7 @@ local setupConfig = function()
 	end
 
 	local config = {
-		virtual_text = false,
+		virtual_text = true,
 		signs = {
 			active = signs,
 		},
@@ -31,17 +36,12 @@ local setupConfig = function()
 	vim.diagnostic.config(config)
 
 	vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-
 	vim.lsp.handlers["textDocument/signatureHelp"] =
 		vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 end
 
 local on_attach = function(client, bufnr)
 	require("tailwind-highlight").setup(client, bufnr)
-
-	if client.server_capabilities.documentSymbolProvider then
-		require("nvim-navic").attach(client, bufnr)
-	end
 
 	local opts = { noremap = true, silent = true }
 	local keymap = vim.api.nvim_buf_set_keymap
@@ -65,17 +65,24 @@ end
 return {
 	"neovim/nvim-lspconfig",
 	dependencies = {
+		{ "williamboman/mason.nvim", build = ":MasonUpdate" },
+		{ "j-hui/fidget.nvim", opts = {} },
 		{
-			"williamboman/mason.nvim",
-			build = ":MasonUpdate",
+			"utilyre/barbecue.nvim",
+			dependencies = {
+				"SmiteshP/nvim-navic",
+				"nvim-tree/nvim-web-devicons",
+			},
 			config = function()
-				require("mason").setup()
+				require("barbecue").setup()
 			end,
 		},
-		{ "j-hui/fidget.nvim", opts = {} },
-		"utilyre/barbecue.nvim",
-		"SmiteshP/nvim-navic",
-		"simrat39/symbols-outline.nvim",
+		{
+			"simrat39/symbols-outline.nvim",
+			config = function()
+				require("symbols-outline").setup({ width = 15, show_symbol_details = false })
+			end,
+		},
 		"williamboman/mason-lspconfig.nvim",
 		"davidosomething/format-ts-errors.nvim",
 		"princejoogie/tailwind-highlight.nvim",
@@ -87,8 +94,7 @@ return {
 		local mlsp = require("mason-lspconfig")
 		local lspconfig = require("lspconfig")
 
-		require("symbols-outline").setup({ width = 15, show_symbol_details = false })
-		require("barbecue").setup({ attach_navic = false })
+		require("mason").setup()
 
 		mlsp.setup({
 			ensure_installed = {

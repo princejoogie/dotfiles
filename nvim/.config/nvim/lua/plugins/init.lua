@@ -18,17 +18,6 @@ return {
 		end,
 	},
 	{
-		"Wansmer/treesj",
-		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		keys = {
-			{ "<leader>J", "<cmd>TSJSplit<CR>", desc = "Treesj split" },
-			{ "<leader>j", "<cmd>TSJJoin<CR>", desc = "Treesj join" },
-		},
-		config = function()
-			require("treesj").setup()
-		end,
-	},
-	{
 		"dmmulroy/tsc.nvim",
 		config = function()
 			require("tsc").setup()
@@ -65,10 +54,6 @@ return {
 			require("zen-mode").setup()
 		end,
 	},
-	{
-		"JoosepAlviste/nvim-ts-context-commentstring",
-		dependencies = { "nvim-treesitter/nvim-treesitter" },
-	},
 	{ "ThePrimeagen/harpoon", dependencies = { "nvim-lua/plenary.nvim" } },
 	{
 		"iamcco/markdown-preview.nvim",
@@ -85,19 +70,6 @@ return {
 		end,
 	},
 	{
-		"windwp/nvim-ts-autotag",
-		config = function()
-			require("nvim-ts-autotag").setup()
-		end,
-	},
-	{
-		"nvim-treesitter/nvim-treesitter-context",
-		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		config = function()
-			require("treesitter-context").setup({ enable = true })
-		end,
-	},
-	{
 		"ggandor/leap.nvim",
 		config = function()
 			require("leap").add_default_mappings()
@@ -105,41 +77,86 @@ return {
 			vim.keymap.del({ "x", "o" }, "X")
 		end,
 	},
-	-- with others
 	{
 		"windwp/nvim-autopairs",
 		config = function()
-			require("others").nvim_autopairs()
-		end,
-	},
-	{
-		"akinsho/toggleterm.nvim",
-		config = function()
-			require("others").toggleterm()
+			require("nvim-autopairs").setup({
+				check_ts = true,
+				ts_config = {
+					lua = { "string" },
+					javascript = { "template_string" },
+					java = false,
+				},
+				disable_filetype = { "TelescopePrompt", "vim" },
+			})
 		end,
 	},
 	{
 		"lukas-reineke/indent-blankline.nvim",
 		config = function()
-			require("others").indent_blankline()
+			vim.opt.list = true
+			require("indent_blankline").setup({
+				space_char_blankline = " ",
+				show_current_context = true,
+				show_current_context_start = false,
+			})
 		end,
 	},
 	{
 		"norcalli/nvim-colorizer.lua",
 		config = function()
-			require("others").nvim_colorizer()
+			require("colorizer").setup({ "*" }, {
+				RGB = true,
+				RRGGBB = true,
+				names = false,
+				RRGGBBAA = true,
+				rgb_fn = true,
+				hsl_fn = true,
+				css = true,
+				css_fn = true,
+				mode = "background",
+			})
 		end,
 	},
 	{
 		"numToStr/Comment.nvim",
 		config = function()
-			require("others").comment()
+			require("Comment").setup({
+				toggler = { line = "<leader>cl", block = "<leader>bl" },
+				opleader = { line = "<leader>cc", block = "<leader>cb" },
+				pre_hook = function(ctx)
+					local U = require("Comment.utils")
+
+					local location = nil
+					if ctx.ctype == U.ctype.block then
+						location = require("ts_context_commentstring.utils").get_cursor_location()
+					elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
+						location = require("ts_context_commentstring.utils").get_visual_start_location()
+					end
+
+					return require("ts_context_commentstring.internal").calculate_commentstring({
+						key = ctx.ctype == U.ctype.line and "__default" or "__multiline",
+						location = location,
+					})
+				end,
+			})
 		end,
 	},
 	{
 		"vuki656/package-info.nvim",
 		config = function()
-			require("others").package_info()
+			require("package-info").setup({
+				icons = {
+					enable = true,
+					style = {
+						up_to_date = "|  ",
+						outdated = "|  ",
+					},
+				},
+				autostart = true,
+				hide_up_to_date = true,
+				hide_unstable_versions = false,
+			})
 		end,
 	},
 	{
@@ -157,6 +174,7 @@ return {
 			local banned_messages = {
 				"No information available",
 				"Toggling hidden files",
+				"Failed to attach to",
 			}
 
 			vim.notify = function(msg, ...)

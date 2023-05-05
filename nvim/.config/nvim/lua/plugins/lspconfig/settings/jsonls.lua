@@ -1,4 +1,4 @@
-local schemastore = safe_require("schemastore")
+local schemastore = require("schemastore")
 
 if not schemastore then
 	return
