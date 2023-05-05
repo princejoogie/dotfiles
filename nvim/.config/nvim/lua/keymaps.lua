@@ -95,9 +95,9 @@ end)
 keymap("n", "<leader>fd", "<cmd>GrepInDirectory<CR>", { desc = "Grep in directory" })
 keymap("n", "<leader>pd", "<cmd>FileInDirectory<CR>", { desc = "File in directory" })
 
-keymap("n", "<leader><S-TAB>", ":BufferLineCyclePrev<CR>", { desc = "Previous buffer" })
-keymap("n", "<leader><TAB>", ":BufferLineCycleNext<CR>", { desc = "Next buffer" })
---[[ keymap("n", "<leader>bc", ":BufferLinePickClose<CR>", { desc = "Close buffer" }) ]]
+keymap("n", "<leader><S-TAB>", "<cmd>BufferLineCyclePrev<CR>", { desc = "Previous buffer" })
+keymap("n", "<leader><TAB>", "<cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
+keymap("n", "<leader>bd", "<cmd>%bd|e#|bd#<CR>", { desc = "Close buffer" })
 keymap("n", "<leader>bc", function()
 	require("bufdelete").bufdelete(vim.api.nvim_get_current_buf(), true)
 end, { desc = "Close all buffers" })

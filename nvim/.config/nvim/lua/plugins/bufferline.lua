@@ -20,6 +20,7 @@ return {
 						highlight = "Directory",
 					},
 				},
+				seperator_style = "slant",
 			},
 			highlights = require("catppuccin.groups.integrations.bufferline").get({
 				styles = { "italic", "bold" },
@@ -35,7 +36,6 @@ return {
 					},
 				},
 			}),
-			seperator_style = "slope",
 		})
 	end,
 }
