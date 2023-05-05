@@ -13,11 +13,13 @@ return {
 		},
 	},
 	config = function()
+		local icons = require("utils").icons
+
 		vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
-		vim.fn.sign_define("DiagnosticSignError", { text = " ", texthl = "DiagnosticSignError" })
-		vim.fn.sign_define("DiagnosticSignWarn", { text = " ", texthl = "DiagnosticSignWarn" })
-		vim.fn.sign_define("DiagnosticSignInfo", { text = " ", texthl = "DiagnosticSignInfo" })
-		vim.fn.sign_define("DiagnosticSignHint", { text = "", texthl = "DiagnosticSignHint" })
+		vim.fn.sign_define("DiagnosticSignError", { text = icons.Error, texthl = "DiagnosticSignError" })
+		vim.fn.sign_define("DiagnosticSignWarn", { text = icons.Warn, texthl = "DiagnosticSignWarn" })
+		vim.fn.sign_define("DiagnosticSignInfo", { text = icons.Info, texthl = "DiagnosticSignInfo" })
+		vim.fn.sign_define("DiagnosticSignHint", { text = icons.Hint, texthl = "DiagnosticSignHint" })
 
 		require("neo-tree").setup({
 			sources = {
@@ -29,9 +31,9 @@ return {
 				winbar = true,
 				statusline = false,
 				sources = {
-					{ source = "filesystem", display_name = "   Files " },
-					{ source = "git_status", display_name = "   Git " },
-					{ source = "diagnostics", display_name = "   Diags " },
+					{ source = "filesystem", display_name = "   Files " },
+					{ source = "git_status", display_name = "   Git " },
+					{ source = "diagnostics", display_name = "   Diags " },
 				},
 			},
 			filesystem = {

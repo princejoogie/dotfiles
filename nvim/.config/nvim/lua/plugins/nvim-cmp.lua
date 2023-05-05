@@ -23,39 +23,6 @@ return {
 		local cmp = require("cmp")
 		local lspkind = require("lspkind")
 
-		local lsp_icons = {
-			mode = "symbol",
-			maxwidth = 50,
-			before = function(entry, vim_item)
-				vim_item.menu = ({
-					nvim_lsp = "[LSP]",
-					luasnip = "[Snippet]",
-					buffer = "[Buffer]",
-					path = "[Path]",
-				})[entry.source.name]
-				return vim_item
-			end,
-			symbol_map = {
-				NONE = "",
-				Array = "",
-				Boolean = "⊨",
-				Class = "",
-				Constructor = "",
-				Key = "",
-				Namespace = "",
-				Null = "NULL",
-				Number = "#",
-				Object = "⦿",
-				Package = "",
-				Property = "",
-				Reference = "",
-				Snippet = "",
-				String = "𝓐",
-				TypeParameter = "",
-				Unit = "",
-			},
-		}
-
 		cmp.setup({
 			snippet = {
 				expand = function(args)
@@ -87,14 +54,20 @@ return {
 			}),
 			formatting = {
 				fields = { "kind", "abbr", "menu" },
-				format = lspkind.cmp_format(lsp_icons),
-				--[[ format = lspkind.cmp_format({ ]]
-				--[[ 	mode = "symbol_text", ]]
-				--[[ 	maxwidth = 60, ]]
-				--[[ 	before = function(_, vim_item) ]]
-				--[[ 		return vim_item ]]
-				--[[ 	end, ]]
-				--[[ }), ]]
+				format = lspkind.cmp_format({
+					mode = "symbol",
+					preset = "codicons",
+					maxwidth = 50,
+					before = function(entry, vim_item)
+						vim_item.menu = ({
+							nvim_lsp = "[LSP]",
+							luasnip = "[Snippet]",
+							buffer = "[Buffer]",
+							path = "[Path]",
+						})[entry.source.name]
+						return vim_item
+					end,
+				}),
 			},
 			window = {
 				completion = {

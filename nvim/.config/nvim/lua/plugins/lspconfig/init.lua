@@ -1,10 +1,5 @@
 local setupConfig = function()
-	local icons = {
-		Error = " ",
-		Warn = " ",
-		Hint = " ",
-		Info = " ",
-	}
+	local icons = require("utils").icons
 
 	local signs = {
 		{ name = "DiagnosticSignError", text = icons.Error },

@@ -7,7 +7,7 @@ return {
 
 		catppuccin.setup({
 			flavour = flavour,
-			term_colors = false,
+			term_colors = true,
 			no_italic = true,
 			no_bold = true,
 			transparent_background = true,
