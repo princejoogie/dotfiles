@@ -29,6 +29,9 @@ return {
 						CursorLine = { bg = "#181825" },
 						GitBlame = { bg = "#181825", fg = C.surface2 },
 						NeoTreeTitle = { bg = C.mantle, fg = C.text },
+						NeoTreeTitleBar = { bg = C.surface0, fg = C.teal },
+						NeoTreeFloatTitle = { bg = C.surface0, fg = C.teal },
+						NeoTreeFloatBorder = { fg = C.surface0 },
 					}
 				end,
 			},

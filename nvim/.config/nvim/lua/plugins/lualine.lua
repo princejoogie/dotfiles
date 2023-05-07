@@ -6,7 +6,7 @@ return {
 		local lualine = require("lualine")
 		local package = require("package-info")
 		local theme = require("lualine.themes.catppuccin")
-		theme.normal.c.bg = C.mantle
+		theme.normal.c.bg = "NONE"
 
 		lualine.setup({
 			options = {
