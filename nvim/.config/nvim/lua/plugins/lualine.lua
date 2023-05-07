@@ -1,17 +1,14 @@
 return {
 	"nvim-lualine/lualine.nvim",
-	dependencies = { "vuki656/package-info.nvim", "f-person/git-blame.nvim", "catppuccin/nvim" },
+	dependencies = { "vuki656/package-info.nvim", "f-person/git-blame.nvim" },
 	config = function()
-		local C = require("catppuccin.palettes").get_palette("mocha")
 		local lualine = require("lualine")
 		local package = require("package-info")
-		local theme = require("lualine.themes.catppuccin")
-		theme.normal.c.bg = "NONE"
 
 		lualine.setup({
 			options = {
 				icons_enabled = true,
-				theme = theme,
+				theme = "catppuccin",
 				--[[ component_separators = { left = "", right = "" }, ]]
 				--[[ section_separators = { left = "", right = "" }, ]]
 				component_separators = { left = "", right = "" },
