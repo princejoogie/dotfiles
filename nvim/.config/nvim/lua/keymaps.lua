@@ -7,7 +7,7 @@ keymap("n", "<C-u>", "<C-u>zz", { desc = "Scroll up" })
 keymap("n", "<C-d>", "<C-d>zz", { desc = "Scroll down" })
 keymap("n", "n", "nzz", { desc = "Match next" })
 keymap("n", "N", "Nzz", { desc = "Match previous" })
-keymap("x", "p", "\"_dP", { desc = "Paste yanked text" })
+keymap("x", "p", '"_dP', { desc = "Paste yanked text" })
 keymap("n", "<M-j>", "<C-w>j", { desc = "Select window up" })
 keymap("n", "<M-k>", "<C-w>k", { desc = "Select window down" })
 keymap("n", "<M-l>", "<C-w>l", { desc = "Select window right" })
@@ -40,6 +40,13 @@ keymap("n", "<leader>aa", "<cmd>ZenMode<CR>", { desc = "Zen Mode" })
 keymap("n", "<leader>oe", "<cmd>silent !wslview %<CR>", { desc = "Open Externally" })
 keymap("n", "<leader>vi", "<cmd>ViewImage<CR>", { desc = "Open Externally" })
 keymap("n", "<leader>bb", "<cmd>GitBlameToggle<CR>", { desc = "Toggle git blame" })
+keymap("n", "<leader>nn", function()
+	if vim.opt.relativenumber._value == true then
+		vim.opt.relativenumber = false
+	else
+		vim.opt.relativenumber = true
+	end
+end, { desc = "Toggle relativenumber" })
 
 -- LSP
 local diag = vim.diagnostic
