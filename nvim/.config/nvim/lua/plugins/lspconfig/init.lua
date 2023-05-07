@@ -87,7 +87,7 @@ return {
 		local mlsp = require("mason-lspconfig")
 		local lspconfig = require("lspconfig")
 
-		require("mason").setup()
+		require("mason").setup({ ui = { border = "rounded" } })
 
 		mlsp.setup({
 			ensure_installed = {
