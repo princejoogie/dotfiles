@@ -2,13 +2,11 @@ return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = { "vuki656/package-info.nvim", "f-person/git-blame.nvim", "catppuccin/nvim" },
 	config = function()
+		local C = require("catppuccin.palettes").get_palette("mocha")
 		local lualine = require("lualine")
 		local package = require("package-info")
-    local C = require("catppuccin.palettes").get_palette("mocha")
-    local theme = require("lualine.themes.catppuccin")
-    --[[ theme.normal.a.bg = C.mantle ]]
-    --[[ theme.normal.b.bg = C.mantle ]]
-    theme.normal.c.bg = C.mantle
+		local theme = require("lualine.themes.catppuccin")
+		theme.normal.c.bg = C.mantle
 
 		lualine.setup({
 			options = {
