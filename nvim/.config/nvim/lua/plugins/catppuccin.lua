@@ -28,6 +28,7 @@ return {
 						TelescopeBorder = { link = "FloatBorder" },
 						CursorLine = { bg = "#181825" },
 						GitBlame = { bg = "#181825", fg = C.surface2 },
+						NeoTreeTitle = { bg = C.mantle, fg = C.text },
 					}
 				end,
 			},
