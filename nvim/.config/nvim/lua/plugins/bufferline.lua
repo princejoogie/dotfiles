@@ -42,7 +42,7 @@ return {
 					bg = C.surface0,
 				},
 				background = {
-					fg = C.teal,
+					fg = C.overlay0,
 					bg = C.surface0,
 				},
 				tab = {
@@ -70,14 +70,14 @@ return {
 					bg = C.surface0,
 				},
 				buffer_visible = {
-					fg = C.teal,
+					fg = C.overlay0,
 					bg = C.surface0,
 				},
 				buffer_selected = {
 					fg = C.teal,
 					bg = C.surface0,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				numbers = {
 					fg = C.teal,
@@ -91,7 +91,7 @@ return {
 					fg = C.teal,
 					bg = C.surface0,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				diagnostic = {
 					fg = C.teal,
@@ -105,7 +105,7 @@ return {
 					fg = C.teal,
 					bg = C.surface0,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				hint = {
 					fg = C.teal,
@@ -121,7 +121,7 @@ return {
 					bg = C.surface0,
 					sp = C.mantle,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				hint_diagnostic = {
 					fg = C.teal,
@@ -137,7 +137,7 @@ return {
 					bg = C.surface0,
 					sp = C.mantle,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				info = {
 					fg = C.teal,
@@ -153,7 +153,7 @@ return {
 					bg = C.surface0,
 					sp = C.mantle,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				info_diagnostic = {
 					fg = C.teal,
@@ -169,7 +169,7 @@ return {
 					bg = C.surface0,
 					sp = C.mantle,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				warning = {
 					fg = C.teal,
@@ -185,7 +185,7 @@ return {
 					bg = C.surface0,
 					sp = C.mantle,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				warning_diagnostic = {
 					fg = C.teal,
@@ -201,7 +201,7 @@ return {
 					bg = C.surface0,
 					sp = C.mantle,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				error = {
 					fg = C.teal,
@@ -217,7 +217,7 @@ return {
 					bg = C.surface0,
 					sp = C.mantle,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				error_diagnostic = {
 					fg = C.teal,
@@ -233,7 +233,7 @@ return {
 					bg = C.surface0,
 					sp = C.mantle,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				modified = {
 					fg = C.teal,
@@ -250,17 +250,17 @@ return {
 				duplicate_selected = {
 					fg = C.teal,
 					bg = C.surface0,
-					italic = true,
+					italic = false,
 				},
 				duplicate_visible = {
 					fg = C.teal,
 					bg = C.surface0,
-					italic = true,
+					italic = false,
 				},
 				duplicate = {
 					fg = C.teal,
 					bg = C.surface0,
-					italic = true,
+					italic = false,
 				},
 				indicator_selected = {
 					fg = C.teal,
@@ -270,19 +270,19 @@ return {
 					fg = C.teal,
 					bg = C.surface0,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				pick_visible = {
 					fg = C.teal,
 					bg = C.surface0,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				pick = {
 					fg = C.teal,
 					bg = C.surface0,
 					bold = true,
-					italic = true,
+					italic = false,
 				},
 				offset_separator = {
 					fg = C.surface1,
