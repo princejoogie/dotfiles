@@ -17,3 +17,26 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 		vim.opt_local.spell = true
 	end,
 })
+
+vim.cmd([[
+  let s:clip = '/mnt/c/Windows/System32/clip.exe'
+  if executable(s:clip)
+    augroup WSLYank
+      autocmd!
+      autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
+    augroup end
+  endif
+]])
+
+vim.cmd([[
+  filetype on
+  filetype plugin on
+  syntax on
+  syntax enable
+
+  autocmd TermOpen * setlocal nonumber norelativenumber
+  autocmd FileType fugitive setlocal nonumber norelativenumber
+
+  command Z w | qa
+  cabbrev wqa Z
+]])
