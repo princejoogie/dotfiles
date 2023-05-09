@@ -181,6 +181,7 @@ return {
 				"No information available",
 				"Toggling hidden files",
 				"Failed to attach to",
+				"No items, skipping",
 			}
 
 			vim.notify = function(msg, ...)
