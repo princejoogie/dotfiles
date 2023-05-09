@@ -2,6 +2,8 @@ return {
 	"nvim-treesitter/nvim-treesitter",
 	build = ":TSUpdate",
 	dependencies = {
+		"nvim-treesitter/playground",
+		"JoosepAlviste/nvim-ts-context-commentstring",
 		{
 			"windwp/nvim-ts-autotag",
 			config = function()
@@ -14,9 +16,6 @@ return {
 			config = function()
 				require("treesitter-context").setup({ enable = true })
 			end,
-		},
-		{
-			"JoosepAlviste/nvim-ts-context-commentstring",
 		},
 		{
 			"Wansmer/treesj",
@@ -35,23 +34,23 @@ return {
 			autotag = {
 				enable = true,
 				filetypes = {
-					"javascript",
-					"typescript",
-					"javascriptreact",
-					"typescriptreact",
-					"svelte",
-					"vue",
-					"tsx",
-					"jsx",
-					"html",
-					"rescript",
-					"xml",
-					"php",
-					"markdown",
 					"astro",
 					"glimmer",
 					"handlebars",
 					"hbs",
+					"html",
+					"javascript",
+					"javascriptreact",
+					"jsx",
+					"markdown",
+					"php",
+					"rescript",
+					"svelte",
+					"tsx",
+					"typescript",
+					"typescriptreact",
+					"vue",
+					"xml",
 				},
 			},
 			ensure_installed = {
@@ -61,6 +60,7 @@ return {
 				"css",
 				"dockerfile",
 				"graphql",
+				"hcl",
 				"html",
 				"javascript",
 				"jsdoc",
@@ -72,11 +72,11 @@ return {
 				"python",
 				"rust",
 				"scss",
+				"sql",
 				"tsx",
 				"typescript",
 				"yaml",
-				"hcl",
-				"sql",
+				"query",
 			},
 			sync_install = false,
 			highlight = { enable = true, additional_vim_regex_highlighting = true },
