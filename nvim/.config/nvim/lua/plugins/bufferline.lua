@@ -23,6 +23,11 @@ return {
 					},
 				},
 				separator_style = "slant",
+        diagnostics = "nvim_lsp",
+				diagnostics_indicator = function(count, level)
+					local icon = level:match("error") and " " or ""
+					return " " .. icon .. count
+				end,
 			},
 			highlights = {
 				fill = {
@@ -204,32 +209,32 @@ return {
 					italic = false,
 				},
 				error = {
-					fg = C.teal,
+					fg = C.red,
 					bg = C.surface0,
 					sp = C.mantle,
 				},
 				error_visible = {
-					fg = C.teal,
+					fg = C.red,
 					bg = C.surface0,
 				},
 				error_selected = {
-					fg = C.teal,
+					fg = C.red,
 					bg = C.surface0,
 					sp = C.mantle,
 					bold = true,
 					italic = false,
 				},
 				error_diagnostic = {
-					fg = C.teal,
+					fg = C.red,
 					bg = C.surface0,
 					sp = C.mantle,
 				},
 				error_diagnostic_visible = {
-					fg = C.teal,
+					fg = C.red,
 					bg = C.surface0,
 				},
 				error_diagnostic_selected = {
-					fg = C.teal,
+					fg = C.red,
 					bg = C.surface0,
 					sp = C.mantle,
 					bold = true,

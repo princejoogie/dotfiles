@@ -106,6 +106,7 @@ keymap("n", "<leader>pd", "<cmd>FileInDirectory<CR>", { desc = "File in director
 
 keymap("n", "<leader><S-TAB>", "<cmd>BufferLineCyclePrev<CR>", { desc = "Previous buffer" })
 keymap("n", "<leader><TAB>", "<cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
+keymap("n", "<leader>0", "<cmd>BufferLinePick<CR>", { desc = "Pick a buffer" })
 keymap("n", "<leader>bd", "<cmd>%bd|e#|bd#<CR>", { desc = "Close all buffers" })
 keymap("n", "<leader>bc", function()
 	require("bufdelete").bufdelete(vim.api.nvim_get_current_buf(), true)

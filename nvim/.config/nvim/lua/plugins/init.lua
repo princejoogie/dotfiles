@@ -160,6 +160,12 @@ return {
 		end,
 	},
 	{
+		"stevearc/dressing.nvim",
+		config = function()
+			require("dressing").setup({ input = { default_prompt = "➤ " } })
+		end,
+	},
+	{
 		"rcarriga/nvim-notify",
 		config = function()
 			local notify = require("notify")

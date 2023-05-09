@@ -105,6 +105,6 @@ return {
 			end
 		end
 
-		keymap("n", "<leader>p", FormatBuffer)
+		keymap("n", "<leader>p", FormatBuffer, { desc = "Format buffer" })
 	end,
 }
