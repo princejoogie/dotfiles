@@ -74,12 +74,11 @@ colors:
 font:
   size: 14
   normal:
-    family: Fira Code
+    family: FiraCode Nerd Font
 
 window:
   opacity: 0.95
-
-alt_send_esc: false
+  option_as_alt: Both
 
 key_bindings:
   - { key: A, mods: Alt, chars: "\x1ba" }
