@@ -96,6 +96,7 @@ alias e=echo
 alias cl="xclip -selection c"
 alias python=python3
 alias pip=pip3
+alias vim=nvim
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
