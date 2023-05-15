@@ -70,6 +70,8 @@ keymap("n", "<leader>sp", '<cmd>lua require("spectre").open_file_search({select_
 -- FUGITIVE
 keymap("n", "<leader>gf", ":diffget //2<CR>")
 keymap("n", "<leader>gh", ":diffget //3<CR>")
+keymap("n", "<leader>dv", ":Gvdiffsplit<CR>")
+keymap("n", "<leader>dh", ":Ghdiffsplit<CR>")
 
 -- TELESCOPE
 pcall(function()
