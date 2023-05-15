@@ -1,6 +1,10 @@
 # Variables
 source "$HOME/.cargo/env"
 
+if [[ -f "$HOME/.private.sh" ]]; then
+  source "$HOME/.private.sh"
+fi
+
 export EDITOR=nvim
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$HOME/.local/bin
@@ -19,7 +23,7 @@ case `uname` in
     export PATH=$PATH:$ANDROID_HOME/platform-tools
     export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
 
-    export FLYCTL_INSTALL="/home/joogie/.fly"
+    export FLYCTL_INSTALL="$HOME/.fly"
     export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
     # miniconda
@@ -36,7 +40,7 @@ case `uname` in
     export PATH=$PATH:$ANDROID_HOME/emulator
     export PATH=$PATH:$ANDROID_HOME/platform-tools
     export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-    #
+
     # miniconda
     export MINICONDA_INSTALL="$HOME/miniconda3"
     export PATH="$MINICONDA_INSTALL/bin:$PATH"

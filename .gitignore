@@ -7,4 +7,6 @@ nvim/.config/nextjs-nodejs/
 nvim/.config/wslu/
 nvim/.config/nvim/plugin/
 
+.private.sh
+
 .DS_Store
