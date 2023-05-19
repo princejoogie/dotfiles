@@ -99,7 +99,7 @@ esac
 
 # fnm
 export PATH="$HOME/.local/share/fnm:$PATH"
-eval "`fnm env`"
+eval "$(fnm env --use-on-cd)"
 # fnm end
 
 # deno
