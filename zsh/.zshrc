@@ -57,7 +57,7 @@ fi
 
 export ZSH="$HOME/.oh-my-zsh"
 
-ZSH_TMUX_AUTOSTART=true
+# ZSH_TMUX_AUTOSTART=true
 ZSH_THEME="powerlevel10k/powerlevel10k"
 CASE_SENSITIVE="false"
 ENABLE_CORRECTION="true"

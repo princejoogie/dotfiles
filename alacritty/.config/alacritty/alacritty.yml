@@ -67,9 +67,9 @@ colors:
     white: "#BAC2DE" # subtext1
     yellow: "#F9E2AF" # yellow
 
-  indexed_colors:
-    - { color: "#F5E0DC", index: 17 }
-    - { color: "#FAB387", index: 16 }
+  # indexed_colors:
+  #   - { color: "#F5E0DC", index: 17 }
+  #   - { color: "#FAB387", index: 16 }
 
 font:
   size: 14
