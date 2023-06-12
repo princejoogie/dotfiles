@@ -86,8 +86,8 @@ return {
 	config = function()
 		local mlsp = require("mason-lspconfig")
 		local lspconfig = require("lspconfig")
-		require("lspconfig.ui.windows").default_options.border = "rounded"
 
+		require("lspconfig.ui.windows").default_options.border = "rounded"
 		require("mason").setup({ ui = { border = "rounded" } })
 
 		mlsp.setup({
