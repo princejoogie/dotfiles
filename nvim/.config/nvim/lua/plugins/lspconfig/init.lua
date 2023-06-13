@@ -59,7 +59,7 @@ return {
 	"neovim/nvim-lspconfig",
 	dependencies = {
 		{ "williamboman/mason.nvim", build = ":MasonUpdate" },
-		{ "j-hui/fidget.nvim", opts = {} },
+		{ "j-hui/fidget.nvim", opts = {}, tag = "legacy" },
 		{
 			"utilyre/barbecue.nvim",
 			dependencies = {
