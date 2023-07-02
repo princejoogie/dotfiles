@@ -10,6 +10,7 @@ return {
 	"tpope/vim-repeat",
 	"tpope/vim-rhubarb",
 	"tpope/vim-surround",
+  "sindrets/diffview.nvim",
 	{ "kevinhwang91/nvim-bqf", ft = { "qf" } },
 	{
 		"nvim-pack/nvim-spectre",

@@ -77,7 +77,7 @@ font:
     family: FiraCode Nerd Font
 
 window:
-  opacity: 0.90
+  opacity: 0.95
   option_as_alt: Both
 
 key_bindings:
