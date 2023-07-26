@@ -43,14 +43,6 @@ return {
 	},
 	{
 		"folke/zen-mode.nvim",
-		dependencies = {
-			{
-				"folke/twilight.nvim",
-				config = function()
-					require("twilight").setup()
-				end,
-			},
-		},
 		config = function()
 			require("zen-mode").setup()
 		end,
