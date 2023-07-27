@@ -1,4 +1,3 @@
-# [░▒▓](#6b7280)\
 format = """
 [  ](fg:#090c0c bg:#6b7280)\
 [](fg:#6b7280 bg:#374151)\
@@ -21,12 +20,6 @@ style = "fg:#e3e5e5 bg:#374151"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
-
-[directory.substitutions]
-"Documents" = "󰈙 "
-"Downloads" = " "
-"Music" = " "
-"Pictures" = " "
 
 [git_branch]
 symbol = ""
