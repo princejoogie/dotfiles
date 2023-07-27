@@ -3,15 +3,20 @@ return {
 	"AndrewRadev/tagalong.vim",
 	"jxnblk/vim-mdx-js",
 	"MunifTanjim/nui.nvim",
-	"github/copilot.vim",
+	--[[ "github/copilot.vim", ]]
 	"junegunn/gv.vim",
 	"nvim-lua/popup.nvim",
 	"tpope/vim-fugitive",
 	"tpope/vim-repeat",
 	"tpope/vim-rhubarb",
 	"tpope/vim-surround",
-  "sindrets/diffview.nvim",
+	"sindrets/diffview.nvim",
 	{ "kevinhwang91/nvim-bqf", ft = { "qf" } },
+	{
+		"folke/persistence.nvim",
+		event = "BufReadPre",
+		opts = {},
+	},
 	{
 		"nvim-pack/nvim-spectre",
 		config = function()

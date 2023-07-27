@@ -44,6 +44,10 @@ keymap("n", "<leader>nn", function()
 	end
 end, { desc = "Toggle relativenumber" })
 
+-- Persistence
+-- restore the session for the current directory
+keymap("n", "<leader>rl", '<cmd>lua require("persistence").load()<CR>', {})
+
 -- LSP
 local diag = vim.diagnostic
 keymap("n", "<leader>dj", diag.goto_next, { desc = "Next diagnostic" })
