@@ -58,7 +58,6 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 
 # ZSH_TMUX_AUTOSTART=true
-ZSH_THEME="powerlevel10k/powerlevel10k"
 CASE_SENSITIVE="false"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
@@ -88,6 +87,10 @@ alias pip=pip3
 alias vim=nvim
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# starship
+eval "$(starship init zsh)"
+# starship end
 
 # pnpm
 export PNPM_HOME="/home/joogie/.local/share/pnpm"
