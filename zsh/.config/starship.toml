@@ -34,6 +34,7 @@ diverged = '⇕⇡${ahead_count}⇣${behind_count} '
 behind = '⇣${count} '
 modified = '!${count} '
 staged = '+${count} '
+stashed = '*${count} '
 untracked = '?${count} '
 
 [nodejs]
