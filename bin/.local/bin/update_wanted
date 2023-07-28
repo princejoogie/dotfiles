@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+
+const { execSync } = require("child_process");
+
+const main = async () => {
+  console.log("Fetching wanted version...");
+  const out = execSync(`npm outdated | awk 'NR > 1 {print $1 "@" $3}'`)
+    .toString()
+    .split("\n")
+    .filter(Boolean);
+  console.log("\nUpdating packages:");
+  out.forEach((e) => console.log(`  - ${e}`));
+
+  const installCommand = `npm install ${out.join(" ")}`;
+  console.log(`\n${installCommand}`)
+  execSync(installCommand, { stdio: "inherit" });
+
+  console.log("Finished updating packages!");
+};
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
+

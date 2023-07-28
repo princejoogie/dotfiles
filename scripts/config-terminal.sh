@@ -31,6 +31,7 @@ git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUST
 rm -rf ~/.bashrc ~/.zshrc
 
 stow zsh
+stow bin
 
 echo "[✅] - Configuration done."
 echo "   Restart your terminal and run"
