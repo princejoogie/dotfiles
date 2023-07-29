@@ -11,6 +11,7 @@ return {
 	"tpope/vim-rhubarb",
 	"tpope/vim-surround",
 	"sindrets/diffview.nvim",
+	"Eandrju/cellular-automaton.nvim",
 	{ "kevinhwang91/nvim-bqf", ft = { "qf" } },
 	{
 		"folke/persistence.nvim",
