@@ -36,6 +36,8 @@ modified = '!${count} '
 staged = '+${count} '
 stashed = '*${count} '
 untracked = '?${count} '
+renamed = '»${count} '
+deleted = '✘${count} '
 
 [nodejs]
 symbol = ""

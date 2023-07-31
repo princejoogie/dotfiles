@@ -11,7 +11,7 @@ export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
 export PATH=$PATH:$HOME/.cargo/bin
 export NVIM_DATA=$HOME/.local/share/nvim
-export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+# export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
 
 case `uname` in
   Linux)
@@ -49,13 +49,6 @@ case `uname` in
   ;;
 esac
 
-# Plugins
-
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-export ZSH="$HOME/.oh-my-zsh"
 
 # ZSH_TMUX_AUTOSTART=true
 CASE_SENSITIVE="false"
@@ -70,8 +63,6 @@ plugins=(
   direnv
   zsh-autosuggestions
 )
-
-source $ZSH/oh-my-zsh.sh
 
 # Configurations
 export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
