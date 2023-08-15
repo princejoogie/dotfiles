@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 const { execSync } = require("child_process");
+const { existsSync } = require("fs");
+const path = require("path");
+const { cwd } = require("process");
 
 const main = async () => {
   console.log("Fetching wanted version...");
@@ -11,9 +14,26 @@ const main = async () => {
   console.log("\nUpdating packages:");
   out.forEach((e) => console.log(`  - ${e}`));
 
-  const installCommand = `npm install ${out.join(" ")}`;
-  console.log(`\n${installCommand}`)
-  execSync(installCommand, { stdio: "inherit" });
+  const yarnLock = path.join(cwd(), "yarn.lock");
+  const pnpmLock = path.join(cwd(), "pnpm-lock.yaml");
+  const packages = out.join(" ");
+
+  if (existsSync(pnpmLock)) {
+    const installCommand = `pnpm add ${packages}`;
+    console.log("\nUsing pnpm");
+    console.log(`\n${installCommand}\n`);
+    execSync(installCommand, { stdio: "inherit" });
+  } else if (existsSync(yarnLock)) {
+    const installCommand = `yarn add ${packages}`;
+    console.log("\nUsing yarn");
+    console.log(`\n${installCommand}\n`);
+    execSync(installCommand, { stdio: "inherit" });
+  } else {
+    const installCommand = `npm install ${packages}`;
+    console.log("\nUsing npm");
+    console.log(`\n${installCommand}\n`);
+    execSync(installCommand, { stdio: "inherit" });
+  }
 
   console.log("Finished updating packages!");
 };
@@ -22,4 +42,3 @@ main().catch((e) => {
   console.error(e);
   process.exit(1);
 });
-
