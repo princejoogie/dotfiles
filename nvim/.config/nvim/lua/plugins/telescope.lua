@@ -52,6 +52,7 @@ return {
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-telescope/telescope-github.nvim",
+		"nvim-telescope/telescope-symbols.nvim",
 	},
 	config = function()
 		local telescope = require("telescope")
