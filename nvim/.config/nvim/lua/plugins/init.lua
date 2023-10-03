@@ -12,6 +12,18 @@ return {
 	"tpope/vim-surround",
 	"sindrets/diffview.nvim",
 	"Eandrju/cellular-automaton.nvim",
+	{
+		"kristijanhusak/vim-dadbod-ui",
+		dependencies = {
+			{ "tpope/vim-dadbod", lazy = true },
+			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+		},
+		cmd = { "DBUI", "DBUIToggle", "DBUIAddConnection", "DBUIFindBuffer" },
+		init = function()
+			-- Your DBUI configuration
+			vim.g.db_ui_use_nerd_fonts = 1
+		end,
+	},
 	{ "kevinhwang91/nvim-bqf", ft = { "qf" } },
 	{
 		"folke/persistence.nvim",
@@ -92,14 +104,12 @@ return {
 	},
 	{
 		"lukas-reineke/indent-blankline.nvim",
-		config = function()
-			vim.opt.list = true
-			require("indent_blankline").setup({
-				space_char_blankline = " ",
-				show_current_context = true,
-				show_current_context_start = false,
-			})
-		end,
+		main = "ibl",
+		opts = {
+			scope = {
+				show_start = false,
+			},
+		},
 	},
 	{
 		"norcalli/nvim-colorizer.lua",

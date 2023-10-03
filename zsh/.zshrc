@@ -40,6 +40,8 @@ case `uname` in
     eval "$(/opt/homebrew/bin/brew shellenv)"
     export PYTHON_PATH=$HOME/Library/Python/3.9/bin
     export PATH=$PATH:$PYTHON_PATH
+    export PATH=$PATH:/opt/homebrew/opt/libpq/bin
+
     export ANDROID_HOME=$HOME/Library/Android/sdk
     export PATH=$PATH:$ANDROID_HOME/emulator
     export PATH=$PATH:$ANDROID_HOME/platform-tools
