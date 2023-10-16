@@ -1,5 +1,7 @@
 # Variables
-source "$HOME/.cargo/env"
+if [[ -f "$HOME/.cargo/env" ]]; then
+  source "$HOME/.cargo/env"
+fi
 
 if [[ -f "$HOME/.private.sh" ]]; then
   source "$HOME/.private.sh"
@@ -7,6 +9,10 @@ fi
 
 if [[ -f "$HOME/.functions.sh" ]]; then
   source "$HOME/.functions.sh"
+fi
+
+if [[ -d "/opt/homebrew/share/zsh/site-functions" ]]; then
+  fpath+=/opt/homebrew/share/zsh/site-functions
 fi
 
 export EDITOR=nvim
@@ -63,7 +69,6 @@ ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 
 # git
-
 plugins=(
 	tmux
 	z
@@ -86,8 +91,6 @@ alias cl="xclip -selection c"
 alias python=python3
 alias pip=pip3
 alias vim=nvim
-
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # starship
 eval "$(starship init zsh)"
