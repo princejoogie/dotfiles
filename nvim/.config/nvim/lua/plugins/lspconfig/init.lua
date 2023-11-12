@@ -60,22 +60,6 @@ return {
 	dependencies = {
 		{ "williamboman/mason.nvim", build = ":MasonUpdate" },
 		{ "j-hui/fidget.nvim", opts = {}, tag = "legacy" },
-		{
-			"utilyre/barbecue.nvim",
-			dependencies = {
-				"SmiteshP/nvim-navic",
-				"nvim-tree/nvim-web-devicons",
-			},
-			config = function()
-				require("barbecue").setup()
-			end,
-		},
-		{
-			"simrat39/symbols-outline.nvim",
-			config = function()
-				require("symbols-outline").setup({ width = 15, show_symbol_details = false })
-			end,
-		},
 		"williamboman/mason-lspconfig.nvim",
 		"davidosomething/format-ts-errors.nvim",
 		"princejoogie/tailwind-highlight.nvim",

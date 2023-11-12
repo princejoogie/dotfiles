@@ -25,6 +25,7 @@ keymap("n", "<leader>hn", "<cmd>TSNodeUnderCursor<CR>", { desc = "TS Node under 
 keymap("n", "<leader>hg", "<cmd>TSHighlightCapturesUnderCursor<CR>", { desc = "TS Highlight captures under cursor" })
 keymap("n", "<leader>mm", "<cmd>MarkdownPreview<CR>", { desc = "Markdown preview" })
 keymap("n", "<leader>ss", ":%s//", { desc = "Replace instances" })
+keymap("v", "<leader>ss", ":s//", { desc = "Visually Replace instances" })
 keymap("x", "<leader><Enter>", "<cmd>.!zsh<CR>", { desc = "Run zsh" })
 keymap("n", "gG", "50%", { desc = "Go to middle of file" })
 keymap("n", "gf", "<C-W>f", { desc = "Open file in new tab" })
@@ -54,8 +55,6 @@ keymap("n", "<leader>dj", diag.goto_next, { desc = "Next diagnostic" })
 keymap("n", "<leader>dk", diag.goto_prev, { desc = "Previous diagnostic" })
 keymap("n", "<leader>e", diag.open_float, { desc = "Open float" })
 keymap("n", "<leader>q", diag.setloclist, { desc = "Set loclist" })
-keymap("n", "<leader>sy", "<cmd>SymbolsOutline<CR>", { desc = "Symbols outline" })
-keymap("n", "<leader>ba", '<cmd>lua require("barbecue.ui").toggle()<CR>', { desc = "Toggle barbecue" })
 
 -- SPECTRE
 keymap("n", "<leader>S", '<cmd>lua require("spectre").open()<CR>', {
@@ -109,7 +108,6 @@ keymap("n", "<leader>pd", "<cmd>FileInDirectory<CR>", { desc = "File in director
 
 keymap("n", "<leader><S-TAB>", "<cmd>BufferLineCyclePrev<CR>", { desc = "Previous buffer" })
 keymap("n", "<leader><TAB>", "<cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
-keymap("n", "<leader>0", "<cmd>BufferLinePick<CR>", { desc = "Pick a buffer" })
 keymap("n", "<leader>bd", "<cmd>%bd|e#|bd#<CR>", { desc = "Close all buffers" })
 keymap("n", "<leader>bc", function()
 	require("bufdelete").bufdelete(vim.api.nvim_get_current_buf(), true)

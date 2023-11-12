@@ -13,6 +13,23 @@ return {
 	"sindrets/diffview.nvim",
 	"Eandrju/cellular-automaton.nvim",
 	{
+		"David-Kunz/gen.nvim",
+		config = function()
+			require("gen").model = "mistral"
+		end,
+	},
+	{
+		"Exafunction/codeium.vim",
+		config = function()
+			vim.keymap.set("i", "<M-;>", function()
+				return vim.fn["codeium#CycleCompletions"](1)
+			end, { expr = true })
+			vim.keymap.set("i", "<M-x>", function()
+				return vim.fn["codeium#Clear"]()
+			end, { expr = true })
+		end,
+	},
+	{
 		"kristijanhusak/vim-dadbod-ui",
 		dependencies = {
 			{ "tpope/vim-dadbod", lazy = true },
