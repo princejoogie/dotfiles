@@ -11,19 +11,33 @@ const main = async () => {
     .toString()
     .split("\n")
     .filter(Boolean);
-  console.log("\nUpdating packages:");
-  out.forEach((e) => console.log(`  - ${e}`));
 
   const yarnLock = path.join(cwd(), "yarn.lock");
   const pnpmLock = path.join(cwd(), "pnpm-lock.yaml");
-  const packages = out.join(" ");
+  const packages = out.length > 0 ? out.join(" ") : null;
 
-  if (existsSync(pnpmLock)) {
-    const installCommand = `pnpm add ${packages}`;
+  const pm = process.argv[2];
+
+  if (packages === null) {
+    console.log("All packages up to date!");
+    process.exit(0);
+  }
+
+  if (pm === "show") {
+    console.log("Packages to update:");
+    out.forEach((e) => console.log(`  - ${e}`));
+    process.exit(0);
+  }
+
+  console.log("\nUpdating packages:");
+  out.forEach((e) => console.log(`  - ${e}`));
+
+  if (existsSync(pnpmLock) || pm === "pnpm") {
+    const installCommand = `pnpm i ${packages}`;
     console.log("\nUsing pnpm");
     console.log(`\n${installCommand}\n`);
     execSync(installCommand, { stdio: "inherit" });
-  } else if (existsSync(yarnLock)) {
+  } else if (existsSync(yarnLock) || pm === "yarn") {
     const installCommand = `yarn add ${packages}`;
     console.log("\nUsing yarn");
     console.log(`\n${installCommand}\n`);
