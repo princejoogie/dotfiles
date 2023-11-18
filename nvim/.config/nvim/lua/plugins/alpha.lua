@@ -32,7 +32,7 @@ return {
 		}
 
 		local function footer()
-			return "“It works on my machine.”"
+			return "“You'll never know the value of a moment until it becomes a memory”"
 		end
 
 		dashboard.section.footer.val = footer()
