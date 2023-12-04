@@ -62,14 +62,27 @@ return {
 			".git",
 			".next",
 			".turbo",
+			".vercel",
+			".expo",
 			"dist",
 			"build",
+			"out",
 			"yarn.lock",
 			"package-lock.json",
 			"pnpm-lock.yaml",
+			"npm-debug.log",
+			"yarn-debug.log",
+			"yarn-error.log",
+			".pnpm-debug.log",
+			".tsbuildinfo",
 		}
 
-		local glob_pattern = "!(" .. table.concat(ignored, "|") .. ")"
+		local rg_globs = {}
+
+		for _, pattern in ipairs(ignored) do
+			table.insert(rg_globs, "--glob")
+			table.insert(rg_globs, "!" .. pattern)
+		end
 
 		telescope.setup({
 			defaults = {
@@ -78,7 +91,6 @@ return {
 				},
 				prompt_prefix = "   ",
 				sorting_stratey = "ascending",
-				file_ignore_patterns = ignored,
 				vimgrep_arguments = {
 					"rg",
 					"-L",
@@ -90,8 +102,8 @@ return {
 					"--line-number",
 					"--column",
 					"--smart-case",
-					"--glob",
-					glob_pattern,
+					---@diagnostic disable-next-line: deprecated
+					unpack(rg_globs),
 				},
 			},
 			pickers = {
@@ -101,8 +113,8 @@ return {
 						"-uu",
 						"--files",
 						"--hidden",
-						"--glob",
-						glob_pattern,
+						---@diagnostic disable-next-line: deprecated
+						unpack(rg_globs),
 					},
 				},
 			},
