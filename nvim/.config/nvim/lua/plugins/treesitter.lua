@@ -30,6 +30,11 @@ return {
 	},
 	config = function()
 		local treesitter = require("nvim-treesitter.configs")
+
+		require("ts_context_commentstring").setup({
+			enable_autocmd = false,
+		})
+
 		treesitter.setup({
 			autotag = {
 				enable = true,
@@ -81,7 +86,6 @@ return {
 			sync_install = false,
 			highlight = { enable = true, additional_vim_regex_highlighting = true },
 			indent = { enable = true },
-			context_commentstring = { enable = true },
 			playground = {
 				enable = true,
 				disable = {},

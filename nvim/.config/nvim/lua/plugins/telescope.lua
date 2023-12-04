@@ -57,21 +57,32 @@ return {
 	config = function()
 		local telescope = require("telescope")
 
+		local ignored = {
+			"node_modules",
+			".git",
+			".next",
+			".turbo",
+			"dist",
+			"build",
+			"yarn.lock",
+			"package-lock.json",
+			"pnpm-lock.yaml",
+		}
+
+		local glob_pattern = "!(" .. table.concat(ignored, "|") .. ")"
+
 		telescope.setup({
 			defaults = {
+				preview = {
+					treesitter = false,
+				},
 				prompt_prefix = "   ",
 				sorting_stratey = "ascending",
-				file_ignore_patterns = {
-					"node_modules/",
-					".git/",
-					"dist/",
-					"build/",
-					"yarn.lock",
-					"package-lock.json",
-				},
+				file_ignore_patterns = ignored,
 				vimgrep_arguments = {
 					"rg",
 					"-L",
+					"-uu",
 					"--hidden",
 					"--color=never",
 					"--no-heading",
@@ -79,11 +90,20 @@ return {
 					"--line-number",
 					"--column",
 					"--smart-case",
+					"--glob",
+					glob_pattern,
 				},
 			},
 			pickers = {
 				find_files = {
-					find_command = { "rg", "--files", "--hidden", "--glob", "!.git/*" },
+					find_command = {
+						"rg",
+						"-uu",
+						"--files",
+						"--hidden",
+						"--glob",
+						glob_pattern,
+					},
 				},
 			},
 		})

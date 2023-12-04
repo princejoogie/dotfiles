@@ -8,27 +8,12 @@ return {
 		"hrsh7th/cmp-nvim-lua",
 		"hrsh7th/cmp-path",
 		"onsails/lspkind.nvim",
-		{
-			"L3MON4D3/LuaSnip",
-			dependencies = {
-				"rafamadriz/friendly-snippets",
-				"saadparwaiz1/cmp_luasnip",
-			},
-			config = function()
-				require("luasnip.loaders.from_vscode").lazy_load()
-			end,
-		},
 	},
 	config = function()
 		local cmp = require("cmp")
 		local lspkind = require("lspkind")
 
 		cmp.setup({
-			snippet = {
-				expand = function(args)
-					require("luasnip").lsp_expand(args.body)
-				end,
-			},
 			mapping = {
 				["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
 				["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
@@ -45,7 +30,6 @@ return {
 			sources = cmp.config.sources({
 				{ name = "nvim_lsp" },
 				{ name = "nvim_lua" },
-				{ name = "luasnip" },
 				{ name = "emoji", insert = true },
 				{ name = "path" },
 			}, {
@@ -61,7 +45,6 @@ return {
 					before = function(entry, vim_item)
 						vim_item.menu = ({
 							nvim_lsp = "[LSP ]",
-							luasnip = "[Snip]",
 							buffer = "[Buf ]",
 							path = "[Path]",
 						})[entry.source.name]
