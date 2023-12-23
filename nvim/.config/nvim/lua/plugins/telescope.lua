@@ -64,6 +64,8 @@ return {
 			".turbo",
 			".vercel",
 			".expo",
+      ".open-next",
+      ".sst",
 			"dist",
 			"build",
 			"out",
