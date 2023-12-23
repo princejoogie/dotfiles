@@ -28,6 +28,10 @@ return {
 			"nvim-lua/plenary.nvim",
 			"nvim-telescope/telescope-github.nvim",
 			{
+				"princejoogie/dir-telescope.nvim",
+				opts = {},
+			},
+			{
 				"nvim-telescope/telescope-fzf-native.nvim",
 				build = "make",
 				cond = function()
