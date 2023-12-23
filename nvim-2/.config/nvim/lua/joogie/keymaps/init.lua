@@ -14,11 +14,19 @@ keymap({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
 -- NEOTREE
 keymap("n", "<C-b>", "<cmd>Neotree toggle<CR>", { desc = "Toggle Filetree" })
 
+-- HARPOON
+pcall(function()
+	local harpoon_ui = require("harpoon.ui")
+	local harpoon_mark = require("harpoon.mark")
+	keymap("n", "<leader>ha", harpoon_mark.add_file, { desc = "Add file" })
+	keymap("n", "<leader>hh", harpoon_ui.toggle_quick_menu, { desc = "Toggle harpoon" })
+end)
+
 -- FUGITIVE
-keymap("n", "<leader>gf", ":diffget //2<CR>")
-keymap("n", "<leader>gh", ":diffget //3<CR>")
-keymap("n", "<leader>dv", ":Gvdiffsplit<CR>")
-keymap("n", "<leader>dh", ":Ghdiffsplit<CR>")
+keymap("n", "<leader>gf", ":diffget //2<CR>", { desc = "Diff get Current" })
+keymap("n", "<leader>gh", ":diffget //3<CR>", { desc = "Diff get Head" })
+keymap("n", "<leader>dv", ":Gvdiffsplit<CR>", { desc = "Diff Vertical" })
+keymap("n", "<leader>dh", ":Ghdiffsplit<CR>", { desc = "Diff Horizontal" })
 
 -- TELESCOPE
 pcall(function()

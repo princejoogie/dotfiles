@@ -11,14 +11,15 @@ return {
 					keywords = { italic = false },
 					functions = {},
 					variables = {},
-					-- Background styles. Can be "dark", "transparent" or "normal"
-					sidebars = "transparent", -- style for sidebars, see below
-					floats = "transparent", -- style for floating windows
+					sidebars = "transparent",
+					floats = "transparent",
 				},
 			})
 			vim.cmd([[colorscheme tokyonight-night]])
 		end,
 	},
+
+	{ "ThePrimeagen/harpoon", dependencies = { "nvim-lua/plenary.nvim" } },
 
 	{
 		"nvim-telescope/telescope.nvim",
@@ -118,18 +119,6 @@ return {
 		},
 		config = function()
 			require("neo-tree").setup({
-				sources = {
-					"filesystem",
-					"git_status",
-				},
-				source_selector = {
-					winbar = true,
-					statusline = false,
-					sources = {
-						{ source = "filesystem", display_name = "   Files " },
-						{ source = "git_status", display_name = "   Git " },
-					},
-				},
 				filesystem = {
 					follow_current_file = {
 						enabled = true,
@@ -167,6 +156,37 @@ return {
 		build = ":TSUpdate",
 	},
 
+	{
+		"rcarriga/nvim-notify",
+		config = function()
+			local notify = require("notify")
+			notify.setup({
+				background_colour = "#000000",
+				fps = 60,
+				max_width = 120,
+				max_height = 10,
+				stages = "fade_in_slide_out",
+			})
+
+			local banned_messages = {
+				"No information available",
+				"Toggling hidden files",
+				"Failed to attach to",
+				"No items, skipping",
+				"Config Change Detected",
+			}
+
+			vim.notify = function(msg, ...)
+				for _, banned in ipairs(banned_messages) do
+					if string.find(msg, banned) then
+						return
+					end
+				end
+				return notify(msg, ...)
+			end
+		end,
+	},
+
 	{ "nvim-tree/nvim-web-devicons", lazy = true },
 	{ "stevearc/dressing.nvim", event = "VeryLazy" },
 
@@ -183,16 +203,20 @@ return {
 	},
 
 	{
-		-- Adds git related signs to the gutter, as well as utilities for managing changes
 		"lewis6991/gitsigns.nvim",
 		opts = {
-			-- See `:help gitsigns.txt`
 			signs = {
-				add = { text = "+" },
-				change = { text = "~" },
+				add = { text = "│" },
+				change = {
+					text = "│",
+				},
 				delete = { text = "_" },
-				topdelete = { text = "‾" },
-				changedelete = { text = "~" },
+				topdelete = {
+					text = "‾",
+				},
+				changedelete = {
+					text = "~",
+				},
 			},
 			on_attach = function(bufnr)
 				local gs = package.loaded.gitsigns
