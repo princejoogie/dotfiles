@@ -33,9 +33,6 @@ local setupConfig = function()
 end
 
 local on_attach = function(_, bufnr)
-	local opts = { noremap = true, silent = true }
-	local keymap = vim.api.nvim_buf_set_keymap
-
 	local nmap = function(keys, func, desc)
 		if desc then
 			desc = "LSP: " .. desc
@@ -44,26 +41,26 @@ local on_attach = function(_, bufnr)
 		vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
 	end
 
-	nmap("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-	nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-	nmap("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-	nmap("gt", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
-	nmap("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-	nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+	nmap("gd", require("telescope.builtin").lsp_definitions, "Goto Definition")
+	nmap("gr", require("telescope.builtin").lsp_references, "Goto References")
+	nmap("gI", require("telescope.builtin").lsp_implementations, "Goto Implementation")
+	nmap("gt", require("telescope.builtin").lsp_type_definitions, "Type Definition")
+	nmap("<leader>ds", require("telescope.builtin").lsp_document_symbols, "Document Symbols")
+	nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "Workspace Symbols")
 
 	--[[ keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts) ]]
 	--[[ keymap(bufnr, "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts) ]]
 	--[[ keymap(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts) ]]
 	--[[ keymap(bufnr, "n", "gt", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts) ]]
 
-	keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-	keymap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
-	keymap(bufnr, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-	keymap(bufnr, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
-	keymap(bufnr, "n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
-	keymap(bufnr, "n", "<leader>dk", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
-	keymap(bufnr, "n", "<leader>dj", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
-	keymap(bufnr, "n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
+	nmap("K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Hover Action")
+	nmap("<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Signature Help")
+	nmap("<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename symbol")
+	nmap("<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", "Code actions")
+	nmap("<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", "Open float")
+	nmap("<leader>dk", "<cmd>lua vim.diagnostic.goto_prev()<CR>", "Previous Error")
+	nmap("<leader>dj", "<cmd>lua vim.diagnostic.goto_next()<CR>", "Next Error")
+	nmap("<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", "Error loclist")
 end
 
 return {

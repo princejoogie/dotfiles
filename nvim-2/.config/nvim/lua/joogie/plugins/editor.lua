@@ -1,4 +1,5 @@
 return {
+	"AndrewRadev/tagalong.vim",
 	{
 		"folke/tokyonight.nvim",
 		lazy = false,
@@ -203,7 +204,6 @@ return {
 
 	{
 		"folke/which-key.nvim",
-		lazy = true,
 	},
 
 	{
