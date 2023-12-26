@@ -1,5 +1,6 @@
 return {
 	"AndrewRadev/tagalong.vim",
+
 	{
 		"folke/tokyonight.nvim",
 		lazy = false,
@@ -162,6 +163,34 @@ return {
 	},
 
 	{
+		"numToStr/Comment.nvim",
+		dependencies = {
+			"JoosepAlviste/nvim-ts-context-commentstring",
+		},
+		config = function()
+			require("Comment").setup({
+				toggler = { line = "<leader>cl", block = "<leader>bl" },
+				opleader = { line = "<leader>cc", block = "<leader>cb" },
+				pre_hook = function(ctx)
+					local U = require("Comment.utils")
+
+					local location = nil
+					if ctx.ctype == U.ctype.block then
+						location = require("ts_context_commentstring.utils").get_cursor_location()
+					elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
+						location = require("ts_context_commentstring.utils").get_visual_start_location()
+					end
+
+					return require("ts_context_commentstring.internal").calculate_commentstring({
+						key = ctx.ctype == U.ctype.line and "__default" or "__multiline",
+						location = location,
+					})
+				end,
+			})
+		end,
+	},
+
+	{
 		"rcarriga/nvim-notify",
 		config = function()
 			local notify = require("notify")
@@ -190,6 +219,19 @@ return {
 				return notify(msg, ...)
 			end
 		end,
+	},
+
+	{
+		"sunjon/Shade.nvim",
+		opts = {
+			overlay_opacity = 50,
+			opacity_step = 1,
+			keys = {
+				brightness_up = "<C-Up>",
+				brightness_down = "<C-Down>",
+				toggle = "<Leader>s",
+			},
+		},
 	},
 
 	{ "nvim-tree/nvim-web-devicons", lazy = true },
