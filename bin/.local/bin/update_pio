@@ -1,0 +1,55 @@
+#!/usr/bin/env node
+
+const { execSync } = require("child_process");
+const { writeFileSync } = require("fs");
+
+const clangdContent = (paths) => `CompileFlags:
+  Add: [
+    -I${paths}
+  ]
+`;
+
+const main = async () => {
+  console.log("Fetching wanted version...");
+  const out = execSync("pio -f -c vim run -t idedata -d $(pwd)")
+    .toString()
+    .split("\n")
+    .filter((l) => Boolean(l) && l.startsWith("{"));
+
+  if (out.length <= 0) {
+    console.log("ERROR: json object not found");
+    return process.exit(1);
+  }
+
+  const json = JSON.parse(out[0]);
+  const paths = [];
+
+  if (json.libsource_dirs) {
+    console.log("has libsource");
+    for (line of json.libsource_dirs) paths.push(line);
+  }
+
+  if (json.includes.build) {
+    for (line of json.includes.build) paths.push(line);
+  }
+
+  if (json.includes.compatlib) {
+    for (line of json.includes.compatlib) paths.push(line);
+  }
+
+  if (json.includes.toolchain) {
+    for (line of json.includes.toolchain) paths.push(line);
+  }
+
+  if (json.cc_path) paths.push(json.cc_path);
+  if (json.cxx_path) paths.push(json.cxx_path);
+  if (json.gdb_path) paths.push(json.gdb_path);
+
+  const str = paths.join(",\n    -I");
+  writeFileSync(".clangd", clangdContent(str));
+};
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
