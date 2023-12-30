@@ -10,7 +10,7 @@ const clangdContent = (paths) => `CompileFlags:
 `;
 
 const main = async () => {
-  console.log("Fetching wanted version...");
+  console.log("Getting idestate...");
   const out = execSync("pio -f -c vim run -t idedata -d $(pwd)")
     .toString()
     .split("\n")
@@ -25,7 +25,6 @@ const main = async () => {
   const paths = [];
 
   if (json.libsource_dirs) {
-    console.log("has libsource");
     for (line of json.libsource_dirs) paths.push(line);
   }
 
