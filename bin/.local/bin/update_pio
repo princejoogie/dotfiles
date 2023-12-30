@@ -40,10 +40,6 @@ const main = async () => {
     for (line of json.includes.toolchain) paths.push(line);
   }
 
-  if (json.cc_path) paths.push(json.cc_path);
-  if (json.cxx_path) paths.push(json.cxx_path);
-  if (json.gdb_path) paths.push(json.gdb_path);
-
   const str = paths.join(",\n    -I");
   writeFileSync(".clangd", clangdContent(str));
 };
