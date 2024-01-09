@@ -1,6 +1,8 @@
 return {
 	"AndrewRadev/tagalong.vim",
 	"folke/which-key.nvim",
+	"sindrets/diffview.nvim",
+
 	{ "nvim-tree/nvim-web-devicons", lazy = true },
 	{ "stevearc/dressing.nvim", event = "VeryLazy" },
 
@@ -125,6 +127,7 @@ return {
 			"nvim-lua/plenary.nvim",
 			"nvim-tree/nvim-web-devicons",
 			"MunifTanjim/nui.nvim",
+			{ "s1n7ax/nvim-window-picker", opts = {} },
 		},
 		config = function()
 			require("neo-tree").setup({
