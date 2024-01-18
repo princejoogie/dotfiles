@@ -149,23 +149,57 @@ return {
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter-textobjects",
 		},
-		opts = {
-			ensure_installed = {
-				"dockerfile",
-				"html",
-				"javascript",
-				"jsdoc",
-				"json",
-				"lua",
-				"markdown",
-				"python",
-				"sql",
-				"tsx",
-				"typescript",
-				"yaml",
-			},
-		},
+		config = function()
+			require("nvim-treesitter.configs").setup({
+				autotag = {
+					enable = true,
+					filetypes = {
+						"html",
+						"javascript",
+						"javascriptreact",
+						"jsx",
+						"markdown",
+						"tsx",
+						"typescript",
+						"typescriptreact",
+						"prisma",
+					},
+				},
+				ensure_installed = {
+					"dockerfile",
+					"html",
+					"javascript",
+					"jsdoc",
+					"json",
+					"lua",
+					"markdown",
+					"prisma",
+					"python",
+					"sql",
+					"tsx",
+					"typescript",
+					"yaml",
+				},
+				highlight = { enable = true, additional_vim_regex_highlighting = false },
+			})
+		end,
 		build = ":TSUpdate",
+	},
+
+	{
+		"vuki656/package-info.nvim",
+		opts = {
+			icons = {
+				enable = true,
+				style = {
+					up_to_date = "|  ",
+					outdated = "|  ",
+				},
+			},
+			autostart = true,
+			hide_up_to_date = true,
+			hide_unstable_versions = false,
+		},
 	},
 
 	{

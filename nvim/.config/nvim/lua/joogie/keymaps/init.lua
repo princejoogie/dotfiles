@@ -29,6 +29,15 @@ pcall(function()
 	keymap("n", "<leader>hh", harpoon_ui.toggle_quick_menu, { desc = "Toggle harpoon" })
 end)
 
+-- PACKAGE-INFO
+pcall(function()
+	local pi_base = require("package-info")
+	keymap("n", "<leader>nc", pi_base.hide, { desc = "Hide package info" })
+	keymap("n", "<leader>np", pi_base.change_version, { desc = "Change package version" })
+	keymap("n", "<leader>ns", pi_base.show, { desc = "Show package info" })
+	keymap("n", "<leader>nu", pi_base.update, { desc = "Update package" })
+end)
+
 -- FUGITIVE
 keymap("n", "<leader>gf", ":diffget //2<CR>", { desc = "Diff get Current" })
 keymap("n", "<leader>gh", ":diffget //3<CR>", { desc = "Diff get Head" })
