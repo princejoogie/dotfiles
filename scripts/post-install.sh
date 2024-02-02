@@ -3,8 +3,8 @@
 cargo install tree-sitter-cli fnm bob-nvim git-delta
 
 echo "[⌛] - Configuring fnm..."
-fnm install 16.9.1
-fnm use 16.9.1
+fnm install 18.19.0
+fnm use 18.19.0
 
 echo "[⌛] - Configuring bob..."
 bob install stable
