@@ -18,6 +18,19 @@ vim.cmd([[
 	vnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 ]])
 
+-- SPECTRE
+pcall(function()
+	local spectre = require("spectre")
+	keymap("n", "<leader>S", spectre.toggle, { desc = "Toggle Spectre" })
+	keymap("v", "<leader>sw", spectre.open_visual, { desc = "Search current word" })
+	keymap("n", "<leader>sw", function()
+		spectre.open_visual({ select_word = true })
+	end, { desc = "Search current word" })
+	keymap("n", "<leader>sp", function()
+		spectre.open_file_search({ select_word = true })
+	end, { desc = "Search on current file" })
+end)
+
 -- NEOTREE
 keymap("n", "<C-b>", "<cmd>Neotree toggle<CR>", { desc = "Toggle Filetree" })
 

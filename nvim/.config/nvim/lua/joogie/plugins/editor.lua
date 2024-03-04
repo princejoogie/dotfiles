@@ -28,6 +28,8 @@ return {
 
 	{ "ThePrimeagen/harpoon", dependencies = { "nvim-lua/plenary.nvim" } },
 
+	{ "nvim-pack/nvim-spectre", opts = {} },
+
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
