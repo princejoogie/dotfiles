@@ -13,6 +13,7 @@ $nodejs\
 $python\
 $rust\
 $golang\
+$conda\
 """
 
 [directory]
@@ -49,6 +50,9 @@ symbol = " "
 style = "bg:#334155"
 format = '[[](bg:#1e293b fg:#334155)[ ${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )](fg:#facc15 bg:#334155)]($style)'
 
+[conda]
+style = "bg:#334155 dimmed green"
+format = '[\($environment\)]($style) '
 
 [rust]
 symbol = ""

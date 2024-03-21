@@ -10,6 +10,7 @@ keymap("n", "N", "Nzz", { desc = "Match previous" })
 keymap("n", "n", "nzz", { desc = "Match next" })
 keymap("x", "p", '"_dP', { desc = "Paste yanked text" })
 keymap({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
+keymap({ "n", "v" }, "$", "g_", { desc = "End of line" })
 
 vim.cmd([[
 	nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
