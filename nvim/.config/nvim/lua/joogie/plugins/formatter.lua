@@ -23,6 +23,21 @@ return {
 		})
 
 		vim.keymap.set({ "n", "v" }, "<leader>p", function()
+			local ft = vim.bo.ft
+			local js_fts = {
+				"javascript",
+				"typescript",
+				"javascriptreact",
+				"typescriptreact",
+			}
+
+			for _, v in ipairs(js_fts) do
+				if ft == v then
+					vim.cmd("EslintFixAll")
+					break
+				end
+			end
+
 			conform.format({
 				lsp_fallback = true,
 				async = true,

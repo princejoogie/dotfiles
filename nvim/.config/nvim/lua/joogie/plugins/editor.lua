@@ -311,6 +311,7 @@ return {
 			})
 
 			local banned_messages = {
+				"Neo-tree",
 				"No information available",
 				"Toggling hidden files",
 				"Failed to attach to",
