@@ -57,6 +57,9 @@ keymap("n", "<leader>gf", ":diffget //2<CR>", { desc = "Diff get Current" })
 keymap("n", "<leader>gh", ":diffget //3<CR>", { desc = "Diff get Head" })
 keymap("n", "<leader>dv", ":Gvdiffsplit<CR>", { desc = "Diff Vertical" })
 keymap("n", "<leader>dh", ":Ghdiffsplit<CR>", { desc = "Diff Horizontal" })
+keymap("n", "<leader>di", ":DiffviewOpen<CR>", { desc = "Diff View Open" })
+keymap("n", "<leader>di", ":DiffviewOpen<CR>", { desc = "Diff View Open" })
+keymap("n", "<leader>dq", ":tabc<CR>", { desc = "Close Tab" })
 
 -- TELESCOPE
 pcall(function()
