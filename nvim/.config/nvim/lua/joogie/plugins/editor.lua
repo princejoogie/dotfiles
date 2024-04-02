@@ -256,7 +256,7 @@ return {
 					outdated = "|  ",
 				},
 			},
-			autostart = true,
+			autostart = false,
 			hide_up_to_date = true,
 			hide_unstable_versions = false,
 		},
