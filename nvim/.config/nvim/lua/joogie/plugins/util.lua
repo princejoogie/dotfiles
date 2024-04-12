@@ -34,6 +34,14 @@ return {
 			},
 		},
 	},
-
 	{ "nvim-lua/plenary.nvim", lazy = true },
+	{
+		"folke/neodev.nvim",
+		dependencies = { "nvim-neotest/neotest" },
+		config = function()
+			require("neodev").setup({
+				library = { plugins = { "neotest" }, types = true },
+			})
+		end,
+	},
 }

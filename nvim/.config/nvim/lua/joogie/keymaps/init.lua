@@ -35,6 +35,17 @@ end)
 -- NEOTREE
 keymap("n", "<C-b>", "<cmd>Neotree toggle<CR>", { desc = "Toggle Filetree" })
 
+-- NEOTEST
+pcall(function()
+	local neotest = require("neotest")
+	keymap("n", "<leader>,s", neotest.summary.toggle, { desc = "[Test] Toggle summary" })
+	keymap("n", "<leader>,e", neotest.output.open, { desc = "[Test] Output open" })
+	keymap("n", "<leader>,r", neotest.run.run, { desc = "[Test] Run nearest" })
+	keymap("n", "<leader>,f", function()
+		neotest.run.run(vim.fn.expand("%"))
+	end, { desc = "[Test] Run file" })
+end)
+
 -- HARPOON
 pcall(function()
 	local harpoon_ui = require("harpoon.ui")
@@ -58,7 +69,7 @@ keymap("n", "<leader>gh", ":diffget //3<CR>", { desc = "Diff get Head" })
 keymap("n", "<leader>dv", ":Gvdiffsplit<CR>", { desc = "Diff Vertical" })
 keymap("n", "<leader>dh", ":Ghdiffsplit<CR>", { desc = "Diff Horizontal" })
 keymap("n", "<leader>di", ":DiffviewOpen<CR>", { desc = "Diff View Open" })
-keymap("n", "<leader>di", ":DiffviewOpen<CR>", { desc = "Diff View Open" })
+keymap("n", "<leader>dh", ":DiffviewFileHistory<CR>", { desc = "Diff View File History" })
 keymap("n", "<leader>dq", ":tabc<CR>", { desc = "Close Tab" })
 
 -- TELESCOPE
