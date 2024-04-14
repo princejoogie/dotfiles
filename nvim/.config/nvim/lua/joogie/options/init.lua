@@ -32,7 +32,7 @@ opt.signcolumn = "yes"
 opt.splitbelow = true
 opt.splitright = true
 opt.termguicolors = true
-opt.timeoutlen = 400
+opt.timeoutlen = 300
 opt.undofile = true
 opt.wrap = true
 

@@ -70,7 +70,6 @@ return {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			{ "j-hui/fidget.nvim", opts = {} },
-			"folke/neodev.nvim",
 		},
 		config = function()
 			local mlsp = require("mason-lspconfig")

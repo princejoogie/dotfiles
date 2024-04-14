@@ -263,6 +263,20 @@ return {
 	},
 
 	{
+		"folke/trouble.nvim",
+		dependencies = {},
+		branch = "dev",
+		keys = {
+			{
+				"<leader>xx",
+				"<cmd>Trouble diagnostics toggle<cr>",
+				desc = "Diagnostics (Trouble)",
+			},
+		},
+		opts = {},
+	},
+
+	{
 		"numToStr/Comment.nvim",
 		dependencies = {
 			"JoosepAlviste/nvim-ts-context-commentstring",

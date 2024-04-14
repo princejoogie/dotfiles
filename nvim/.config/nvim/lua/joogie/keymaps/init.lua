@@ -12,6 +12,18 @@ keymap("x", "p", '"_dP', { desc = "Paste yanked text" })
 keymap({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
 keymap({ "n", "v" }, "$", "g_", { desc = "End of line" })
 
+-- resize
+keymap("n", "<C-Left>", [[<cmd>lua require("tmux").resize_left()<cr>]], { desc = "+ Resize Vertically" })
+keymap("n", "<C-Down>", [[<cmd>lua require("tmux").resize_bottom()<cr>]], { desc = "+ Resize Horizontally" })
+keymap("n", "<C-Up>", [[<cmd>lua require("tmux").resize_top()<cr>]], { desc = "- Resize Horizontally" })
+keymap("n", "<C-Right>", [[<cmd>lua require("tmux").resize_right()<cr>]], { desc = "- Resize Vertically" })
+
+-- pane-switch
+keymap("n", "<C-h>", [[<cmd>lua require("tmux").move_left()<cr>]])
+keymap("n", "<C-j>", [[<cmd>lua require("tmux").move_bottom()<cr>]])
+keymap("n", "<C-k>", [[<cmd>lua require("tmux").move_top()<cr>]])
+keymap("n", "<C-l>", [[<cmd>lua require("tmux").move_right()<cr>]])
+
 vim.cmd([[
 	nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 	nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
