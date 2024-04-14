@@ -11,7 +11,9 @@ return {
 			---@diagnostic disable-next-line: missing-fields
 			require("neotest").setup({
 				adapters = {
-					require("neotest-vitest"),
+					require("neotest-vitest")({
+						vitestCommand = "npx vitest",
+					}),
 				},
 			})
 		end,
