@@ -54,7 +54,7 @@ local on_attach = function(_, bufnr)
 	--[[ keymap(bufnr, "n", "gt", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts) ]]
 
 	nmap("K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Hover Action")
-	nmap("<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Signature Help")
+	--[[ nmap("<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Signature Help") ]]
 	nmap("<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename symbol")
 	nmap("<leader>ca", "<cmd>lua vim.lsp.buf.code_action({ apply = true })<CR>", "Code actions")
 	nmap("<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", "Open float")
