@@ -47,6 +47,7 @@ end)
 
 -- NEOTREE
 keymap("n", "<C-b>", "<cmd>Neotree toggle<CR>", { desc = "Toggle Filetree" })
+keymap("n", "<leader>cc", "<cmd>ZenMode<CR>", { desc = "Toggle ZenMode" })
 
 -- NEOTEST
 pcall(function()
