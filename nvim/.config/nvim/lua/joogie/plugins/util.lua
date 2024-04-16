@@ -12,21 +12,21 @@ return {
 		opts = { options = vim.opt.sessionoptions:get() },
 		keys = {
 			{
-				"<leader>qs",
+				"<leader>ws",
 				function()
 					require("persistence").load()
 				end,
 				desc = "Restore Session",
 			},
 			{
-				"<leader>ql",
+				"<leader>wl",
 				function()
 					require("persistence").load({ last = true })
 				end,
 				desc = "Restore Last Session",
 			},
 			{
-				"<leader>qd",
+				"<leader>wd",
 				function()
 					require("persistence").stop()
 				end,

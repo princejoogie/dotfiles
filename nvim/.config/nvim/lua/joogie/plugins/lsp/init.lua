@@ -46,21 +46,13 @@ local on_attach = function(_, bufnr)
 	nmap("gI", require("telescope.builtin").lsp_implementations, "Goto Implementation")
 	nmap("gt", require("telescope.builtin").lsp_type_definitions, "Type Definition")
 	nmap("<leader>ds", require("telescope.builtin").lsp_document_symbols, "Document Symbols")
-	nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "Workspace Symbols")
-
-	--[[ keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts) ]]
-	--[[ keymap(bufnr, "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts) ]]
-	--[[ keymap(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts) ]]
-	--[[ keymap(bufnr, "n", "gt", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts) ]]
 
 	nmap("K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Hover Action")
-	--[[ nmap("<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Signature Help") ]]
 	nmap("<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename symbol")
 	nmap("<leader>ca", "<cmd>lua vim.lsp.buf.code_action({ apply = true })<CR>", "Code actions")
 	nmap("<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", "Open float")
 	nmap("<leader>dk", "<cmd>lua vim.diagnostic.goto_prev()<CR>", "Previous Error")
 	nmap("<leader>dj", "<cmd>lua vim.diagnostic.goto_next()<CR>", "Next Error")
-	nmap("<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", "Error loclist")
 end
 
 return {
