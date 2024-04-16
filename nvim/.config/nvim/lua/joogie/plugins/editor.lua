@@ -21,6 +21,11 @@ return {
 					sidebars = "transparent",
 					floats = "transparent",
 				},
+				on_highlights = function(hl)
+					hl.WinSeparator = {
+						fg = "#3b4261",
+					}
+				end,
 			})
 			vim.cmd([[colorscheme tokyonight-night]])
 		end,
