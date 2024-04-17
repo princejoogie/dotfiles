@@ -48,6 +48,8 @@ end)
 -- NEOTREE
 keymap("n", "<C-b>", "<cmd>Neotree toggle<CR>", { desc = "Toggle Filetree" })
 keymap("n", "<leader>cm", "<cmd>ZenMode<CR>", { desc = "Toggle ZenMode" })
+keymap("n", "<leader>ai", "<cmd>ChatGPT<CR>", { desc = "Toggle ChatGPT" })
+keymap({ "n", "v", "x" }, "<leader>ar", ":ChatGPTRun", { desc = "ChatGPTRun x" })
 keymap("n", "<leader>mm", "<cmd>MarkdownPreviewToggle<CR>", { desc = "Toggle MarkdownPreview" })
 
 -- NEOTEST
