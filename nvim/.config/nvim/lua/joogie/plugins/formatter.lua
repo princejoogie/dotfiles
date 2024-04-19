@@ -22,7 +22,7 @@ return {
 			},
 		})
 
-		vim.keymap.set({ "n", "v" }, "<leader>p", function()
+		local format = function()
 			local ft = vim.bo.ft
 			local js_fts = {
 				"javascript",
@@ -42,6 +42,13 @@ return {
 				lsp_fallback = true,
 				async = true,
 			})
-		end, { desc = "Format file or range" })
+		end
+
+		vim.keymap.set({ "n", "v" }, "<leader>p", format, { desc = "Format file or range" })
+
+		vim.api.nvim_create_autocmd("BufWritePost", {
+			group = vim.api.nvim_create_augroup("joogie_format_on_save", { clear = true }),
+			callback = format,
+		})
 	end,
 }
