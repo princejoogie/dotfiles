@@ -346,7 +346,7 @@ return {
 
 			vim.notify = function(msg, ...)
 				for _, banned in ipairs(banned_messages) do
-					if string.find(msg, banned) then
+					if string.find(msg, banned, 1, true) then
 						return
 					end
 				end

@@ -85,10 +85,15 @@ end)
 
 -- PACKAGE-INFO
 pcall(function()
+	local fidget = require("fidget")
 	local pi_base = require("package-info")
+
 	keymap("n", "<leader>nc", pi_base.hide, { desc = "Hide package info" })
 	keymap("n", "<leader>np", pi_base.change_version, { desc = "Change package version" })
-	keymap("n", "<leader>ns", pi_base.show, { desc = "Show package info" })
+	keymap("n", "<leader>ns", function()
+		pi_base.show({ force = true })
+		fidget.notify(pi_base.get_status(), vim.log.levels.INFO, { annote = "", key = "foobar" })
+	end, { desc = "Show package info" })
 	keymap("n", "<leader>nu", pi_base.update, { desc = "Update package" })
 end)
 
