@@ -12,6 +12,9 @@ keymap("n", "n", "nzz", { desc = "Match next" })
 keymap("x", "p", '"_dP', { desc = "Paste yanked text" })
 keymap({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
 keymap({ "n", "v" }, "$", "g_", { desc = "End of line" })
+keymap("n", "<leader>cp", [[:let @+=expand('%:~:.')<CR>]], { desc = "Copy relative path" })
+keymap("n", "<leader><Tab>", "<cmd>Cnext<CR>", { desc = "Next quickfix item" })
+keymap("n", "<leader><S-Tab>", "<cmd>Cprev<CR>", { desc = "Previos quickfix item" })
 
 -- resize
 keymap("n", "<C-Left>", [[<cmd>lua require("tmux").resize_left()<cr>]], { desc = "+ Resize Vertically" })
@@ -49,7 +52,12 @@ end)
 keymap("n", "<C-b>", "<cmd>Neotree toggle<CR>", { desc = "Toggle Filetree" })
 keymap("n", "<leader>cm", "<cmd>ZenMode<CR>", { desc = "Toggle ZenMode" })
 keymap("n", "<leader>ai", "<cmd>ChatGPT<CR>", { desc = "Toggle ChatGPT" })
-keymap({ "n", "v", "x" }, "<leader>ae", "<cmd>ChatGPTEditWithInstructions<CR>", { desc = "Toggle ChatGPTEditWithInstructions" })
+keymap(
+	{ "n", "v", "x" },
+	"<leader>ae",
+	"<cmd>ChatGPTEditWithInstructions<CR>",
+	{ desc = "Toggle ChatGPTEditWithInstructions" }
+)
 keymap({ "n", "v", "x" }, "<leader>ar", ":ChatGPTRun", { desc = "ChatGPTRun x" })
 keymap("n", "<leader>mm", "<cmd>MarkdownPreviewToggle<CR>", { desc = "Toggle MarkdownPreview" })
 

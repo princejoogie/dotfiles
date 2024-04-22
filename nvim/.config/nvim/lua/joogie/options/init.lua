@@ -9,6 +9,7 @@ opt.cursorline = true
 opt.expandtab = true
 opt.shiftwidth = 2
 opt.smartindent = true
+opt.autoindent = true
 opt.tabstop = 2
 opt.softtabstop = 2
 opt.fillchars = { eob = " " }
@@ -55,3 +56,12 @@ vim.env.PATH = vim.env.PATH .. (is_windows and ";" or ":") .. vim.fn.stdpath("da
 if os.getenv("CONDA_PREFIX") then
 	vim.g.python3_host_prog = os.getenv("CONDA_PREFIX") .. "/bin/python"
 end
+
+-- allow looping back in qf list
+vim.cmd([[
+	command! Cnext try | cnext | catch | cfirst | catch | endtry
+	command! Cprev try | cprev | catch | clast | catch | endtry
+
+	command! Lnext try | lnext | catch | lfirst | catch | endtry
+	command! Lprev try | lprev | catch | llast | catch | endtry
+]])
