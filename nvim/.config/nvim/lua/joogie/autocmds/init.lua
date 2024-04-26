@@ -102,3 +102,26 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 		vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
 	end,
 })
+
+local function remove_qf_item()
+	local curqfidx = vim.fn.line(".") - 1
+	local qfall = vim.fn.getqflist()
+	table.remove(qfall, curqfidx + 1) -- Lua indexing starts at 1
+	vim.fn.setqflist(qfall, "r")
+	vim.cmd(curqfidx + 1 .. "cfirst")
+	vim.cmd("copen")
+end
+
+vim.api.nvim_create_user_command(
+	"RemoveQFItem",
+	remove_qf_item,
+	{ desc = "Use `dd` to delete an item in quickfix list" }
+)
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = augroup("quickfix_mappings"),
+	pattern = { "qf" },
+	callback = function()
+		vim.api.nvim_buf_set_keymap(0, "n", "dd", "<cmd>RemoveQFItem<CR>", { noremap = true, silent = true })
+	end,
+})

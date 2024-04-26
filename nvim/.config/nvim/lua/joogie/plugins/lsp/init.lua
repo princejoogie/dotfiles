@@ -42,6 +42,10 @@ local on_attach = function(_, bufnr)
 	end
 
 	nmap("gd", require("telescope.builtin").lsp_definitions, "Goto Definition")
+	nmap("gD", function()
+		vim.cmd("vsplit")
+		require("telescope.builtin").lsp_definitions()
+	end, "Goto Definition in split")
 	nmap("gr", require("telescope.builtin").lsp_references, "Goto References")
 	nmap("gI", require("telescope.builtin").lsp_implementations, "Goto Implementation")
 	nmap("gt", require("telescope.builtin").lsp_type_definitions, "Type Definition")

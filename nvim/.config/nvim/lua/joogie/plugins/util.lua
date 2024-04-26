@@ -61,6 +61,8 @@ return {
 			vim.g.vrc_auto_format_response_patterns = {
 				json = "jq",
 			}
+			vim.g.vrc_show_command = true
+			vim.g.vrc_trigger = "<leader><CR>"
 		end,
 	},
 	{
