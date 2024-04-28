@@ -9,3 +9,9 @@ gc() {
 gca() {
   git branch -a | fzf-tmux -p --reverse | awk '{gsub("remotes/origin/", "", $1); print $1}' | xargs git checkout
 }
+
+ghpr() {
+  _branch=$(git branch -a | fzf-tmux -p --reverse | awk '{gsub("remotes/origin/", "", $1); print $1}')
+  echo "gh pr create --base $_branch" | pbcopy > /dev/null
+  echo "Command has been copued to clipboard"
+}

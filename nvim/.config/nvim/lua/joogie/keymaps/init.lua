@@ -35,6 +35,9 @@ vim.cmd([[
 	vnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 ]])
 
+-- TYPESCRIPT-TOOLS
+keymap("n", "<leader>rf", "<cmd>TSToolsRenameFile<CR>", { desc = "TS Rename File" })
+
 -- SPECTRE
 pcall(function()
 	local spectre = require("spectre")
@@ -98,6 +101,7 @@ pcall(function()
 end)
 
 -- FUGITIVE
+keymap("n", "<leader>gg", ":Git<CR>", { desc = "Open Git Fugitive" })
 keymap("n", "<leader>gf", ":diffget //2<CR>", { desc = "Diff get Current" })
 keymap("n", "<leader>gh", ":diffget //3<CR>", { desc = "Diff get Head" })
 keymap("n", "<leader>dv", ":Gvdiffsplit<CR>", { desc = "Diff Vertical" })

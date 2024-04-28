@@ -75,9 +75,9 @@ COMPLETION_WAITING_DOTS="true"
 
 # git
 plugins=(
-	tmux
-	z
-	vi-mode
+  tmux
+  z
+  vi-mode
   direnv
   zsh-autosuggestions
 )
