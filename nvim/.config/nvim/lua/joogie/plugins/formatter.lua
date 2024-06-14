@@ -46,9 +46,9 @@ return {
 
 		vim.keymap.set({ "n", "v" }, "<leader>p", format, { desc = "Format file or range" })
 
-		vim.api.nvim_create_autocmd("BufWritePost", {
-			group = vim.api.nvim_create_augroup("joogie_format_on_save", { clear = true }),
-			callback = format,
-		})
+		--[[ vim.api.nvim_create_autocmd("BufWritePost", { ]]
+		--[[ 	group = vim.api.nvim_create_augroup("joogie_format_on_save", { clear = true }), ]]
+		--[[ 	callback = format, ]]
+		--[[ }) ]]
 	end,
 }

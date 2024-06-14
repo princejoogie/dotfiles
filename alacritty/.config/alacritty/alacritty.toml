@@ -69,5 +69,8 @@ size = 14
 family = "FiraCode Nerd Font"
 
 [window]
-opacity = 0.95
-decorations = "none"
+padding.x = 10
+padding.y = 10
+opacity = 0.85
+blur = true
+decorations = "Buttonless"

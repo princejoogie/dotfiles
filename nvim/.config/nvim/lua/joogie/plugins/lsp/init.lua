@@ -66,11 +66,11 @@ return {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			{ "j-hui/fidget.nvim", opts = {} },
-			{
-				"pmizio/typescript-tools.nvim",
-				dependencies = { "stevearc/dressing.nvim" },
-				opts = {},
-			},
+			--[[ { ]]
+			--[[ 	"pmizio/typescript-tools.nvim", ]]
+			--[[ 	dependencies = { "stevearc/dressing.nvim" }, ]]
+			--[[ 	opts = {}, ]]
+			--[[ }, ]]
 		},
 		config = function()
 			local mlsp = require("mason-lspconfig")

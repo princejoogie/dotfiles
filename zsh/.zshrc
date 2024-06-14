@@ -15,6 +15,15 @@ if [[ -d "/opt/homebrew/share/zsh/site-functions" ]]; then
   fpath+=/opt/homebrew/share/zsh/site-functions
 fi
 
+if [[ -f "$HOME/completions/docker.sh" ]] then
+  source "$HOME/completions/docker.sh" 
+fi
+
+if [[ -d "$HOME/.zsh/completion" ]] then
+  fpath+="$HOME/.zsh/completion"
+  autoload -Uz compinit && compinit
+fi
+
 # export DOTNET_ROOT="/opt/homebrew/Cellar/dotnet/8.0.0"
 export DOTNET_ROOT=$HOME/.dotnet
 export PATH=$PATH:$HOME/.dotnet
@@ -111,9 +120,12 @@ alias so=source
 alias x=exit
 alias e=echo
 alias cl="xclip -selection c"
+alias G=git
 alias python=python3
 alias pip=pip3
 alias vim=nvim
+alias t=tmux
+alias ldock=lazydocker
 
 # starship
 eval "$(starship init zsh)"
