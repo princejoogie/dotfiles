@@ -270,7 +270,6 @@ return {
 	{
 		"folke/trouble.nvim",
 		dependencies = {},
-		branch = "dev",
 		keys = {
 			{
 				"<leader>xx",

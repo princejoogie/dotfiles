@@ -27,6 +27,7 @@ fi
 # export DOTNET_ROOT="/opt/homebrew/Cellar/dotnet/8.0.0"
 export DOTNET_ROOT=$HOME/.dotnet
 export PATH=$PATH:$HOME/.dotnet
+export TURBO_UI=1
 
 export EDITOR=nvim
 export PATH=$PATH:/usr/local/go/bin
@@ -126,6 +127,8 @@ alias pip=pip3
 alias vim=nvim
 alias t=tmux
 alias ldock=lazydocker
+alias hawk=git
+alias tuah=push
 
 # starship
 eval "$(starship init zsh)"
