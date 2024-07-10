@@ -4,7 +4,7 @@ return {
 	"sindrets/diffview.nvim",
 
 	{ "nvim-tree/nvim-web-devicons", lazy = true },
-	{ "stevearc/dressing.nvim", event = "VeryLazy" },
+	{ "stevearc/dressing.nvim",      event = "VeryLazy" },
 
 	{
 		"folke/tokyonight.nvim",
@@ -31,7 +31,7 @@ return {
 		end,
 	},
 
-	{ "ThePrimeagen/harpoon", dependencies = { "nvim-lua/plenary.nvim" } },
+	{ "ThePrimeagen/harpoon",   dependencies = { "nvim-lua/plenary.nvim" } },
 
 	{ "nvim-pack/nvim-spectre", opts = {} },
 
@@ -138,6 +138,12 @@ return {
 		},
 		config = function()
 			require("neo-tree").setup({
+				window = {
+					mappings = {
+						["<C-b>"] = "noop",
+						["/"] = "noop",
+					}
+				},
 				filesystem = {
 					follow_current_file = {
 						enabled = true,
@@ -213,10 +219,10 @@ return {
 			incremental_selection = {
 				enable = true,
 				keymaps = {
-					init_selection = "<C-space>",
-					node_incremental = "<C-space>",
+					init_selection = "<CR>",
+					node_incremental = "<CR>",
 					scope_incremental = false,
-					node_decremental = "<bs>",
+					node_decremental = "<BS>",
 				},
 			},
 			textobjects = {
@@ -247,7 +253,7 @@ return {
 		cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
 		keys = {
 			{ "<c-space>", desc = "Increment selection" },
-			{ "<bs>", desc = "Decrement selection", mode = "x" },
+			{ "<bs>",      desc = "Decrement selection", mode = "x" },
 		},
 	},
 

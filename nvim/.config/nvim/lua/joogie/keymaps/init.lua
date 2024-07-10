@@ -16,6 +16,8 @@ keymap({ "n", "v" }, "$", "g_", { desc = "End of line" })
 keymap("n", "<leader>cp", [[:let @+=expand('%:~:.')<CR>]], { desc = "Copy relative path" })
 keymap("n", "<leader><Tab>", "<cmd>Cnext<CR>", { desc = "Next quickfix item" })
 keymap("n", "<leader><S-Tab>", "<cmd>Cprev<CR>", { desc = "Previos quickfix item" })
+keymap("i", "<C-h>", "<C-w>", { desc = "Delete word back" })
+keymap("i", "<C-l>", "<Esc>ldwi", { desc = "Delete word front" })
 
 -- resize
 keymap("n", "<C-Left>", [[<cmd>lua require("tmux").resize_left()<cr>]], { desc = "+ Resize Vertically" })
