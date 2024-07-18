@@ -123,4 +123,10 @@ return {
 			delete_check_events = "TextChanged",
 		},
 	},
+	{
+		"supermaven-inc/supermaven-nvim",
+		config = function()
+			require("supermaven-nvim").setup({})
+		end,
+	},
 }
