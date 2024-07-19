@@ -1,47 +1,24 @@
 return {
 	"stevearc/conform.nvim",
+	opts = {},
 	config = function()
-		-- TEMPORARY: this config seems broken but eslint and prisma format still works
-		--[[ require("conform").setup({ ]]
-		--[[ 	formatters_by_ft = { ]]
-		--[[ 		cpp = { "clang-format" }, ]]
-		--[[ javascript = { "prettier" }, ]]
-		--[[ typescript = { "prettier" }, ]]
-		--[[ javascriptreact = { "prettier" }, ]]
-		--[[ typescriptreact = { "prettier" }, ]]
-		--[[ svelte = { "prettier" }, ]]
-		--[[ css = { "prettier" }, ]]
-		--[[ html = { "prettier" }, ]]
-		--[[ json = { "prettier" }, ]]
-		--[[ yaml = { "prettier" }, ]]
-		--[[ markdown = { "prettier" }, ]]
-		--[[ graphql = { "prettier" }, ]]
-		--[[ 		lua = { "stylua" }, ]]
-		--[[ 		python = { "isort", "black" }, ]]
-		--[[ 	}, ]]
-		--[[ }) ]]
-		--[[ local format = function() ]]
-		--[[ 	local ft = vim.bo.ft ]]
-		--[[ 	local js_fts = { ]]
-		--[[ 		"javascript", ]]
-		--[[ 		"typescript", ]]
-		--[[ 		"javascriptreact", ]]
-		--[[ 		"typescriptreact", ]]
-		--[[ 	} ]]
-		--[[ for _, v in ipairs(js_fts) do ]]
-		--[[ 	if ft == v then ]]
-		--[[ 		vim.cmd("EslintFixAll") ]]
-		--[[ 		break ]]
-		--[[ 	end ]]
-		--[[ end ]]
-		--[[ 	conform.format({ ]]
-		--[[ 		lsp_format = "last", ]]
-		--[[ 		async = true, ]]
-		--[[ 		quiet = true, ]]
-		--[[ 	}) ]]
-		--[[ end ]]
+		local conform = require("conform")
 
-		require("conform").setup()
+		conform.setup({
+			formatters_by_ft = {
+				cpp = { "clang-format" },
+				lua = { "stylua" },
+				python = { "isort", "black" },
+				javascript = { "prettier" },
+				svelte = { "prettier" },
+				css = { "prettier" },
+				html = { "prettier" },
+				json = { "prettier" },
+				yaml = { "prettier" },
+				markdown = { "prettier" },
+				graphql = { "prettier" },
+			},
+		})
 
 		vim.keymap.set({ "n", "v" }, "<leader>p",
 			function()
@@ -60,8 +37,27 @@ return {
 					}
 				end
 
-				require("conform").format(opts)
+				local is_js = false
+
+				for _, v in ipairs({
+					"javascript",
+					"typescript",
+					"javascriptreact",
+					"typescriptreact",
+
+				}) do
+					if vim.bo.ft == v then
+						is_js = true
+						break
+					end
+				end
+
+				if is_js then
+					vim.cmd("EslintFixAll")
+				else
+					conform.format(opts)
+				end
 			end,
 			{ desc = "Format file or range" })
-	end,
+	end
 }
