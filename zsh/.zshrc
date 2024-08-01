@@ -1,3 +1,7 @@
+if [ -n "${ZSH_DEBUGRC+1}" ]; then
+    zmodload zsh/zprof
+fi
+
 # Variables
 if [[ -f "$HOME/.cargo/env" ]]; then
   source "$HOME/.cargo/env"
@@ -67,6 +71,7 @@ case `uname` in
     export PATH=$PATH:$ANDROID_HOME/emulator
     export PATH=$PATH:$ANDROID_HOME/platform-tools
     export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:"$(brew --prefix)/opt/libgit2/lib":"$(brew --prefix)/lib"
 
     # miniconda
     export MINICONDA_INSTALL="$HOME/miniconda3"
@@ -151,3 +156,7 @@ eval "$(fnm env)"
 export DENO_INSTALL="$HOME/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
 # deno end
+
+if [ -n "${ZSH_DEBUGRC+1}" ]; then
+    zprof
+fi

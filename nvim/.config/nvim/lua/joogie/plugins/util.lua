@@ -111,4 +111,16 @@ return {
 		end,
 		ft = { "markdown" },
 	},
+	{
+		"3rd/image.nvim",
+		opts = {}
+	},
+	{
+		"vhyrro/luarocks.nvim",
+		priority = 1000,
+		config = true,
+		opts = {
+			rocks = { "magick" },
+		}
+	}
 }

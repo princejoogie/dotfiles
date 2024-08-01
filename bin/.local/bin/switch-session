@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tmux list-sessions -F "#{session_name}" | fzf-tmux -p --reverse | xargs tmux switch-client -t
