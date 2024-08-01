@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { execSync } = require("child_process");
+const { spawn } = require("child_process");
 const { writeFileSync } = require("fs");
 
 const clangdContent = (paths) => `CompileFlags:
@@ -9,12 +9,35 @@ const clangdContent = (paths) => `CompileFlags:
   ]
 `;
 
+function runCommand(cmd, args) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(cmd, args);
+
+    let output = '';
+
+    child.stdout.on('data', (data) => {
+      process.stdout.write(data);
+      output += data.toString();
+    });
+
+    child.stderr.on('data', (data) => {
+      process.stderr.write(data);
+    });
+
+    child.on('close', (code) => {
+      if (code !== 0) {
+        reject(new Error(`Command failed with exit code ${code}`));
+      } else {
+        resolve(output);
+      }
+    });
+  });
+}
+
 const main = async () => {
   console.log("Getting idestate...");
-  const out = execSync("pio -f -c vim run -t idedata -d $(pwd)")
-    .toString()
-    .split("\n")
-    .filter((l) => Boolean(l) && l.startsWith("{"));
+  const raw = await runCommand('pio', ['-f', '-c', 'vim', 'run', '-t', 'idedata', '-d', process.cwd()]);
+  const out = raw.split("\n").filter((l) => Boolean(l) && l.startsWith("{"));
 
   if (out.length <= 0) {
     console.log("ERROR: json object not found");
