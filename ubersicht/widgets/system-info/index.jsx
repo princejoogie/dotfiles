@@ -4,7 +4,7 @@ import { getCpuUsage } from "./src/cpu";
 import { Hexagon } from "./src/components/hexagon";
 import { CpuIcon, DatabaseIcon } from "./src/lib/icons";
 
-export const refreshFrequency = 2000;
+export const refreshFrequency = 1000;
 
 /**
  * initialState
@@ -43,17 +43,37 @@ export const command = (dispatch) => {
 export const render = (props) => {
   return (
     <div className="p-2 fixed bottom-2 left-2 font-mono text-xs">
-      <Hexagon>
+      <Hexagon className="fixed bottom-[calc(80px+10px)]">
         <div className="flex flex-col items-center gap-1 mb-1">
           <div className="flex items-center gap-1">
             <CpuIcon />
-            <p>CPU</p>
+            <p>CPU1</p>
           </div>
           <span className="text-green-300">{props.cpu}%</span>
         </div>
       </Hexagon>
 
-      <Hexagon>
+      <Hexagon className="fixed bottom-[calc(40px+9px)] left-[calc(90px)]">
+        <div className="flex flex-col items-center gap-1 mb-1">
+          <div className="flex items-center gap-1">
+            <CpuIcon />
+            <p>CPU2</p>
+          </div>
+          <span className="text-green-300">{props.cpu}%</span>
+        </div>
+      </Hexagon>
+
+      <Hexagon className="fixed bottom-[calc(80px+9px)] left-[calc(164px)]">
+        <div className="flex flex-col items-center gap-1 mb-1">
+          <div className="flex items-center gap-1">
+            <CpuIcon />
+            <p>CPU3</p>
+          </div>
+          <span className="text-green-300">{props.cpu}%</span>
+        </div>
+      </Hexagon>
+
+      <Hexagon className="fixed bottom-2">
         <div className="flex flex-col items-center gap-1">
           <div className="flex items-center gap-1">
             <DatabaseIcon />
