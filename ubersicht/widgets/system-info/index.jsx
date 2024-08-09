@@ -56,7 +56,7 @@ export const render = (props) => {
       <Hexagon>
         <div className="flex flex-col items-center gap-1">
           <div className="flex items-center gap-1">
-            <DatabaseIcon className="size-4" />
+            <DatabaseIcon />
             <p>MEM</p>
           </div>
           <span className="text-green-300">{props.memory}%</span>

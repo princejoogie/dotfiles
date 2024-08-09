@@ -12,7 +12,7 @@ export const CpuIcon = ({ className = "size-4" }) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className={`size-5 ${className}`}
+      className={className}
     >
       <path
         strokeLinecap="round"
@@ -37,7 +37,7 @@ export const DatabaseIcon = ({ className = "size-4" }) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className={`size-5 ${className}`}
+      className={className}
     >
       <path
         strokeLinecap="round"
