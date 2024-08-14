@@ -56,7 +56,7 @@ end)
 
 -- NEOTREE
 keymap("n", "<C-b>", "<cmd>Neotree toggle<CR>", { desc = "Toggle Filetree" })
-keymap("n", "<leader>cm", "<cmd>ZenMode<CR>", { desc = "Toggle ZenMode" })
+keymap("n", "<leader>zm", "<cmd>ZenMode<CR>", { desc = "Toggle ZenMode" })
 keymap("n", "<leader>ai", "<cmd>ChatGPT<CR>", { desc = "Toggle ChatGPT" })
 keymap(
 	{ "n", "v", "x" },

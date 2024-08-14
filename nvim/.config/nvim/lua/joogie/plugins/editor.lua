@@ -43,7 +43,8 @@ return {
 			"nvim-telescope/telescope-github.nvim",
 			{
 				"princejoogie/dir-telescope.nvim",
-				opts = {},
+				--[[ dir = "~/Documents/codes/lua/dir-telescope.nvim", ]]
+				opts = { show_preview = false },
 			},
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
