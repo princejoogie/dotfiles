@@ -32,6 +32,7 @@ case `uname` in
     # miniconda end
   ;;
   Darwin)
+    eval "$(/opt/homebrew/bin/brew shellenv)"
     # miniconda
     export MINICONDA_INSTALL="$HOME/miniconda3"
     export PATH="$MINICONDA_INSTALL/bin:$PATH"
@@ -48,8 +49,8 @@ COMPLETION_WAITING_DOTS="true"
 
 # git
 plugins=(
-  z
   tmux
+  z
   vi-mode
   zsh-autosuggestions
 )
@@ -81,16 +82,22 @@ alias ldock=lazydocker
 eval "$(starship init zsh)"
 # starship end
 
+# pnpm
+export PNPM_HOME="/home/joogie/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
 # fnm
 export PATH="$HOME/.local/share/fnm:$PATH"
 eval "$(fnm env)"
 # fnm end
 
 # deno
-if [ -d "$HOME/.deno" ]; then
-  export DENO_INSTALL="$HOME/.deno"
-  export PATH="$DENO_INSTALL/bin:$PATH"
-fi
+export DENO_INSTALL="$HOME/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
 # deno end
 
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
