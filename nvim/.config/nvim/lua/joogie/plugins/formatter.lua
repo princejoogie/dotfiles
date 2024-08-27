@@ -17,6 +17,7 @@ return {
 				yaml = { "prettier" },
 				markdown = { "prettier" },
 				graphql = { "prettier" },
+				sql = { "sqlfmt" },
 			},
 		})
 
