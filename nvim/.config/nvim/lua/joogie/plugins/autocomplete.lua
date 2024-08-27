@@ -8,6 +8,7 @@ return {
 			"hrsh7th/cmp-nvim-lua",
 			"hrsh7th/cmp-path",
 			"onsails/lspkind.nvim",
+			"kristijanhusak/vim-dadbod-completion"
 		},
 		opts = function()
 			local cmp = require("cmp")
@@ -28,6 +29,7 @@ return {
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
 				},
 				sources = cmp.config.sources({
+					{ name = "vim-dadbod-completion" },
 					{ name = "nvim_lsp" },
 					{ name = "nvim_lua" },
 					{ name = "path" },
@@ -47,7 +49,9 @@ return {
 								buffer = "[Buf ]",
 								path = "[Path]",
 								luasnip = "[Snip]",
+								["vim-dadbod-completion"] = "[DBUI ]",
 							})[entry.source.name]
+
 							return vim_item
 						end,
 					}),
@@ -64,6 +68,14 @@ return {
 		end,
 		config = function(_, opts)
 			local cmp = require("cmp")
+
+			cmp.setup.filetype("sql", {
+				sources = cmp.config.sources({
+					{ name = "vim-dadbod-completion" },
+				}, {
+					{ name = "buffer" },
+				}),
+			})
 
 			cmp.setup.filetype("gitcommit", {
 				sources = cmp.config.sources({
@@ -129,4 +141,26 @@ return {
 			require("supermaven-nvim").setup({})
 		end,
 	},
+	{
+		"yetone/avante.nvim",
+		event = "VeryLazy",
+		build = "make",
+		opts = {
+			provider = "claude",
+		},
+		dependencies = {
+			"nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+			"stevearc/dressing.nvim",
+			"nvim-lua/plenary.nvim",
+			"MunifTanjim/nui.nvim",
+			--- The below is optional, make sure to setup it properly if you have lazy=true
+			{
+				'MeanderingProgrammer/render-markdown.nvim',
+				opts = {
+					file_types = { "markdown", "Avante" },
+				},
+				ft = { "markdown", "Avante" },
+			},
+		},
+	}
 }

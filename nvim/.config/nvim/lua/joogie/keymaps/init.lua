@@ -40,6 +40,9 @@ vim.cmd([[
 
 -- TYPESCRIPT-TOOLS
 keymap("n", "<leader>rf", "<cmd>TSToolsRenameFile<CR>", { desc = "TS Rename File" })
+keymap("n", "<leader>db", "<cmd>DBUIToggle<CR>", { desc = "Toggle DBUI" })
+keymap("n", "<leader><Tab>", "<cmd>tabnext<CR>", { desc = "Next Tab" })
+keymap("n", "<leader><S-Tab>", "<cmd>tabprevious<CR>", { desc = "Previous Tab" })
 
 -- SPECTRE
 pcall(function()

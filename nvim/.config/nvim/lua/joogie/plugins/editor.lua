@@ -348,6 +348,8 @@ return {
 				"Failed to attach to",
 				"No items, skipping",
 				"Config Change Detected",
+				"Executing query",
+				"Done after",
 			}
 
 			vim.notify = function(msg, ...)

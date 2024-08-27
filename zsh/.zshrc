@@ -22,6 +22,10 @@ export PATH=$PATH:$HOME/.cargo/bin
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
 export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:/opt/homebrew/opt/libpq/bin
+export LDFLAGS="-L/opt/homebrew/opt/libpq/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/libpq/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/libpq/lib/pkgconfig"
 
 case `uname` in
   Linux)
@@ -33,6 +37,7 @@ case `uname` in
   ;;
   Darwin)
     eval "$(/opt/homebrew/bin/brew shellenv)"
+    export HOMEBREW_NO_AUTO_UPDATE=1
     # miniconda
     export MINICONDA_INSTALL="$HOME/miniconda3"
     export PATH="$MINICONDA_INSTALL/bin:$PATH"
