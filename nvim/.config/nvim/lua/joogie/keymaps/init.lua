@@ -70,9 +70,12 @@ keymap(
 keymap({ "n", "v", "x" }, "<leader>ar", ":ChatGPTRun", { desc = "ChatGPTRun x" })
 keymap("n", "<leader>mm", "<cmd>MarkdownPreviewToggle<CR>", { desc = "Toggle MarkdownPreview" })
 
+	keymap("n", "<leader>c", function() end, { desc = "[Code Actions] -->" })
+
 -- NEOTEST
 pcall(function()
 	local neotest = require("neotest")
+	keymap("n", "<leader>,", function() end, { desc = "[NeoTest] -->" })
 	keymap("n", "<leader>,s", neotest.summary.toggle, { desc = "[Test] Toggle summary" })
 	keymap("n", "<leader>,e", neotest.output.open, { desc = "[Test] Output open" })
 	keymap("n", "<leader>,r", neotest.run.run, { desc = "[Test] Run nearest" })

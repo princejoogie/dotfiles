@@ -1,8 +1,11 @@
 return {
 	"AndrewRadev/tagalong.vim",
-	"folke/which-key.nvim",
 	"sindrets/diffview.nvim",
 
+	{
+		"folke/which-key.nvim",
+		opts = { win = { border = "rounded", } }
+	},
 	{ "nvim-tree/nvim-web-devicons", lazy = true },
 	{ "stevearc/dressing.nvim",      event = "VeryLazy" },
 

@@ -38,6 +38,10 @@ case `uname` in
   Darwin)
     eval "$(/opt/homebrew/bin/brew shellenv)"
     export HOMEBREW_NO_AUTO_UPDATE=1
+
+    # bun completions
+    [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
     # miniconda
     export MINICONDA_INSTALL="$HOME/miniconda3"
     export PATH="$MINICONDA_INSTALL/bin:$PATH"
