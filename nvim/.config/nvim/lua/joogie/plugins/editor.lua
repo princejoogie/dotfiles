@@ -4,10 +4,10 @@ return {
 
 	{
 		"folke/which-key.nvim",
-		opts = { win = { border = "rounded", } }
+		opts = { win = { border = "rounded" } },
 	},
 	{ "nvim-tree/nvim-web-devicons", lazy = true },
-	{ "stevearc/dressing.nvim",      event = "VeryLazy" },
+	{ "stevearc/dressing.nvim", event = "VeryLazy" },
 
 	{
 		"folke/tokyonight.nvim",
@@ -34,7 +34,7 @@ return {
 		end,
 	},
 
-	{ "ThePrimeagen/harpoon",   dependencies = { "nvim-lua/plenary.nvim" } },
+	{ "ThePrimeagen/harpoon", dependencies = { "nvim-lua/plenary.nvim" } },
 
 	{ "nvim-pack/nvim-spectre", opts = {} },
 
@@ -146,7 +146,7 @@ return {
 					mappings = {
 						["<C-b>"] = "noop",
 						["/"] = "noop",
-					}
+					},
 				},
 				filesystem = {
 					follow_current_file = {
@@ -257,7 +257,7 @@ return {
 		cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
 		keys = {
 			{ "<c-space>", desc = "Increment selection" },
-			{ "<bs>",      desc = "Decrement selection", mode = "x" },
+			{ "<bs>", desc = "Decrement selection", mode = "x" },
 		},
 	},
 

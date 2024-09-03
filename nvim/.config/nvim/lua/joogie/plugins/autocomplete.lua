@@ -8,7 +8,7 @@ return {
 			"hrsh7th/cmp-nvim-lua",
 			"hrsh7th/cmp-path",
 			"onsails/lspkind.nvim",
-			"kristijanhusak/vim-dadbod-completion"
+			"kristijanhusak/vim-dadbod-completion",
 		},
 		opts = function()
 			local cmp = require("cmp")
@@ -155,12 +155,12 @@ return {
 			"MunifTanjim/nui.nvim",
 			--- The below is optional, make sure to setup it properly if you have lazy=true
 			{
-				'MeanderingProgrammer/render-markdown.nvim',
+				"MeanderingProgrammer/render-markdown.nvim",
 				opts = {
 					file_types = { "markdown", "Avante" },
 				},
 				ft = { "markdown", "Avante" },
 			},
 		},
-	}
+	},
 }

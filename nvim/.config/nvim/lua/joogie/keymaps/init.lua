@@ -1,35 +1,39 @@
 local keymap = vim.keymap.set
 
-keymap("i", "jj", "<Esc>", { desc = "Exit insert mode" })
-keymap("n", "<C-d>", "<C-d>zz", { desc = "Scroll down" })
-keymap("n", "<C-u>", "<C-u>zz", { desc = "Scroll up" })
-keymap("n", "<C-n>", "<cmd>noh<CR>", { desc = "Clear search highlights" })
-keymap("n", "<leader>q", "<cmd>:q<CR>", { desc = "Close buffer" })
-keymap("n", "<leader>ss", ":%s//", { desc = "Replace instances" })
-keymap("n", "<leader>wk", "<cmd>WhichKey<CR>", { desc = "Which Key" })
-keymap("n", "N", "Nzz", { desc = "Match previous" })
-keymap("n", "n", "nzz", { desc = "Match next" })
-keymap("x", "p", '"_dP', { desc = "Paste yanked text" })
-keymap("x", "<leader>d", '"_d', { desc = "Delete without putting to register" })
-keymap({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
-keymap({ "n", "v" }, "$", "g_", { desc = "End of line" })
-keymap("n", "<leader>cp", [[:let @+=expand('%:~:.')<CR>]], { desc = "Copy relative path" })
-keymap("n", "<leader><Tab>", "<cmd>Cnext<CR>", { desc = "Next quickfix item" })
-keymap("n", "<leader><S-Tab>", "<cmd>Cprev<CR>", { desc = "Previos quickfix item" })
+local cmd = function(command)
+	return "<cmd>" .. command .. "<CR>"
+end
+
 keymap("i", "<C-h>", "<C-w>", { desc = "Delete word back" })
 keymap("i", "<C-l>", "<Esc>ldwi", { desc = "Delete word front" })
+keymap("i", "jj", "<Esc>", { desc = "Exit insert mode" })
+keymap("n", "<C-d>", "<C-d>zz", { desc = "Scroll down" })
+keymap("n", "<C-n>", cmd("noh"), { desc = "Clear search highlights" })
+keymap("n", "<C-u>", "<C-u>zz", { desc = "Scroll up" })
+keymap("n", "<leader><S-Tab>", cmd("Cprev"), { desc = "Previos quickfix item" })
+keymap("n", "<leader><Tab>", cmd("Cnext"), { desc = "Next quickfix item" })
+keymap("n", "<leader>cp", [[:let @+=expand('%:~:.')<CR>]], { desc = "Copy relative path" })
+keymap("n", "<leader>q", cmd(":q"), { desc = "Close buffer" })
+keymap("n", "<leader>ss", ":%s//", { desc = "Replace instances" })
+keymap("n", "<leader>wk", cmd("WhichKey"), { desc = "Which Key" })
+keymap("n", "N", "Nzz", { desc = "Match previous" })
+keymap("n", "n", "nzz", { desc = "Match next" })
+keymap("x", "<leader>d", '"_d', { desc = "Delete without putting to register" })
+keymap("x", "p", '"_dP', { desc = "Paste yanked text" })
+keymap({ "i", "x", "n", "s" }, "<C-s>", cmd("w"), { desc = "Save file" })
+keymap({ "n", "v" }, "$", "g_", { desc = "End of line" })
 
 -- resize
-keymap("n", "<C-Left>", [[<cmd>lua require("tmux").resize_left()<cr>]], { desc = "+ Resize Vertically" })
-keymap("n", "<C-Down>", [[<cmd>lua require("tmux").resize_bottom()<cr>]], { desc = "+ Resize Horizontally" })
-keymap("n", "<C-Up>", [[<cmd>lua require("tmux").resize_top()<cr>]], { desc = "- Resize Horizontally" })
-keymap("n", "<C-Right>", [[<cmd>lua require("tmux").resize_right()<cr>]], { desc = "- Resize Vertically" })
+keymap("n", "<C-Left>", cmd('lua require("tmux").resize_left()'), { desc = "+ Resize Vertically" })
+keymap("n", "<C-Down>", cmd('lua require("tmux").resize_bottom()'), { desc = "+ Resize Horizontally" })
+keymap("n", "<C-Up>", cmd('lua require("tmux").resize_top()'), { desc = "- Resize Horizontally" })
+keymap("n", "<C-Right>", cmd('lua require("tmux").resize_right()'), { desc = "- Resize Vertically" })
 
 -- pane-switch
-keymap("n", "<C-h>", [[<cmd>lua require("tmux").move_left()<cr>]])
-keymap("n", "<C-j>", [[<cmd>lua require("tmux").move_bottom()<cr>]])
-keymap("n", "<C-k>", [[<cmd>lua require("tmux").move_top()<cr>]])
-keymap("n", "<C-l>", [[<cmd>lua require("tmux").move_right()<cr>]])
+keymap("n", "<C-h>", cmd('lua require("tmux").move_left()'))
+keymap("n", "<C-j>", cmd('lua require("tmux").move_bottom()'))
+keymap("n", "<C-k>", cmd('lua require("tmux").move_top()'))
+keymap("n", "<C-l>", cmd('lua require("tmux").move_right()'))
 
 vim.cmd([[
 	nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
@@ -39,10 +43,11 @@ vim.cmd([[
 ]])
 
 -- TYPESCRIPT-TOOLS
-keymap("n", "<leader>rf", "<cmd>TSToolsRenameFile<CR>", { desc = "TS Rename File" })
-keymap("n", "<leader>db", "<cmd>DBUIToggle<CR>", { desc = "Toggle DBUI" })
-keymap("n", "<leader><Tab>", "<cmd>tabnext<CR>", { desc = "Next Tab" })
-keymap("n", "<leader><S-Tab>", "<cmd>tabprevious<CR>", { desc = "Previous Tab" })
+keymap("n", "<leader>rf", cmd("TSToolsRenameFile"), { desc = "TS Rename File" })
+keymap("n", "<leader>db", cmd("DBUIToggle"), { desc = "Toggle DBUI" })
+keymap("n", "<leader><Tab>", cmd("tabnext"), { desc = "Next Tab" })
+keymap("n", "<leader><S-Tab>", cmd("tabprevious"), { desc = "Previous Tab" })
+keymap("n", "<leader>nd", cmd('lua require("notify").dismiss()'), { desc = "Previous Tab" })
 
 -- SPECTRE
 pcall(function()
@@ -58,19 +63,19 @@ pcall(function()
 end)
 
 -- NEOTREE
-keymap("n", "<C-b>", "<cmd>Neotree toggle<CR>", { desc = "Toggle Filetree" })
-keymap("n", "<leader>zm", "<cmd>ZenMode<CR>", { desc = "Toggle ZenMode" })
-keymap("n", "<leader>ai", "<cmd>ChatGPT<CR>", { desc = "Toggle ChatGPT" })
+keymap("n", "<C-b>", cmd("Neotree toggle"), { desc = "Toggle Filetree" })
+keymap("n", "<leader>zm", cmd("ZenMode"), { desc = "Toggle ZenMode" })
+keymap("n", "<leader>ai", cmd("ChatGPT"), { desc = "Toggle ChatGPT" })
 keymap(
 	{ "n", "v", "x" },
 	"<leader>ae",
-	"<cmd>ChatGPTEditWithInstructions<CR>",
+	cmd("ChatGPTEditWithInstructions"),
 	{ desc = "Toggle ChatGPTEditWithInstructions" }
 )
 keymap({ "n", "v", "x" }, "<leader>ar", ":ChatGPTRun", { desc = "ChatGPTRun x" })
-keymap("n", "<leader>mm", "<cmd>MarkdownPreviewToggle<CR>", { desc = "Toggle MarkdownPreview" })
+keymap("n", "<leader>mm", cmd("MarkdownPreviewToggle"), { desc = "Toggle MarkdownPreview" })
 
-	keymap("n", "<leader>c", function() end, { desc = "[Code Actions] -->" })
+keymap("n", "<leader>c", function() end, { desc = "[Code Actions] -->" })
 
 -- NEOTEST
 pcall(function()
@@ -130,7 +135,7 @@ pcall(function()
 	keymap("n", "<leader>?", function()
 		builtin.spell_suggest(require("telescope.themes").get_cursor({}))
 	end, { desc = "Spell suggest" })
-	keymap("n", "<leader>tr", "<cmd>Telescope resume<CR>", { desc = "Telescope resume" })
+	keymap("n", "<leader>tr", cmd("Telescope resume"), { desc = "Telescope resume" })
 	keymap("n", "<leader>ch", builtin.command_history, { desc = "Command history" })
 	keymap("n", "<leader>bf", builtin.buffers, { desc = "Buffers" })
 	keymap("n", "<leader>fb", builtin.current_buffer_fuzzy_find, { desc = "Current buffer fuzzy find" })
@@ -140,6 +145,6 @@ pcall(function()
 	keymap("n", "<leader>sf", builtin.lsp_document_symbols, { desc = "Document symbols" })
 	keymap("n", "<leader>gs", builtin.git_status, { desc = "Git status" })
 	keymap("n", "<leader>nh", exts.notify.notify, { desc = "Notify history" })
-	keymap("n", "<leader>fd", "<cmd>GrepInDirectory<CR>", { desc = "Grep in directory" })
-	keymap("n", "<leader>P", "<cmd>FileInDirectory<CR>", { desc = "File in directory" })
+	keymap("n", "<leader>fd", cmd("GrepInDirectory"), { desc = "Grep in directory" })
+	keymap("n", "<leader>P", cmd("FileInDirectory"), { desc = "File in directory" })
 end)
