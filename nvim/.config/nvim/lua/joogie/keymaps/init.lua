@@ -84,7 +84,7 @@ keymap("n", "<leader>di", cmd("DiffviewOpen"), { desc = "Diff View Open" })
 keymap("n", "<leader>dh", cmd("DiffviewFileHistory"), { desc = "Diff View File History" })
 keymap("n", "<leader>dq", cmd("tabc"), { desc = "Close Tab" })
 
--- Plugin: Neotest
+-- Neotest
 pcall(function()
 	local neotest = require("neotest")
 	keymap("n", "<leader>,", function() end, { desc = "[NeoTest] -->" })
@@ -99,7 +99,7 @@ pcall(function()
 	end, { desc = "[Test] Run file" })
 end)
 
--- Plugin: Spectre
+-- Spectre
 pcall(function()
 	local spectre = require("spectre")
 	keymap("n", "<leader>S", spectre.toggle, { desc = "Toggle Spectre" })
@@ -112,7 +112,7 @@ pcall(function()
 	end, { desc = "Search on current file" })
 end)
 
--- Plugin: Harpoon
+-- Harpoon
 pcall(function()
 	local harpoon_ui = require("harpoon.ui")
 	local harpoon_mark = require("harpoon.mark")
@@ -120,10 +120,10 @@ pcall(function()
 	keymap("n", "<leader>hh", harpoon_ui.toggle_quick_menu, { desc = "Toggle harpoon" })
 end)
 
--- Plugin: Notify
+-- Notify
 keymap("n", "<leader>nd", cmd('lua require("notify").dismiss()'), { desc = "Dismiss notifications" })
 
--- Plugin: ChatGPT
+-- ChatGPT
 keymap("n", "<leader>ai", cmd("ChatGPT"), { desc = "Toggle ChatGPT" })
 keymap(
 	{ "n", "v", "x" },
@@ -133,13 +133,13 @@ keymap(
 )
 keymap({ "n", "v", "x" }, "<leader>ar", ":ChatGPTRun", { desc = "ChatGPTRun x" })
 
--- Plugin: ZenMode
+-- ZenMode
 keymap("n", "<leader>zm", cmd("ZenMode"), { desc = "Toggle ZenMode" })
 
--- Plugin: Markdown
+-- Markdown
 keymap("n", "<leader>mm", cmd("MarkdownPreviewToggle"), { desc = "Toggle MarkdownPreview" })
 
--- Plugin: Package Info
+-- Package Info
 pcall(function()
 	local fidget = require("fidget")
 	local pi_base = require("package-info")
@@ -152,10 +152,10 @@ pcall(function()
 	keymap("n", "<leader>nu", pi_base.update, { desc = "Update package" })
 end)
 
--- Plugin: WhichKey
+-- WhichKey
 keymap("n", "<leader>wk", cmd("WhichKey"), { desc = "Which Key" })
 
--- Plugin: Typescript Tools
+-- Typescript Tools
 keymap("n", "<leader>rf", cmd("TSToolsRenameFile"), { desc = "TS Rename File" })
 
 -- Code Actions
