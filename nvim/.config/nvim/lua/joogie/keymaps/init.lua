@@ -51,6 +51,9 @@ keymap("n", "<C-l>", cmd('lua require("tmux").move_right()'), { desc = "Move to 
 keymap("n", "<leader><S-Tab>", cmd("Cprev"), { desc = "Previous quickfix item" })
 keymap("n", "<leader><Tab>", cmd("Cnext"), { desc = "Next quickfix item" })
 
+-- Dadbob
+keymap("n", "<leader>db", cmd("DBUIToggle"), { desc = "Toggle DBUI" })
+
 -- Telescope
 pcall(function()
 	local exts = require("telescope").extensions
@@ -83,6 +86,10 @@ keymap("n", "<leader>dh", cmd("Ghdiffsplit"), { desc = "Diff Horizontal" })
 keymap("n", "<leader>di", cmd("DiffviewOpen"), { desc = "Diff View Open" })
 keymap("n", "<leader>dh", cmd("DiffviewFileHistory"), { desc = "Diff View File History" })
 keymap("n", "<leader>dq", cmd("tabc"), { desc = "Close Tab" })
+
+-- Flash
+keymap({ "n", "x", "o" }, "s", function() require("flash").jump() end, { desc = "Flash" })
+keymap({ "n", "x", "o" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
 
 -- Neotest
 pcall(function()
