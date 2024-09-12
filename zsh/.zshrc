@@ -38,6 +38,7 @@ case `uname` in
   Darwin)
     eval "$(/opt/homebrew/bin/brew shellenv)"
     export HOMEBREW_NO_AUTO_UPDATE=1
+    export PATH="/usr/local/bin:$PATH"
 
     # bun completions
     [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
@@ -108,6 +109,10 @@ eval "$(fnm env)"
 export DENO_INSTALL="$HOME/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
 # deno end
+
+if [[ -x "$(command -v fastfetch)" ]]; then
+  fastfetch
+fi
 
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zprof
