@@ -1,11 +1,26 @@
 return {
 	"AndrewRadev/tagalong.vim",
 	"sindrets/diffview.nvim",
+	{
+		"ThePrimeagen/git-worktree.nvim",
+		config = function()
+			local link_env = require("joogie.utils.link-env")
+			local worktree = require("git-worktree")
+			worktree.setup()
 
+			worktree.on_tree_change(function(op, metadata)
+				-- TODO: handle errors
+				-- metadata.path can return just the branch name, so we need to expand it
+				if op == worktree.Operations.Switch then
+					link_env.link(metadata.path)
+				end
+			end
+			)
+		end,
+	},
 	{
 		"folke/which-key.nvim",
-		opts = { win = { border = "rounded" } },
-	},
+		opts = { win = { border = "rounded" } }, },
 	{ "nvim-tree/nvim-web-devicons", lazy = true },
 	{ "stevearc/dressing.nvim", event = "VeryLazy" },
 
@@ -60,6 +75,7 @@ return {
 		config = function()
 			pcall(require("telescope").load_extension, "fzf")
 			pcall(require("telescope").load_extension, "gh")
+			pcall(require("telescope").load_extension, "git_worktree")
 
 			local telescope = require("telescope")
 

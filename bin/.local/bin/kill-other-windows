@@ -1,0 +1,11 @@
+#!/bin/bash
+
+current_window=$(tmux display-message -p '#I')
+
+all_windows=$(tmux list-windows -F '#I')
+
+for window in $all_windows; do
+    if [ "$window" -ne "$current_window" ]; then
+        tmux kill-window -t $window
+    fi
+done

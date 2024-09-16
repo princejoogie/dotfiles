@@ -1,3 +1,49 @@
 #!/bin/bash
 
-git branch -a | fzf-tmux -p --reverse | awk '{gsub("remotes/origin/", "", $1); print $1}' | xargs git checkout > /dev/null 2>&1
+IS_BARE=$(git rev-parse --is-bare-repository)
+ROOT_DIR=$(git rev-parse --path-format=absolute --git-common-dir)
+
+switch_worktree() {
+    WORKTREE_DIR=$(git worktree list | awk -v root_dir="$ROOT_DIR" '{gsub(root_dir "/?", "", $1); print $1}' | fzf-tmux -p --reverse)
+    
+    if [ -z "$WORKTREE_DIR" ]; then
+        echo "No worktree selected."
+        return 1
+    fi
+
+    echo "cd $ROOT_DIR/$WORKTREE_DIR" | pbcopy
+    echo "command copied to clipboard"
+}
+
+add_worktree() {
+    git branch -a | fzf-tmux -p --reverse | awk '{gsub("remotes/origin/", "", $1); print $1}' | xargs git worktree add > /dev/null 2>&1
+    switch_worktree
+}
+
+remove_worktree() {
+    WORKTREE_DIR=$(git worktree list | awk -v root_dir="$ROOT_DIR" '{gsub(root_dir "/?", "", $1); print $1}' | fzf-tmux -p --reverse)
+
+    if [ "$WORKTREE_DIR" == "$ROOT_DIR" ]; then
+        echo "Cannot remove bare repo."
+        return 1
+    fi
+
+    git worktree remove $WORKTREE_DIR
+    rm -rf $ROOT_DIR/$WORKTREE_DIR
+
+    echo "Worktree removed."
+}
+
+if [ "$IS_BARE" == "true" ]; then
+    ACTION=$(echo -e "add\nswitch\nremove" | fzf-tmux -p --reverse | awk '{print $1}')
+    if [ "$ACTION" == "add" ]; then
+        add_worktree
+    elif [ "$ACTION" == "switch" ]; then
+        switch_worktree
+    elif [ "$ACTION" == "remove" ]; then
+        remove_worktree
+    fi
+else
+    git branch -a | fzf-tmux -p --reverse | awk '{gsub("remotes/origin/", "", $1); print $1}' | xargs git checkout > /dev/null 2>&1
+fi
+
