@@ -32,7 +32,18 @@ local setupConfig = function()
 		vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 end
 
-local on_attach = function(_, bufnr)
+local on_attach_extras = {
+	ts_ls = function(client, bufnr)
+		require("twoslash-queries").attach(client, bufnr)
+	end,
+}
+
+local on_attach = function(client, bufnr)
+	local attach_func = on_attach_extras[client.name]
+	if attach_func then
+		attach_func(client, bufnr)
+	end
+
 	local nmap = function(keys, func, desc)
 		if desc then
 			desc = "LSP: " .. desc
@@ -65,6 +76,7 @@ return {
 		dependencies = {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
+			"marilari88/twoslash-queries.nvim",
 			{ "j-hui/fidget.nvim", opts = {} },
 			--[[ { ]]
 			--[[ 	"pmizio/typescript-tools.nvim", ]]
@@ -89,7 +101,7 @@ return {
 					"jsonls",
 					"lua_ls",
 					"tailwindcss",
-					"tsserver",
+					"ts_ls",
 					"yamlls",
 				},
 			})

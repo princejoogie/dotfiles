@@ -167,5 +167,8 @@ keymap("n", "<leader>wk", cmd("WhichKey"), { desc = "Which Key" })
 -- Typescript Tools
 keymap("n", "<leader>rf", cmd("TSToolsRenameFile"), { desc = "TS Rename File" })
 
+-- Twoslash Queries
+keymap("n", "<leader>ti", cmd("TwoslashQueriesInspect"), { desc = "Twoslash Queries toggle" })
+
 -- Code Actions
 keymap("n", "<leader>c", function() end, { desc = "[Code Actions] -->" })
