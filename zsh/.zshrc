@@ -116,10 +116,6 @@ export DENO_INSTALL="$HOME/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
 # deno end
 
-if [[ -x "$(command -v fastfetch)" ]]; then
-  fastfetch
-fi
-
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zprof
 fi
