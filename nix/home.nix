@@ -60,7 +60,19 @@
 	export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
 	export JOOGIE="qweqweqwe"
 
+	# miniconda
+	export MINICONDA_INSTALL="$HOME/miniconda3"
+	export PATH="$MINICONDA_INSTALL/bin:$PATH"
+	. "$MINICONDA_INSTALL/etc/profile.d/conda.sh"
+	# miniconda end
+
         # fnm
+	export PNPM_HOME="/home/joogie/.local/share/pnpm"
+	case ":$PATH:" in
+	  *":$PNPM_HOME:"*) ;;
+	  *) export PATH="$PNPM_HOME:$PATH" ;;
+	esac
+
 	export PATH="$HOME/.local/share/fnm:$PATH"
 	eval "$(fnm env)"
         # fnm end

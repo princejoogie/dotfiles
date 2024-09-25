@@ -15,8 +15,9 @@
     system = "aarch64-darwin";
     pkgs = import nixpkgs { inherit system; };
     systemConfig = { pkgs, ... }: {
-      environment.systemPackages = [
-	pkgs.tmux
+      environment.systemPackages = with pkgs; [
+        tmux
+        ripgrep
       ];
 
       nix.settings.experimental-features = "nix-command flakes";
@@ -42,7 +43,10 @@
         brewPrefix = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/bin" else "/usr/local";
         enable = true;
         brews = [];
-        casks = [ "alacritty" ];
+        casks = [
+          "alacritty"
+          "miniconda"
+        ];
       };
 
       nixpkgs.hostPlatform = system;
