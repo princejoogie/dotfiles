@@ -6,15 +6,17 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs }:
+  outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager }:
   let
-    configuration = { pkgs, ... }: {
+    system = "aarch64-darwin";
+    pkgs = import nixpkgs { inherit system; };
+    systemConfig = { pkgs, ... }: {
       environment.systemPackages = [
-        pkgs.awscli2
-        pkgs.direnv
-        pkgs.fnm
+	pkgs.tmux
       ];
 
       nix.settings.experimental-features = "nix-command flakes";
@@ -22,6 +24,11 @@
       services.nix-daemon.enable = true;
       system.configurationRevision = self.rev or self.dirtyRev or null;
       system.stateVersion = 5;
+
+      users.users."prince.juguilon" = {
+        name = "prince.juguilon";
+        home = "/Users/prince.juguilon";
+      };
 
       system.defaults = {
         dock.autohide = true;
@@ -34,20 +41,24 @@
       homebrew = {
         brewPrefix = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/bin" else "/usr/local";
         enable = true;
-        brews = [
-        ];
-        casks = [
-          "alacritty"
-        ];
+        brews = [];
+        casks = [ "alacritty" ];
       };
 
-      nixpkgs.hostPlatform = "aarch64-darwin";
+      nixpkgs.hostPlatform = system;
     };
   in
   {
     darwinConfigurations."princejoogie-macos" = nix-darwin.lib.darwinSystem {
-      modules = [ configuration ];
+      inherit system pkgs;
+      modules = [
+        systemConfig
+        home-manager.darwinModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.users."prince.juguilon" = ./home.nix;
+        }
+      ];
     };
-    darwinPackages = self.darwinConfigurations."princejoogie-macos".pkgs;
   };
 }
