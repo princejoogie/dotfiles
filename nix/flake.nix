@@ -42,6 +42,7 @@
         finder.AppleShowAllExtensions = true;
         finder.FXPreferredViewStyle = "clmv";
         finder.ShowPathbar = true;
+        NSGlobalDomain.AppleInterfaceStyle = "Dark";
       };
 
       homebrew = {
