@@ -22,6 +22,7 @@
   };
   home.file.".config/starship.toml".source = ./starship.toml;
   home.file.".tmux.conf".source = ./.tmux.conf;
+  home.file.".gitconfig".source = ./.gitconfig;
 
   programs.zsh = {
     enable = true;
