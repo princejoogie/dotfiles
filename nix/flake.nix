@@ -13,11 +13,16 @@
   outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager }:
   let
     system = "aarch64-darwin";
-    pkgs = import nixpkgs { inherit system; };
+    pkgs = import nixpkgs { 
+      inherit system;
+      config.allowUnfree = true;
+    };
     systemConfig = { pkgs, ... }: {
       environment.systemPackages = with pkgs; [
-        tmux
+        kitty
         ripgrep
+        tmux
+        zoxide
       ];
 
       nix.settings.experimental-features = "nix-command flakes";
@@ -40,12 +45,23 @@
       };
 
       homebrew = {
-        brewPrefix = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/bin" else "/usr/local";
+        brewPrefix =
+          if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/bin"
+          else "/usr/local";
         enable = true;
         brews = [];
         casks = [
           "alacritty"
+          "appcleaner"
+          "arc"
+          "discord"
+          "docker"
+          "hiddenbar"
           "miniconda"
+          "raycast"
+          "shottr"
+          "spotify"
+          "tunnelblick"
         ];
       };
 

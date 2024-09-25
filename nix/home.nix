@@ -6,7 +6,9 @@
   home.packages = with pkgs; [
     awscli2
     direnv
+    ffmpeg
     fnm
+    gh
     lazydocker
     rustup
     starship
