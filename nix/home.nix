@@ -8,5 +8,6 @@
     ./user/shell/zsh.nix
     ./user/nvim/nvim.nix
     ./user/kitty/kitty.nix
+    ./user/vscode/vscode.nix
   ];
 }
