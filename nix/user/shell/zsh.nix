@@ -67,7 +67,7 @@
       . "$MINICONDA_INSTALL/etc/profile.d/conda.sh"
       # miniconda end
 
-            # fnm
+      # fnm
       export PNPM_HOME="/home/joogie/.local/share/pnpm"
       case ":$PATH:" in
         *":$PNPM_HOME:"*) ;;
@@ -76,7 +76,7 @@
 
       export PATH="$HOME/.local/share/fnm:$PATH"
       eval "$(fnm env)"
-            # fnm end
+      # fnm end
 
       bindkey -M viins jj vi-cmd-mode
       export VI_MODE_SET_CURSOR=true
