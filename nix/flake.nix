@@ -1,6 +1,6 @@
 # https://daiderd.com/nix-darwin/manual/index.html
 {
-  description = "Example Darwin system flake";
+  description = "nix-darwin configuration for princejoogie";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -12,13 +12,14 @@
   let
     configuration = { pkgs, ... }: {
       environment.systemPackages = [
-        pkgs.vim
+        pkgs.awscli2
+        pkgs.direnv
+        pkgs.fnm
       ];
 
-      services.nix-daemon.enable = true;
-      # nix.package = pkgs.nix;
       nix.settings.experimental-features = "nix-command flakes";
-      programs.zsh.enable = true;  # default shell on catalina
+      programs.zsh.enable = true;
+      services.nix-daemon.enable = true;
       system.configurationRevision = self.rev or self.dirtyRev or null;
       system.stateVersion = 5;
 
@@ -28,6 +29,16 @@
         finder.AppleShowAllExtensions = true;
         finder.FXPreferredViewStyle = "clmv";
         finder.ShowPathbar = true;
+      };
+
+      homebrew = {
+        brewPrefix = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/bin" else "/usr/local";
+        enable = true;
+        brews = [
+        ];
+        casks = [
+          "alacritty"
+        ];
       };
 
       nixpkgs.hostPlatform = "aarch64-darwin";
