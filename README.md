@@ -1,11 +1,17 @@
 # dotfiles
 
-***PERSONAL*** dotfiles
+personal dotfiles with nix
 
-![demo_1](https://user-images.githubusercontent.com/47204120/225486926-1b283887-a449-4401-9585-26be480fd8fa.png)
+## Usage
 
-![demo_2](https://user-images.githubusercontent.com/47204120/225486972-78c756b7-aff2-477d-8ace-316882645dd4.png)
-
----
-
-Made with ☕ by Prince Carlo Juguilon
+- Install [`nix`](https://nixos.org/download)
+- Install [`nix-darwin`](https://github.com/LnL7/nix-darwin?tab=readme-ov-file#flakes) (flakes)
+- Install [`home-manager`](https://nix-community.github.io/home-manager/index.xhtml#sec-install-nix-darwin-module) (darwin module)
+- Clone this repo
+    ```sh
+    git clone https://github.com/princejoogie/dotfiles.git ~/dotfiles
+    ```
+- Run `darwin-rebuild switch` to switch to the flake
+    ```sh
+    darwin-rebuild switch --flake ~/dotfiles/nix
+    ```
