@@ -57,6 +57,7 @@
           "discord"
           "docker"
           "hiddenbar"
+          "karabiner-elements"
           "miniconda"
           "raycast"
           "shottr"
