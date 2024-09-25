@@ -1,8 +1,15 @@
-{ ... }:
+{ pkgs, ... }:
 {
   home.username = "prince.juguilon";
   home.homeDirectory = "/Users/prince.juguilon";
   home.stateVersion = "24.05";
+  
+  home.packages = with pkgs; [
+    shortcat
+    discord
+    spotify
+    appcleaner
+  ];
 
   imports = [
     ./user/shell/zsh.nix

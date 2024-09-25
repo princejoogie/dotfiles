@@ -5,6 +5,7 @@
     direnv
     ffmpeg
     fnm
+    fzf
     gh
     lazydocker
     rustup

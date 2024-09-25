@@ -52,16 +52,13 @@
         brews = [];
         casks = [
           "alacritty"
-          "appcleaner"
           "arc"
-          "discord"
           "docker"
           "hiddenbar"
           "karabiner-elements"
           "miniconda"
           "raycast"
           "shottr"
-          "spotify"
           "tunnelblick"
         ];
       };
