@@ -21,6 +21,7 @@ return {
 				markdown = { "prettier" },
 				graphql = { "prettier" },
 				sql = { "sqlfmt" },
+				nix = { "nixpkgs-fmt" },
 			},
 		})
 
