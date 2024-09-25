@@ -45,6 +45,8 @@
         NSGlobalDomain.AppleInterfaceStyle = "Dark";
       };
 
+      security.pam.enableSudoTouchIdAuth = true;
+
       homebrew = {
         brewPrefix =
           if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/bin"
