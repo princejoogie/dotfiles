@@ -10,6 +10,7 @@
     lazydocker
     rustup
     starship
+    tree
   ];
 
   programs.direnv = {
@@ -59,6 +60,7 @@
       export PATH=$PATH:$HOME/.cargo/bin
       export PATH=$PATH:$HOME/.local/bin
       export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
+      export PATH=$PATH:/opt/homebrew/opt/libpq/bin
       export JOOGIE="qweqweqwe"
 
       # miniconda

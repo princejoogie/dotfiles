@@ -45,16 +45,15 @@
         NSGlobalDomain.AppleInterfaceStyle = "Dark";
       };
 
-      security.pam.enableSudoTouchIdAuth = true;
-
       homebrew = {
         brewPrefix =
           if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/bin"
           else "/usr/local";
         enable = true;
-        brews = [];
+        brews = [
+          "libpq"
+        ];
         casks = [
-          "alacritty"
           "arc"
           "docker"
           "hiddenbar"
@@ -63,6 +62,9 @@
           "raycast"
           "shottr"
           "tunnelblick"
+          "linear-linear"
+          "mac-mouse-fix"
+          "google-chrome"
         ];
       };
 
