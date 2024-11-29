@@ -14,13 +14,13 @@ return {
 				if op == worktree.Operations.Switch then
 					link_env.link(metadata.path)
 				end
-			end
-			)
+			end)
 		end,
 	},
 	{
 		"folke/which-key.nvim",
-		opts = { win = { border = "rounded" } }, },
+		opts = { win = { border = "rounded" } },
+	},
 	{ "nvim-tree/nvim-web-devicons", lazy = true },
 	{ "stevearc/dressing.nvim", event = "VeryLazy" },
 
