@@ -50,21 +50,29 @@
           if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/bin"
           else "/usr/local";
         enable = true;
+        onActivation = {
+          upgrade = true;
+          autoUpdate = true;
+        };
         brews = [
+          "jq"
           "libpq"
+          "netcat"
+          "wget"
         ];
         casks = [
           "arc"
           "docker"
+          "google-chrome"
           "hiddenbar"
           "karabiner-elements"
+          "linear-linear"
+          "mac-mouse-fix"
           "miniconda"
           "raycast"
           "shottr"
           "tunnelblick"
-          "linear-linear"
-          "mac-mouse-fix"
-          "google-chrome"
+          "ghostty"
         ];
       };
 

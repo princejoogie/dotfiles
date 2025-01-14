@@ -61,6 +61,7 @@
       export PATH=$PATH:$HOME/.local/bin
       export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
       export PATH=$PATH:/opt/homebrew/opt/libpq/bin
+      export PATH=$PATH:/opt/homebrew/bin
       export JOOGIE="qweqweqwe"
 
       # miniconda
