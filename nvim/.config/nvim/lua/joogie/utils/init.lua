@@ -42,4 +42,8 @@ M.telescope_live_grep_open_files = function()
 	})
 end
 
+M.cmd = function(command)
+	return "<cmd>" .. command .. "<CR>"
+end
+
 return M

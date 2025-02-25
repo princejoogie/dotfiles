@@ -32,11 +32,7 @@ local setupConfig = function()
 		vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 end
 
-local on_attach_extras = {
-	ts_ls = function(client, bufnr)
-		require("twoslash-queries").attach(client, bufnr)
-	end,
-}
+local on_attach_extras = {}
 
 local on_attach = function(client, bufnr)
 	local attach_func = on_attach_extras[client.name]
@@ -52,16 +48,6 @@ local on_attach = function(client, bufnr)
 		vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
 	end
 
-	nmap("gd", require("telescope.builtin").lsp_definitions, "Goto Definition")
-	nmap("gD", function()
-		vim.cmd("vsplit")
-		require("telescope.builtin").lsp_definitions()
-	end, "Goto Definition in split")
-	nmap("gr", require("telescope.builtin").lsp_references, "Goto References")
-	nmap("gI", require("telescope.builtin").lsp_implementations, "Goto Implementation")
-	nmap("gt", require("telescope.builtin").lsp_type_definitions, "Type Definition")
-	nmap("<leader>ds", require("telescope.builtin").lsp_document_symbols, "Document Symbols")
-
 	nmap("K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Hover Action")
 	nmap("<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename symbol")
 	nmap("<leader>ca", "<cmd>lua vim.lsp.buf.code_action({ apply = true })<CR>", "Code actions")
@@ -76,13 +62,7 @@ return {
 		dependencies = {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
-			"marilari88/twoslash-queries.nvim",
-			{ "j-hui/fidget.nvim", opts = {} },
-			--[[ { ]]
-			--[[ 	"pmizio/typescript-tools.nvim", ]]
-			--[[ 	dependencies = { "stevearc/dressing.nvim" }, ]]
-			--[[ 	opts = {}, ]]
-			--[[ }, ]]
+			"j-hui/fidget.nvim",
 		},
 		config = function()
 			local mlsp = require("mason-lspconfig")

@@ -51,9 +51,21 @@
     };
 
     initExtra = ''
+      export DISABLE_AUTO_UPDATE="true"
+
       if [[ -f "$HOME/.private.sh" ]]; then
         source "$HOME/.private.sh"
       fi
+
+      # Function to check for .shell.sh and execute it
+      check_and_run_shell_script() {
+          if [ -f "$PWD/.shell.sh" ]; then
+              source "$PWD/.shell.sh"
+          fi
+      }
+      # Hook the function to the chpwd (change directory) hook
+      chpwd_functions+=("check_and_run_shell_script")
+      check_and_run_shell_script
 
       export EDITOR=nvim
       export NVIM_DATA=$HOME/.local/share/nvim
@@ -78,7 +90,7 @@
       esac
 
       export PATH="$HOME/.local/share/fnm:$PATH"
-      eval "$(fnm env)"
+      eval "$(fnm env --use-on-cd)"
       # fnm end
 
       bindkey -M viins jj vi-cmd-mode

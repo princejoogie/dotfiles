@@ -1,10 +1,12 @@
 {
     "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
     "Lua.diagnostics.disable": [
-        "duplicate-set-field"
+        "duplicate-set-field",
+        "undefined-global"
     ],
     "Lua.workspace.checkThirdParty": false,
     "diagnostics.globals": [
-        "vim"
+        "vim",
+        "Snacks"
     ]
 }

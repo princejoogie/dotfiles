@@ -55,14 +55,20 @@
           autoUpdate = true;
         };
         brews = [
+          "fd"
+          "ghostscript"
+          "imagemagick"
           "jq"
           "libpq"
           "netcat"
+          "stow"
+          "tectonic"
           "wget"
         ];
         casks = [
           "arc"
           "docker"
+          "ghostty"
           "google-chrome"
           "hiddenbar"
           "karabiner-elements"
@@ -72,7 +78,6 @@
           "raycast"
           "shottr"
           "tunnelblick"
-          "ghostty"
         ];
       };
 

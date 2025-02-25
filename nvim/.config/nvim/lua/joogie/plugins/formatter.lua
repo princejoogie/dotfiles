@@ -41,23 +41,6 @@ return {
 				}
 			end
 
-			--[[ local is_js = false ]]
-			--[[ for _, v in ipairs({ ]]
-			--[[ 	"javascript", ]]
-			--[[ 	"typescript", ]]
-			--[[ 	"javascriptreact", ]]
-			--[[ 	"typescriptreact", ]]
-			--[[]]
-			--[[ }) do ]]
-			--[[ 	if vim.bo.ft == v then ]]
-			--[[ 		is_js = true ]]
-			--[[ 		break ]]
-			--[[ 	end ]]
-			--[[ end ]]
-			--[[]]
-			--[[ if is_js then ]]
-			--[[ 	vim.cmd("EslintFixAll") ]]
-			--[[ end ]]
 			conform.format(opts)
 		end, { desc = "Format file or range" })
 	end,
