@@ -1,16 +1,16 @@
 local cmd = require("joogie.utils").cmd
 
 return {
-	"tpope/vim-fugitive",
-	"tpope/vim-rhubarb",
-	"tpope/vim-sleuth",
-	"tpope/vim-surround",
-	"tpope/vim-repeat",
-	"nvim-lua/plenary.nvim",
-	{
-		"folke/snacks.nvim",
-		priority = 1000,
-		lazy = false,
+  "tpope/vim-fugitive",
+  "tpope/vim-rhubarb",
+  "tpope/vim-sleuth",
+  "tpope/vim-surround",
+  "tpope/vim-repeat",
+  "nvim-lua/plenary.nvim",
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
     -- stylua: ignore
 		keys = {
 			{ "<leader>bd", function() Snacks.bufdelete.delete() end, desc = "Delete current buffer", },
@@ -44,202 +44,202 @@ return {
 			{ "<leader>ss", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols", },
 			{ "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols", },
 		},
-		opts = {
-			bigfile = { enabled = true },
-			bufdelete = { enabled = true },
-			dashboard = { enabled = true },
-			explorer = { enabled = true },
-			indent = { enabled = true },
-			input = { enabled = true },
-			quickfile = { enabled = true },
-			scope = { enabled = true },
-			statuscolumn = { enabled = true },
-			words = { enabled = true },
-			image = { enabled = true },
-			toggle = { enabled = true },
-			picker = {
-				enabled = true,
-				ui_select = true,
-				previewers = {
-					diff = {
-						builtin = false,
-						cmd = { "delta" },
-					},
-					git = {
-						builtin = false,
-						args = {},
-					},
-				},
-				win = {
-					input = {
-						keys = {
-							["<a-H>"] = { "toggle_hidden", mode = { "i", "n" } },
-							["<a-M>"] = { "toggle_maximize", mode = { "i", "n" } },
-						},
-					},
-				},
-			},
-			notifier = {
-				enabled = true,
-				filter = function(n)
-					local banned_messages = {
-						"Neo-tree",
-						"No information available",
-						"Toggling hidden files",
-						"Failed to attach to",
-						"No items, skipping",
-						"Config Change Detected",
-						"Executing query",
-						"Done after",
-					}
+    opts = {
+      bigfile = { enabled = true },
+      bufdelete = { enabled = true },
+      dashboard = { enabled = true },
+      explorer = { enabled = true },
+      indent = { enabled = true },
+      input = { enabled = true },
+      quickfile = { enabled = true },
+      scope = { enabled = true },
+      statuscolumn = { enabled = true },
+      words = { enabled = true },
+      image = { enabled = true },
+      toggle = { enabled = true },
+      picker = {
+        enabled = true,
+        ui_select = true,
+        previewers = {
+          diff = {
+            builtin = false,
+            cmd = { "delta" },
+          },
+          git = {
+            builtin = false,
+            args = {},
+          },
+        },
+        win = {
+          input = {
+            keys = {
+              ["<a-H>"] = { "toggle_hidden", mode = { "i", "n" } },
+              ["<a-M>"] = { "toggle_maximize", mode = { "i", "n" } },
+            },
+          },
+        },
+      },
+      notifier = {
+        enabled = true,
+        filter = function(n)
+          local banned_messages = {
+            "Neo-tree",
+            "No information available",
+            "Toggling hidden files",
+            "Failed to attach to",
+            "No items, skipping",
+            "Config Change Detected",
+            "Executing query",
+            "Done after",
+          }
 
-					for _, banned in ipairs(banned_messages) do
-						if string.find(n.msg, banned, 1, true) then
-							return false
-						end
-					end
+          for _, banned in ipairs(banned_messages) do
+            if string.find(n.msg, banned, 1, true) then
+              return false
+            end
+          end
 
-					return true
-				end,
-			},
-		},
-	},
-	{
-		"folke/tokyonight.nvim",
-		lazy = false,
-		priority = 1000,
-		config = function()
-			require("tokyonight").setup({
-				transparent = true,
-				styles = {
-					comments = { italic = false },
-					keywords = { italic = false },
-					functions = {},
-					variables = {},
-					sidebars = "transparent",
-					floats = "transparent",
-				},
-				on_highlights = function(hl)
-					hl.WinSeparator = { fg = "#3b4261" }
-				end,
-			})
-			vim.cmd([[colorscheme tokyonight-night]])
-		end,
-	},
-	{
-		"ThePrimeagen/harpoon",
+          return true
+        end,
+      },
+    },
+  },
+  {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("tokyonight").setup({
+        transparent = true,
+        styles = {
+          comments = { italic = false },
+          keywords = { italic = false },
+          functions = {},
+          variables = {},
+          sidebars = "transparent",
+          floats = "transparent",
+        },
+        on_highlights = function(hl)
+          hl.WinSeparator = { fg = "#3b4261" }
+        end,
+      })
+      vim.cmd([[colorscheme tokyonight-night]])
+    end,
+  },
+  {
+    "ThePrimeagen/harpoon",
     -- stylua: ignore
 		keys = {
 			{ "<leader>ha", function() require("harpoon.mark").add_file() end, desc = "Add file", },
 			{ "<leader>hh", function() require("harpoon.ui").toggle_quick_menu() end, desc = "Toggle harpoon", },
 		},
-	},
-	{ "nvim-lualine/lualine.nvim", opts = { theme = "tokyonight" } },
-	{
-		"sindrets/diffview.nvim",
+  },
+  { "nvim-lualine/lualine.nvim", opts = { theme = "tokyonight" } },
+  {
+    "sindrets/diffview.nvim",
     -- stylua: ignore
 		keys = {
 			{ "<leader>di", cmd("DiffviewOpen"), desc = "Diff View Open" },
 			{ "<leader>dh", cmd("DiffviewFileHistory"), desc = "Diff View File History" },
 			{ "<leader>dq", cmd("tabc"), desc = "Close Tab" },
 		},
-	},
-	{
-		"folke/which-key.nvim",
-		opts = { win = { border = "rounded" } },
+  },
+  {
+    "folke/which-key.nvim",
+    opts = { win = { border = "rounded" } },
     -- stylua: ignore
 		keys = {
 			{ "<leader>wk", cmd("WhichKey"), desc = "Show which-key" },
 		},
-	},
-	{ "nvim-tree/nvim-web-devicons", lazy = true },
-	{
-		"folke/flash.nvim",
-		lazy = true,
+  },
+  { "nvim-tree/nvim-web-devicons", lazy = true },
+  {
+    "folke/flash.nvim",
+    lazy = true,
     -- stylua: ignore
 		keys = {
 			{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash", },
 			{ "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash", },
 		},
-	},
-	{
-		"numToStr/Comment.nvim",
-		dependencies = {
-			"JoosepAlviste/nvim-ts-context-commentstring",
-		},
-		config = function()
-			require("Comment").setup({
-				toggler = { line = "<leader>cl", block = "<leader>bl" },
-				opleader = { line = "<leader>cc", block = "<leader>cb" },
-				pre_hook = function(ctx)
-					local U = require("Comment.utils")
+  },
+  {
+    "numToStr/Comment.nvim",
+    dependencies = {
+      "JoosepAlviste/nvim-ts-context-commentstring",
+    },
+    config = function()
+      require("Comment").setup({
+        toggler = { line = "<leader>cl", block = "<leader>bl" },
+        opleader = { line = "<leader>cc", block = "<leader>cb" },
+        pre_hook = function(ctx)
+          local U = require("Comment.utils")
 
-					local location = nil
-					if ctx.ctype == U.ctype.block then
-						location = require("ts_context_commentstring.utils").get_cursor_location()
-					elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
-						location = require("ts_context_commentstring.utils").get_visual_start_location()
-					end
+          local location = nil
+          if ctx.ctype == U.ctype.block then
+            location = require("ts_context_commentstring.utils").get_cursor_location()
+          elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
+            location = require("ts_context_commentstring.utils").get_visual_start_location()
+          end
 
-					return require("ts_context_commentstring.internal").calculate_commentstring({
-						key = ctx.ctype == U.ctype.line and "__default" or "__multiline",
-						location = location,
-					})
-				end,
-			})
-		end,
-	},
-	{
-		"diepm/vim-rest-console",
-		config = function()
-			vim.g.vrc_response_default_content_type = "application/json"
-			vim.g.vrc_output_buffer_name = "__VRC_OUTPUT.json"
-			vim.g.vrc_auto_format_response_patterns = {
-				json = "jq",
-			}
-			vim.g.vrc_show_command = true
-			vim.g.vrc_trigger = "<leader><CR>"
-		end,
-	},
-	{
-		"windwp/nvim-autopairs",
-		event = "InsertEnter",
-		config = true,
-	},
-	{
-		"iamcco/markdown-preview.nvim",
-		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-		build = "cd app && yarn install",
-		init = function()
-			vim.g.mkdp_filetypes = { "markdown" }
-		end,
-		ft = { "markdown" },
+          return require("ts_context_commentstring.internal").calculate_commentstring({
+            key = ctx.ctype == U.ctype.line and "__default" or "__multiline",
+            location = location,
+          })
+        end,
+      })
+    end,
+  },
+  {
+    "diepm/vim-rest-console",
+    config = function()
+      vim.g.vrc_response_default_content_type = "application/json"
+      vim.g.vrc_output_buffer_name = "__VRC_OUTPUT.json"
+      vim.g.vrc_auto_format_response_patterns = {
+        json = "jq",
+      }
+      vim.g.vrc_show_command = true
+      vim.g.vrc_trigger = "<leader><CR>"
+    end,
+  },
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = true,
+  },
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    build = "cd app && yarn install",
+    init = function()
+      vim.g.mkdp_filetypes = { "markdown" }
+    end,
+    ft = { "markdown" },
     -- stylua: ignore
 		keys = {
 			{ "<leader>md", cmd("MarkdownPreviewToggle"), desc = "Markdown Preview" },
 		},
-	},
-	{
-		"kristijanhusak/vim-dadbod-ui",
-		dependencies = {
-			{ "tpope/vim-dadbod", lazy = true },
-			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
-		},
-		cmd = {
-			"DBUI",
-			"DBUIToggle",
-			"DBUIAddConnection",
-			"DBUIFindBuffer",
-		},
-		init = function()
-			vim.g.db_ui_execute_on_save = 0
-			vim.g.db_ui_use_nerd_fonts = 1
-			vim.g.db_ui_use_nvim_notify = 1
-		end,
-	},
-	{
-		"aserowy/tmux.nvim",
-		opts = { copy_sync = { enable = false }, resize = { resize_step_x = 5, resize_step_y = 5 } },
+  },
+  {
+    "kristijanhusak/vim-dadbod-ui",
+    dependencies = {
+      { "tpope/vim-dadbod", lazy = true },
+      { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+    },
+    cmd = {
+      "DBUI",
+      "DBUIToggle",
+      "DBUIAddConnection",
+      "DBUIFindBuffer",
+    },
+    init = function()
+      vim.g.db_ui_execute_on_save = 0
+      vim.g.db_ui_use_nerd_fonts = 1
+      vim.g.db_ui_use_nvim_notify = 1
+    end,
+  },
+  {
+    "aserowy/tmux.nvim",
+    opts = { copy_sync = { enable = false }, resize = { resize_step_x = 5, resize_step_y = 5 } },
     -- stylua: ignore
 		keys = {
 			{ "<C-Left>", cmd("lua require('tmux').resize_left()"), desc = "+ Resize Vertically" },
@@ -251,5 +251,5 @@ return {
 			{ "<C-k>", cmd("lua require('tmux').move_top()"), desc = "Move to top pane" },
 			{ "<C-l>", cmd("lua require('tmux').move_right()"), desc = "Move to right pane" },
 		},
-	},
+  },
 }

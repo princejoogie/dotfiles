@@ -45,6 +45,11 @@
         NSGlobalDomain.AppleInterfaceStyle = "Dark";
       };
 
+      system.keyboard = {
+        enableKeyMapping = true;
+        remapCapsLockToControl = true;
+      };
+
       homebrew = {
         brewPrefix =
           if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew/bin"
