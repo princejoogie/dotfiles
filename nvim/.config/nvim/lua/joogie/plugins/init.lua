@@ -12,38 +12,38 @@ return {
     priority = 1000,
     lazy = false,
     -- stylua: ignore
-		keys = {
-			{ "<leader>bd", function() Snacks.bufdelete.delete() end, desc = "Delete current buffer", },
-			{ "<leader>ba", function() Snacks.bufdelete({ filter = function(buf) return #vim.fn.win_findbuf(buf) == 0 end, }) end, desc = "Delete all hidden buffers", },
-			-- Top Pickers & Explorer
-			{ "<C-p>", function() Snacks.picker.files() end, desc = "Find Files", },
-			{ "<C-f>", function() Snacks.picker.grep() end, desc = "Grep", },
-			{ "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History", },
-			{ "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History", },
-			-- git
-			{ "<leader>gb", function() Snacks.picker.git_branches() end, desc = "Git Branches", },
-			{ "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log", },
-			{ "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status", },
-			-- search
-			{ "<leader>s/", function() Snacks.picker.search_history() end, desc = "Search History", },
-			{ "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "Diagnostics", },
-			{ "<leader>sD", function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics", },
-			{ "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages", },
-			{ "<leader>sH", function() Snacks.picker.highlights() end, desc = "Highlights", },
-			{ "<leader>si", function() Snacks.picker.icons() end, desc = "Icons", },
-			{ "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps", },
-			{ "<leader>sr", function() Snacks.picker.resume() end, desc = "Resume", },
-			{ "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History", },
-			{ "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes", },
+    keys = {
+      { "<leader>bd", function() Snacks.bufdelete.delete() end, desc = "Delete current buffer", },
+      { "<leader>ba", function() Snacks.bufdelete({ filter = function(buf) return #vim.fn.win_findbuf(buf) == 0 end, }) end, desc = "Delete all hidden buffers", },
+      -- Top Pickers & Explorer
+      { "<C-p>", function() Snacks.picker.files() end, desc = "Find Files", },
+      { "<C-f>", function() Snacks.picker.grep() end, desc = "Grep", },
+      { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History", },
+      { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History", },
+      -- git
+      { "<leader>gb", function() Snacks.picker.git_branches() end, desc = "Git Branches", },
+      { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log", },
+      { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status", },
+      -- search
+      { "<leader>s/", function() Snacks.picker.search_history() end, desc = "Search History", },
+      { "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "Diagnostics", },
+      { "<leader>sD", function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics", },
+      { "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages", },
+      { "<leader>sH", function() Snacks.picker.highlights() end, desc = "Highlights", },
+      { "<leader>si", function() Snacks.picker.icons() end, desc = "Icons", },
+      { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps", },
+      { "<leader>sr", function() Snacks.picker.resume() end, desc = "Resume", },
+      { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History", },
+      { "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes", },
       -- LSP
-			{ "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition", }, -- stylua: ignore
-			{ "gD", function() vim.cmd("vsplit") Snacks.picker.lsp_definitions() end, desc = "Goto Definition in split", },
-			{ "gr", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References", },
-			{ "gI", function() Snacks.picker.lsp_implementations() end, desc = "Goto Implementation", },
-			{ "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto T[y]pe Definition", },
-			{ "<leader>ss", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols", },
-			{ "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols", },
-		},
+      { "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition", },
+      { "gD", function() vim.cmd("vsplit") Snacks.picker.lsp_definitions() end, desc = "Goto Definition in split", },
+      { "gr", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References", },
+      { "gI", function() Snacks.picker.lsp_implementations() end, desc = "Goto Implementation", },
+      { "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto T[y]pe Definition", },
+      { "<leader>ds", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols", },
+      { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols", },
+    },
     opts = {
       bigfile = { enabled = true },
       bufdelete = { enabled = true },
@@ -61,14 +61,8 @@ return {
         enabled = true,
         ui_select = true,
         previewers = {
-          diff = {
-            builtin = false,
-            cmd = { "delta" },
-          },
-          git = {
-            builtin = false,
-            args = {},
-          },
+          diff = { builtin = false, cmd = { "delta" } },
+          git = { builtin = false, args = {} },
         },
         win = {
           input = {
@@ -127,40 +121,51 @@ return {
     end,
   },
   {
+    "stevearc/oil.nvim",
+    opts = {
+      keymaps = {
+        ["H"] = { "actions.toggle_hidden", mode = "n" },
+      },
+    },
+    lazy = false,
+    keys = {
+      { "<C-b>", cmd("lua require('oil').open()"), desc = "Open Oil" },
+    },
+  },
+  {
     "ThePrimeagen/harpoon",
     -- stylua: ignore
-		keys = {
-			{ "<leader>ha", function() require("harpoon.mark").add_file() end, desc = "Add file", },
-			{ "<leader>hh", function() require("harpoon.ui").toggle_quick_menu() end, desc = "Toggle harpoon", },
-		},
+    keys = {
+      { "<leader>ha", function() require("harpoon.mark").add_file() end, desc = "Add file", },
+      { "<leader>hh", function() require("harpoon.ui").toggle_quick_menu() end, desc = "Toggle harpoon", },
+    },
   },
   { "nvim-lualine/lualine.nvim", opts = { theme = "tokyonight" } },
   {
     "sindrets/diffview.nvim",
-    -- stylua: ignore
-		keys = {
-			{ "<leader>di", cmd("DiffviewOpen"), desc = "Diff View Open" },
-			{ "<leader>dh", cmd("DiffviewFileHistory"), desc = "Diff View File History" },
-			{ "<leader>dq", cmd("tabc"), desc = "Close Tab" },
-		},
+    keys = {
+      { "<leader>di", cmd("DiffviewOpen"), desc = "Diff View Open" },
+      { "<leader>dh", cmd("DiffviewFileHistory"), desc = "Diff View File History" },
+      { "<leader>dq", cmd("tabc"), desc = "Close Tab" },
+    },
   },
   {
     "folke/which-key.nvim",
     opts = { win = { border = "rounded" } },
     -- stylua: ignore
-		keys = {
-			{ "<leader>wk", cmd("WhichKey"), desc = "Show which-key" },
-		},
+    keys = {
+      { "<leader>wk", cmd("WhichKey"), desc = "Show which-key" },
+    },
   },
   { "nvim-tree/nvim-web-devicons", lazy = true },
   {
     "folke/flash.nvim",
     lazy = true,
     -- stylua: ignore
-		keys = {
-			{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash", },
-			{ "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash", },
-		},
+    keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash", },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash", },
+    },
   },
   {
     "numToStr/Comment.nvim",
@@ -215,9 +220,9 @@ return {
     end,
     ft = { "markdown" },
     -- stylua: ignore
-		keys = {
-			{ "<leader>md", cmd("MarkdownPreviewToggle"), desc = "Markdown Preview" },
-		},
+    keys = {
+      { "<leader>md", cmd("MarkdownPreviewToggle"), desc = "Markdown Preview" },
+    },
   },
   {
     "kristijanhusak/vim-dadbod-ui",
@@ -241,15 +246,15 @@ return {
     "aserowy/tmux.nvim",
     opts = { copy_sync = { enable = false }, resize = { resize_step_x = 5, resize_step_y = 5 } },
     -- stylua: ignore
-		keys = {
-			{ "<C-Left>", cmd("lua require('tmux').resize_left()"), desc = "+ Resize Vertically" },
-			{ "<C-Down>", cmd("lua require('tmux').resize_bottom()"), desc = "+ Resize Horizontally" },
-			{ "<C-Up>", cmd("lua require('tmux').resize_top()"), desc = "- Resize Horizontally" },
-			{ "<C-Right>", cmd("lua require('tmux').resize_right()"), desc = "- Resize Vertically" },
-			{ "<C-h>", cmd("lua require('tmux').move_left()"), desc = "Move to left pane" },
-			{ "<C-j>", cmd("lua require('tmux').move_bottom()"), desc = "Move to bottom pane" },
-			{ "<C-k>", cmd("lua require('tmux').move_top()"), desc = "Move to top pane" },
-			{ "<C-l>", cmd("lua require('tmux').move_right()"), desc = "Move to right pane" },
-		},
+    keys = {
+      { "<C-Left>", cmd("lua require('tmux').resize_left()"), desc = "+ Resize Vertically" },
+      { "<C-Down>", cmd("lua require('tmux').resize_bottom()"), desc = "+ Resize Horizontally" },
+      { "<C-Up>", cmd("lua require('tmux').resize_top()"), desc = "- Resize Horizontally" },
+      { "<C-Right>", cmd("lua require('tmux').resize_right()"), desc = "- Resize Vertically" },
+      { "<C-h>", cmd("lua require('tmux').move_left()"), desc = "Move to left pane" },
+      { "<C-j>", cmd("lua require('tmux').move_bottom()"), desc = "Move to bottom pane" },
+      { "<C-k>", cmd("lua require('tmux').move_top()"), desc = "Move to top pane" },
+      { "<C-l>", cmd("lua require('tmux').move_right()"), desc = "Move to right pane" },
+    },
   },
 }
