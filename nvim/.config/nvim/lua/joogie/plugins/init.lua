@@ -15,7 +15,9 @@ return {
     keys = {
       { "<leader>bd", function() Snacks.bufdelete.delete() end, desc = "Delete current buffer", },
       { "<leader>ba", function() Snacks.bufdelete({ filter = function(buf) return #vim.fn.win_findbuf(buf) == 0 end, }) end, desc = "Delete all hidden buffers", },
+      { "<leader>zm", function() Snacks.zen.zen() end, desc = "Open Explorer", },
       -- Top Pickers & Explorer
+      { "<C-b>", function() Snacks.explorer.open() end, desc = "Open Explorer", },
       { "<C-p>", function() Snacks.picker.files() end, desc = "Find Files", },
       { "<C-f>", function() Snacks.picker.grep() end, desc = "Grep", },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History", },
@@ -57,9 +59,23 @@ return {
       words = { enabled = true },
       image = { enabled = true },
       toggle = { enabled = true },
+      zen = { enabled = true, dim = false },
       picker = {
         enabled = true,
         ui_select = true,
+        sources = {
+          explorer = {
+            win = {
+              list = {
+                keys = {
+                  ["z"] = "explorer_close_all",
+                  ["]c"] = "explorer_git_next",
+                  ["[c"] = "explorer_git_prev",
+                },
+              },
+            },
+          },
+        },
         previewers = {
           diff = { builtin = false, cmd = { "delta" } },
           git = { builtin = false, args = {} },
@@ -125,11 +141,12 @@ return {
     opts = {
       keymaps = {
         ["H"] = { "actions.toggle_hidden", mode = "n" },
+        ["<BS>"] = { "actions.parent", mode = "n" },
       },
     },
     lazy = false,
     keys = {
-      { "<C-b>", cmd("lua require('oil').open()"), desc = "Open Oil" },
+      { "<leader>oi", cmd("lua require('oil').open()"), desc = "Open Oil" },
     },
   },
   {
