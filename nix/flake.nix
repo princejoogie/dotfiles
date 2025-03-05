@@ -59,6 +59,7 @@
           autoUpdate = true;
         };
         brews = [
+          "csvlens"
           "fd"
           "ghostscript"
           "imagemagick"

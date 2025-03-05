@@ -3,6 +3,7 @@ local cmd = require("joogie.utils").cmd
 local keymap = vim.keymap.set
 
 -- General Editing
+keymap("n", "<M-a>", "ggVG", { desc = "Select all" })
 keymap("i", "<C-h>", "<C-w>", { desc = "Delete word back" })
 keymap("i", "<C-l>", "<Esc>ldwi", { desc = "Delete word front" })
 keymap("i", "jj", "<Esc>", { desc = "Exit insert mode" })

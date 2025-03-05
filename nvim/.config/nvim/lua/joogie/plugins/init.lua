@@ -17,9 +17,10 @@ return {
       { "<leader>ba", function() Snacks.bufdelete({ filter = function(buf) return #vim.fn.win_findbuf(buf) == 0 end, }) end, desc = "Delete all hidden buffers", },
       { "<leader>zm", function() Snacks.zen.zen() end, desc = "Open Explorer", },
       -- Top Pickers & Explorer
-      { "<C-b>", function() Snacks.explorer.open() end, desc = "Open Explorer", },
-      { "<C-p>", function() Snacks.picker.files() end, desc = "Find Files", },
-      { "<C-f>", function() Snacks.picker.grep() end, desc = "Grep", },
+      { "<C-b>", function() Snacks.explorer.open({ hidden = true }) end, desc = "Open Explorer", },
+      { "<C-p>", function() Snacks.picker.files({ hidden = true }) end, desc = "Find Files", },
+      { "<C-f>", function() Snacks.picker.grep({ hidden = true }) end, desc = "Grep", },
+      { "<leader>/", function() Snacks.picker.lines() end, desc = "Grep current buffer", },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History", },
       { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History", },
       -- git
@@ -155,11 +156,34 @@ return {
   },
   {
     "ThePrimeagen/harpoon",
-    -- stylua: ignore
-    keys = {
-      { "<leader>ha", function() require("harpoon.mark").add_file() end, desc = "Add file", },
-      { "<leader>hh", function() require("harpoon.ui").toggle_quick_menu() end, desc = "Toggle harpoon", },
-    },
+    branch = "harpoon2",
+    config = function()
+      local harpoon = require("harpoon")
+      harpoon:setup()
+
+      harpoon:extend({
+        UI_CREATE = function(cx)
+          -- stylua: ignore start
+          vim.keymap.set("n", "<C-v>", function() harpoon.ui:select_menu_item({ vsplit = true }) end, { buffer = cx.bufnr })
+          vim.keymap.set("n", "<C-h>", function() harpoon.ui:select_menu_item({ split = true }) end, { buffer = cx.bufnr })
+          vim.keymap.set("n", "<C-t>", function() harpoon.ui:select_menu_item({ tabedit = true }) end, { buffer = cx.bufnr })
+          -- stylua: ignore end
+        end,
+      })
+
+      -- stylua: ignore start
+      vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end)
+      vim.keymap.set("n", "<leader>hh", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+      vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end)
+      vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
+      vim.keymap.set("n", "<leader>3", function() harpoon:list():select(3) end)
+      vim.keymap.set("n", "<leader>4", function() harpoon:list():select(4) end)
+
+      vim.keymap.set("n", "<leader>P", function() harpoon:list():prev() end)
+      vim.keymap.set("n", "<leader>N", function() harpoon:list():next() end)
+      -- stylua: ignore end
+    end,
   },
   { "nvim-lualine/lualine.nvim", opts = { theme = "tokyonight" } },
   {
