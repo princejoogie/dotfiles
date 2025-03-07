@@ -23,6 +23,7 @@ return {
       { "<leader>/", function() Snacks.picker.lines() end, desc = "Grep current buffer", },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History", },
       { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History", },
+      { "<leader>sp", function() Snacks.picker() end, desc = "Open Picker", },
       -- git
       { "<leader>gb", function() Snacks.picker.git_branches() end, desc = "Git Branches", },
       { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log", },
@@ -40,6 +41,7 @@ return {
       { "<leader>sr", function() Snacks.picker.resume() end, desc = "Resume", },
       { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History", },
       { "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes", },
+      { "<leader>?", function() Snacks.picker.spelling() end, desc = "Spelling" },
       -- LSP
       { "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition", },
       { "gD", function() vim.cmd("vsplit") Snacks.picker.lsp_definitions() end, desc = "Goto Definition in split", },
@@ -257,16 +259,11 @@ return {
     config = true,
   },
   {
-    "iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-    build = "cd app && yarn install",
-    init = function()
-      vim.g.mkdp_filetypes = { "markdown" }
-    end,
-    ft = { "markdown" },
+    "OXY2DEV/markview.nvim",
+    lazy = false,
     -- stylua: ignore
     keys = {
-      { "<leader>md", cmd("MarkdownPreviewToggle"), desc = "Markdown Preview" },
+      { "<leader>mm", cmd("Markview Toggle"), desc = "Markview toggle" },
     },
   },
   {
