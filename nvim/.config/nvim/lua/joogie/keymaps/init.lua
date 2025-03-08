@@ -38,10 +38,6 @@ keymap("n", "<leader><S-Tab>", cmd("tabprevious"), { desc = "Previous Tab" })
 keymap("n", "<C-n>", cmd("noh"), { desc = "Clear search highlights" })
 keymap("n", "<leader>cp", [[:let @+=expand('%:~:.')<CR>]], { desc = "Copy relative path" })
 
--- Quickfix
-keymap("n", "<leader><S-Tab>", cmd("Cprev"), { desc = "Previous quickfix item" })
-keymap("n", "<leader><Tab>", cmd("Cnext"), { desc = "Next quickfix item" })
-
 -- Dadbob
 keymap("n", "<leader>db", cmd("DBUIToggle"), { desc = "Toggle DBUI" })
 
