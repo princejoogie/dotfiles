@@ -7,6 +7,10 @@ plugins=(
   z
   tmux
   vi-mode
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+  fast-syntax-highlighting
+  zsh-autocomplete
 )
 
 bindkey -M viins jj vi-cmd-mode
