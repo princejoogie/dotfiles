@@ -6,6 +6,8 @@ export ZSH="$HOME/.oh-my-zsh"
 plugins=(
   z
   tmux
+  aws
+  docker
   vi-mode
   zsh-autosuggestions
   zsh-syntax-highlighting
