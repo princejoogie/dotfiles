@@ -1,4 +1,5 @@
 local cmd = require("joogie.utils").cmd
+local exclude = require("joogie.utils").exclude
 
 return {
   "tpope/vim-fugitive",
@@ -17,9 +18,9 @@ return {
       { "<leader>ba", function() Snacks.bufdelete({ filter = function(buf) return #vim.fn.win_findbuf(buf) == 0 end, }) end, desc = "Delete all hidden buffers", },
       { "<leader>zm", function() Snacks.zen.zen() end, desc = "Open Explorer", },
       -- Top Pickers & Explorer
-      { "<C-b>", function() Snacks.explorer.open({ hidden = true }) end, desc = "Open Explorer", },
-      { "<C-p>", function() Snacks.picker.files({ hidden = true }) end, desc = "Find Files", },
-      { "<C-f>", function() Snacks.picker.grep({ hidden = true }) end, desc = "Grep", },
+      { "<C-b>", function() Snacks.explorer.open({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Open Explorer", },
+      { "<C-p>", function() Snacks.picker.files({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Find Files", },
+      { "<C-f>", function() Snacks.picker.grep({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Grep", },
       { "<leader>/", function() Snacks.picker.lines() end, desc = "Grep current buffer", },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History", },
       { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History", },

@@ -46,4 +46,27 @@ M.cmd = function(command)
   return "<cmd>" .. command .. "<CR>"
 end
 
+M.exclude = {
+  "node_modules",
+  ".git",
+  ".next",
+  ".turbo",
+  ".vercel",
+  ".expo",
+  ".open-next",
+  ".sst",
+  ".pio",
+  "dist",
+  "build",
+  "out",
+  "yarn.lock",
+  "package-lock.json",
+  "pnpm-lock.yaml",
+  "npm-debug.log",
+  "yarn-debug.log",
+  "yarn-error.log",
+  ".pnpm-debug.log",
+  ".tsbuildinfo",
+}
+
 return M

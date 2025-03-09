@@ -12,7 +12,6 @@ plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
   fast-syntax-highlighting
-  zsh-autocomplete
 )
 
 bindkey -M viins jj vi-cmd-mode
@@ -21,6 +20,7 @@ export VI_MODE_SET_CURSOR=true
 
 # aliases
 alias cls=clear
+alias sl="exa --group-directories-first --icons --time-style=long-iso -la"
 alias so=source
 alias x=exit
 alias G=git
@@ -50,11 +50,17 @@ eval "$(fnm env --use-on-cd --shell zsh)"
 # fnm end
 
 # miniconda
-export MINICONDA_INSTALL="$HOME/miniconda3"
-if [[ -f $MINICONDA_INSTALL ]]; then
-  export PATH="$MINICONDA_INSTALL/bin:$PATH"
-  . "$MINICONDA_INSTALL/etc/profile.d/conda.sh"
+__conda_setup="$('$HOME/miniconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
+if [ $? -eq 0 ]; then
+  eval "$__conda_setup"
+else
+  if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
+    . "$HOME/miniconda3/etc/profile.d/conda.sh"
+  else
+    export PATH="$HOME/miniconda3/bin:$PATH"
+  fi
 fi
+unset __conda_setup
 # miniconda end
 
 source $ZSH/oh-my-zsh.sh

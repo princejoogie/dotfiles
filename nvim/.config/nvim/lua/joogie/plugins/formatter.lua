@@ -9,10 +9,10 @@ return {
         cpp = { "clang-format" },
         lua = { "stylua" },
         python = { "isort", "black" },
-        javascript = { "prettier" },
-        typescript = { "prettier" },
-        javascriptreact = { "prettier" },
-        typescriptreact = { "prettier" },
+        javascript = { "prettier", "eslint_d" },
+        typescript = { "prettier", "eslint_d" },
+        javascriptreact = { "prettier", "eslint_d" },
+        typescriptreact = { "prettier", "eslint_d" },
         svelte = { "prettier" },
         css = { "prettier" },
         html = { "prettier" },
@@ -22,6 +22,13 @@ return {
         graphql = { "prettier" },
         sql = { "sqlfmt" },
         nix = { "nixpkgs-fmt" },
+        zsh = { "shfmt" },
+        sh = { "shfmt" },
+      },
+      formatters = {
+        shfmt = {
+          args = { "-i", "2", "-filename", "$FILENAME" },
+        },
       },
     })
 
