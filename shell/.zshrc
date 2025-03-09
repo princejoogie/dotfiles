@@ -5,8 +5,9 @@ export ZSH="$HOME/.oh-my-zsh"
 
 plugins=(
   z
-  tmux
   aws
+  fnm
+  tmux
   docker
   vi-mode
   zsh-autosuggestions
@@ -29,12 +30,13 @@ alias t=tmux
 
 # variables
 export EDITOR=nvim
-export NVIM_DATA=$HOME/.local/share/nvim
+export MANPAGER='nvim +Man!'
+export PATH=$PATH:/opt/homebrew/bin
 export PATH=$PATH:$HOME/.cargo/bin
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.local/share/fnm
+export PATH=$PATH:$HOME/.local/custom/bin
 export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
-export PATH=$PATH:/opt/homebrew/bin
 
 if [[ -f "$HOME/.private.sh" ]]; then
   source "$HOME/.private.sh"

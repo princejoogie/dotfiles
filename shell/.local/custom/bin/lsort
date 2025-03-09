@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sort -n -k1 | awk '{print length, $0}' | sort -n | cut -d" " -f2-
