@@ -10,7 +10,6 @@ $git_status\
 \n$character"""
 
 right_format = """
-$hostname\
 $nodejs\
 $python\
 $rust\
@@ -70,3 +69,4 @@ format = '[[](bg:#334155 fg:#475569)[ $symbol ($version) ](fg:#f1f5f9 bg:#475
 symbol = ""
 style = "bg:#64748b"
 format = '[[](bg:#475569 fg:#64748b)[ $symbol ($version) ](fg:#ffffff bg:#64748b)]($style)'
+

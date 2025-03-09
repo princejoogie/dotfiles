@@ -10,7 +10,6 @@ $git_status\
 \n$character"""
 
 right_format = """
-$hostname\
 $nodejs\
 $python\
 $rust\
