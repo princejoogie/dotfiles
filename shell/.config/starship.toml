@@ -1,6 +1,5 @@
 format = """
-$hostname\
-[  ](fg:#090c0c bg:#6b7280)\
+[ 󰘧 ](fg:#090c0c bg:#6b7280)\
 [](fg:#6b7280 bg:#374151)\
 $directory\
 [](fg:#374151 bg:#394260)\
@@ -16,11 +15,6 @@ $rust\
 $golang\
 $conda\
 """
-
-[hostname]
-ssh_only = true
-format = '[ssh:$hostname](fg:#090c0c bg:#6b7280)'
-disabled = false
 
 [directory]
 style = "fg:#e3e5e5 bg:#374151"
