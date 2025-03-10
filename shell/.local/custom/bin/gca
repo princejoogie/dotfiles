@@ -1,0 +1,3 @@
+#!/usr/bin/sh
+
+git branch -a | awk '{gsub("remotes/origin/", "", $1); print $1}' | fzf-tmux -p --reverse | xargs git checkout > /dev/null 2>&1

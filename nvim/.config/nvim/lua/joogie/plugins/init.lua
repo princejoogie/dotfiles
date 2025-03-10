@@ -145,6 +145,15 @@ return {
     end,
   },
   {
+    "folke/persistence.nvim",
+    event = "BufReadPre",
+    opts = {},
+    -- stylua: ignore
+    keys = {
+      { "<leader>wl", function() require("persistence").load() end, desc = "Load Persistence" },
+    },
+  },
+  {
     "stevearc/oil.nvim",
     opts = {
       keymaps = {
