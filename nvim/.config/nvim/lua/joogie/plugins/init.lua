@@ -164,19 +164,47 @@ return {
       local harpoon = require("harpoon")
       harpoon:setup()
 
-      harpoon:extend({
-        UI_CREATE = function(cx)
-          -- stylua: ignore start
-          vim.keymap.set("n", "<C-v>", function() harpoon.ui:select_menu_item({ vsplit = true }) end, { buffer = cx.bufnr })
-          vim.keymap.set("n", "<C-h>", function() harpoon.ui:select_menu_item({ split = true }) end, { buffer = cx.bufnr })
-          vim.keymap.set("n", "<C-t>", function() harpoon.ui:select_menu_item({ tabedit = true }) end, { buffer = cx.bufnr })
-          -- stylua: ignore end
-        end,
-      })
+      local normalize_list = function(t)
+        local normalized = {}
+        for _, v in pairs(t) do
+          if v ~= nil then
+            table.insert(normalized, v)
+          end
+        end
+        return normalized
+      end
+
+      vim.keymap.set("n", "<leader>hh", function()
+        Snacks.picker({
+          finder = function()
+            local file_paths = {}
+            local list = normalize_list(harpoon:list().items)
+            for _, item in ipairs(list) do
+              table.insert(file_paths, { text = item.value, file = item.value })
+            end
+            return file_paths
+          end,
+          win = {
+            input = {
+              keys = { ["dd"] = { "harpoon_delete", mode = { "n", "x" } } },
+            },
+            list = {
+              keys = { ["dd"] = { "harpoon_delete", mode = { "n", "x" } } },
+            },
+          },
+          actions = {
+            harpoon_delete = function(picker, item)
+              local to_remove = item or picker:selected()
+              harpoon:list():remove({ value = to_remove.text })
+              harpoon:list().items = normalize_list(harpoon:list().items)
+              picker:find({ refresh = true })
+            end,
+          },
+        })
+      end)
 
       -- stylua: ignore start
       vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end)
-      vim.keymap.set("n", "<leader>hh", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 
       vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end)
       vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
