@@ -35,13 +35,6 @@ M.live_grep_git_root = function()
   end
 end
 
-M.telescope_live_grep_open_files = function()
-  require("telescope.builtin").live_grep({
-    grep_open_files = true,
-    prompt_title = "Live Grep in Open Files",
-  })
-end
-
 M.cmd = function(command)
   return "<cmd>" .. command .. "<CR>"
 end
