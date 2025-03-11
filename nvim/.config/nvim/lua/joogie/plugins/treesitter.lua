@@ -53,6 +53,7 @@ return {
       "norg",
       "prisma",
       "python",
+      "query",
       "regex",
       "scss",
       "sql",
