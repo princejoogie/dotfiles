@@ -79,6 +79,7 @@ return {
           "html",
           "jsonls",
           "lua_ls",
+          "prismals",
           "tailwindcss",
           "ts_ls",
           "yamlls",

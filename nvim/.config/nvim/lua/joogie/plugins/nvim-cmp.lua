@@ -30,6 +30,7 @@ return {
         },
         sources = cmp.config.sources({
           { name = "vim-dadbod-completion" },
+          { name = "git" },
           { name = "nvim_lsp" },
           { name = "nvim_lua" },
           { name = "path" },
@@ -49,7 +50,8 @@ return {
                 buffer = "[Buf ]",
                 path = "[Path]",
                 luasnip = "[Snip]",
-                ["vim-dadbod-completion"] = "[DBUI ]",
+                git = "[Git ]",
+                ["vim-dadbod-completion"] = "[DB  ]",
               })[entry.source.name]
 
               return vim_item
@@ -57,12 +59,8 @@ return {
           }),
         },
         window = {
-          completion = {
-            border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
-          },
-          documentation = {
-            border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
-          },
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
         },
       }
     end,
@@ -79,19 +77,21 @@ return {
 
       cmp.setup.filetype("gitcommit", {
         sources = cmp.config.sources({
-          { name = "cmp_git" },
+          { name = "git" },
         }, {
           { name = "buffer" },
         }),
       })
 
-      cmp.setup.cmdline("/", {
+      cmp.setup.cmdline({ "/", "?" }, {
+        mapping = cmp.mapping.preset.cmdline(),
         sources = {
           { name = "buffer" },
         },
       })
 
       cmp.setup.cmdline(":", {
+        mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({
           { name = "path" },
         }, {
@@ -134,6 +134,15 @@ return {
       history = true,
       delete_check_events = "TextChanged",
     },
+  },
+
+  {
+    "petertriho/cmp-git",
+    dependencies = { "hrsh7th/nvim-cmp" },
+    opts = {},
+    init = function()
+      table.insert(require("cmp").get_config().sources, { name = "git" })
+    end,
   },
   {
     "supermaven-inc/supermaven-nvim",
