@@ -10,3 +10,4 @@ nvim/.config/nvim/plugin/
 .private.sh
 
 .DS_Store
+.aider*
