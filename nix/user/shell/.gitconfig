@@ -16,6 +16,17 @@
 	navigate = true
 	light = false
 	side-by-side = false
+	minus-style                   = syntax "#26181C"
+	minus-non-emph-style          = syntax "#26181C"
+	minus-emph-style              = syntax "#7B2F2E"
+	minus-empty-line-marker-style = syntax "#26181C"
+	line-numbers-minus-style      = "#914c54"
+	plus-style                    = syntax "#14261F"
+	plus-non-emph-style           = syntax "#14261F"
+	plus-emph-style               = syntax "#1F572D"
+	plus-empty-line-marker-style  = syntax "#14261F"
+	line-numbers-plus-style       = "#449dab"
+	line-numbers-zero-style       = "#3b4261"
 [merge]
 	conflictstyle = diff3
 [diff]

@@ -144,6 +144,7 @@ return {
     config = function()
       require("tokyonight").setup({
         transparent = true,
+        plugins = { all = true },
         styles = {
           comments = { italic = false },
           keywords = { italic = false },
@@ -153,12 +154,26 @@ return {
           floats = "transparent",
         },
         on_highlights = function(hl)
+          local git = {
+            delete = { bg = "#151B23", fg = "#151B23" },
+            add = { bg = "#14261F" },
+            change = { bg = "#26181C" },
+            text = { bg = "#1F572D" },
+          }
+
           hl.Folded = hl.Comment
           hl.TreesitterContext = { bg = hl.CursorLine.bg }
           hl.Visual = { bg = hl.CursorLine.bg }
-          hl.DiffDelete = { fg = hl.diffRemoved.fg, bg = "NONE" }
-          hl.DiffAdd = { fg = hl.diffAdded.fg, bg = "NONE" }
-          hl.DiffChange = { fg = hl.diffChanged.fg, bg = "NONE" }
+
+          hl.DiffAdd = git.add
+          hl.DiffChange = git.change
+          hl.DiffDelete = git.delete
+          hl.DiffText = git.text
+
+          hl.diffAdded = git.add
+          hl.diffChanged = git.change
+          hl.diffRemoved = git.delete
+          hl.diffLine = git.text
         end,
       })
       vim.cmd([[colorscheme tokyonight-night]])
@@ -337,8 +352,5 @@ return {
       { "<leader>xp", cmd("Presenting"), desc = "Presenting toggle" },
     },
   },
-  {
-    "cameron-wags/rainbow_csv.nvim",
-    opts = {},
-  },
+  { "cameron-wags/rainbow_csv.nvim", opts = {} },
 }
