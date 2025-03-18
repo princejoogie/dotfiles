@@ -2,6 +2,14 @@ return {
   "nvim-treesitter/nvim-treesitter",
   dependencies = {
     {
+      "nvim-treesitter/nvim-treesitter-context",
+      opts = { enable = true },
+      -- stylua: ignore
+      keys = {
+        { mode = { "n", "v" }, "<leader>k", function() require("treesitter-context").go_to_context(vim.v.count1) end, desc = "Go to context", },
+      },
+    },
+    {
       "nvim-treesitter/nvim-treesitter-textobjects",
       config = function()
         local move = require("nvim-treesitter.textobjects.move") ---@type table<string,fun(...)>

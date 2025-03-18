@@ -309,4 +309,16 @@ return {
       { "<C-l>", cmd("lua require('tmux').move_right()"), desc = "Move to right pane" },
     },
   },
+  {
+    "sotte/presenting.nvim",
+    opts = {},
+    cmd = { "Presenting" },
+    keys = {
+      { "<leader>xp", cmd("Presenting"), desc = "Presenting toggle" },
+    },
+  },
+  {
+    "cameron-wags/rainbow_csv.nvim",
+    opts = {},
+  },
 }
