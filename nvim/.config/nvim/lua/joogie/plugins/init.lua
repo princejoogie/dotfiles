@@ -1,4 +1,5 @@
 local cmd = require("joogie.utils").cmd
+local dashboard_header = require("joogie.utils").dashboard_header
 local exclude = require("joogie.utils").exclude
 
 return {
@@ -70,7 +71,6 @@ return {
     opts = {
       bigfile = { enabled = true },
       bufdelete = { enabled = true },
-      dashboard = { enabled = true },
       explorer = { enabled = true },
       git = { enabled = true },
       gitbrowse = { enabled = true },
@@ -83,6 +83,13 @@ return {
       toggle = { enabled = true },
       words = { enabled = true },
       zen = { enabled = true, dim = false },
+      dashboard = {
+        enabled = true,
+        preset = {
+          keys = { { icon = " ", key = "q", desc = "Quit", action = ":qa" } },
+          header = dashboard_header,
+        },
+      },
       picker = {
         enabled = true,
         ui_select = true,
