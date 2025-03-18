@@ -82,6 +82,7 @@
           "miniconda"
           "raycast"
           "shottr"
+          "tunnelbear"
           "tunnelblick"
         ];
       };
