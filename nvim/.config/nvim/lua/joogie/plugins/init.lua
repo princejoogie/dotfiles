@@ -12,8 +12,8 @@ return {
     "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
-    -- stylua: ignore
     keys = {
+      -- stylua: ignore start
       { "<leader>bd", function() Snacks.bufdelete.delete() end, desc = "Delete current buffer", },
       { "<leader>ba", function() Snacks.bufdelete({ filter = function(buf) return #vim.fn.win_findbuf(buf) == 0 end, }) end, desc = "Delete all hidden buffers", },
       { "<leader>zm", function() Snacks.zen.zen() end, desc = "Open Explorer", },
@@ -29,7 +29,7 @@ return {
       { "<leader>gb", function() Snacks.picker.git_branches() end, desc = "Git Branches", },
       { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log", },
       { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status", },
-      { "<leader>go", function() Snacks.gitbrowse() end, desc = "Git Repo in Browser", },
+      { "<leader>go", function() Snacks.gitbrowse() end, desc = "Git Repo in Browser", mode = { "n", "v" } },
       { "<leader>gk", function() Snacks.git.blame_line() end, desc = "Git Blame Line", },
       -- search
       { "<leader>s/", function() Snacks.picker.search_history() end, desc = "Search History", },
@@ -51,6 +51,21 @@ return {
       { "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto T[y]pe Definition", },
       { "<leader>ds", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols", },
       { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols", },
+      -- stylua: ignore end
+      {
+        "<leader>gy",
+        function()
+          Snacks.gitbrowse({
+            notify = false,
+            open = function(url)
+              Snacks.notifier("Permalink copied to clipboard")
+              vim.fn.setreg("+", url)
+            end,
+          })
+        end,
+        desc = "Copy Git Permalink",
+        mode = { "n", "v" },
+      },
     },
     opts = {
       bigfile = { enabled = true },

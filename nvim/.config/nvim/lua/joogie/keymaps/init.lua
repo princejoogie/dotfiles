@@ -6,6 +6,9 @@ local keymap = vim.keymap.set
 keymap("n", "<M-a>", "ggVG", { desc = "Select all" })
 keymap("i", "<C-h>", "<C-w>", { desc = "Delete word back" })
 keymap("i", "<C-l>", "<Esc>ldwi", { desc = "Delete word front" })
+keymap({ "n", "v", "x" }, "H", "0", { desc = "Move to start of line" })
+keymap({ "n", "v", "x" }, "L", "$", { desc = "Move to end of line" })
+keymap("n", "Q", "@q", { desc = "Repeat macro from q register" })
 keymap("i", "jj", "<Esc>", { desc = "Exit insert mode" })
 keymap("n", "n", "nzz", { desc = "Match next" })
 keymap("n", "N", "Nzz", { desc = "Match previous" })
@@ -21,10 +24,10 @@ keymap({ "i", "x", "n", "s" }, "<C-s>", cmd("w"), { desc = "Save file" })
 keymap({ "n", "v" }, "$", "g_", { desc = "End of line" })
 keymap("n", "<leader>ss", ":%s//", { desc = "Replace instances" })
 vim.cmd([[
-	nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
-	nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
-	vnoremap <expr> k v:count == 0 ? 'gk' : 'k'
-	vnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+  nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+  nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+  vnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+  vnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 ]])
 
 -- Buffer and Tab Management
