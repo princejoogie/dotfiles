@@ -138,7 +138,12 @@ return {
           floats = "transparent",
         },
         on_highlights = function(hl)
-          hl.WinSeparator = { fg = "#3b4261" }
+          hl.Folded = hl.Comment
+          hl.TreesitterContext = { bg = hl.CursorLine.bg }
+          hl.Visual = { bg = hl.CursorLine.bg }
+          hl.DiffDelete = { fg = hl.diffRemoved.fg, bg = "NONE" }
+          hl.DiffAdd = { fg = hl.diffAdded.fg, bg = "NONE" }
+          hl.DiffChange = { fg = hl.diffChanged.fg, bg = "NONE" }
         end,
       })
       vim.cmd([[colorscheme tokyonight-night]])
