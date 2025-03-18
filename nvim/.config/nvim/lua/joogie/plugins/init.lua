@@ -172,7 +172,7 @@ return {
 
           hl.diffAdded = git.add
           hl.diffChanged = git.change
-          hl.diffRemoved = git.delete
+          hl.diffRemoved = { bg = git.delete.bg }
           hl.diffLine = git.text
         end,
       })
@@ -236,7 +236,7 @@ return {
   {
     "sindrets/diffview.nvim",
     keys = {
-      { "<leader>di", cmd("DiffviewOpen"), desc = "Diff View Open" },
+      { "<leader>do", ":DiffviewOpen", desc = "Diff View Open" },
       { "<leader>dh", cmd("DiffviewFileHistory"), desc = "Diff View File History" },
       { "<leader>dq", cmd("tabc"), desc = "Close Tab" },
     },
