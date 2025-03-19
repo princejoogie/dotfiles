@@ -1,6 +1,9 @@
-local cmd = require("joogie.utils").cmd
-local dashboard_header = require("joogie.utils").dashboard_header
 local exclude = require("joogie.utils").exclude
+local utils = require("joogie.utils")
+
+local cmd = utils.cmd
+local dashboard_header = utils.dashboard_header
+local toggle_diffview = utils.toggle_diffview
 
 return {
   "tpope/vim-fugitive",
@@ -243,8 +246,9 @@ return {
   {
     "sindrets/diffview.nvim",
     keys = {
-      { "<leader>do", ":DiffviewOpen", desc = "Diff View Open" },
-      { "<leader>dh", cmd("DiffviewFileHistory"), desc = "Diff View File History" },
+      { "<leader>do", ":DiffviewOpen ", desc = "Open Diffview" },
+      { "<leader>dh", function() toggle_diffview("DiffviewFileHistory") end, desc = "Toggle Diffview History" },
+      { "<leader>df", function() toggle_diffview("DiffviewFileHistory %") end, desc = "Toggle Diffview File History" },
       { "<leader>dq", cmd("tabc"), desc = "Close Tab" },
     },
   },

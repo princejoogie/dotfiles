@@ -39,6 +39,14 @@ M.cmd = function(command)
   return "<cmd>" .. command .. "<CR>"
 end
 
+M.toggle_diffview = function(cmd)
+  if next(require("diffview.lib").views) == nil then
+    vim.cmd(cmd)
+  else
+    vim.cmd("DiffviewClose")
+  end
+end
+
 M.exclude = {
   "node_modules",
   ".git",
