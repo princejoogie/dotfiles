@@ -51,4 +51,10 @@ eval "$(starship init zsh)"
 eval "$(fnm env --use-on-cd --shell zsh)"
 # fnm end
 
+# bun
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+# bun end
+
 source $ZSH/oh-my-zsh.sh
