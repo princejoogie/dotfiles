@@ -247,8 +247,20 @@ return {
     "sindrets/diffview.nvim",
     keys = {
       { "<leader>do", ":DiffviewOpen ", desc = "Open Diffview" },
-      { "<leader>dh", function() toggle_diffview("DiffviewFileHistory") end, desc = "Toggle Diffview History" },
-      { "<leader>df", function() toggle_diffview("DiffviewFileHistory %") end, desc = "Toggle Diffview File History" },
+      {
+        "<leader>dh",
+        function()
+          toggle_diffview("DiffviewFileHistory")
+        end,
+        desc = "Toggle Diffview History",
+      },
+      {
+        "<leader>df",
+        function()
+          toggle_diffview("DiffviewFileHistory %")
+        end,
+        desc = "Toggle Diffview File History",
+      },
       { "<leader>dq", cmd("tabc"), desc = "Close Tab" },
     },
   },
@@ -364,4 +376,15 @@ return {
     },
   },
   { "cameron-wags/rainbow_csv.nvim", opts = {} },
+  {
+    "norcalli/nvim-colorizer.lua",
+    config = function()
+      require("colorizer").setup({ "*" }, {
+        RGB = true,
+        RRGGBB = true,
+        names = true,
+        RRGGBBAA = true,
+      })
+    end,
+  },
 }
