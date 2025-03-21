@@ -1,26 +1,30 @@
 format = """
-[ 󰘧 ](fg:#090c0c bg:#6b7280)\
-[](fg:#6b7280 bg:#374151)\
+(#a3aed2)\
+[  ](bg:#a3aed2 fg:#090c0c)\
+[](bg:#769ff0 fg:#a3aed2)\
 $directory\
-[](fg:#374151 bg:#394260)\
+[](fg:#769ff0 bg:#394260)\
 $git_branch\
 $git_status\
-[](fg:#394260 bg:#111827)\
-\n$character"""
-
-right_format = """
+[](fg:#394260 bg:#212736)\
 $nodejs\
-$python\
 $rust\
 $golang\
-$conda\
-"""
+$php\
+[ ](fg:#212736)\
+\n$character"""
 
 [directory]
-style = "fg:#e3e5e5 bg:#374151"
+style = "fg:#15161E bg:#769ff0"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
 
 [git_branch]
 symbol = ""
@@ -42,25 +46,27 @@ deleted = '✘${count} '
 
 [nodejs]
 symbol = ""
-style = "bg:#1e293b"
-format = '[[](bg:#000000 fg:#1e293b)[ $symbol ($version) ](fg:#fca5a5 bg:#1e293b)]($style)'
-
-[python]
-symbol = " "
-style = "bg:#334155"
-format = '[[](bg:#1e293b fg:#334155)[ ${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )](fg:#facc15 bg:#334155)]($style)'
-
-[conda]
-style = "bg:#334155 dimmed green"
-format = '[\($environment\)]($style) '
+style = "bg:#212736"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
 
 [rust]
 symbol = ""
-style = "bg:#475569"
-format = '[[](bg:#334155 fg:#475569)[ $symbol ($version) ](fg:#f1f5f9 bg:#475569)]($style)'
+style = "bg:#212736"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
 
 [golang]
 symbol = ""
-style = "bg:#64748b"
-format = '[[](bg:#475569 fg:#64748b)[ $symbol ($version) ](fg:#ffffff bg:#64748b)]($style)'
+style = "bg:#212736"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
+
+[php]
+symbol = ""
+style = "bg:#212736"
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
+
+[time]
+disabled = false
+time_format = "%R" # Hour:Minute Format
+style = "bg:#1d2230"
+format = '[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)'
 
