@@ -17,6 +17,7 @@ return {
     lazy = false,
     keys = {
       -- stylua: ignore start
+      { "<M-d>", function() Snacks.words.jump(1, true) end, desc = "Jump to word", },
       { "<leader>bd", function() Snacks.bufdelete.delete() end, desc = "Delete current buffer", },
       { "<leader>ba", function() Snacks.bufdelete({ filter = function(buf) return #vim.fn.win_findbuf(buf) == 0 end, }) end, desc = "Delete all hidden buffers", },
       { "<leader>zm", function() Snacks.zen.zen() end, desc = "Open Explorer", },
@@ -267,23 +268,9 @@ return {
     },
     config = function()
       require("Comment").setup({
-        toggler = { line = "<leader>cl", block = "<leader>bl" },
-        opleader = { line = "<leader>cc", block = "<leader>cb" },
-        pre_hook = function(ctx)
-          local U = require("Comment.utils")
-
-          local location = nil
-          if ctx.ctype == U.ctype.block then
-            location = require("ts_context_commentstring.utils").get_cursor_location()
-          elseif ctx.cmotion == U.cmotion.v or ctx.cmotion == U.cmotion.V then
-            location = require("ts_context_commentstring.utils").get_visual_start_location()
-          end
-
-          return require("ts_context_commentstring.internal").calculate_commentstring({
-            key = ctx.ctype == U.ctype.line and "__default" or "__multiline",
-            location = location,
-          })
-        end,
+        toggler = { line = "<leader>cl", block = "<leader>cc" },
+        opleader = { line = "cl", block = "cc" },
+        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
       })
     end,
   },
