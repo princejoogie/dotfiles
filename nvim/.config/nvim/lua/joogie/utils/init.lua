@@ -53,7 +53,7 @@ M.git = {
     git_branches = string.gsub(git_branches, "origin/", "")
     git_branches = vim.split(git_branches, "\n")
 
-    local unique_branches = { "NONE" }
+    local unique_branches = { "HEAD" }
 
     for _, branch in ipairs(git_branches) do
       if not vim.tbl_contains(unique_branches, branch) then
@@ -66,6 +66,8 @@ M.git = {
   commits = function()
     local git_commits = vim.fn.system("git log --pretty=format:'%h %s' --abbrev-commit --decorate --no-merges")
     git_commits = vim.split(git_commits, "\n")
+
+    table.insert(git_commits, 1, "HEAD")
     return git_commits
   end,
 }

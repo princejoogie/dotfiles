@@ -6,10 +6,9 @@ return {
   "sindrets/diffview.nvim",
   keys = {
     {
-      "<leader>dw",
+      "<leader>do",
       function()
         local first_branch = nil
-        local second_branch = nil
 
         vim.ui.select(utils.git.branches(), {
           prompt = "Select first branch:",
@@ -22,13 +21,19 @@ return {
 
           vim.ui.select(utils.git.branches(), {
             prompt = "Select second branch:",
-          }, function(branch2)
-            if not branch2 then
+          }, function(second_branch)
+            if not second_branch then
               return
             end
 
-            second_branch = branch2
-            vim.notify("Diff view on " .. first_branch .. " and " .. second_branch)
+            if first_branch == "HEAD" and second_branch == "HEAD" then
+              return vim.cmd("DiffviewOpen")
+            end
+
+            if second_branch == first_branch then
+              return vim.notify("Please select different branches", vim.log.levels.ERROR)
+            end
+
             vim.cmd("DiffviewOpen " .. first_branch .. ".." .. second_branch)
           end)
         end)
@@ -39,7 +44,6 @@ return {
       "<leader>dc",
       function()
         local first_commit = nil
-        local second_commit = nil
 
         vim.ui.select(utils.git.commits(), {
           prompt = "Select first commit:",
@@ -52,38 +56,22 @@ return {
 
           vim.ui.select(utils.git.commits(), {
             prompt = "Select second commit:",
-          }, function(commit2)
-            if not commit2 then
+          }, function(second_commit)
+            if not second_commit then
               return
             end
 
-            second_commit = vim.split(commit2, " ")[1]
-            vim.notify("Diff view on " .. first_commit .. " and " .. second_commit)
+            second_commit = vim.split(second_commit, " ")[1]
+
+            if second_commit == first_commit then
+              return vim.notify("Please select different commits", vim.log.levels.ERROR)
+            end
+
             vim.cmd("DiffviewOpen " .. first_commit .. ".." .. second_commit)
           end)
         end)
       end,
       desc = "Diffview: on two commits",
-    },
-    {
-      "<leader>do",
-      function()
-        vim.ui.select(utils.git.branches(), {
-          prompt = "Select branch to diff on:",
-        }, function(branch)
-          if not branch then
-            return
-          end
-
-          if branch == "NONE" then
-            vim.cmd("DiffviewOpen")
-            return
-          end
-
-          vim.cmd("DiffviewOpen " .. branch)
-        end)
-      end,
-      desc = "Diffview: on branch",
     },
     {
       "<leader>dh",
