@@ -246,7 +246,39 @@ return {
   {
     "sindrets/diffview.nvim",
     keys = {
-      { "<leader>do", ":DiffviewOpen ", desc = "Open Diffview" },
+      {
+        "<leader>do",
+        function()
+          local git_branches = vim.fn.system("git branch --all --format='%(refname:short)'")
+          git_branches = string.gsub(git_branches, "origin/", "")
+          git_branches = vim.split(git_branches, "\n")
+          git_branches = vim.fn.uniq(git_branches)
+
+          local unique_branches = {"NONE"}
+
+          for _, branch in ipairs(git_branches) do
+            if not vim.tbl_contains(unique_branches, branch) then
+              table.insert(unique_branches, branch)
+            end
+          end
+
+          vim.ui.select(unique_branches, {
+            prompt = "Select branch diff for: ",
+          }, function(branch)
+            if not branch then
+              return
+            end
+
+            if branch == "NONE" then
+              vim.cmd("DiffviewOpen")
+              return
+            end
+
+            vim.cmd("DiffviewOpen " .. branch)
+          end)
+        end,
+        desc = "Open Diffview",
+      },
       {
         "<leader>dh",
         function()
@@ -311,6 +343,7 @@ return {
   },
   {
     "diepm/vim-rest-console",
+    ft = { "rest" },
     config = function()
       vim.g.vrc_response_default_content_type = "application/json"
       vim.g.vrc_output_buffer_name = "__VRC_OUTPUT.json"
@@ -318,7 +351,7 @@ return {
         json = "jq",
       }
       vim.g.vrc_show_command = true
-      vim.g.vrc_trigger = "<leader><CR>"
+      vim.g.vrc_trigger = "<leader>S"
     end,
   },
   {
@@ -328,11 +361,11 @@ return {
   },
   {
     "OXY2DEV/markview.nvim",
-    lazy = false,
     -- stylua: ignore
     keys = {
       { "<leader>mm", cmd("Markview Toggle"), desc = "Markview toggle" },
     },
+    ft = { "markdown", "markdown_inline" },
   },
   {
     "kristijanhusak/vim-dadbod-ui",
@@ -375,7 +408,7 @@ return {
       { "<leader>xp", cmd("Presenting"), desc = "Presenting toggle" },
     },
   },
-  { "cameron-wags/rainbow_csv.nvim", opts = {} },
+  { "cameron-wags/rainbow_csv.nvim", opts = {}, ft = { "csv" } },
   {
     "catgoose/nvim-colorizer.lua",
     event = "BufReadPre",
@@ -388,8 +421,6 @@ return {
         RRGGBBAA = true,
         AARRGGBB = true,
         tailwind = true,
-        mode = "virtualtext",
-        virtualtext_inline = true,
       },
     },
   },
