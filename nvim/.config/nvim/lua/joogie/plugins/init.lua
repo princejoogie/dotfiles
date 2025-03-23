@@ -13,6 +13,27 @@ return {
   "nvim-lua/plenary.nvim",
   {
     "folke/snacks.nvim",
+    dependencies = {
+      {
+        "s1n7ax/nvim-window-picker",
+        name = "window-picker",
+        event = "VeryLazy",
+        opts = {
+          hint = "floating-big-letter",
+          show_prompt = false,
+          filter_rules = {
+            autoselect_one = true,
+            include_current_win = false,
+            include_unfocusable_windows = false,
+            -- stylua: ignore
+            bo = {
+              filetype = { "snacks_picker_input", "snacks_picker_list", "NvimTree", "neo-tree", "notify", "snacks_notif", },
+              buftype = { "terminal", "nofile", "quickfix", "help", "prompt", "notify", "float" },
+            },
+          },
+        },
+      },
+    },
     priority = 1000,
     lazy = false,
     keys = {
@@ -98,12 +119,30 @@ return {
         ui_select = true,
         sources = {
           explorer = {
+            actions = {
+              window_picker = function(_, item)
+                if item.dir then
+                  return
+                end
+
+                local window_id = require("window-picker").pick_window()
+
+                if not window_id then
+                  return
+                end
+
+                vim.api.nvim_set_current_win(window_id)
+                vim.cmd("edit " .. item._path)
+                Snacks.explorer()
+              end,
+            },
             win = {
               list = {
                 keys = {
                   ["z"] = "explorer_close_all",
                   ["]c"] = "explorer_git_next",
                   ["[c"] = "explorer_git_prev",
+                  ["w"] = "window_picker",
                 },
               },
             },
@@ -236,9 +275,6 @@ return {
       vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
       vim.keymap.set("n", "<leader>3", function() harpoon:list():select(3) end)
       vim.keymap.set("n", "<leader>4", function() harpoon:list():select(4) end)
-
-      vim.keymap.set("n", "<leader>P", function() harpoon:list():prev() end)
-      vim.keymap.set("n", "<leader>N", function() harpoon:list():next() end)
       -- stylua: ignore end
     end,
   },
