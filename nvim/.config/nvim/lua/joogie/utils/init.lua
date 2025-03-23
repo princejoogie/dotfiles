@@ -47,6 +47,29 @@ M.toggle_diffview = function(cmd)
   end
 end
 
+M.git = {
+  branches = function()
+    local git_branches = vim.fn.system("git branch --all --format='%(refname:short)'")
+    git_branches = string.gsub(git_branches, "origin/", "")
+    git_branches = vim.split(git_branches, "\n")
+
+    local unique_branches = { "NONE" }
+
+    for _, branch in ipairs(git_branches) do
+      if not vim.tbl_contains(unique_branches, branch) then
+        table.insert(unique_branches, branch)
+      end
+    end
+
+    return unique_branches
+  end,
+  commits = function()
+    local git_commits = vim.fn.system("git log --pretty=format:'%h %s' --abbrev-commit --decorate --no-merges")
+    git_commits = vim.split(git_commits, "\n")
+    return git_commits
+  end,
+}
+
 M.exclude = {
   "node_modules",
   ".cache",

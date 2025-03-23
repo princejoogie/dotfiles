@@ -3,7 +3,6 @@ local utils = require("joogie.utils")
 
 local cmd = utils.cmd
 local dashboard_header = utils.dashboard_header
-local toggle_diffview = utils.toggle_diffview
 
 return {
   "tpope/vim-fugitive",
@@ -243,59 +242,6 @@ return {
     end,
   },
   { "nvim-lualine/lualine.nvim", opts = { theme = "tokyonight" } },
-  {
-    "sindrets/diffview.nvim",
-    keys = {
-      {
-        "<leader>do",
-        function()
-          local git_branches = vim.fn.system("git branch --all --format='%(refname:short)'")
-          git_branches = string.gsub(git_branches, "origin/", "")
-          git_branches = vim.split(git_branches, "\n")
-          git_branches = vim.fn.uniq(git_branches)
-
-          local unique_branches = {"NONE"}
-
-          for _, branch in ipairs(git_branches) do
-            if not vim.tbl_contains(unique_branches, branch) then
-              table.insert(unique_branches, branch)
-            end
-          end
-
-          vim.ui.select(unique_branches, {
-            prompt = "Select branch diff for: ",
-          }, function(branch)
-            if not branch then
-              return
-            end
-
-            if branch == "NONE" then
-              vim.cmd("DiffviewOpen")
-              return
-            end
-
-            vim.cmd("DiffviewOpen " .. branch)
-          end)
-        end,
-        desc = "Open Diffview",
-      },
-      {
-        "<leader>dh",
-        function()
-          toggle_diffview("DiffviewFileHistory")
-        end,
-        desc = "Toggle Diffview History",
-      },
-      {
-        "<leader>df",
-        function()
-          toggle_diffview("DiffviewFileHistory %")
-        end,
-        desc = "Toggle Diffview File History",
-      },
-      { "<leader>dq", cmd("tabc"), desc = "Close Tab" },
-    },
-  },
   {
     "folke/which-key.nvim",
     opts = { win = { border = "rounded" } },
