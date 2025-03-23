@@ -377,14 +377,20 @@ return {
   },
   { "cameron-wags/rainbow_csv.nvim", opts = {} },
   {
-    "norcalli/nvim-colorizer.lua",
-    config = function()
-      require("colorizer").setup({ "*" }, {
+    "catgoose/nvim-colorizer.lua",
+    event = "BufReadPre",
+    opts = {
+      user_default_options = {
+        names = false,
         RGB = true,
+        RGBA = true,
         RRGGBB = true,
-        names = true,
         RRGGBBAA = true,
-      })
-    end,
+        AARRGGBB = true,
+        tailwind = true,
+        mode = "virtualtext",
+        virtualtext_inline = true,
+      },
+    },
   },
 }

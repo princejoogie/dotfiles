@@ -49,6 +49,7 @@ end
 
 M.exclude = {
   "node_modules",
+  ".cache",
   ".git",
   ".next",
   ".turbo",
