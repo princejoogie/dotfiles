@@ -14,19 +14,22 @@ return {
         vim.ui.select(utils.git.branches(), {
           prompt = "Select first branch:",
         }, function(branch)
+          if not branch then
+            return
+          end
+
           first_branch = branch
 
           vim.ui.select(utils.git.branches(), {
             prompt = "Select second branch:",
           }, function(branch2)
-            second_branch = branch2
-
-            if not first_branch or not second_branch then
-              return vim.notify("Please select two branches", vim.log.levels.ERROR)
+            if not branch2 then
+              return
             end
 
-            local command = "DiffviewOpen " .. first_branch .. ".." .. second_branch
-            vim.cmd(command)
+            second_branch = branch2
+            vim.notify("Diff view on " .. first_branch .. " and " .. second_branch)
+            vim.cmd("DiffviewOpen " .. first_branch .. ".." .. second_branch)
           end)
         end)
       end,
@@ -41,17 +44,21 @@ return {
         vim.ui.select(utils.git.commits(), {
           prompt = "Select first commit:",
         }, function(commit)
+          if not commit then
+            return
+          end
+
           first_commit = vim.split(commit, " ")[1]
 
           vim.ui.select(utils.git.commits(), {
             prompt = "Select second commit:",
           }, function(commit2)
-            second_commit = vim.split(commit2, " ")[1]
-
-            if not first_commit or not second_commit then
-              return vim.notify("Please select two commits", vim.log.levels.ERROR)
+            if not commit2 then
+              return
             end
 
+            second_commit = vim.split(commit2, " ")[1]
+            vim.notify("Diff view on " .. first_commit .. " and " .. second_commit)
             vim.cmd("DiffviewOpen " .. first_commit .. ".." .. second_commit)
           end)
         end)
