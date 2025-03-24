@@ -133,7 +133,6 @@ return {
 
                 vim.api.nvim_set_current_win(window_id)
                 vim.cmd("edit " .. item._path)
-                Snacks.explorer()
               end,
             },
             win = {
@@ -185,6 +184,20 @@ return {
         end,
       },
     },
+    init = function()
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "VeryLazy",
+        callback = function()
+          vim.ui.input = Snacks.input.input
+          vim.ui.select = Snacks.picker.select
+
+          Snacks.toggle.option("relativenumber", { name = "Relative Number" }):map("<leader>uL")
+          Snacks.toggle.diagnostics():map("<leader>ud")
+          Snacks.toggle.line_number():map("<leader>ul")
+          Snacks.toggle.indent():map("<leader>ug")
+        end,
+      })
+    end,
   },
   {
     "folke/tokyonight.nvim",
@@ -329,12 +342,15 @@ return {
     config = true,
   },
   {
-    "OXY2DEV/markview.nvim",
+    "MeanderingProgrammer/render-markdown.nvim",
+    opts = {
+      file_types = { "markdown", "markdown_inline", "Avante", "mcphub" },
+    },
+    ft = { "markdown", "markdown_inline", "Avante", "mcphub" },
     -- stylua: ignore
     keys = {
-      { "<leader>mm", cmd("Markview Toggle"), desc = "Markview toggle" },
+      { "<leader>mm", cmd("RenderMarkdown toggle"), desc = "Markview toggle" },
     },
-    ft = { "markdown", "markdown_inline" },
   },
   {
     "kristijanhusak/vim-dadbod-ui",

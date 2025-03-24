@@ -11,3 +11,5 @@ nvim/.config/nvim/plugin/
 
 .DS_Store
 .aider*
+
+mcpservers.json

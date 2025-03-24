@@ -6,7 +6,7 @@ return {
   "sindrets/diffview.nvim",
   keys = {
     {
-      "<leader>do",
+      "<leader>dO",
       function()
         local first_branch = nil
 
@@ -39,6 +39,20 @@ return {
         end)
       end,
       desc = "Diffview: on two branches",
+    },
+    {
+      "<leader>do",
+      function()
+        vim.ui.select(utils.git.branches(), {
+          prompt = "Select first branch:",
+        }, function(branch)
+          if not branch then
+            return
+          end
+          vim.cmd("DiffviewOpen " .. (branch == "HEAD" and "" or branch))
+        end)
+      end,
+      desc = "Diffview: on a branch",
     },
     {
       "<leader>dc",
