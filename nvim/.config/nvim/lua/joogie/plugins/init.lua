@@ -43,7 +43,7 @@ return {
       { "<leader>ba", function() Snacks.bufdelete({ filter = function(buf) return #vim.fn.win_findbuf(buf) == 0 end, }) end, desc = "Delete all hidden buffers", },
       { "<leader>zm", function() Snacks.zen.zen() end, desc = "Open Explorer", },
       -- Top Pickers & Explorer
-      { "<C-b>", function() Snacks.explorer.open({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Open Explorer", },
+      { "<C-b>", function() Snacks.explorer.open({ hidden = true, ignored = false }) end, desc = "Open Explorer", },
       { "<C-p>", function() Snacks.picker.files({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Find Files", },
       { "<C-f>", function() Snacks.picker.grep({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Grep", },
       { "<leader>/", function() Snacks.picker.lines() end, desc = "Grep current buffer", },

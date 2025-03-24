@@ -48,30 +48,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 
--- close some filetypes with <q>
-vim.api.nvim_create_autocmd("FileType", {
-  group = augroup("close_with_q"),
-  pattern = {
-    "PlenaryTestPopup",
-    "help",
-    "lspinfo",
-    "notify",
-    "qf",
-    "query",
-    "spectre_panel",
-    "startuptime",
-    "tsplayground",
-    "neotest-output",
-    "checkhealth",
-    "neotest-summary",
-    "neotest-output-panel",
-  },
-  callback = function(event)
-    vim.bo[event.buf].buflisted = false
-    vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
-  end,
-})
-
 -- make it easier to close man-files when opened inline
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup("man_unlisted"),
@@ -103,13 +79,13 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
   end,
 })
 
-local function remove_qf_item()
+vim.api.nvim_create_user_command("RemoveQFItem", function()
   local qf_list = vim.fn.getqflist()
   local curqfidx = nil
 
   if #qf_list > 0 then
     curqfidx = vim.fn.line(".") - 1
-    table.remove(qf_list, curqfidx + 1) -- Lua is 1-based index
+    table.remove(qf_list, curqfidx + 1)
     vim.fn.setqflist(qf_list, "r")
   end
 
@@ -119,19 +95,18 @@ local function remove_qf_item()
   else
     vim.cmd("cclose")
   end
-end
-
-vim.api.nvim_create_user_command(
-  "RemoveQFItem",
-  remove_qf_item,
-  { desc = "Use `dd` to delete an item in quickfix list" }
-)
+end, { desc = "Delete item from quickfix list" })
 
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup("quickfix_mappings"),
   pattern = { "qf" },
   callback = function()
-    vim.keymap.set("n", "dd", "<cmd>RemoveQFItem<CR>", { noremap = true, silent = true, buffer = 0 })
+    vim.keymap.set(
+      "n",
+      "dd",
+      "<cmd>RemoveQFItem<CR>",
+      { noremap = true, silent = true, buffer = 0, desc = "Delete item from quickfix list" }
+    )
   end,
 })
 
