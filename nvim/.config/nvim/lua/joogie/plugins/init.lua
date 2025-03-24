@@ -106,7 +106,7 @@ return {
       statuscolumn = { enabled = true },
       toggle = { enabled = true },
       words = { enabled = true },
-      zen = { enabled = true, dim = false },
+      zen = { enabled = true, toggles = { dim = false } },
       dashboard = {
         enabled = true,
         preset = {
@@ -249,10 +249,11 @@ return {
       -- stylua: ignore end
     end,
   },
-  { "nvim-lualine/lualine.nvim", opts = { theme = "tokyonight" } },
+  { "nvim-lualine/lualine.nvim", opts = { options = { theme = "catppuccin" } } },
   {
     "folke/which-key.nvim",
-    opts = { win = { border = "rounded" } },
+    lazy = false,
+    opts = { win = { border = "rounded" }, preset = "modern" },
     -- stylua: ignore
     keys = {
       { "<leader>wk", cmd("WhichKey"), desc = "Show which-key" },
