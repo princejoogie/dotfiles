@@ -1,10 +1,9 @@
-local find_git_root = require("joogie.utils").find_git_root
-
 return {
   {
     "yetone/avante.nvim",
     event = "VeryLazy",
     version = false,
+    enabled = false,
     opts = {
       provider = "claude",
       file_selector = { provider = "snacks" },
@@ -18,7 +17,6 @@ return {
         local hub = require("mcphub").get_hub_instance()
         return hub:get_active_servers_prompt()
       end,
-      -- The custom_tools type supports both a list and a function that returns a list. Using a function here prevents requiring mcphub before it's loaded
       custom_tools = function()
         return {
           require("mcphub.extensions.avante").mcp_tool(),
@@ -31,8 +29,8 @@ return {
       "MunifTanjim/nui.nvim",
       "nvim-treesitter/nvim-treesitter",
       "nvim-lua/plenary.nvim",
-      "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
-      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+      "hrsh7th/nvim-cmp",
+      "nvim-tree/nvim-web-devicons",
       "ravitemer/mcphub.nvim",
       {
         "HakonHarnes/img-clip.nvim",
@@ -55,7 +53,13 @@ return {
         cmd = { "McpHub" },
         config = function()
           local port = 9999
-          local config = find_git_root() .. "/mcpservers.json"
+          local config =  vim.fn.expand("~/mcpservers.json")
+
+          if not vim.loop.fs_stat(config) then
+            vim.fn.mkdir(vim.fn.fnamemodify(config, ":p:h"), "p")
+            vim.fn.writefile({ '{"mcpServers":{}}' }, config)
+          end
+
           require("mcphub").setup({
             port = port,
             config = config,
@@ -73,11 +77,11 @@ return {
           local handle
           handle = vim.uv.spawn(cmd, {
             args = args,
-            stdio = { nil, nil, nil }, -- optionally capture stdio
+            stdio = { nil, nil, nil },
             detached = true,
           }, function(code, signal)
             vim.schedule(function()
-              Snacks.notifier("mcp-hub exited with code " .. code .. ", signal " .. signal)
+              vim.notify("`mcp-hub` exited with code " .. code .. ", signal " .. signal)
             end)
             handle:close()
           end)
