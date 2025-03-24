@@ -66,8 +66,6 @@ M.git = {
   commits = function()
     local git_commits = vim.fn.system("git log --pretty=format:'%h %s' --abbrev-commit --decorate --no-merges")
     git_commits = vim.split(git_commits, "\n")
-
-    table.insert(git_commits, 1, "HEAD")
     return git_commits
   end,
 }
