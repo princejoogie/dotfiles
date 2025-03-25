@@ -1,6 +1,9 @@
 # dotfiles
 
-personal dotfiles with nix
+Personal dotfiles with nix
+
+![sc1](https://github.com/user-attachments/assets/e11bd0a0-a0d5-4c65-b16c-2dd24cccb71d)
+![sc2](https://github.com/user-attachments/assets/42975532-19ab-4f16-9d44-a6500c839297)
 
 ## Usage
 
