@@ -249,7 +249,18 @@ return {
       -- stylua: ignore end
     end,
   },
-  { "nvim-lualine/lualine.nvim", opts = { options = { theme = "catppuccin" } } },
+  {
+    "nvim-lualine/lualine.nvim",
+    config = function()
+      require("lualine").setup({
+        options = {
+          theme = "catppuccin",
+          component_separators = { left = "|", right = "|" },
+          section_separators = { left = "", right = "" },
+        },
+      })
+    end,
+  },
   {
     "folke/which-key.nvim",
     lazy = false,

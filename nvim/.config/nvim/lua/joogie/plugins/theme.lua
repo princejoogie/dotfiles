@@ -1,14 +1,5 @@
 return {
   {
-    "rebelot/kanagawa.nvim",
-    enabled = false,
-    priority = 1000,
-    opts = {},
-    init = function()
-      vim.cmd("colorscheme kanagawa-dragon")
-    end,
-  },
-  {
     "catppuccin/nvim",
     enabled = true,
     name = "catppuccin",
@@ -16,34 +7,17 @@ return {
     opts = {
       no_italic = true,
       integrations = {
-        cmp = true,
-        gitsigns = true,
-        notify = true,
         harpoon = true,
-        flash = true,
-        snacks = { enabled = true },
+        snacks = { enabled = true, indent_scope_color = "surface2" },
       },
+      custom_highlights = function(colors)
+        return {
+          Folded = { fg = colors.overlay2, bg = colors.base },
+        }
+      end,
     },
     init = function()
       vim.cmd([[colorscheme catppuccin-mocha]])
-    end,
-  },
-  {
-    "folke/tokyonight.nvim",
-    enabled = false,
-    lazy = false,
-    priority = 1000,
-    config = function()
-      require("tokyonight").setup({
-        plugins = { all = true },
-        styles = {
-          comments = { italic = false },
-          keywords = { italic = false },
-          functions = {},
-          variables = {},
-        },
-      })
-      vim.cmd([[colorscheme tokyonight-night]])
     end,
   },
 }
