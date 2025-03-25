@@ -1,6 +1,16 @@
 return {
   {
+    "rebelot/kanagawa.nvim",
+    enabled = false,
+    priority = 1000,
+    opts = {},
+    init = function()
+      vim.cmd("colorscheme kanagawa-dragon")
+    end,
+  },
+  {
     "catppuccin/nvim",
+    enabled = true,
     name = "catppuccin",
     priority = 1000,
     opts = {
@@ -33,6 +43,7 @@ return {
           variables = {},
         },
       })
+      vim.cmd([[colorscheme tokyonight-night]])
     end,
   },
 }

@@ -16,7 +16,7 @@
 response=$(curl 'http://10.0.1.146:200/Attendance/WebServices/TimeLogsEntry.asmx/TimeLogsEntry_Create' \
   -H 'Content-Type: application/json; charset=UTF-8' \
   -H 'X-Requested-With: XMLHttpRequest' \
-  --data-raw '{"remarks":"ManualEntry","employeeID":"$FGI_EMPLOYEE_ID"}' \
+  --data-raw '{"remarks":"ManualEntry","employeeID":"867497"}' \
   --insecure)
 
 if echo "$response" | jq -e '.d == "true"' > /dev/null 2>&1; then
