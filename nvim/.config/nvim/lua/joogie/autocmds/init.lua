@@ -79,37 +79,6 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
   end,
 })
 
-vim.api.nvim_create_user_command("RemoveQFItem", function()
-  local qf_list = vim.fn.getqflist()
-  local curqfidx = nil
-
-  if #qf_list > 0 then
-    curqfidx = vim.fn.line(".") - 1
-    table.remove(qf_list, curqfidx + 1)
-    vim.fn.setqflist(qf_list, "r")
-  end
-
-  if #qf_list > 0 then
-    vim.cmd((curqfidx + 1) .. "cfirst")
-    vim.cmd("copen")
-  else
-    vim.cmd("cclose")
-  end
-end, { desc = "Delete item from quickfix list" })
-
-vim.api.nvim_create_autocmd("FileType", {
-  group = augroup("quickfix_mappings"),
-  pattern = { "qf" },
-  callback = function()
-    vim.keymap.set(
-      "n",
-      "dd",
-      "<cmd>RemoveQFItem<CR>",
-      { noremap = true, silent = true, buffer = 0, desc = "Delete item from quickfix list" }
-    )
-  end,
-})
-
 local progress = vim.defaulttable()
 vim.api.nvim_create_autocmd("LspProgress", {
   group = augroup("lsp_progress"),

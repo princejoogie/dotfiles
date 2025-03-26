@@ -1,3 +1,21 @@
+vim.keymap.set("n", "dd", function()
+  local qf_list = vim.fn.getqflist()
+  local curqfidx = nil
+
+  if #qf_list > 0 then
+    curqfidx = vim.fn.line(".") - 1
+    table.remove(qf_list, curqfidx + 1)
+    vim.fn.setqflist(qf_list, "r")
+  end
+
+  if #qf_list > 0 then
+    vim.cmd((curqfidx + 1) .. "cfirst")
+    vim.cmd("copen")
+  else
+    vim.cmd("cclose")
+  end
+end, { buffer = true, desc = "Delete item from quickfix list" })
+
 vim.keymap.set("n", "w", function()
   local qflist = vim.fn.getqflist()
   if not qflist or #qflist == 0 then
@@ -33,4 +51,4 @@ vim.keymap.set("n", "w", function()
   vim.api.nvim_set_current_win(window_id)
   vim.cmd("edit " .. vim.fn.fnameescape(filepath))
   vim.fn.cursor(current_item.lnum, current_item.col)
-end, { buffer = true })
+end, { buffer = true, desc = "Open item in a specific window" })

@@ -93,6 +93,7 @@ return {
       },
     },
     opts = {
+      scope = { enabled = false },
       bigfile = { enabled = true },
       bufdelete = { enabled = true },
       explorer = { enabled = true },
@@ -102,7 +103,6 @@ return {
       indent = { enabled = true },
       input = { enabled = true },
       quickfile = { enabled = true },
-      scope = { enabled = true },
       statuscolumn = { enabled = true },
       toggle = { enabled = true },
       words = { enabled = true },
