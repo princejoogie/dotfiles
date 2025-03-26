@@ -117,24 +117,24 @@ return {
       picker = {
         enabled = true,
         ui_select = true,
+        actions = {
+          window_picker = function(_, item)
+            if item.dir then
+              return
+            end
+
+            local window_id = require("window-picker").pick_window()
+
+            if not window_id then
+              return
+            end
+
+            vim.api.nvim_set_current_win(window_id)
+            vim.cmd("edit " .. item._path)
+          end,
+        },
         sources = {
           explorer = {
-            actions = {
-              window_picker = function(_, item)
-                if item.dir then
-                  return
-                end
-
-                local window_id = require("window-picker").pick_window()
-
-                if not window_id then
-                  return
-                end
-
-                vim.api.nvim_set_current_win(window_id)
-                vim.cmd("edit " .. item._path)
-              end,
-            },
             win = {
               list = {
                 keys = {
@@ -154,8 +154,19 @@ return {
         win = {
           input = {
             keys = {
+              ["<M-/>"] = { "focus_list", mode = { "i", "n" } },
               ["<a-H>"] = { "toggle_hidden", mode = { "i", "n" } },
               ["<a-M>"] = { "toggle_maximize", mode = { "i", "n" } },
+            },
+          },
+          list = {
+            keys = {
+              ["<M-/>"] = { "focus_preview", mode = { "i", "n" } },
+            },
+          },
+          preview = {
+            keys = {
+              ["<M-/>"] = { "focus_input", mode = { "i", "n" } },
             },
           },
         },

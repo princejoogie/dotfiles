@@ -39,8 +39,8 @@ keymap("n", "<C-w>z", cmd("tab split"), { desc = "Open buffer in new Tab" })
 keymap("n", "<leader><Tab>", cmd("tabnext"), { desc = "Next Tab" })
 keymap("n", "<leader><S-Tab>", cmd("tabprevious"), { desc = "Previous Tab" })
 
-keymap("n", "<leader>cj", "<cmd>cnext<CR>", { desc = "Next quickfix" })
-keymap("n", "<leader>ck", "<cmd>cprev<CR>", { desc = "Previous quickfix" })
+keymap("n", "<leader>cj", cmd("Cnext"), { desc = "Next quickfix" })
+keymap("n", "<leader>ck", cmd("Cprevious"), { desc = "Previous quickfix" })
 
 keymap("n", "<C-n>", cmd("noh"), { desc = "Clear search highlights" })
 keymap("n", "<leader>cp", [[:let @+=expand('%:~:.')<CR>]], { desc = "Copy relative path" })
