@@ -4,6 +4,7 @@ opt.laststatus = 3
 opt.showmode = false
 opt.clipboard = "unnamedplus"
 opt.cursorline = true
+opt.ch = 0
 opt.sessionoptions = "buffers,curdir,folds,help,tabpages,winsize,terminal"
 
 -- Indenting

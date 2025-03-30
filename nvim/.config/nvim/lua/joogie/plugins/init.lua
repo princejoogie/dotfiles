@@ -183,7 +183,6 @@ return {
         RRGGBB = true,
         RRGGBBAA = true,
         AARRGGBB = true,
-        tailwind = true,
       },
     },
   },
