@@ -176,10 +176,11 @@ return {
             "Config Change Detected",
             "Executing query",
             "Done after",
+            '^".*" %d+L, %d+B written$',
           }
 
           for _, banned in ipairs(banned_messages) do
-            if string.find(n.msg, banned, 1, true) then
+            if string.find(n.msg, banned) then
               return false
             end
           end
