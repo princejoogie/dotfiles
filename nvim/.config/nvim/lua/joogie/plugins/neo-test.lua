@@ -17,41 +17,41 @@ return {
       })
     end,
     keys = {
-      { "<leader>,", function() end, desc = "[NeoTest] -->" },
+      { "<leader>,", function() end, desc = "NeoTest" },
       {
         "<leader>,s",
         function()
           require("neotest").summary.toggle()
         end,
-        desc = "[Test] Toggle summary",
+        desc = "NeoTest: Toggle summary",
       },
       {
         "<leader>,e",
         function()
           require("neotest").output.open()
         end,
-        desc = "[Test] Output open",
+        desc = "NeoTest: Output open",
       },
       {
         "<leader>,r",
         function()
           require("neotest").run.run()
         end,
-        desc = "[Test] Run nearest",
+        desc = "NeoTest: Run nearest",
       },
       {
         "<leader>,w",
         function()
           require("neotest").watch.toggle(vim.fn.expand("%"))
         end,
-        desc = "[Test] Watch file",
+        desc = "NeoTest: Watch file",
       },
       {
         "<leader>,f",
         function()
           require("neotest").run.run(vim.fn.expand("%"))
         end,
-        desc = "[Test] Run file",
+        desc = "NeoTest: Run file",
       },
     },
   },

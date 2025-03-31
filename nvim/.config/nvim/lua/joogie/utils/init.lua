@@ -70,6 +70,8 @@ M.git = {
   end,
 }
 
+M.noop = function() end
+
 M.exclude = {
   "node_modules",
   ".cache",

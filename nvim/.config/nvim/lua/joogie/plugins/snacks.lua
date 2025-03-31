@@ -30,12 +30,14 @@ return {
     lazy = false,
     keys = {
       -- stylua: ignore start
+      { "<leader>u", function() end, desc = "UI Toggles" },
       { "<M-d>", function() Snacks.words.jump(1, true) end, desc = "Jump to word", },
+      { "<leader>b", function() end, desc = "Buffer" },
       { "<leader>bd", function() Snacks.bufdelete.delete() end, desc = "Delete current buffer", },
       { "<leader>ba", function() Snacks.bufdelete({ filter = function(buf) return #vim.fn.win_findbuf(buf) == 0 end, }) end, desc = "Delete all hidden buffers", },
-      { "<leader>zm", function() Snacks.zen.zen() end, desc = "Open Explorer", },
+      { "<leader>zm", function() Snacks.zen.zen() end, desc = "Zen mode" },
       -- Top Pickers & Explorer
-      { "<C-b>", function() Snacks.explorer.open({ hidden = true, ignored = false }) end, desc = "Open Explorer", },
+      { "<C-b>", function() Snacks.explorer({ hidden = true, ignored = false }) end, desc = "Open Explorer", },
       { "<C-p>", function() Snacks.picker.files({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Find Files", },
       { "<C-f>", function() Snacks.picker.grep({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Grep", },
       { "<leader>/", function() Snacks.picker.lines() end, desc = "Grep current buffer", },
@@ -49,6 +51,7 @@ return {
       { "<leader>go", function() Snacks.gitbrowse() end, desc = "Git Repo in Browser", mode = { "n", "v" } },
       { "<leader>gk", function() Snacks.git.blame_line() end, desc = "Git Blame Line", },
       -- search
+      { "<leader>s", function() end, desc = "Pickers" },
       { "<leader>s/", function() Snacks.picker.search_history() end, desc = "Search History", },
       { "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "Diagnostics", },
       { "<leader>sD", function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics", },
@@ -110,24 +113,24 @@ return {
         layout = { preset = "vertical" },
         enabled = true,
         ui_select = true,
-        actions = {
-          window_picker = function(_, item)
-            if item.dir then
-              return
-            end
-
-            local window_id = require("window-picker").pick_window()
-
-            if not window_id then
-              return
-            end
-
-            vim.api.nvim_set_current_win(window_id)
-            vim.cmd("edit " .. item._path)
-          end,
-        },
         sources = {
           explorer = {
+            actions = {
+              window_picker = function(_, item)
+                if item.dir then
+                  return
+                end
+
+                local window_id = require("window-picker").pick_window()
+
+                if not window_id then
+                  return
+                end
+
+                vim.api.nvim_set_current_win(window_id)
+                vim.cmd("edit " .. item._path)
+              end,
+            },
             win = {
               list = {
                 keys = {
@@ -135,6 +138,7 @@ return {
                   ["]c"] = "explorer_git_next",
                   ["[c"] = "explorer_git_prev",
                   ["w"] = "window_picker",
+                  ["<C-b>"] = "close",
                 },
               },
             },

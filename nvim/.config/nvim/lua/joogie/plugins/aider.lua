@@ -27,6 +27,7 @@ return {
     end,
     -- stylua: ignore
     keys = {
+      { "<leader>a", function() end, desc = "Aider" },
       { "<leader>ai", "<C-\\><C-n><cmd>AiderTerminalToggle<cr>", desc = "Open Aider", mode = { "t" } },
       { "<leader>ai", "<cmd>AiderTerminalToggle<cr>", desc = "Open Aider" },
       { "<leader>as", "<cmd>AiderTerminalSend<cr>", desc = "Send to Aider", mode = { "n", "v" } },
