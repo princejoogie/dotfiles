@@ -51,6 +51,10 @@ local on_attach = function(client, bufnr)
   nmap("<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename symbol")
   nmap("<leader>ca", "<cmd>lua vim.lsp.buf.code_action({ apply = true })<CR>", "Code actions")
   nmap("<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", "Open float")
+  nmap("[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", "Previous Error")
+  nmap("]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", "Next Error")
+  nmap("<leader>dk", '<cmd>lua vim.notify("use [d")<CR>', "Previous Error")
+  nmap("<leader>dj", '<cmd>lua vim.notify("use ]d")<CR>', "Next Error")
 end
 
 return {

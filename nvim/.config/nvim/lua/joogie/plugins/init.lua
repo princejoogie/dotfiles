@@ -60,11 +60,31 @@ return {
   {
     "nvim-lualine/lualine.nvim",
     config = function()
+      local function isRecording()
+        local reg = vim.fn.reg_recording()
+        if reg == "" then
+          return ""
+        end
+        return "Recording @" .. reg
+      end
+
+      local function filepath()
+        return vim.fn.expand("%:p:.")
+      end
+
       require("lualine").setup({
         options = {
           theme = "catppuccin",
           component_separators = { left = "|", right = "|" },
           section_separators = { left = "", right = "" },
+        },
+        sections = {
+          lualine_a = { "mode" },
+          lualine_b = { "branch", "diff", "diagnostics" },
+          lualine_c = { filepath },
+          lualine_x = { "encoding", "fileformat", "filetype" },
+          lualine_y = { "progress" },
+          lualine_z = { isRecording, "location" },
         },
       })
     end,
