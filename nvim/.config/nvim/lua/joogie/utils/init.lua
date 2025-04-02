@@ -1,5 +1,7 @@
 local M = {}
 
+M.spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+
 M.find_git_root = function()
   local current_file = vim.api.nvim_buf_get_name(0)
   local current_dir
@@ -24,6 +26,7 @@ M.icons = {
   Warn = " ",
   Info = " ",
   Hint = " ",
+  Success = " ",
 }
 
 M.live_grep_git_root = function()
@@ -37,6 +40,81 @@ end
 
 M.cmd = function(command)
   return "<cmd>" .. command .. "<CR>"
+end
+
+M.notify_loading = function(msg, id)
+  Snacks.notifier(msg, vim.log.levels.INFO, {
+    id = id,
+    title = "Loading",
+    timeout = false,
+    opts = function(notif)
+      notif.icon = M.spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #M.spinner + 1]
+    end,
+  })
+end
+
+M.exec = function(commands, msg)
+  local id = table.concat(commands, " ")
+  local _msg = msg or id
+  local success_msg = " " .. _msg .. "\n---\n"
+  local error_msg = " " .. _msg .. "\n---\n"
+
+  M.notify_loading(_msg, id)
+
+  local function execute_command(command, on_complete)
+    local cmd = vim.fn.has("win32") == 1 and { "cmd.exe", "/c", command } or { "/bin/sh", "-c", command }
+
+    vim.fn.jobstart(cmd, {
+      stdout_buffered = true,
+      stderr_buffered = true,
+      on_stdout = function(_, data)
+        if data then
+          success_msg = success_msg .. table.concat(data, "\n")
+        end
+      end,
+      on_stderr = function(_, err)
+        if err then
+          error_msg = error_msg .. table.concat(err, "\n")
+        end
+      end,
+      on_exit = function(_, code)
+        if code ~= 0 then
+          Snacks.notifier(error_msg, vim.log.levels.ERROR, {
+            id = id,
+            title = "Error",
+            icon = M.icons.Error,
+          })
+        else
+          Snacks.notifier(success_msg, vim.log.levels.INFO, {
+            id = id,
+            title = "Running",
+            opts = function(notif)
+              notif.icon = M.spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #M.spinner + 1]
+            end,
+          })
+        end
+        if on_complete then
+          on_complete(code)
+        end
+      end,
+    })
+  end
+
+  local function run_next_command(i)
+    if i <= #commands then
+      local command = commands[i]
+      execute_command(command, function(code)
+        if code == 0 then
+          run_next_command(i + 1)
+        end
+      end)
+    else
+      success_msg = success_msg .. "---\n" .. M.icons.Success .. " Job Done"
+      Snacks.notifier(success_msg, vim.log.levels.INFO, { id = id, title = "Done" })
+    end
+  end
+
+  run_next_command(1)
 end
 
 M.toggle_diffview = function(cmd)

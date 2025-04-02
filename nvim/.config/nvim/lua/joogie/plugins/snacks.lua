@@ -42,7 +42,8 @@ return {
       { "<C-f>", function() Snacks.picker.grep({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Grep", },
       { "<leader>/", function() Snacks.picker.lines() end, desc = "Grep current buffer", },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History", },
-      { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History", },
+      { "<leader>nn", function() Snacks.picker.notifications() end, desc = "Notification History", },
+      { "<leader>nd", function() Snacks.notifier.hide() end, desc = "Hide Notifications", },
       { "<leader>sp", function() Snacks.picker() end, desc = "Open Picker", },
       -- git
       { "<leader>gb", function() Snacks.picker.git_branches() end, desc = "Git Branches", },

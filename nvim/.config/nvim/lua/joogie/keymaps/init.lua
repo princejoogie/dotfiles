@@ -1,4 +1,5 @@
 local cmd = require("joogie.utils").cmd
+local Util = require("joogie.utils")
 
 local keymap = vim.keymap.set
 
@@ -49,7 +50,13 @@ keymap("n", "<leader>cp", [[:let @+=expand('%:~:.')<CR>]], { desc = "Copy relati
 keymap("n", "<leader>db", cmd("DBUIToggle"), { desc = "Toggle DBUI" })
 
 -- Fugitive
-keymap("n", "<leader>gg", cmd("Git"), { desc = "Open Git Fugitive" })
+keymap("n", "<leader>Ga", cmd("Git add ."), { desc = "Fugitive: add all" })
+keymap("n", "<leader>Gc", cmd("Git commit"), { desc = "Fugitive: commit" })
+keymap("n", "<leader>Gp", cmd("Git push"), { desc = "Fugitive: push" })
+keymap("n", "<leader>GP", cmd("Git push --force-with-lease"), { desc = "Fugitive: push force" })
+keymap("n", "<leader>G!", function()
+  Util.exec({ "git add .", "git commit -m 'commit'", "git push" })
+end, { desc = "Fugitive: push yolo" })
 keymap("n", "<leader>gf", cmd("diffget //2"), { desc = "Diff get Current" })
 keymap("n", "<leader>gh", cmd("diffget //3"), { desc = "Diff get Head" })
 keymap("n", "<leader>dv", cmd("Gvdiffsplit"), { desc = "Diff Vertical" })
