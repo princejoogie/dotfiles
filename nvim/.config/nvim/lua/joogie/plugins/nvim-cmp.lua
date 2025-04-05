@@ -15,6 +15,9 @@ return {
       local lspkind = require("lspkind")
 
       return {
+        completion = {
+          autocomplete = false,
+        },
         mapping = {
           ["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
           ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
@@ -31,9 +34,9 @@ return {
         sources = cmp.config.sources({
           { name = "vim-dadbod-completion" },
           { name = "git" },
+          { name = "path" },
           { name = "nvim_lsp" },
           { name = "nvim_lua" },
-          { name = "path" },
           { name = "lazydev", group_index = 0 },
         }, {
           { name = "buffer" },
@@ -154,7 +157,8 @@ return {
     end,
   },
   {
-    "supermaven-inc/supermaven-nvim",
+    "princejoogie/supermaven-nvim",
+    dir = "~/documents/codes/supermaven-nvim",
     config = function()
       require("supermaven-nvim").setup({})
     end,

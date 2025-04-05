@@ -14,6 +14,7 @@ plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
   fast-syntax-highlighting
+  supermaven
 )
 
 bindkey -M viins jj vi-cmd-mode

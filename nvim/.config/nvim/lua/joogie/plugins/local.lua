@@ -1,4 +1,5 @@
 return {
+  "princejoogie/duckdb.nvim",
   dir = "~/documents/codes/duckdb.nvim",
   ft = { "csv" },
   opts = {
