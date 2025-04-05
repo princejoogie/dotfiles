@@ -34,6 +34,7 @@ return {
           { name = "nvim_lsp" },
           { name = "nvim_lua" },
           { name = "path" },
+          { name = "lazydev", group_index = 0 },
         }, {
           { name = "buffer" },
           { name = "spell" },
@@ -135,7 +136,15 @@ return {
       delete_check_events = "TextChanged",
     },
   },
-
+  {
+    "folke/lazydev.nvim",
+    ft = "lua",
+    opts = {
+      library = {
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
+    },
+  },
   {
     "petertriho/cmp-git",
     dependencies = { "hrsh7th/nvim-cmp" },

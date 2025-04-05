@@ -7,6 +7,7 @@ plugins=(
   z
   aws
   fnm
+  git
   tmux
   docker
   vi-mode
@@ -39,6 +40,7 @@ export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.local/share/fnm
 export PATH=$PATH:$HOME/.local/custom/bin
 export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
+export PATH=$PATH:$HOME/.duckdb/cli/latest
 
 if [[ -f "$HOME/.private.sh" ]]; then
   source "$HOME/.private.sh"
