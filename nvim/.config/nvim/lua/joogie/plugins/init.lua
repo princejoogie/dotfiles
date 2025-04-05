@@ -120,6 +120,7 @@ return {
       "JoosepAlviste/nvim-ts-context-commentstring",
     },
     config = function()
+      ---@diagnostic disable-next-line: missing-fields
       require("Comment").setup({
         toggler = { line = "<leader>cl", block = "<leader>cc" },
         opleader = { line = "cl", block = "cc" },
