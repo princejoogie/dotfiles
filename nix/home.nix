@@ -5,7 +5,6 @@
   home.stateVersion = "24.05";
   
   home.packages = with pkgs; [
-    shortcat
     discord
     spotify
     appcleaner

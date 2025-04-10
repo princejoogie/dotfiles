@@ -81,6 +81,7 @@
           "mac-mouse-fix"
           "miniconda"
           "raycast"
+          "shortcat"
           "shottr"
           "tunnelbear"
           "tunnelblick"
