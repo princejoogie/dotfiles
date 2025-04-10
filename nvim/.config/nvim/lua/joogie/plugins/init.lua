@@ -1,4 +1,5 @@
 local cmd = require("joogie.utils").cmd
+local Util = require("joogie.utils")
 
 return {
   "tpope/vim-fugitive",
@@ -59,8 +60,13 @@ return {
   },
   {
     "nvim-lualine/lualine.nvim",
+    dependencies = { "vuki656/package-info.nvim" },
     config = function()
-      local function isRecording()
+      local function package_info_status()
+        return require("package-info").get_status()
+      end
+
+      local function recording_status()
         local reg = vim.fn.reg_recording()
         if reg == "" then
           return ""
@@ -82,9 +88,9 @@ return {
           lualine_a = { "mode" },
           lualine_b = { "branch", "diff", "diagnostics" },
           lualine_c = { filepath },
-          lualine_x = { "encoding", "fileformat", "filetype" },
+          lualine_x = { package_info_status, "encoding", "fileformat", "filetype" },
           lualine_y = { "progress" },
-          lualine_z = { isRecording, "location" },
+          lualine_z = { recording_status, "location" },
         },
       })
     end,
@@ -211,6 +217,22 @@ return {
         RRGGBBAA = true,
         AARRGGBB = true,
       },
+    },
+  },
+  {
+    "vuki656/package-info.nvim",
+    config = function()
+      require("package-info").setup({
+        autostart = false,
+        hide_up_to_date = true,
+      })
+    end,
+    -- stylua: ignore
+    keys = {
+      { "<leader>tp", function() end, desc = "Package Info" },
+      { "<leader>tps", function() require("package-info").show({ force = true }) end, desc = "Show" },
+      { "<leader>tph", function() require("package-info").hide() end, desc = "Hide" },
+      { "<leader>tpp", function() require("package-info").change_version() end, desc = "Change Version" },
     },
   },
 }

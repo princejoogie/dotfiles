@@ -41,7 +41,7 @@ keymap("n", "<leader><Tab>", cmd("tabnext"), { desc = "Next Tab" })
 keymap("n", "<leader><S-Tab>", cmd("tabprevious"), { desc = "Previous Tab" })
 
 keymap("n", "]q", cmd("Cnext"), { desc = "Next quickfix" })
-keymap("n", "[q", cmd("Cprevious"), { desc = "Previous quickfix" })
+keymap("n", "[q", cmd("Cprev"), { desc = "Previous quickfix" })
 
 keymap("n", "<C-n>", cmd("noh"), { desc = "Clear search highlights" })
 keymap("n", "<leader>cp", [[:let @+=expand('%:~:.')<CR>]], { desc = "Copy relative path" })

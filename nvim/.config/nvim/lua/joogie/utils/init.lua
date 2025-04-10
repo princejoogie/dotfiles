@@ -42,13 +42,15 @@ M.cmd = function(command)
   return "<cmd>" .. command .. "<CR>"
 end
 
+M.spinner_icon = M.spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #M.spinner + 1]
+
 M.notify_loading = function(msg, id)
   Snacks.notifier(msg, vim.log.levels.INFO, {
     id = id,
     title = "Loading",
     timeout = false,
     opts = function(notif)
-      notif.icon = M.spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #M.spinner + 1]
+      notif.icon = M.spinner_icon
     end,
   })
 end
@@ -89,7 +91,7 @@ M.exec = function(commands, msg)
             id = id,
             title = "Running",
             opts = function(notif)
-              notif.icon = M.spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #M.spinner + 1]
+              notif.icon = M.spinner_icon
             end,
           })
         end
