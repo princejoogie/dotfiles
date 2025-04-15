@@ -15,9 +15,9 @@ return {
       local lspkind = require("lspkind")
 
       return {
-        completion = {
-          autocomplete = false,
-        },
+        -- completion = {
+        --   autocomplete = false,
+        -- },
         mapping = {
           ["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
           ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
