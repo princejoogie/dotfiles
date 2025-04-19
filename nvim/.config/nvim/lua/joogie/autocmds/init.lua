@@ -1,3 +1,5 @@
+require("joogie.autocmds.node-exec")
+
 local function augroup(name)
   return vim.api.nvim_create_augroup("joogie_" .. name, { clear = true })
 end
