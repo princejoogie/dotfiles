@@ -79,10 +79,6 @@ if [[ -f "$HOME/.private.sh" ]]; then
 fi
 # variables end
 
-# starship
-eval "$(starship init zsh)"
-# starship end
-
 # fnm
 eval "$(fnm env --use-on-cd --shell zsh)"
 # fnm end

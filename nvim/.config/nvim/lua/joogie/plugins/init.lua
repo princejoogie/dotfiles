@@ -1,5 +1,4 @@
 local cmd = require("joogie.utils").cmd
-local Util = require("joogie.utils")
 
 return {
   "tpope/vim-fugitive",
