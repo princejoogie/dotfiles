@@ -64,6 +64,7 @@ export VI_MODE_SET_CURSOR=true
 # oh-my-zsh end
 
 # variables
+# export TERM=xterm-256color
 export EDITOR=nvim
 export MANPAGER='nvim +Man!'
 export PATH=$PATH:/opt/homebrew/bin

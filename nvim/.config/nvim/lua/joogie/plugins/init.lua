@@ -116,6 +116,7 @@ return {
     -- stylua: ignore
     keys = {
       { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash", },
+      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter", },
       { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash", },
     },
   },
@@ -233,5 +234,19 @@ return {
       { "<leader>tph", function() require("package-info").hide() end, desc = "Hide" },
       { "<leader>tpp", function() require("package-info").change_version() end, desc = "Change Version" },
     },
+  },
+  {
+    "copilotlsp-nvim/copilot-lsp",
+    dependencies = { "github/copilot.vim" },
+    init = function()
+      vim.g.copilot_nes_debounce = 500
+      vim.lsp.enable("copilot")
+      vim.keymap.set("n", "<C-j>", function()
+        require("copilot-lsp.nes").apply_pending_nes()
+      end)
+      vim.keymap.set("i", "<C-j>", function() 
+        require("copilot-lsp.nes").apply_pending_nes()
+      end)
+    end,
   },
 }

@@ -158,6 +158,7 @@ return {
   },
   {
     "princejoogie/supermaven-nvim",
+    enabled = false,
     dir = "~/documents/codes/supermaven-nvim",
     config = function()
       require("supermaven-nvim").setup({})
