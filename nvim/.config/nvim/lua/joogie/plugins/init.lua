@@ -237,15 +237,15 @@ return {
   },
   {
     "copilotlsp-nvim/copilot-lsp",
-    dependencies = { "github/copilot.vim" },
     init = function()
-      vim.g.copilot_nes_debounce = 500
+      vim.g.copilot_nes_debounce = 300
       vim.lsp.enable("copilot")
-      vim.keymap.set("n", "<C-j>", function()
+      vim.keymap.set({ "n", "v" }, "<tab>", function()
         require("copilot-lsp.nes").apply_pending_nes()
       end)
-      vim.keymap.set("i", "<C-j>", function() 
-        require("copilot-lsp.nes").apply_pending_nes()
+      vim.keymap.set("n", "<C-j>", function()
+        local copilot_lsp_client = vim.lsp.get_clients({ name = "copilot" })[1]
+        require("copilot-lsp.nes").request_nes(copilot_lsp_client)
       end)
     end,
   },
