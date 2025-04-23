@@ -56,7 +56,7 @@
       pip = "pip3";
     };
 
-    initExtra = ''
+    initContent= ''
 export DISABLE_AUTO_UPDATE="true"
 
 bindkey -M viins jj vi-cmd-mode
