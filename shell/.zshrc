@@ -5,16 +5,17 @@ export ZSH="$HOME/.oh-my-zsh"
 
 plugins=(
   z
+  gh
   aws
   fnm
   git
   tmux
   docker
   vi-mode
+  supermaven
   zsh-autosuggestions
   zsh-syntax-highlighting
   fast-syntax-highlighting
-  supermaven
 )
 
 bindkey -M viins jj vi-cmd-mode

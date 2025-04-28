@@ -1,0 +1,37 @@
+#!/bin/bash
+
+limit=999
+echo -e "📦 Fetching organizations..."
+orgs=$(gh org list)
+org_selection=("personal")
+
+for org in $orgs; do
+  org_selection+=("$org")
+done
+
+selected_org=$(for org in "${org_selection[@]}"; do
+  echo "$org"
+done | fzf --prompt "Select org: ")
+
+if [ -z "$selected_org" ]; then
+  echo "No organization selected. Exiting."
+  exit 1
+fi
+
+if [ "$selected_org" = "personal" ]; then
+  echo -e "📦 Fetching personal repositories..."
+  repos=$(gh repo list --limit $limit)
+else
+  echo -e "📦 Fetching $selected_org repositories..."
+  repos=$(gh repo list "$selected_org" --limit $limit)
+fi
+
+selected_repo=$(echo "$repos" | fzf --prompt "Select repository: " | awk '{print $1}')
+
+if [ -z "$selected_repo" ]; then
+  echo "No repository selected. Exiting."
+  exit 1
+fi
+
+echo "Cloning $selected_repo..."
+gh repo clone "$selected_repo"
