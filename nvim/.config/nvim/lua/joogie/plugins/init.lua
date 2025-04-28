@@ -235,18 +235,4 @@ return {
       { "<leader>tpp", function() require("package-info").change_version() end, desc = "Change Version" },
     },
   },
-  {
-    "copilotlsp-nvim/copilot-lsp",
-    init = function()
-      vim.g.copilot_nes_debounce = 300
-      vim.lsp.enable("copilot")
-      vim.keymap.set({ "n", "v" }, "<tab>", function()
-        require("copilot-lsp.nes").apply_pending_nes()
-      end)
-      vim.keymap.set("n", "<C-j>", function()
-        local copilot_lsp_client = vim.lsp.get_clients({ name = "copilot" })[1]
-        require("copilot-lsp.nes").request_nes(copilot_lsp_client)
-      end)
-    end,
-  },
 }

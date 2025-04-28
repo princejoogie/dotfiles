@@ -168,12 +168,12 @@ return {
     "copilotlsp-nvim/copilot-lsp",
     init = function()
       vim.g.copilot_nes_debounce = 300
-      vim.lsp.enable("copilot")
+      vim.lsp.enable("copilot_ls")
       vim.keymap.set({ "n", "v" }, "<tab>", function()
-        require("copilot-lsp.nes").apply_pending_nes()
+        local _ = (require("copilot-lsp.nes").apply_pending_nes() and require("copilot-lsp.nes").walk_cursor_end_edit())
       end)
-      vim.keymap.set("n", "<C-[>", function()
-        local copilot_lsp_client = vim.lsp.get_clients({ name = "copilot" })[1]
+      vim.keymap.set("n", "<C-j>", function()
+        local copilot_lsp_client = vim.lsp.get_clients({ name = "copilot_ls" })[1]
         require("copilot-lsp.nes").request_nes(copilot_lsp_client)
       end)
     end,
