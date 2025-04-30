@@ -50,11 +50,15 @@ fi
 # variables end
 
 # starship
-eval "$(starship init zsh)"
+if [[ -x "$(command -v starship)" ]]; then
+  eval "$(starship init zsh)"
+fi
 # starship end
 
 # fnm
-eval "$(fnm env --use-on-cd --shell zsh)"
+if [[ -x "$(command -v fnm)" ]]; then
+  eval "$(fnm env --use-on-cd --shell zsh)"
+fi
 # fnm end
 
 # bun
