@@ -12,10 +12,10 @@ plugins=(
   tmux
   docker
   vi-mode
-  supermaven
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-  fast-syntax-highlighting
+  # supermaven
+  # zsh-autosuggestions
+  # zsh-syntax-highlighting
+  # fast-syntax-highlighting
 )
 
 bindkey -M viins jj vi-cmd-mode
