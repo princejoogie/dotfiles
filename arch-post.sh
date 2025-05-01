@@ -1,6 +1,17 @@
 #!/bin/bash
 
+install_git() {
+  echo ""
+  if [[ -x "$(command -v git)" ]]; then
+    echo "'git' is already installed"
+  else
+    echo "Installing 'git'"
+    pacman -S --noconfirm git
+  fi
+}
+
 install_yay() {
+  echo ""
   if [[ -x "$(command -v yay)" ]]; then
     echo "'yay' is already installed"
   else
@@ -31,6 +42,7 @@ install_yay() {
 }
 
 install_cargo() {
+  echo ""
   if [[ -x "$(command -v cargo)" ]]; then
     echo "'cargo' is already installed"
   else
@@ -56,5 +68,6 @@ install_cargo() {
   done
 }
 
+install_git
 install_yay
 install_cargo

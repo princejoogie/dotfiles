@@ -5,6 +5,7 @@ return {
     name = "catppuccin",
     priority = 1000,
     opts = {
+      transparent_background = true,
       no_italic = true,
       integrations = {
         harpoon = true,
