@@ -13,3 +13,5 @@ nvim/.config/nvim/plugin/
 .aider*
 
 mcpservers.json
+
+*.cbor
