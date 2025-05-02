@@ -1,5 +1,9 @@
 [global]
+font = FiraCode Nerd Font 11
+origin = top-center
+offset = 15x15
 frame_color = "#89b4fa"
+frame_width = 1
 separator_color= frame
 highlight = "#89b4fa"
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 limit=999
-echo -e "📦 Fetching organizations..."
+echo -e " Fetching organizations..."
 orgs=$(gh org list)
 org_selection=("personal")
 
@@ -19,10 +19,10 @@ if [ -z "$selected_org" ]; then
 fi
 
 if [ "$selected_org" = "personal" ]; then
-  echo -e "📦 Fetching personal repositories..."
+  echo -e " Fetching personal repositories..."
   repos=$(gh repo list --limit $limit)
 else
-  echo -e "📦 Fetching $selected_org repositories..."
+  echo -e " Fetching $selected_org repositories..."
   repos=$(gh repo list "$selected_org" --limit $limit)
 fi
 
