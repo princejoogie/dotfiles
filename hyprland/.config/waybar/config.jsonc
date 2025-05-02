@@ -13,7 +13,7 @@
         "clock"
     ],
     "modules-right": [
-        "custom/spotify",
+        // "custom/spotify",
         "tray",
         "cpu_text",
         "cpu",
