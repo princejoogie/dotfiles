@@ -2,7 +2,7 @@
 max_icon_size = 128
 width = 512
 font = FiraCode Nerd Font 12
-origin = top-center
+origin = top-right
 offset = 15x15
 frame_color = "#89b4fa"
 frame_width = 1
