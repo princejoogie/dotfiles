@@ -1,0 +1,14 @@
+(defwindow calendar
+  :monitor 0
+  :geometry (geometry :x 1160 :y 0 :width 240 :height 200)
+  :stacking "fg"
+  :focusable true
+  :on-lost-focus "eww close calendar"
+  :visible false
+  (calendar
+    :show-heading true
+    :show-day-names true
+    :show-week-numbers false
+  )
+)
+

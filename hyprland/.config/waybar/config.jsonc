@@ -35,7 +35,8 @@
     },
     "clock": {
         "format": "{:%I:%M %p - %a, %d %b %Y}",
-        "tooltip": false
+        "tooltip": false,
+        "on-click": "eww open --toggle calendar"
     },
     "cpu": {
         "format": "cpu {usage}%",
