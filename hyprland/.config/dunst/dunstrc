@@ -1,10 +1,12 @@
 [global]
-font = FiraCode Nerd Font 11
+max_icon_size = 128
+width = 512
+font = FiraCode Nerd Font 12
 origin = top-center
 offset = 15x15
 frame_color = "#89b4fa"
 frame_width = 1
-separator_color= frame
+separator_color = frame
 highlight = "#89b4fa"
 
 [urgency_low]
