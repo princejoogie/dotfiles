@@ -81,9 +81,9 @@
         "exec": "python3 ~/dotfiles/hyprland/.config/waybar/custom/spotify/mediaplayer.py --player spotify",
         "format": "{}  ",
         "return-type": "json",
-        "on-click": "playerctl play-pause",
+        "on-click": "playerctl --player=spotify play-pause",
         "on-click-right": "~/dotfiles/hyprland/.config/waybar/custom/focus_class.sh 'Spotify'",
-        "on-scroll-up": "playerctl next",
-        "on-scroll-down": "playerctl previous"
+        "on-scroll-up": "playerctl --player=spotify next",
+        "on-scroll-down": "playerctl --player=spotify previous"
     }
 }
