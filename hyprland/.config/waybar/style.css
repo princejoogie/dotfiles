@@ -75,3 +75,8 @@ tooltip {
   border: 2px solid @surface1;
   color: @red;
 }
+
+.custom-spotify {
+  padding-left: 8px;
+  padding-right: 8px;
+}
