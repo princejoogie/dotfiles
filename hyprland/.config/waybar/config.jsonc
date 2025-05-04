@@ -82,7 +82,7 @@
         "format": "  {}  ",
         "return-type": "json",
         "on-click": "playerctl play-pause",
-        "on-click-right": "~/dotfiles/hyprland/.config/waybar/custom/spotify/focus_spotify.sh",
+        "on-click-right": "~/dotfiles/hyprland/.config/waybar/custom/focus_class.sh 'Spotify'",
         "on-scroll-up": "playerctl next",
         "on-scroll-down": "playerctl previous"
     }
