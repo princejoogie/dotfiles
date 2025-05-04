@@ -7,15 +7,14 @@
     "margin-bottom": 0,
     "margin-left": 8,
     "modules-left": [
-        "hyprland/workspaces"
+        "hyprland/workspaces",
+        "custom/spotify"
     ],
     "modules-center": [
         "clock"
     ],
     "modules-right": [
-        // "custom/spotify",
         "tray",
-        "cpu_text",
         "cpu",
         "memory",
         "battery",
@@ -28,7 +27,7 @@
         "tooltip": false
     },
     "tray": {
-        "icon-size": 21,
+        "icon-size": 16,
         "show-passive-items": true,
         "spacing": 10,
         "tooltip": false
@@ -36,24 +35,24 @@
     "clock": {
         "format": "{:%I:%M %p - %a, %d %b %Y}",
         "tooltip": false,
-        "on-click": "eww open --toggle calendar"
+        "on-click": "notion-calendar-electron"
     },
     "cpu": {
-        "format": "cpu {usage}%",
+        "format": " {usage}%",
         "interval": 2,
         "states": {
             "critical": 90
         }
     },
     "memory": {
-        "format": "mem {percentage}%",
+        "format": " {percentage}%",
         "interval": 2,
         "states": {
             "critical": 80
         }
     },
     "battery": {
-        "format": "bat {capacity}%",
+        "format": " {capacity}%",
         "interval": 5,
         "states": {
             "warning": 20,
@@ -62,19 +61,28 @@
         "tooltip": false
     },
     "network": {
-        "format-wifi": "wifi {bandwidthDownBits}",
-        "format-ethernet": "enth {bandwidthDownBits}",
+        "format-wifi": "  {bandwidthDownBits}",
+        "format-ethernet": " {bandwidthUpBits}  {bandwidthDownBits}",
         "format-disconnected": "no network",
         "interval": 5,
-        "tooltip": false
+        "tooltip": true,
+        "tooltip-format": "{ifname}: {ipaddr}"
     },
     "pulseaudio": {
         "scroll-step": 5,
         "max-volume": 150,
-        "format": "vol {volume}%",
-        "format-bluetooth": "vol {volume}%",
+        "format": " {volume}%",
+        "format-bluetooth": " {volume}%",
         "nospacing": 1,
         "on-click": "pavucontrol",
         "tooltip": false
+    },
+    "custom/spotify": {
+        "exec": "python3 ~/dotfiles/hyprland/.config/waybar/custom/mediaplayer.py --player spotify",
+        "format": "  {}  ",
+        "return-type": "json",
+        "on-click": "playerctl play-pause",
+        "on-scroll-up": "playerctl next",
+        "on-scroll-down": "playerctl previous"
     }
 }

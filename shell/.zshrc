@@ -1,4 +1,7 @@
 # oh-my-zsh
+autoload -U compinit
+compinit
+
 export DISABLE_AUTO_UPDATE="true"
 
 export ZSH="$HOME/.oh-my-zsh"
@@ -59,6 +62,16 @@ if [[ -x "$(command -v fnm)" ]]; then
   eval "$(fnm env --use-on-cd --shell zsh)"
 fi
 # fnm end
+
+# uv
+if [[ -x "$(command -v uv)" ]]; then
+  eval "$(uv generate-shell-completion zsh)"
+fi
+
+if [[ -x "$(command -v uvx)" ]]; then
+  eval "$(uvx --generate-shell-completion zsh)"
+fi
+# uv end
 
 # bun
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
