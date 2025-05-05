@@ -51,8 +51,10 @@ format = '[[ $symbol ($version) ](fg:#89b4fa bg:#181825)]($style)'
 
 [python]
 symbol = " "
+detect_extensions = []
+detect_files = []
 style = "bg:#181825"
-format = '[[ $symbol ($version) ](fg:#89b4fa bg:#181825)]($style)'
+format = '[[ $symbol ($version) ($virtualenv)](fg:#89b4fa bg:#181825)]($style)'
 
 [golang]
 symbol = ""
