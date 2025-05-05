@@ -2,7 +2,7 @@
 
 * {
   border: none;
-  border-radius: 0;
+  border-radius: 6px;
   min-height: 0;
   font-family: "FiraCode Nerd Font";
   font-weight: 500;
@@ -13,6 +13,7 @@
 window#waybar {
   background: rgba(30, 30, 46, 0.9);
   border: 2px solid @surface0;
+  border-radius: 12px;
 }
 
 tooltip {
@@ -48,6 +49,7 @@ tooltip {
   background-color: @surface0;
   border: 2px solid @surface1;
   padding: 2px 8px;
+  border-radius: 6px;
 }
 
 #workspaces button:not(:first-child) {

@@ -235,4 +235,18 @@ return {
       { "<leader>tpp", function() require("package-info").change_version() end, desc = "Change Version" },
     },
   },
+  {
+    "mistweaverco/kulala.nvim",
+    keys = {
+      { "<leader>Rs", desc = "Send request" },
+      { "<leader>Ra", desc = "Send all requests" },
+      { "<leader>Rb", desc = "Open scratchpad" },
+    },
+    ft = { "http", "rest" },
+    opts = {
+      -- your configuration comes here
+      global_keymaps = true,
+      additional_curl_options = { "--insecure" },
+    },
+  },
 }

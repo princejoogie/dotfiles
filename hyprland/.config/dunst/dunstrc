@@ -1,23 +1,34 @@
 [global]
-max_icon_size = 128
-width = 512
-font = FiraCode Nerd Font 12
+max_icon_size = 32
+max_icon_size = 32
+width = (0,512)
+font = SF Pro 11
+padding = 15
+horizontal_padding = 10
+gaps = true
+gap_size = 5
+corner_radius = 6
 origin = top-right
-offset = 15x15
-frame_color = "#89b4fa"
-frame_width = 1
+offset = 20x20
+frame_color = "#bac2de"
+frame_width = 2
 separator_color = frame
-highlight = "#89b4fa"
+vertical_alignment = top
+icon_path = /usr/share/icons/breeze-dark/status/:/usr/share/icons/breeze-dark/devices/:/usr/share/pixmaps/
 
 [urgency_low]
-background = "#1e1e2e"
-foreground = "#cdd6f4"
+background = "#bac2de"
+foreground = "#11111b"
 
 [urgency_normal]
-background = "#1e1e2e"
-foreground = "#cdd6f4"
+background = "#bac2de"
+foreground = "#11111b"
 
 [urgency_critical]
-background = "#1e1e2e"
-foreground = "#cdd6f4"
-frame_color = "#fab387"
+background = "#f38ba8"
+foreground = "#11111b"
+frame_color = "#f38ba8"
+
+[slack]
+desktop_entry = Slack
+new_icon=/usr/share/pixmaps/slack.png
