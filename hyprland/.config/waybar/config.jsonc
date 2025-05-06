@@ -11,15 +11,16 @@
         "custom/spotify"
     ],
     "modules-center": [
-        "clock"
+        "hyprland/window"
     ],
     "modules-right": [
         "tray",
         "cpu",
         "memory",
-        "battery",
         "network",
-        "pulseaudio"
+        "pulseaudio",
+        "battery",
+        "clock"
     ],
     "hyprland/workspaces": {
         "disable-scroll": true,
@@ -38,15 +39,24 @@
         "on-click": "notion-calendar-electron"
     },
     "cpu": {
-        "format": " {usage}%",
-        "interval": 2,
-        "states": {
-            "critical": 90
-        }
+        "tooltip": true,
+        "interval": 1,
+        // reduce this to the number of cores you have
+        "format": " {icon0}{icon1}{icon2}{icon4}{icon5}{icon6}{icon7}{icon8}{icon9}{icon10}{icon11}{icon12}{icon13}{icon14}{icon15}",
+        "format-icons": [
+            "<span color='#a6e3a1'>▁</span>",
+            "<span color='#94e2d5'>▂</span>",
+            "<span color='#89dceb'>▃</span>",
+            "<span color='#74c7ec'>▄</span>",
+            "<span color='#89b4fa'>▅</span>",
+            "<span color='#b4befe'>▆</span>",
+            "<span color='#fab387'>▇</span>",
+            "<span color='#f38ba8'>█</span>"
+        ]
     },
     "memory": {
-        "format": " {percentage}%",
-        "interval": 2,
+        "format": " {used}GB",
+        "interval": 1,
         "states": {
             "critical": 80
         }
@@ -61,8 +71,8 @@
         "tooltip": false
     },
     "network": {
-        "format-wifi": "  {bandwidthDownBits}",
-        "format-ethernet": " {bandwidthUpBits}  {bandwidthDownBits}",
+        "format-wifi": " {bandwidthDownBits}",
+        "format-ethernet": " {bandwidthDownBits}",
         "format-disconnected": "no network",
         "interval": 5,
         "tooltip": true,
