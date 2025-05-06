@@ -19,7 +19,6 @@
         "memory",
         "network",
         "pulseaudio",
-        "battery",
         "clock"
     ],
     "hyprland/workspaces": {
@@ -61,31 +60,26 @@
             "critical": 80
         }
     },
-    "battery": {
-        "format": " {capacity}%",
-        "interval": 5,
-        "states": {
-            "warning": 20,
-            "critical": 10
-        },
-        "tooltip": false
-    },
     "network": {
         "format-wifi": " {bandwidthDownBits}",
         "format-ethernet": " {bandwidthDownBits}",
-        "format-disconnected": "no network",
-        "interval": 5,
+        "format-disconnected": "󰖪 no network",
+        "interval": 1,
         "tooltip": true,
-        "tooltip-format": "{ifname}: {ipaddr}"
+        "tooltip-format": "IP: {ipaddr}\nInterface: {ifname}\nGateway: {gwaddr}\nNetmask: {netmask}\nUpload: {bandwidthUpBits}\nDownload: {bandwidthDownBits}"
     },
     "pulseaudio": {
-        "scroll-step": 5,
-        "max-volume": 150,
-        "format": " {volume}%",
-        "format-bluetooth": " {volume}%",
-        "nospacing": 1,
-        "on-click": "pavucontrol",
-        "tooltip": false
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "{icon}  {volume}%",
+        "format-muted": "",
+        "format-icons": {
+            "default": [
+                "",
+                ""
+            ]
+        },
+        "scroll-step": 1,
+        "on-click": "pavucontrol"
     },
     "custom/spotify": {
         "exec": "python3 ~/dotfiles/hyprland/.config/waybar/custom/spotify/mediaplayer.py --player spotify",
