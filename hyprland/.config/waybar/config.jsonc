@@ -21,6 +21,16 @@
         "pulseaudio",
         "clock"
     ],
+    "hyprland/window": {
+        "format": "{title:.80}",
+        "rewrite": {
+            "(.*) — Zen Browser": "$1",
+            "tms": "Terminal: Kitty",
+            "t": "Terminal: Kitty"
+        },
+        "tooltip-format": "{title}\n\nClass: {class}",
+        "separate-outputs": true
+    },
     "hyprland/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
