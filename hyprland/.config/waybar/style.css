@@ -11,14 +11,14 @@
 }
 
 window#waybar {
-  background: rgba(30, 30, 46, 0.9);
-  border: 2px solid @surface0;
+  background: @base;
+  border: 1px solid @surface0;
   border-radius: 12px;
 }
 
 tooltip {
   background-color: @base;
-  border: 2px solid @overlay1;
+  border: 1px solid @overlay1;
   color: @text;
 }
 
@@ -30,7 +30,7 @@ tooltip {
 #network,
 #pulseaudio {
   background-color: @surface0;
-  border: 2px solid @surface1;
+  border: 1px solid @surface1;
   color: @text;
   margin: 6px 6px 6px 0px;
   padding: 2px 8px;
@@ -47,13 +47,13 @@ tooltip {
   all: initial;
   color: @text;
   background-color: @surface0;
-  border: 2px solid @surface1;
+  border: 1px solid @surface1;
   padding: 2px 8px;
   border-radius: 6px;
 }
 
 #workspaces button:not(:first-child) {
-  margin-left: 4px;
+  margin-left: 6px;
 }
 
 #workspaces button.active {
@@ -74,11 +74,11 @@ tooltip {
 #battery.critical,
 #battery.urgent {
   background-color: @overlay1;
-  border: 2px solid @surface1;
+  border: 1px solid @surface1;
   color: @red;
 }
 
 .custom-spotify {
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 6px;
+  padding-right: 6px;
 }
