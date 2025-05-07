@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+root_path="$HOME"
+
+prompt="Folder"
+
+folder_path="$(rg --files --hidden --no-ignore --maxdepth 5 "$root_path" |
+  grep -v '/\.' |
+  sed -E 's|/[^/]+$||' |
+  sort -u |
+  sed "s|^$root_path/||" |
+  wofi --show dmenu -p "$prompt")"
+
+if [[ -n "$folder_path" ]]; then
+  if [[ "$folder_path" == "$root_path" ]]; then
+    search_path="$root_path"
+  else
+    search_path="$root_path/$folder_path"
+  fi
+
+  mapfile -t files < <(find "$search_path" -maxdepth 1 -type f)
+
+  if [[ ${#files[@]} -eq 0 ]]; then
+    prompt="No files here!"
+    file_name=""
+  else
+    prompt="File:"
+    file_name="$(printf "%s\n" "${files[@]##*/}" | wofi --show dmenu -p "$prompt")"
+  fi
+
+  if [[ -n "$file_name" ]]; then
+    xdg-open "$search_path/$file_name"
+  fi
+fi
+
+exit 0
