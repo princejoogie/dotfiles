@@ -93,7 +93,8 @@
     },
     "custom/spotify": {
         "exec": "python3 ~/dotfiles/hyprland/.config/waybar/custom/spotify/mediaplayer.py --player spotify",
-        "format": "{}  ",
+        "format": "{text:.50}  ",
+        "tooltip-format": "{text}",
         "return-type": "json",
         "on-click": "playerctl --player=spotify play-pause",
         "on-click-right": "~/dotfiles/hyprland/.config/waybar/custom/focus_class.sh 'Spotify'",

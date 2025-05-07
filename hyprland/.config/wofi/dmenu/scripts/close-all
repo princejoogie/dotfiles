@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+for pid in $(hyprctl --instance 0 clients -j | jq -r '.[] | .pid'); do
+  kill -9 "$pid"
+done

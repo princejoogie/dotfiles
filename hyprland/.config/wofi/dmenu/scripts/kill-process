@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# dmenu theming
+lines="-l 20"
+font="-fn Inconsolata-13"
+
+selected="$(ps -a -u $USER | wofi --show dmenu -i -p "Type to search and select process to kill" | awk '{print $1" "$4}')"
+
+if [[ ! -z $selected ]]; then
+  answer="$(echo -e "Yes\nNo" | wofi --show dmenu -i -p "$selected will be killed, are you sure?")"
+
+  if [[ $answer == "Yes" ]]; then
+    selpid="$(awk '{print $1}' <<<$selected)"
+    kill -9 $selpid
+    notify-send "Success" "Process $selpid killed"
+  else
+    notify-send "Cancelled" "Process kill cancelled"
+  fi
+fi
+
+exit 0
