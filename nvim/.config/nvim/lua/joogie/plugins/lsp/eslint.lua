@@ -1,5 +1,9 @@
-local lspconfig_util = require("lspconfig.util")
+local root_dir = vim.fs.dirname(vim.fs.find(".git", { path = vim.fs.cwd(), upward = true })[1])
+
+if vim.uv.fs_stat(root_dir .. "/biome.json") then
+  return {}
+end
 
 return {
-  root_dir = lspconfig_util.find_git_ancestor,
+  root_dir = root_dir,
 }

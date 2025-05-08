@@ -1,3 +1,7 @@
+local find_git_root = require("joogie.utils").find_git_root
+
+local is_biome_present = vim.uv.fs_stat(find_git_root() .. "/biome.json") and true or false
+
 return {
   "stevearc/conform.nvim",
   opts = {},
@@ -9,10 +13,10 @@ return {
         cpp = { "clang-format" },
         lua = { "stylua" },
         python = { "isort", "black" },
-        javascript = { "prettier", "eslint_d" },
-        typescript = { "prettier", "eslint_d" },
-        javascriptreact = { "prettier", "eslint_d" },
-        typescriptreact = { "prettier", "eslint_d" },
+        javascript = { "prettier", "eslint_d", "biome" },
+        typescript = { "prettier", "eslint_d", "biome" },
+        javascriptreact = { "prettier", "eslint_d", "biome" },
+        typescriptreact = { "prettier", "eslint_d", "biome" },
         svelte = { "prettier" },
         css = { "prettier" },
         html = { "prettier" },
@@ -28,6 +32,24 @@ return {
       formatters = {
         shfmt = {
           args = { "-i", "2", "-filename", "$FILENAME" },
+        },
+        prettier = {
+          command = "prettier",
+          condition = function()
+            return not is_biome_present
+          end,
+        },
+        eslint_d = {
+          command = "eslint_d",
+          condition = function()
+            return not is_biome_present
+          end,
+        },
+        biome = {
+          command = "biome",
+          condition = function()
+            return is_biome_present
+          end,
         },
       },
     })
