@@ -26,9 +26,6 @@ local setupConfig = function()
   }
 
   vim.diagnostic.config(config)
-
-  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-  vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 end
 
 local on_attach_extras = {}
@@ -61,19 +58,19 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
+      "mason-org/mason.nvim",
+      "mason-org/mason-lspconfig.nvim",
       "j-hui/fidget.nvim",
     },
     config = function()
       local mlsp = require("mason-lspconfig")
-      local lspconfig = require("lspconfig")
 
       require("lspconfig.ui.windows").default_options.border = "rounded"
       require("mason").setup({ ui = { border = "rounded" } })
 
       mlsp.setup({
         ensure_installed = {
+          "biome",
           "bashls",
           "cssls",
           "dockerls",
@@ -98,17 +95,7 @@ return {
         on_attach = on_attach,
       }
 
-      mlsp.setup_handlers({
-        function(server_name)
-          local custom_opts_status, custom_opts = pcall(require, "joogie.plugins.lsp." .. server_name)
-
-          if custom_opts_status then
-            opts = vim.tbl_deep_extend("force", custom_opts, opts)
-          end
-
-          lspconfig[server_name].setup(opts)
-        end,
-      })
+      vim.lsp.config("*", opts)
     end,
   },
 }

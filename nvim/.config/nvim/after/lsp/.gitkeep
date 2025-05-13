@@ -1,0 +1,6 @@
+put your lsp configs here
+e.g.
+
+eslint.lua
+biome.lua
+...
