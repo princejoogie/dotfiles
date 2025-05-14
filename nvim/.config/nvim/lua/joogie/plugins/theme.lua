@@ -5,7 +5,7 @@ return {
     name = "catppuccin",
     priority = 1000,
     opts = {
-      transparent_background = not vim.uv.os_uname().sysname == "Darwin",
+      transparent_background = vim.uv.os_uname().sysname == "Darwin" and false or true,
       no_italic = true,
       integrations = {
         harpoon = true,
