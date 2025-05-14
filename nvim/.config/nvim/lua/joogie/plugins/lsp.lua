@@ -1,4 +1,18 @@
-local setupConfig = function()
+---@param client vim.lsp.Client
+---@param method vim.lsp.protocol.Method
+---@param bufnr? integer some lsp support methods only in specific files
+---@return boolean
+---@diagnostic disable-next-line: unused-local, unused-function
+local function client_supports_method(client, method, bufnr)
+  if vim.fn.has("nvim-0.11") == 1 then
+    return client:supports_method(method, bufnr)
+  else
+    ---@diagnostic disable-next-line: param-type-mismatch
+    return client.supports_method(method, { bufnr = bufnr })
+  end
+end
+
+local setup_defaults = function()
   local icons = require("joogie.utils").icons
 
   local signs = {
@@ -12,63 +26,56 @@ local setupConfig = function()
     vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = "" })
   end
 
-  local config = {
+  vim.diagnostic.config({
     virtual_text = false,
-    update_in_insert = false,
-    underline = true,
-    severity_sort = true,
-    float = {
-      border = "rounded",
-      source = "always",
-      header = "",
-      prefix = "",
-    },
-  }
-
-  vim.diagnostic.config(config)
+    virtual_lines = true,
+    float = { border = "rounded" },
+  })
 end
 
-local on_attach_extras = {}
+local setup_autocmds = function()
+  vim.api.nvim_create_autocmd("LspAttach", {
+    group = vim.api.nvim_create_augroup("joogie-lsp-attach", { clear = true }),
+    callback = function(event)
+      -- local client = vim.lsp.get_client_by_id(event.data.client_id)
+      local map = function(keys, func, desc, mode)
+        mode = mode or "n"
+        vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+      end
 
-local on_attach = function(client, bufnr)
-  local attach_func = on_attach_extras[client.name]
-  if attach_func then
-    attach_func(client, bufnr)
-  end
-
-  local nmap = function(keys, func, desc)
-    if desc then
-      desc = "LSP: " .. desc
-    end
-
-    vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-  end
-
-  nmap("K", "<cmd>lua vim.lsp.buf.hover()<CR>", "Hover Action")
-  nmap("<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename symbol")
-  nmap("<leader>ca", "<cmd>lua vim.lsp.buf.code_action({ apply = true })<CR>", "Code actions")
-  nmap("<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", "Open float")
-  nmap("[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", "Previous Error")
-  nmap("]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", "Next Error")
-  nmap("<leader>dk", '<cmd>lua vim.notify("use [d")<CR>', "Previous Error")
-  nmap("<leader>dj", '<cmd>lua vim.notify("use ]d")<CR>', "Next Error")
+      map("K", vim.lsp.buf.hover, "Hover Action")
+      map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+      map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ctions", { "n", "x" })
+      map("<leader>e", vim.diagnostic.open_float, "Open float")
+      map("[d", function()
+        vim.diagnostic.jump({ count = -1 })
+      end, "[D]iagnostic Prev")
+      map("]d", function()
+        vim.diagnostic.jump({ count = 1 })
+      end, "[D]iagnostic Next")
+    end,
+  })
 end
 
 return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "mason-org/mason.nvim",
+      { "mason-org/mason.nvim", opts = {} },
       "mason-org/mason-lspconfig.nvim",
       "j-hui/fidget.nvim",
     },
     config = function()
+      setup_autocmds()
+      setup_defaults()
+
       local mlsp = require("mason-lspconfig")
 
       require("lspconfig.ui.windows").default_options.border = "rounded"
       require("mason").setup({ ui = { border = "rounded" } })
 
       mlsp.setup({
+        automatic_enable = true,
         ensure_installed = {
           "biome",
           "bashls",
@@ -85,17 +92,9 @@ return {
         },
       })
 
-      setupConfig()
-
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
-
-      local opts = {
-        capabilities = capabilities,
-        on_attach = on_attach,
-      }
-
-      vim.lsp.config("*", opts)
+      vim.lsp.config("*", { capabilities = capabilities })
     end,
   },
 }
