@@ -2,7 +2,7 @@
 max_icon_size = 32
 max_icon_size = 32
 width = (0,512)
-font = SF Pro 11
+font = SF Pro Display 12
 padding = 15
 horizontal_padding = 10
 gaps = true
@@ -15,17 +15,20 @@ frame_width = 2
 separator_color = frame
 vertical_alignment = top
 icon_path = /usr/share/icons/breeze-dark/status/:/usr/share/icons/breeze-dark/devices/:/usr/share/pixmaps/
+mouse_left_click = do_action, close_current
+mouse_middle_click = close_all
+mouse_right_click = close_current
 
 [urgency_low]
-background = "#bac2de"
+background = "#bac2dedb"
 foreground = "#11111b"
 
 [urgency_normal]
-background = "#bac2de"
+background = "#bac2dedb"
 foreground = "#11111b"
 
 [urgency_critical]
-background = "#f38ba8"
+background = "#f38ba8db"
 foreground = "#11111b"
 frame_color = "#f38ba8"
 
