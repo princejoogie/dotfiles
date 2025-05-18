@@ -28,7 +28,7 @@ local setup_defaults = function()
 
   vim.diagnostic.config({
     virtual_text = false,
-    virtual_lines = true,
+    -- virtual_lines = true,
     float = { border = "rounded" },
   })
 end
@@ -48,10 +48,10 @@ local setup_autocmds = function()
       map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ctions", { "n", "x" })
       map("<leader>e", vim.diagnostic.open_float, "Open float")
       map("[d", function()
-        vim.diagnostic.jump({ count = -1 })
+        vim.diagnostic.jump({ count = -1, float = true })
       end, "[D]iagnostic Prev")
       map("]d", function()
-        vim.diagnostic.jump({ count = 1 })
+        vim.diagnostic.jump({ count = 1, float = true })
       end, "[D]iagnostic Next")
     end,
   })

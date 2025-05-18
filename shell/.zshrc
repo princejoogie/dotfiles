@@ -31,8 +31,9 @@ alias so=source
 alias x=exit
 alias G=git
 alias t=tmux
-alias python=python3
-alias pip=pip3
+alias lta="ls -lta"
+# alias python=python3
+# alias pip=pip3
 # alises end
 
 # variables

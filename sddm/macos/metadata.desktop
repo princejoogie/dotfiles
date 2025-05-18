@@ -1,0 +1,12 @@
+[SddmGreeterTheme]
+Name=macos
+Description=apple like style
+Author=princejoogie
+Copyright=(c) 2025, princejoogie
+License=gpl3.0
+Type=sddm-theme
+Version=1.0
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=macos
+QtVersion=6
