@@ -8,7 +8,9 @@
     "margin-left": 8,
     "modules-left": [
         "hyprland/workspaces",
-        "custom/spotify"
+        "custom/spotify",
+        "image#tailscale",
+        "custom/tailscale"
     ],
     "modules-center": [
         "hyprland/window"
@@ -100,5 +102,19 @@
         "on-click-right": "~/dotfiles/hyprland/.config/waybar/custom/focus_class.sh 'Spotify'",
         "on-scroll-up": "playerctl --player=spotify next",
         "on-scroll-down": "playerctl --player=spotify previous"
+    },
+    "image#tailscale": {
+        "exec": "~/dotfiles/hyprland/.config/waybar/custom/tailscale/tailscale-icon.sh",
+        "size": 20,
+        "on-click": "~/dotfiles/hyprland/.config/waybar/custom/tailscale/toggle.sh",
+        "interval": 1
+    },
+    "custom/tailscale": {
+        "exec": "~/dotfiles/hyprland/.config/waybar/custom/tailscale/check_status.sh",
+        "interval": 1,
+        "format": "{text}",
+        "tooltip": false,
+        "return-type": "json",
+        "on-click": "~/dotfiles/hyprland/.config/waybar/custom/tailscale/toggle.sh"
     }
 }
