@@ -8,19 +8,19 @@
     "margin-left": 8,
     "modules-left": [
         "hyprland/workspaces",
-        "custom/spotify",
-        "image#tailscale",
-        "custom/tailscale"
+        "tray",
+        "custom/spotify"
     ],
     "modules-center": [
         "hyprland/window"
     ],
     "modules-right": [
-        "tray",
-        "cpu",
-        "memory",
         "network",
+        "memory",
+        "cpu",
         "pulseaudio",
+        "image#tailscale",
+        "custom/tailscale",
         "clock"
     ],
     "hyprland/window": {
@@ -113,7 +113,7 @@
         "exec": "~/dotfiles/hyprland/.config/waybar/custom/tailscale/check_status.sh",
         "interval": 1,
         "format": "{text}",
-        "tooltip": false,
+        "tooltip": true,
         "return-type": "json",
         "on-click": "~/dotfiles/hyprland/.config/waybar/custom/tailscale/toggle.sh"
     }

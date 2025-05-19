@@ -23,7 +23,6 @@ tooltip {
 }
 
 #clock,
-#tray,
 #cpu,
 #memory,
 #battery,
@@ -33,6 +32,14 @@ tooltip {
   border: 1px solid @surface1;
   color: @text;
   margin: 6px 6px 6px 0px;
+  padding: 2px 8px;
+}
+
+#tray {
+  background-color: @surface0;
+  border: 1px solid @surface1;
+  color: @text;
+  margin: 6px 0px 6px 6px;
   padding: 2px 8px;
 }
 
