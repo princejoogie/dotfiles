@@ -15,9 +15,9 @@
         "hyprland/window"
     ],
     "modules-right": [
-        "network",
-        "memory",
         "cpu",
+        "memory",
+        "network",
         "pulseaudio",
         "image#tailscale",
         "custom/tailscale",
@@ -31,7 +31,9 @@
             "t": "Terminal: Kitty"
         },
         "tooltip-format": "{title}\n\nClass: {class}",
-        "separate-outputs": true
+        "separate-outputs": true,
+        "on-click": "hyprctl activewindow -j | jq -r '.title' | wl-copy; notify-send 'Copied title to clipboard'",
+        "on-click-right": "hyprctl activewindow -j | jq -r '.class' | wl-copy; notify-send 'Copied class to clipboard'"
     },
     "hyprland/workspaces": {
         "disable-scroll": true,
