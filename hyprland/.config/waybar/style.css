@@ -105,7 +105,7 @@ tooltip {
   background-color: @surface0;
   padding-right: 6px;
   padding-left: 2px;
-  margin: 6px 0px 6px 6px;
+  margin: 6px 0px 6px 0px;
   border-left: 1px solid @surface1;
   border-bottom: 1px solid @surface1;
   border-top: 1px solid @surface1;

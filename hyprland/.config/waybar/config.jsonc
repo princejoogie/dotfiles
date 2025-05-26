@@ -18,7 +18,8 @@
         "cpu",
         "memory",
         "network",
-        "pulseaudio",
+        "pulseaudio#output",
+        "pulseaudio#input",
         "image#tailscale",
         "custom/tailscale",
         "clock"
@@ -82,7 +83,7 @@
         "tooltip": true,
         "tooltip-format": "IP: {ipaddr}\nInterface: {ifname}\nGateway: {gwaddr}\nNetmask: {netmask}\nUpload: {bandwidthUpBits}\nDownload: {bandwidthDownBits}"
     },
-    "pulseaudio": {
+    "pulseaudio#output": {
         "format": "{icon} {volume}%",
         "format-bluetooth": "{icon}  {volume}%",
         "format-muted": "",
@@ -94,6 +95,19 @@
         },
         "scroll-step": 1,
         "on-click": "pavucontrol"
+    },
+    "pulseaudio#input": {
+        "format-source": " {volume}%",
+        "format-source-muted": " MUTED",
+        "format": "{format_source}",
+        "tooltip": false,
+        "scroll-step": 1,
+        "smooth-scrolling-threshold": 1,
+        "max-volume": 100,
+        "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
+        "on-click-middle": "pavucontrol",
+        "on-scroll-up": "pactl set-source-volume @DEFAULT_SOURCE@ +1%",
+        "on-scroll-down": "pactl set-source-volume @DEFAULT_SOURCE@ -1%"
     },
     "custom/spotify": {
         "exec": "python3 ~/dotfiles/hyprland/.config/waybar/custom/spotify/mediaplayer.py --player spotify",
