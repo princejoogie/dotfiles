@@ -13,6 +13,7 @@ return {
       },
       custom_highlights = function(colors)
         return {
+          Normal = { bg = "#000000" },
           Folded = { fg = colors.overlay2, bg = colors.base },
           NesDelete = { cterm = { strikethrough = true }, strikethrough = true, bg = "#443245" },
         }

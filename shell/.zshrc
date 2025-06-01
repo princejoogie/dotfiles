@@ -24,6 +24,14 @@ bindkey -M viins jj vi-cmd-mode
 export VI_MODE_SET_CURSOR=true
 # oh-my-zsh end
 
+# options
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt SHARE_HISTORY
+setopt INC_APPEND_HISTORY
+# options end
+
 # aliases
 alias cls=clear
 alias sl="exa --group-directories-first --icons --time-style=long-iso -la"
@@ -31,9 +39,7 @@ alias so=source
 alias x=exit
 alias G=git
 alias t=tmux
-alias lta="ls -lta"
-# alias python=python3
-# alias pip=pip3
+alias lta="ls -lta --human-readable"
 # alises end
 
 # variables
@@ -46,6 +52,7 @@ export PATH=$PATH:$HOME/.local/share/fnm
 export PATH=$PATH:$HOME/.local/custom/bin
 export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
 export PATH=$PATH:$HOME/.duckdb/cli/latest
+export PATH=$PATH:$HOME/.lmstudio/bin
 
 if [[ -f "$HOME/.private.sh" ]]; then
   source "$HOME/.private.sh"
