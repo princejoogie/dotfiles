@@ -1,5 +1,5 @@
-[DetailsMode]
-PreviewSize=256
+[CompactMode]
+PreviewSize=96
 
 [General]
 Version=202
