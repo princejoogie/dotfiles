@@ -9,7 +9,7 @@ local function super_zen_toggle()
     os.execute("tmux set status off")
     is_super_zen = true
   else
-    vim.opt.laststatus = 2
+    vim.opt.laststatus = 3
     vim.opt.number = true
     vim.opt.relativenumber = true
     vim.cmd("lua Snacks.indent.enable()")

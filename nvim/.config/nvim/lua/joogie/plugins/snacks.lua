@@ -95,7 +95,7 @@ return {
       explorer = { enabled = true },
       git = { enabled = true },
       gitbrowse = { enabled = true },
-      image = { enabled = true },
+      image = { enabled = true, convert = { notify = false } },
       indent = { enabled = true },
       input = { enabled = true },
       quickfile = { enabled = true },
