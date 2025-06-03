@@ -9,7 +9,7 @@ return {
       -- stylua: ignore
       keys = {
         { mode = { "n", "v" }, "<leader>k", function() require("treesitter-context").go_to_context(vim.v.count1) end, desc = "Go to context", },
-        {"<leader>tc", cmd("TSContextToggle"), desc = "Toggle Treesitter Context"},
+        {"<leader>tc", cmd("TSContext toggle"), desc = "Toggle Treesitter Context"},
       },
     },
     {

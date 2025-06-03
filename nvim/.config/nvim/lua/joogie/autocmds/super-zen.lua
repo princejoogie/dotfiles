@@ -6,6 +6,7 @@ local function super_zen_toggle()
     vim.opt.number = false
     vim.opt.relativenumber = false
     vim.cmd("lua Snacks.indent.disable()")
+    vim.cmd("TSContext disable")
     os.execute("tmux set status off")
     is_super_zen = true
   else
@@ -13,11 +14,10 @@ local function super_zen_toggle()
     vim.opt.number = true
     vim.opt.relativenumber = true
     vim.cmd("lua Snacks.indent.enable()")
+    vim.cmd("TSContext enable")
     os.execute("tmux set status on")
     is_super_zen = false
   end
-
-  vim.cmd("TSContextToggle")
 end
 
 vim.api.nvim_create_user_command("SuperZenToggle", super_zen_toggle, {

@@ -81,6 +81,12 @@ if [[ -x "$(command -v uvx)" ]]; then
 fi
 # uv end
 
+# direnv
+if [[ -x "$(command -v direnv)" ]]; then
+  eval "$(direnv hook zsh)"
+fi
+# direnv end
+
 # bun
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 export BUN_INSTALL="$HOME/.bun"
