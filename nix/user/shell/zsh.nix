@@ -52,8 +52,7 @@
       G = "git";
       vim = "nvim";
       t = "tmux";
-      python = "python3";
-      pip = "pip3";
+      lta = "ls -lta --human-readable";
     };
 
     initContent= ''
@@ -62,6 +61,14 @@ export DISABLE_AUTO_UPDATE="true"
 bindkey -M viins jj vi-cmd-mode
 export VI_MODE_SET_CURSOR=true
 # oh-my-zsh end
+
+# options
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt SHARE_HISTORY
+setopt INC_APPEND_HISTORY
+# options end
 
 # variables
 # export TERM=xterm-256color
@@ -84,6 +91,22 @@ fi
 # fnm
 eval "$(fnm env --use-on-cd --shell zsh)"
 # fnm end
+
+# uv
+if [[ -x "$(command -v uv)" ]]; then
+  eval "$(uv generate-shell-completion zsh)"
+fi
+
+if [[ -x "$(command -v uvx)" ]]; then
+  eval "$(uvx --generate-shell-completion zsh)"
+fi
+# uv end
+
+# direnv
+if [[ -x "$(command -v direnv)" ]]; then
+  eval "$(direnv hook zsh)"
+fi
+# direnv end
 
 # bun
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
