@@ -39,7 +39,7 @@ alias so=source
 alias x=exit
 alias G=git
 alias t=tmux
-alias lta="ls -lta --human-readable"
+alias lta="ls -ltar --human-readable | grep -vE '^\.| \.$| \.\.$'"
 # alises end
 
 # variables
