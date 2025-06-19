@@ -7,6 +7,7 @@ return {
   opts = {},
   config = function()
     local conform = require("conform")
+    local fs = require("conform.fs")
     local util = require("conform.util")
 
     conform.setup({
