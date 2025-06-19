@@ -7,6 +7,7 @@ return {
   opts = {},
   config = function()
     local conform = require("conform")
+    local util = require("conform.util")
 
     conform.setup({
       formatters_by_ft = {
@@ -18,9 +19,9 @@ return {
         javascriptreact = { "prettier", "eslint_d", "biome" },
         typescriptreact = { "prettier", "eslint_d", "biome" },
         svelte = { "prettier" },
-        css = { "prettier" },
-        html = { "prettier" },
-        json = { "prettier" },
+        css = { "prettier", "biome" },
+        html = { "prettier", "biome" },
+        json = { "prettier", "biome" },
         yaml = { "prettier" },
         markdown = { "prettier" },
         graphql = { "prettier" },
@@ -34,19 +35,30 @@ return {
           args = { "-i", "2", "-filename", "$FILENAME" },
         },
         prettier = {
-          command = "prettier",
+          command = util.from_node_modules(fs.is_windows and "prettier.cmd" or "prettier"),
+          args = function(self, ctx)
+            return eval_parser(self, ctx) or { "--stdin-filepath", "$FILENAME" }
+          end,
+          range_args = function(self, ctx)
+            local start_offset, end_offset = util.get_offsets_from_range(ctx.buf, ctx.range)
+            local args = eval_parser(self, ctx) or { "--stdin-filepath", "$FILENAME" }
+            return vim.list_extend(args, { "--range-start=" .. start_offset, "--range-end=" .. end_offset })
+          end,
           condition = function()
             return not is_biome_present
           end,
         },
         eslint_d = {
-          command = "eslint_d",
+          command = util.from_node_modules("eslint_d"),
+          args = { "--fix-to-stdout", "--stdin", "--stdin-filename", "$FILENAME" },
           condition = function()
             return not is_biome_present
           end,
         },
         biome = {
-          command = "biome",
+          command = util.from_node_modules("biome"),
+          stdin = true,
+          args = { "check", "--write", "--stdin-file-path", "$FILENAME" },
           condition = function()
             return is_biome_present
           end,
