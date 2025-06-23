@@ -163,6 +163,7 @@ return {
   },
   {
     "copilotlsp-nvim/copilot-lsp",
+    enabled = false,
     init = function()
       vim.g.copilot_nes_debounce = 300
       vim.lsp.enable("copilot_ls")

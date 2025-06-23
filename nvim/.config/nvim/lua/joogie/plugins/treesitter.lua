@@ -77,15 +77,6 @@ return {
     },
     highlight = { enable = true, additional_vim_regex_highlighting = false },
     indent = { enable = true },
-    incremental_selection = {
-      enable = true,
-      keymaps = {
-        init_selection = "<C-Space>",
-        node_incremental = "<C-Space>",
-        scope_incremental = false,
-        node_decremental = "<BS>",
-      },
-    },
     textobjects = {
       move = {
         enable = true,
@@ -113,7 +104,6 @@ return {
   build = ":TSUpdate",
   cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
   keys = {
-    { "<c-space>", desc = "Increment selection" },
     { "<bs>", desc = "Decrement selection", mode = "x" },
   },
 }
