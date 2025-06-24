@@ -8,7 +8,6 @@
     discord
     spotify
     appcleaner
-    slack
   ];
 
   imports = [

@@ -27,6 +27,7 @@
 
       nix.settings.experimental-features = "nix-command flakes";
       programs.zsh.enable = true;
+      system.primaryUser = "prince.juguilon";
       system.configurationRevision = self.rev or self.dirtyRev or null;
       system.stateVersion = 5;
 
@@ -73,16 +74,15 @@
         casks = [
           "arc"
           "docker"
-          "ghostty"
           "google-chrome"
           "hiddenbar"
           "karabiner-elements"
           "linear-linear"
           "mac-mouse-fix"
-          "miniconda"
           "raycast"
           "shortcat"
           "shottr"
+          "slack"
           "tunnelbear"
           "tunnelblick"
         ];
