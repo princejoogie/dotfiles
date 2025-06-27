@@ -1,0 +1,22 @@
+#!/usr/bin/sh
+
+# Check if URL argument is provided
+if [ $# -eq 0 ]; then
+    echo "Error: No URL provided"
+    echo "Usage: $0 <youtube_url>"
+    exit 1
+fi
+
+URL="$1"
+
+echo "Cleaning up..."
+rm -rf /tmp/transcript.mp3*
+
+echo "Downloading audio from: $URL"
+yt-dlp --extract-audio --audio-format mp3 --output /tmp/transcript.mp3 "$URL"
+
+echo "Transcribing audio..."
+whisper-cli -otxt -m ~/documents/codes/whisper.cpp/models/ggml-base.en.bin /tmp/transcript.mp3
+
+echo "Generating summary..."
+opencode run -m openrouter/anthropic/claude-4-sonnet-20250522 "summarize and provide bullet points on important topics. the file is located at \`/tmp/transcript.mp3.txt\`"
