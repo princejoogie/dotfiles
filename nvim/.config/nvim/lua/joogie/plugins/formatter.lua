@@ -1,4 +1,5 @@
 local find_git_root = require("joogie.utils").find_git_root
+local eval_parser = require("joogie.utils").eval_parser
 
 local is_biome_present = vim.uv.fs_stat(find_git_root() .. "/biome.json") and true or false
 

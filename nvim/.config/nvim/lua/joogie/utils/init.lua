@@ -2,6 +2,21 @@ local M = {}
 
 M.spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
 
+--- Helper function to parse options to into a parser if available
+---@param self conform.JobFormatterConfig
+---@param ctx conform.Context|conform.RangeContext
+---@return string[]|nil args the arguments for setting a `prettier` parser if they exist in the options, nil otherwise
+M.eval_parser = function(self, ctx)
+  local ft = vim.bo[ctx.buf].filetype
+  local ext = vim.fn.fnamemodify(ctx.filename, ":e")
+  local options = self.options
+  local parser = options
+    and ((options.ft_parsers and options.ft_parsers[ft]) or (options.ext_parsers and options.ext_parsers[ext]))
+  if parser then
+    return { "--parser", parser }
+  end
+end
+
 M.find_git_root = function()
   local current_file = vim.api.nvim_buf_get_name(0)
   local current_dir
