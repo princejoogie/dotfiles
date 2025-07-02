@@ -7,8 +7,8 @@ local keymap = vim.keymap.set
 keymap("n", "<M-a>", "ggVG", { desc = "Select all" })
 keymap("i", "<C-h>", "<C-w>", { desc = "Delete word back" })
 keymap("i", "<C-l>", "<Esc>ldwi", { desc = "Delete word front" })
-keymap({ "n", "v", "x" }, "H", "0", { desc = "Move to start of line" })
-keymap({ "n", "v", "x" }, "L", "$", { desc = "Move to end of line" })
+keymap({ "n", "v" }, "$", "g$", { desc = "Move to end of visual line" })
+keymap({ "n", "v" }, "0", "g0", { desc = "Move to start of visual line" })
 keymap("n", "Q", "@q", { desc = "Repeat macro from q register" })
 keymap({ "t", "i" }, "jj", "<Esc>", { desc = "Exit insert mode" })
 keymap({ "t", "i" }, "JJ", "<C-\\><C-n>", { desc = "Exit insert mode" })
@@ -24,7 +24,6 @@ keymap("n", "<leader>dm", function()
 end, { desc = "Delete all marks" })
 keymap("x", "p", '"_dP', { desc = "Paste yanked text" })
 keymap({ "i", "x", "n", "s" }, "<C-s>", cmd("w"), { desc = "Save file" })
-keymap({ "n", "v" }, "$", "g_", { desc = "End of line" })
 keymap("n", "<leader>ss", ":%s//", { desc = "Replace instances" })
 vim.cmd([[
   nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
