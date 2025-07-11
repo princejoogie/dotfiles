@@ -9,9 +9,9 @@ opt.sessionoptions = "buffers,curdir,folds,help,tabpages,winsize,terminal"
 
 -- Indenting
 opt.expandtab = true
-opt.shiftwidth = 2
 opt.smartindent = true
 opt.autoindent = true
+opt.shiftwidth = 2
 opt.tabstop = 2
 opt.softtabstop = 2
 opt.fillchars = { eob = " " }

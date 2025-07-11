@@ -39,16 +39,20 @@ return {
       harpoon:extend({
         UI_CREATE = function(cx)
           -- stylua: ignore start
-          vim.keymap.set("n", "<C-v>", function() harpoon.ui:select_menu_item({ vsplit = true }) end, { buffer = cx.bufnr, desc = "Harpoon VSplit" })
-          vim.keymap.set("n", "<C-h>", function() harpoon.ui:select_menu_item({ split = true }) end, { buffer = cx.bufnr, desc = "Harpoon Split" })
-          vim.keymap.set("n", "<C-t>", function() harpoon.ui:select_menu_item({ tabedit = true }) end, { buffer = cx.bufnr, desc = "Harpoon Tab" })
+          vim.keymap.set("n", "<C-v>", function() harpoon.ui:select_menu_item({ vsplit = true }) end,
+            { buffer = cx.bufnr, desc = "Harpoon VSplit" })
+          vim.keymap.set("n", "<C-h>", function() harpoon.ui:select_menu_item({ split = true }) end,
+            { buffer = cx.bufnr, desc = "Harpoon Split" })
+          vim.keymap.set("n", "<C-t>", function() harpoon.ui:select_menu_item({ tabedit = true }) end,
+            { buffer = cx.bufnr, desc = "Harpoon Tab" })
           -- stylua: ignore end
         end,
       })
 
       -- stylua: ignore start
       vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end, { desc = "Harpoon Add" })
-      vim.keymap.set("n", "<leader>hh", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Harpoon Quick Menu" })
+      vim.keymap.set("n", "<leader>hh", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
+        { desc = "Harpoon Quick Menu" })
 
       vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end, { desc = "Harpoon 1" })
       vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end, { desc = "Harpoon 2" })
@@ -109,15 +113,15 @@ return {
       { "<leader>wk", cmd("WhichKey"), desc = "Show which-key" },
     },
   },
-  { "nvim-tree/nvim-web-devicons", lazy = true },
+  { "nvim-tree/nvim-web-devicons",   lazy = true },
   {
     "folke/flash.nvim",
     lazy = true,
     -- stylua: ignore
     keys = {
-      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash", },
+      { "s",         mode = { "n", "x", "o" }, function() require("flash").jump() end,       desc = "Flash", },
       { "<C-Space>", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter", },
-      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash", },
+      { "r",         mode = "o",               function() require("flash").remote() end,     desc = "Remote Flash", },
     },
   },
   {
@@ -166,7 +170,7 @@ return {
   {
     "kristijanhusak/vim-dadbod-ui",
     dependencies = {
-      { "tpope/vim-dadbod", lazy = true },
+      { "tpope/vim-dadbod",                     lazy = true },
       { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
     },
     cmd = {
@@ -186,14 +190,14 @@ return {
     opts = { copy_sync = { enable = false }, resize = { resize_step_x = 5, resize_step_y = 5 } },
     -- stylua: ignore
     keys = {
-      { "<C-Left>", cmd("lua require('tmux').resize_left()"), desc = "+ Resize Vertically" },
-      { "<C-Down>", cmd("lua require('tmux').resize_bottom()"), desc = "+ Resize Horizontally" },
-      { "<C-Up>", cmd("lua require('tmux').resize_top()"), desc = "- Resize Horizontally" },
-      { "<C-Right>", cmd("lua require('tmux').resize_right()"), desc = "- Resize Vertically" },
-      { "<C-h>", cmd("lua require('tmux').move_left()"), desc = "Move to left pane" },
-      { "<C-j>", cmd("lua require('tmux').move_bottom()"), desc = "Move to bottom pane" },
-      { "<C-k>", cmd("lua require('tmux').move_top()"), desc = "Move to top pane" },
-      { "<C-l>", cmd("lua require('tmux').move_right()"), desc = "Move to right pane" },
+      { "<C-Left>",  cmd("lua require('tmux').resize_left()"),   desc = "+ Resize Vertically" },
+      { "<C-Down>",  cmd("lua require('tmux').resize_bottom()"), desc = "+ Resize Horizontally" },
+      { "<C-Up>",    cmd("lua require('tmux').resize_top()"),    desc = "- Resize Horizontally" },
+      { "<C-Right>", cmd("lua require('tmux').resize_right()"),  desc = "- Resize Vertically" },
+      { "<C-h>",     cmd("lua require('tmux').move_left()"),     desc = "Move to left pane" },
+      { "<C-j>",     cmd("lua require('tmux').move_bottom()"),   desc = "Move to bottom pane" },
+      { "<C-k>",     cmd("lua require('tmux').move_top()"),      desc = "Move to top pane" },
+      { "<C-l>",     cmd("lua require('tmux').move_right()"),    desc = "Move to right pane" },
     },
   },
   {
@@ -204,7 +208,7 @@ return {
       { "<leader>xp", cmd("Presenting"), desc = "Presenting toggle" },
     },
   },
-  { "cameron-wags/rainbow_csv.nvim", opts = {}, ft = { "csv" } },
+  { "cameron-wags/rainbow_csv.nvim", opts = {},  ft = { "csv" } },
   {
     "catgoose/nvim-colorizer.lua",
     event = "BufReadPre",
@@ -229,10 +233,10 @@ return {
     end,
     -- stylua: ignore
     keys = {
-      { "<leader>tp", function() end, desc = "Package Info" },
+      { "<leader>tp",  function() end,                                                desc = "Package Info" },
       { "<leader>tps", function() require("package-info").show({ force = true }) end, desc = "Show" },
-      { "<leader>tph", function() require("package-info").hide() end, desc = "Hide" },
-      { "<leader>tpp", function() require("package-info").change_version() end, desc = "Change Version" },
+      { "<leader>tph", function() require("package-info").hide() end,                 desc = "Hide" },
+      { "<leader>tpp", function() require("package-info").change_version() end,       desc = "Change Version" },
     },
   },
   {
@@ -258,4 +262,15 @@ return {
       vim.cmd("cnoreabbrev norm Norm")
     end,
   },
+  {
+    "kawre/leetcode.nvim",
+    build = ":TSUpdate html",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+    },
+    opts = {
+      lang = "typescript"
+    },
+  }
 }
