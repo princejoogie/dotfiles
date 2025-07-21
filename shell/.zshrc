@@ -40,6 +40,7 @@ alias x=exit
 alias G=git
 alias t=tmux
 alias lta="ls -ltar --human-readable | grep -vE '^\.| \.$| \.\.$'"
+alias pip=pip3
 # alises end
 
 # variables
