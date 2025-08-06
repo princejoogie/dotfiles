@@ -5,7 +5,10 @@ return {
     name = "catppuccin",
     priority = 1000,
     opts = {
-      transparent_background = vim.uv.os_uname().sysname == "Darwin" and false or true,
+      transparent_background = is_transparent,
+      float = {
+        transparent = is_transparent
+      },
       no_italic = true,
       integrations = {
         harpoon = true,
@@ -13,7 +16,6 @@ return {
       },
       custom_highlights = function(colors)
         return {
-          Normal = { bg = "#000000" },
           Folded = { fg = colors.overlay2, bg = colors.base },
           NesDelete = { cterm = { strikethrough = true }, strikethrough = true, bg = "#443245" },
         }
