@@ -50,9 +50,9 @@
       so = "source";
       x = "exit";
       G = "git";
-      vim = "nvim";
       t = "tmux";
       lta = "ls -lta --human-readable";
+      pip = "pip3";
     };
 
     initContent= ''
