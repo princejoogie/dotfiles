@@ -2,10 +2,10 @@
     "layer": "top",
     "spacing": 0,
     "height": 0,
-    "margin-top": 8,
-    "margin-right": 8,
+    "margin-top": 0,
+    "margin-right": 0,
+    "margin-left": 0,
     "margin-bottom": 0,
-    "margin-left": 8,
     "modules-left": [
         "hyprland/workspaces",
         "tray",
@@ -121,7 +121,7 @@
     },
     "image#tailscale": {
         "exec": "~/dotfiles/hyprland/.config/waybar/custom/tailscale/tailscale-icon.sh",
-        "size": 20,
+        "size": 16,
         "on-click": "~/dotfiles/hyprland/.config/waybar/custom/tailscale/toggle.sh",
         "interval": 1
     },

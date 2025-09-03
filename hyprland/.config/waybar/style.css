@@ -11,9 +11,8 @@
 }
 
 window#waybar {
-  background: @base;
-  border: 1px solid @surface0;
-  border-radius: 12px;
+  background: transparent;
+  border-radius: 0px;
 }
 
 tooltip {
@@ -28,43 +27,43 @@ tooltip {
 #battery,
 #network,
 #pulseaudio {
-  background-color: @surface0;
+  background-color: @base;
   border: 1px solid @surface1;
   color: @text;
-  margin: 6px 6px 6px 0px;
+  margin: 6px 6px 2px 0px;
   padding: 2px 8px;
 }
 
 #tray {
-  background-color: @surface0;
+  background-color: @base;
   border: 1px solid @surface1;
   color: @text;
-  margin: 6px 0px 6px 6px;
+  margin: 6px 0px 2px 6px;
   padding: 2px 8px;
 }
 
 #workspaces {
   background: transparent;
   border: none;
-  margin: 6px 0px 6px 6px;
+  margin: 6px 0px 2px 6px;
   padding: 0;
 }
 
 #workspaces button {
   all: initial;
   color: @text;
-  background-color: @surface0;
+  background-color: @base;
   border: 1px solid @surface1;
   padding: 2px 8px;
   border-radius: 6px;
 }
 
 #workspaces button:not(:first-child) {
-  margin-left: 6px;
+  margin-left: 2px;
 }
 
 #workspaces button.active {
-  background-color: @surface0;
+  background-color: @base;
   border-color: @blue;
   color: @text;
 }
@@ -88,12 +87,13 @@ tooltip {
 .custom-spotify {
   padding-left: 6px;
   padding-right: 6px;
+  padding-top: 4px;
 }
 
 #custom-tailscale {
-  background-color: @surface0;
+  background-color: @base;
   padding-right: 6px;
-  margin: 6px 6px 6px 0px;
+  margin: 6px 6px 2px 0px;
   border-right: 1px solid @surface1;
   border-bottom: 1px solid @surface1;
   border-top: 1px solid @surface1;
@@ -102,10 +102,10 @@ tooltip {
 }
 
 #image {
-  background-color: @surface0;
+  background-color: @base;
   padding-right: 6px;
-  padding-left: 2px;
-  margin: 6px 0px 6px 0px;
+  padding-left: 4px;
+  margin: 6px 0px 2px 0px;
   border-left: 1px solid @surface1;
   border-bottom: 1px solid @surface1;
   border-top: 1px solid @surface1;
