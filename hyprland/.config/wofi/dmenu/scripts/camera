@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+DISPLAY=:0 ffplay -f v4l2 -i /dev/video0 -window_title "Camera"
