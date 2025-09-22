@@ -1,0 +1,31 @@
+#!/bin/bash
+
+PR_JSON=$(gh pr list --limit 999 --json number,title,author,headRefName,updatedAt)
+
+if [ -z "$PR_JSON" ] || [ "$PR_JSON" = "[]" ]; then
+  echo "No PRs found."
+  exit 1
+fi
+
+FORMATTED_LIST=$(echo "$PR_JSON" | jq -r '.[] | "\(.number)\t| \(.title)\t| \(.author.login)\t| [\(.headRefName)]"' | column -t -s $'\t')
+
+SELECTED=$(echo "$FORMATTED_LIST" | fzf --prompt "Select PR: " --height=80% --border --layout=reverse --margin=1,4)
+
+if [ -z "$SELECTED" ]; then
+  echo "No PR selected."
+  exit 1
+fi
+
+PR_NUMBER=$(echo "$SELECTED" | awk '{print $1}')
+
+if [ -z "$PR_NUMBER" ]; then
+  echo "Could not extract PR number."
+  exit 1
+fi
+
+echo "Fetching comments for PR #$PR_NUMBER..."
+
+# Get current repository
+REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+
+gh api repos/$REPO/pulls/$PR_NUMBER/comments | jq -r '.[] | "📁 **File:** `\(.path // "N/A")\(.line | if . then ":\(.)" else "" end)`\n\n### Diff Context\n````diff\n\(.diff_hunk // "No diff context")\n````\n\n### 💬 @\(.user.login):\n\(.body)\n\n---\n"' | nvim -c "set ft=markdown" -c "set laststatus=0" -c "set nonumber" -c "set norelativenumber" -c "lua Snacks.indent.disable()" -c "TSContext disable"
