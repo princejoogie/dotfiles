@@ -113,7 +113,7 @@ return {
       { "<leader>wk", cmd("WhichKey"), desc = "Show which-key" },
     },
   },
-  { "nvim-tree/nvim-web-devicons",   lazy = true },
+  { "nvim-tree/nvim-web-devicons", lazy = true },
   {
     "folke/flash.nvim",
     lazy = true,
@@ -170,7 +170,7 @@ return {
   {
     "kristijanhusak/vim-dadbod-ui",
     dependencies = {
-      { "tpope/vim-dadbod",                     lazy = true },
+      { "tpope/vim-dadbod", lazy = true },
       { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
     },
     cmd = {
@@ -208,7 +208,7 @@ return {
       { "<leader>xp", cmd("Presenting"), desc = "Presenting toggle" },
     },
   },
-  { "cameron-wags/rainbow_csv.nvim", opts = {},  ft = { "csv" } },
+  { "cameron-wags/rainbow_csv.nvim", opts = {}, ft = { "csv" } },
   {
     "catgoose/nvim-colorizer.lua",
     event = "BufReadPre",
@@ -270,7 +270,7 @@ return {
       "MunifTanjim/nui.nvim",
     },
     opts = {
-      lang = "typescript"
+      lang = "typescript",
     },
   }
 }
