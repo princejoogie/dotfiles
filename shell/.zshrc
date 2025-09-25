@@ -41,6 +41,7 @@ alias G=git
 alias t=tmux
 alias lta="ls -ltar --human-readable | grep -vE '^\.| \.$| \.\.$'"
 alias pip=pip3
+alias wt=". _wt"
 # alises end
 
 # variables
@@ -54,6 +55,7 @@ export PATH=$PATH:$HOME/.local/custom/bin
 export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
 export PATH=$PATH:$HOME/.duckdb/cli/latest
 export PATH=$PATH:$HOME/.lmstudio/bin
+export PATH=$PATH:$HOME/go/bin
 
 if [[ -f "$HOME/.private.sh" ]]; then
   source "$HOME/.private.sh"

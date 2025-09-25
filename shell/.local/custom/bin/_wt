@@ -1,0 +1,106 @@
+#!/usr/bin/sh
+
+# Get the bare repo root (first worktree line)
+get_bare_root() {
+    git worktree list --porcelain | grep '^worktree' | head -1 | cut -d' ' -f2
+}
+
+case "$1" in
+    list|ls)
+        BARE_ROOT=$(get_bare_root)
+        
+        git worktree list --porcelain | awk -v bare_root="$BARE_ROOT" '
+        /^worktree/ { 
+            path = $2
+            # Make path relative to bare root
+            gsub("^" bare_root "/", "", path)
+            gsub("^" bare_root "$", ".", path)
+        }
+        /^branch/ { 
+            branch = $2
+            gsub("refs/heads/", "", branch)
+            print path " [" branch "]"
+        }
+        /^bare$/ {
+            print path " (bare)"
+        }'
+        ;;
+    cd)
+        BARE_ROOT=$(get_bare_root)
+
+        # Get all worktree paths, make them relative to bare root, then fzf and cd
+        SELECTED=$(git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2 | sed "s|$BARE_ROOT||g" | sed 's|^/||' | sed '/^$/d' | fzf)
+
+        if [ -n "$SELECTED" ]; then
+            cd "$BARE_ROOT/$SELECTED"
+        fi
+        ;;
+    add)
+        BARE_ROOT=$(get_bare_root)
+
+        # Get all branches and select one with fzf
+        SELECTED_BRANCH=$(git branch -a | sed 's/^[* ] //' | sed 's|remotes/origin/||' | sort -u | grep -v '^HEAD' | fzf)
+
+        if [ -n "$SELECTED_BRANCH" ]; then
+            # Create worktree in bare root directory
+            git worktree add "$BARE_ROOT/$SELECTED_BRANCH" "$SELECTED_BRANCH"
+            
+            # Post-add hook: process .wtconfig.yaml if it exists
+            if [ -f "$BARE_ROOT/.wtconfig.yaml" ]; then
+                echo "Processing post-add hooks..."
+                
+                # Parse YAML and copy files
+                awk -v bare_root="$BARE_ROOT" -v branch="$SELECTED_BRANCH" '
+                BEGIN { in_copy_files = 0 }
+                /^post-add:/ { in_post_add = 1; next }
+                /^  copy-files:/ && in_post_add { in_copy_files = 1; next }
+                /^    - src:/ && in_copy_files { 
+                    gsub(/^    - src: /, "")
+                    gsub(/\$BARE_ROOT/, bare_root)
+                    src = $0
+                    getline
+                    gsub(/^      dst: /, "")
+                    dst = bare_root "/" branch "/" $0
+                    
+                    # Create destination directory if it doesn'\''t exist
+                    cmd = "mkdir -p \"" dirname(dst) "\""
+                    system(cmd)
+                    
+                    # Copy file
+                    cmd = "cp \"" src "\" \"" dst "\""
+                    print "Copying " src " -> " dst
+                    system(cmd)
+                }
+                /^[^ ]/ && !/^post-add:/ { in_post_add = 0; in_copy_files = 0 }
+                
+                function dirname(path) {
+                    gsub(/\/[^\/]*$/, "", path)
+                    return path
+                }
+                ' "$BARE_ROOT/.wtconfig.yaml"
+            fi
+            
+            # Change to the new worktree directory
+            cd "$BARE_ROOT/$SELECTED_BRANCH"
+        fi
+        ;;
+    remove|rm)
+        BARE_ROOT=$(get_bare_root)
+
+        # Get all worktree paths (excluding bare repo), make them relative, then fzf
+        SELECTED=$(git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2 | grep -v "^$BARE_ROOT$" | sed "s|$BARE_ROOT||g" | sed 's|^/||' | fzf)
+
+        if [ -n "$SELECTED" ]; then
+            # Remove the selected worktree
+            git worktree remove "$BARE_ROOT/$SELECTED"
+        fi
+        ;;
+    *)
+        echo "Usage: wt <command>"
+        echo "Commands:"
+        echo "  cd         Select and switch to a worktree"
+        echo "  add        Select a branch and create a new worktree"
+        echo "  remove|rm  Select and remove a worktree"
+        echo "  list|ls    List all worktrees"
+        ;;
+esac
