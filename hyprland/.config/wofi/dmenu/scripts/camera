@@ -1,3 +1,10 @@
 #!/usr/bin/env bash
 
-DISPLAY=:0 ffplay -f v4l2 -i /dev/video0 -window_title "Camera"
+device=$(v4l2-ctl --list-devices | grep -E '/dev/video[0-9]+' | head -n1 | xargs)
+
+if [ -z "$device" ]; then
+    notify-send "Camera" "No video devices found"
+    exit 1
+fi
+
+DISPLAY=:0 ffplay -f v4l2 -i "$device" -window_title "Camera"
