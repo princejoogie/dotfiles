@@ -28,8 +28,13 @@ case "$1" in
     cd)
         BARE_ROOT=$(get_bare_root)
 
-        # Get all worktree paths, make them relative to bare root, then fzf and cd
-        SELECTED=$(git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2 | sed "s|$BARE_ROOT||g" | sed 's|^/||' | sed '/^$/d' | fzf)
+        # Check if a specific worktree is provided as argument
+        if [ -n "$2" ]; then
+            SELECTED="$2"
+        else
+            # Get all worktree paths, make them relative to bare root, then fzf and cd
+            SELECTED=$(git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2 | sed "s|$BARE_ROOT||g" | sed 's|^/||' | sed '/^$/d' | fzf)
+        fi
 
         if [ -n "$SELECTED" ]; then
             cd "$BARE_ROOT/$SELECTED"
@@ -38,15 +43,19 @@ case "$1" in
     add)
         BARE_ROOT=$(get_bare_root)
 
-        # Get all branches and select one with fzf
-        SELECTED_BRANCH=$(git branch -a | sed 's/^[* ] //' | sed 's|remotes/origin/||' | sort -u | grep -v '^HEAD' | fzf)
+        # Check if a specific branch is provided as argument
+        if [ -n "$2" ]; then
+            SELECTED_BRANCH="$2"
+        else
+            # Get all branches and select one with fzf
+            SELECTED_BRANCH=$(git branch -a | sed 's/^[* ] //' | sed 's|remotes/origin/||' | sort -u | grep -v '^HEAD' | fzf)
+        fi
 
         if [ -n "$SELECTED_BRANCH" ]; then
             # Create worktree in bare root directory
-            git worktree add "$BARE_ROOT/$SELECTED_BRANCH" "$SELECTED_BRANCH"
-            
-            # Post-add hook: process .wtconfig.yaml if it exists
-            if [ -f "$BARE_ROOT/.wtconfig.yaml" ]; then
+            if git worktree add "$BARE_ROOT/$SELECTED_BRANCH" "$SELECTED_BRANCH"; then
+                # Post-add hook: process .wtconfig.yaml if it exists (only if worktree add succeeded)
+                if [ -f "$BARE_ROOT/.wtconfig.yaml" ]; then
                 echo "Processing post-add hooks..."
                 
                 # Parse YAML and copy files
@@ -78,29 +87,37 @@ case "$1" in
                     return path
                 }
                 ' "$BARE_ROOT/.wtconfig.yaml"
+                fi
+                
+                # Change to the new worktree directory
+                cd "$BARE_ROOT/$SELECTED_BRANCH"
             fi
-            
-            # Change to the new worktree directory
-            cd "$BARE_ROOT/$SELECTED_BRANCH"
         fi
         ;;
     remove|rm)
         BARE_ROOT=$(get_bare_root)
 
-        # Get all worktree paths (excluding bare repo), make them relative, then fzf
-        SELECTED=$(git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2 | grep -v "^$BARE_ROOT$" | sed "s|$BARE_ROOT||g" | sed 's|^/||' | fzf)
+        # Check if a specific worktree is provided as argument
+        if [ -n "$2" ]; then
+            SELECTED="$2"
+        else
+            # Get all worktree paths (excluding bare repo), make them relative, then fzf
+            SELECTED=$(git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2 | grep -v "^$BARE_ROOT$" | sed "s|$BARE_ROOT||g" | sed 's|^/||' | fzf)
+        fi
 
         if [ -n "$SELECTED" ]; then
             # Remove the selected worktree
-            git worktree remove "$BARE_ROOT/$SELECTED"
+            if git worktree remove "$BARE_ROOT/$SELECTED"; then
+                echo "Worktree '$SELECTED' removed successfully"
+            fi
         fi
         ;;
     *)
-        echo "Usage: wt <command>"
+        echo "Usage: wt <command> [argument]"
         echo "Commands:"
-        echo "  cd         Select and switch to a worktree"
-        echo "  add        Select a branch and create a new worktree"
-        echo "  remove|rm  Select and remove a worktree"
-        echo "  list|ls    List all worktrees"
+        echo "  cd [name]         Select and switch to a worktree (or specify name directly)"
+        echo "  add [branch]      Select a branch and create a new worktree (or specify branch directly)"
+        echo "  remove|rm [name]  Select and remove a worktree (or specify name directly)"
+        echo "  list|ls           List all worktrees"
         ;;
 esac
