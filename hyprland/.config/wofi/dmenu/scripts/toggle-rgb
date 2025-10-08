@@ -7,7 +7,7 @@ if [[ -f "$STATE_FILE" && "$(cat "$STATE_FILE")" == "white" ]]; then
     echo "black" > "$STATE_FILE"
     notify-send "RGB lights set to black"
 else
-    openrgb --mode static --color ffffff
+    openrgb --mode static --color 11EC57
     echo "white" > "$STATE_FILE"
     notify-send "RGB lights set to white"
 fi
