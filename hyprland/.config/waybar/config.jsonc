@@ -9,15 +9,15 @@
     "modules-left": [
         "hyprland/workspaces",
         "tray",
-        "custom/spotify"
+        "custom/spotify",
+        "cpu"
     ],
     "modules-center": [
         "hyprland/window"
     ],
     "modules-right": [
-        "cpu",
-        "memory",
         "network",
+        "memory",
         "pulseaudio#output",
         "pulseaudio#input",
         "image#tailscale",

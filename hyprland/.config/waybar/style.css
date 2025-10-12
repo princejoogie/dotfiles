@@ -27,9 +27,6 @@ tooltip {
 #battery,
 #network,
 #pulseaudio {
-  background-color: @base;
-  border: 1px solid @surface1;
-  color: @text;
   margin: 6px 6px 2px 0px;
   padding: 2px 8px;
 }
@@ -91,24 +88,13 @@ tooltip {
 }
 
 #custom-tailscale {
-  background-color: @base;
   padding-right: 6px;
   margin: 6px 6px 2px 0px;
-  border-right: 1px solid @surface1;
-  border-bottom: 1px solid @surface1;
-  border-top: 1px solid @surface1;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
 }
 
 #image {
-  background-color: @base;
+  /* background-color: @base; */
   padding-right: 6px;
   padding-left: 4px;
   margin: 6px 0px 2px 0px;
-  border-left: 1px solid @surface1;
-  border-bottom: 1px solid @surface1;
-  border-top: 1px solid @surface1;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
 }
