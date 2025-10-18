@@ -92,6 +92,11 @@ tooltip {
   margin: 6px 6px 2px 0px;
 }
 
+#custom-tunnelbear {
+  padding-right: 6px;
+  margin: 6px 6px 2px 0px;
+}
+
 #image {
   /* background-color: @base; */
   padding-right: 6px;

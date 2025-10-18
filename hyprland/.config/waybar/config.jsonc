@@ -22,6 +22,8 @@
         "pulseaudio#input",
         "image#tailscale",
         "custom/tailscale",
+        "image#tunnelbear",
+        "custom/tunnelbear",
         "clock"
     ],
     "hyprland/window": {
@@ -132,5 +134,19 @@
         "tooltip": true,
         "return-type": "json",
         "on-click": "~/dotfiles/hyprland/.config/waybar/custom/tailscale/toggle.sh"
+    },
+    "image#tunnelbear": {
+        "exec": "~/dotfiles/hyprland/.config/waybar/custom/tunnelbear/tunnelbear-icon.sh",
+        "size": 16,
+        "on-click": "~/dotfiles/hyprland/.config/waybar/custom/tunnelbear/toggle.sh",
+        "interval": 1
+    },
+    "custom/tunnelbear": {
+        "exec": "~/dotfiles/hyprland/.config/waybar/custom/tunnelbear/check_status.sh",
+        "interval": 1,
+        "format": "{text}",
+        "tooltip": true,
+        "return-type": "json",
+        "on-click": "~/dotfiles/hyprland/.config/waybar/custom/tunnelbear/toggle.sh"
     }
 }

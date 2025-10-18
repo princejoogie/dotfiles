@@ -58,6 +58,6 @@
 	helper = !/usr/bin/gh auth git-credential
 [user]
 	name = princejoogie
-	email = princejoogie@gmail.com
+	email = pjuguilon@solutiondigital.biz
 [pull]
 	rebase = true
