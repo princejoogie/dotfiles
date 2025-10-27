@@ -41,6 +41,7 @@ return {
       { "<C-b>", function() Snacks.explorer({ hidden = true, ignored = false }) end, desc = "Open Explorer", },
       { "<C-p>", function() Snacks.picker.files({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Find Files", },
       { "<C-f>", function() Snacks.picker.grep({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Grep", },
+      { "<leader>sw", function() Snacks.picker.grep_word({ hidden = true, ignored = true, exclude = exclude }) end, desc = "Grep word under cursor", },
       { "<leader>/", function() Snacks.picker.lines() end, desc = "Grep current buffer", },
       { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History", },
       { "<leader>nn", function() Snacks.picker.notifications() end, desc = "Notification History", },

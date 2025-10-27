@@ -98,3 +98,8 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # bun end
 
 source $ZSH/oh-my-zsh.sh
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/pjuguilon/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
