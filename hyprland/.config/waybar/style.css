@@ -76,9 +76,7 @@ tooltip {
 #battery.warning,
 #battery.critical,
 #battery.urgent {
-  background-color: @overlay1;
-  border: 1px solid @surface1;
-  color: @red;
+  color: @yellow;
 }
 
 .custom-spotify {
