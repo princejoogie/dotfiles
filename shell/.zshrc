@@ -55,6 +55,7 @@ export PATH=$PATH:$HOME/.local/share/fnm
 export PATH=$PATH:$HOME/.local/custom/bin
 export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
 export PATH=$PATH:$HOME/.duckdb/cli/latest
+export PATH=$PATH:$HOME/.opencode/bin
 export PATH=$PATH:$HOME/.lmstudio/bin
 export PATH=$PATH:$HOME/go/bin
 
