@@ -14,7 +14,7 @@ opt.autoindent = true
 opt.shiftwidth = 2
 opt.tabstop = 2
 opt.softtabstop = 2
-opt.fillchars = { eob = " " }
+opt.fillchars = { eob = " ", diff = "╱" }
 opt.ignorecase = true
 opt.smartcase = true
 opt.mouse = "a"
@@ -70,4 +70,5 @@ vim.cmd([[
   cabbrev cprev CPrev
   cabbrev lnext Lnext
   cabbrev lprev Lprev
+  set fillchars+=diff:╱
 ]])
