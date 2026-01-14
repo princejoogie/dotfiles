@@ -5,7 +5,6 @@ local function super_zen_toggle()
     vim.opt.laststatus = 0
     vim.opt.number = false
     vim.opt.relativenumber = false
-    vim.cmd("lua Snacks.indent.disable()")
     vim.cmd("TSContext disable")
     os.execute("tmux set status off")
     is_super_zen = true
@@ -13,7 +12,6 @@ local function super_zen_toggle()
     vim.opt.laststatus = 3
     vim.opt.number = true
     vim.opt.relativenumber = true
-    vim.cmd("lua Snacks.indent.enable()")
     vim.cmd("TSContext enable")
     os.execute("tmux set status on")
     is_super_zen = false
