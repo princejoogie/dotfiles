@@ -1,0 +1,3 @@
+#!/bin/sh
+
+opencode run --model "opencode/gemini-3-flash" "Stage all unstaged changes in the current git repository, then analyze all changes to generate a commit message following the Conventional Commits specification. Finally, execute the git commit. Do not push the changes."
