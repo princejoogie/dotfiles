@@ -13,6 +13,7 @@ shell/.local/state
 
 .DS_Store
 .aider*
+.opencode
 
 mcpservers.json
 
