@@ -1,42 +1,63 @@
 # dotfiles
 
-Personal dotfiles configuration using Nix flakes for reproducible system management.
+Personal configuration for a productive and aesthetic development environment, focused on Linux (Hyprland) and macOS.
 
 ![sc1](https://github.com/user-attachments/assets/a129c2cb-e0a0-420b-b8bf-aa79c05728eb)
 ![sc2](https://github.com/user-attachments/assets/af4f3786-5444-464f-b639-ffa916ebbb0c)
 
-## Features
+## ✨ Highlights
 
-- **Hyprland** - Wayland compositor configuration
-- **Neovim** - Complete development environment
-- **Terminal tools** - Alacritty, Kitty, Zsh with Starship
-- **System utilities** - Waybar, Dunst, Wofi, and more
-- **Nix flakes** - Reproducible system configuration
+### 🖥️ Desktop (Linux)
+- **Window Manager**: [Hyprland](https://hyprland.org/) - A dynamic tiling Wayland compositor.
+- **Status Bar**: [Waybar](https://github.com/Alexays/Waybar) with custom modules for Spotify, Tailscale, and Tunnelbear.
+- **Widgets**: [Eww](https://github.com/elkowar/eww) for interactive desktop elements like calendars.
+- **Launcher**: [Wofi](https://hg.sr.ht/~scoopta/wofi) with a collection of custom utility scripts.
+- **Notifications**: [Dunst](https://dunst-project.org/) for lightweight system alerts.
 
-## Installation
+### ⌨️ Editor
+- **Neovim**: A modern Lua-based configuration using [lazy.nvim](https://github.com/folke/lazy.nvim).
+  - Built-in LSP, Treesitter, and snacks.nvim integration.
+  - Optimized for performance and a seamless coding experience.
+  - Custom UI components and statuslines.
 
-### Prerequisites
+### 🛠️ Shell & Tools
+- **Terminal**: [Kitty](https://sw.kovidgoyal.net/kitty/) and [Alacritty](https://alacritty.org/) support.
+- **Shell**: Zsh with [Starship](https://starship.rs/) prompt.
+- **File Manager**: [yazi](https://github.com/sxyazi/yazi) - Blazing fast terminal file manager.
+- **Multiplexer**: [Tmux](https://github.com/tmux/tmux) for robust session management.
+- **Productivity**: Raycast scripts for macOS automation.
 
-- Install [Nix](https://nixos.org/download)
-- Install [nix-darwin](https://github.com/LnL7/nix-darwin?tab=readme-ov-file#flakes) (flakes)
-- Install [home-manager](https://nix-community.github.io/home-manager/index.xhtml#sec-install-nix-darwin-module) (darwin module)
+## 📂 Structure
 
-### Setup
+| Folder | Description |
+| :--- | :--- |
+| `hyprland/` | Hyprland, Waybar, Wofi, and Eww configurations |
+| `nvim/` | Neovim configuration (Lua) |
+| `shell/` | Shell environment (Zsh, Starship, Tmux, Git) |
+| `sddm/` | macOS-inspired login theme |
+| `wallpapers/` | A collection of curated high-resolution backgrounds |
 
-1. Clone this repository:
-   ```sh
-   git clone https://github.com/princejoogie/dotfiles.git ~/dotfiles
-   ```
+## 🚀 Setup
 
-2. Apply the configuration:
-   ```sh
-   darwin-rebuild switch --flake ~/dotfiles/nix
-   ```
+### 1. Clone the repository
+```bash
+git clone https://github.com/princejoogie/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+```
 
-## Structure
+### 2. Install GNU Stow
+Ensure `stow` is installed on your system:
+- **Arch Linux**: `sudo pacman -S stow`
+- **macOS**: `brew install stow`
 
-- `nix/` - Nix flake configuration and home-manager setup
-- `hyprland/` - Hyprland and related Wayland tools configuration
-- `nvim/` - Neovim configuration with Lua
-- `shell/` - Shell configuration (Zsh, Git, Tmux)
-- `sddm/` - Display manager themes
+### 3. Symlink configurations
+Use `stow` to link the configurations to your home directory:
+```bash
+# Link core configurations
+stow hyprland
+stow nvim
+stow shell
+```
+
+> [!NOTE]
+> For SDDM theme installation, refer to the scripts within the `sddm/` directory.
