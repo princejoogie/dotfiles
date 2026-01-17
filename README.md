@@ -8,6 +8,7 @@ Personal configuration for a productive and aesthetic development environment, f
 ## ✨ Highlights
 
 ### 🖥️ Desktop (Linux)
+
 - **Window Manager**: [Hyprland](https://hyprland.org/) - A dynamic tiling Wayland compositor.
 - **Status Bar**: [Waybar](https://github.com/Alexays/Waybar) with custom modules for Spotify, Tailscale, and Tunnelbear.
 - **Widgets**: [Eww](https://github.com/elkowar/eww) for interactive desktop elements like calendars.
@@ -15,12 +16,14 @@ Personal configuration for a productive and aesthetic development environment, f
 - **Notifications**: [Dunst](https://dunst-project.org/) for lightweight system alerts.
 
 ### ⌨️ Editor
+
 - **Neovim**: A modern Lua-based configuration using [lazy.nvim](https://github.com/folke/lazy.nvim).
   - Built-in LSP, Treesitter, and snacks.nvim integration.
   - Optimized for performance and a seamless coding experience.
   - Custom UI components and statuslines.
 
 ### 🛠️ Shell & Tools
+
 - **Terminal**: [Kitty](https://sw.kovidgoyal.net/kitty/) and [Alacritty](https://alacritty.org/) support.
 - **Shell**: Zsh with [Starship](https://starship.rs/) prompt.
 - **File Manager**: [yazi](https://github.com/sxyazi/yazi) - Blazing fast terminal file manager.
@@ -29,29 +32,34 @@ Personal configuration for a productive and aesthetic development environment, f
 
 ## 📂 Structure
 
-| Folder | Description |
-| :--- | :--- |
-| `hyprland/` | Hyprland, Waybar, Wofi, and Eww configurations |
-| `nvim/` | Neovim configuration (Lua) |
-| `shell/` | Shell environment (Zsh, Starship, Tmux, Git) |
-| `sddm/` | macOS-inspired login theme |
+| Folder        | Description                                         |
+| :------------ | :-------------------------------------------------- |
+| `hyprland/`   | Hyprland, Waybar, Wofi, and Eww configurations      |
+| `nvim/`       | Neovim configuration (Lua)                          |
+| `shell/`      | Shell environment (Zsh, Starship, Tmux, Git)        |
+| `sddm/`       | macOS-inspired login theme                          |
 | `wallpapers/` | A collection of curated high-resolution backgrounds |
 
 ## 🚀 Setup
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/princejoogie/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ```
 
 ### 2. Install GNU Stow
+
 Ensure `stow` is installed on your system:
+
 - **Arch Linux**: `sudo pacman -S stow`
 - **macOS**: `brew install stow`
 
 ### 3. Symlink configurations
+
 Use `stow` to link the configurations to your home directory:
+
 ```bash
 # Link core configurations
 stow hyprland
