@@ -2,19 +2,28 @@
 
 set -euo pipefail
 
-if ! command -v lsof >/dev/null; then
-    echo "lsof is required" >&2
+if ! command -v ss >/dev/null; then
+    echo "ss is required" >&2
     exit 1
 fi
 
-list=$(lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null | awk 'NR>1 {
-    cmd=$1
-    pid=$2
-    addr=$(NF-1)
-    port=addr
-    sub(/.*:/, "", port)
-    printf "%s\t%s\t%s\t%s\n", pid, port, cmd, addr
-}')
+list=$(ss -ltnpH 2>/dev/null | awk '
+    /pid=[0-9]+/ {
+        local=$4
+        port=local
+        sub(/.*:/, "", port)
+        pid=""
+        if (match($0, /pid=[0-9]+/)) {
+            pid=substr($0, RSTART+4, RLENGTH-4)
+        }
+        proc=$0
+        sub(/.*users:\(\("/, "", proc)
+        sub(/",pid=.*/, "", proc)
+        if (pid != "" && port != "") {
+            printf "%s\t%s\t%s\t%s\n", pid, port, proc, local
+        }
+    }
+')
 
 if [ -z "$list" ]; then
     exit 0
