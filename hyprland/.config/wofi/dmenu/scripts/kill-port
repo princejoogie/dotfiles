@@ -7,7 +7,13 @@ if ! command -v ss >/dev/null; then
     exit 1
 fi
 
-list=$(ss -ltnpH 2>/dev/null | awk '
+notify() {
+    if command -v notify-send >/dev/null; then
+        notify-send "kill-port" "$1"
+    fi
+}
+
+raw=$(ss -ltnpH 2>/dev/null | awk '
     /pid=[0-9]+/ {
         local=$4
         port=local
@@ -20,23 +26,46 @@ list=$(ss -ltnpH 2>/dev/null | awk '
         sub(/.*users:\(\("/, "", proc)
         sub(/",pid=.*/, "", proc)
         if (pid != "" && port != "") {
-            printf "%s\t%s\t%s\t%s\n", pid, port, proc, local
+            printf "%s\t%s\t%s\n", proc, port, pid
+        }
+    }
+')
+
+list=$(printf "%s\n" "$raw" | sort -t $'\t' -k2,2n | awk -F '\t' '
+    {
+        n++
+        procs[n]=$1
+        ports[n]=$2
+        pids[n]=$3
+        if (length($1) > maxlen) {
+            maxlen=length($1)
+        }
+        if (length($2) > maxport) {
+            maxport=length($2)
+        }
+    }
+    END {
+        for (i = 1; i <= n; i++) {
+            printf "%-*s :%-*s %s\n", maxlen, procs[i], maxport, ports[i], pids[i]
         }
     }
 ')
 
 if [ -z "$list" ]; then
+    notify "No listening ports found"
     exit 0
 fi
 
-selected=$(printf "%s\n" "$list" | column -t -s $'\t' | wofi --dmenu --prompt "Kill port")
+selected=$(printf "%s\n" "$list" | wofi --dmenu --prompt "Kill port")
 if [ -z "$selected" ]; then
     exit 0
 fi
 
-pid=$(printf "%s\n" "$selected" | awk '{print $1}')
+proc=$(printf "%s\n" "$selected" | awk '{print $1}')
+pid=$(printf "%s\n" "$selected" | awk '{print $NF}')
 if [ -z "$pid" ]; then
     exit 0
 fi
 
 kill "$pid"
+notify "Killed $proc: $pid"
