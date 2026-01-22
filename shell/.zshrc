@@ -42,6 +42,8 @@ alias t=tmux
 alias lta="ls -ltar --human-readable | grep -vE '^\.| \.$| \.\.$'"
 alias pip=pip3
 alias wt=". _wt"
+alias ai="noglob opencode run --model \"opencode/gemini-3-flash\""
+alias open=xdg-open
 # alises end
 
 # variables

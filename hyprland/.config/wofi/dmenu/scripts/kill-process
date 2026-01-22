@@ -8,7 +8,17 @@ notify() {
     fi
 }
 
-raw=$(ps -u "$USER" -o pid=,comm= | awk '
+exclude=(
+    qbittorrent-nox
+)
+
+exclude_re=""
+if [ ${#exclude[@]} -gt 0 ]; then
+    exclude_re=$(IFS='|'; printf '%s' "${exclude[*]}")
+fi
+
+raw=$(ps -u "$USER" -o pid=,comm= | awk -v exclude_re="$exclude_re" '
+    exclude_re != "" && $2 ~ ("^(" exclude_re ")$") { next }
     !seen[$2]++ {
         printf "%s\t%s\n", $2, $1
     }
@@ -35,7 +45,7 @@ if [ -z "$list" ]; then
     exit 0
 fi
 
-selected=$(printf "%s\n" "$list" | wofi --dmenu --prompt "Kill process")
+selected=$(printf "%s\n" "$list" | wofi --dmenu --prompt "Kill process" --matching fuzzy)
 if [ -z "$selected" ]; then
     exit 0
 fi
