@@ -10,6 +10,7 @@ A comprehensive guide for creating animations that feel right, based on Emil Kow
 ## Initial Response
 
 When this skill is first invoked without a specific question, respond only with:
+
 > I'm ready to help you with animations based on Emil Kowalski's animations.dev course.
 
 Do not provide any other information until the user asks a question.
@@ -18,13 +19,14 @@ Do not provide any other information until the user asks a question.
 
 When reviewing animations, you MUST use a markdown table. Do NOT use a list with "Before:" and "After:" on separate lines. Always output an actual markdown table like this:
 
-| Before                                | After                                           |
-| ------------------------------------- | ----------------------------------------------- |
-| `transform: scale(0)`                 | `transform: scale(0.95)`                        |
-| `animation: fadeIn 400ms ease-in`     | `animation: fadeIn 200ms ease-out`              |
-| No reduced motion support             | `@media (prefers-reduced-motion: reduce) {...}` |
+| Before                            | After                                           |
+| --------------------------------- | ----------------------------------------------- |
+| `transform: scale(0)`             | `transform: scale(0.95)`                        |
+| `animation: fadeIn 400ms ease-in` | `animation: fadeIn 200ms ease-out`              |
+| No reduced motion support         | `@media (prefers-reduced-motion: reduce) {...}` |
 
 Wrong format (never do this):
+
 ```
 Before: transform: scale(0)
 After: transform: scale(0.95)
@@ -103,32 +105,39 @@ Elements that animate together must use the same easing and duration. Modal + ov
 
 ```css
 /* Both use the same timing */
-.modal { transition: transform 200ms ease-out; }
-.overlay { transition: opacity 200ms ease-out; }
+.modal {
+  transition: transform 200ms ease-out;
+}
+.overlay {
+  transition: opacity 200ms ease-out;
+}
 ```
 
 ## Timing and Duration
 
-### Duration Guidelines
+## Duration Guidelines
 
 | Element Type                      | Duration  |
 | --------------------------------- | --------- |
 | Micro-interactions                | 100-150ms |
 | Standard UI (tooltips, dropdowns) | 150-250ms |
 | Modals, drawers                   | 200-300ms |
-| Page transitions                  | 300-400ms |
 
-**Rule:** UI animations should stay under 300ms. Larger elements animate slower than smaller ones.
+**Rules:**
+- UI animations should stay under 300ms
+- Larger elements animate slower than smaller ones
+- Exit animations can be ~20% faster than entrance
+- Match duration to distance - longer travel = longer duration
 
-### The Frequency Principle
+### The Frequency
 
 Determine how often users will see the animation:
 
 - **100+ times/day** → No animation (or drastically reduced)
 - **Occasional use** → Standard animation
-- **Rare/first-time** → Can add delight
+- **Rare/first-time** → Can be more special
 
-**Example:** Raycast never animates its menu toggle because users open it hundreds of times daily.
+**Example:** Raycast never animates because users open it hundreds of times a day.
 
 ## When to Animate
 
