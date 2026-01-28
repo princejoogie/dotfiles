@@ -1,0 +1,380 @@
+#!/usr/bin/env bun
+
+import { spawnSync } from "node:child_process";
+if (typeof process.getuid === "function" && process.getuid() !== 0 && !process.env.SUDO_UID) {
+  const argv = process.argv.slice(1);
+  spawnSync("sudo", [process.execPath, ...argv], { stdio: "inherit" });
+  process.exit(0);
+}
+
+let HID;
+try {
+  HID = await import("node-hid");
+} catch {
+  console.error("Missing dependency: node-hid");
+  console.error("Install with: bun add node-hid");
+  process.exit(1);
+}
+
+const REPORT_ID = 8;
+const CMD = {
+  EncryptionData: 1,
+  DeviceOnLine: 3,
+  BatteryLevel: 4,
+  ReadFlashData: 8,
+};
+
+function parseHexArg(value) {
+  if (!value) return null;
+  if (value.startsWith("0x") || value.startsWith("0X")) return Number.parseInt(value, 16);
+  return Number.parseInt(value, 10);
+}
+
+function buildPacket(cmd, payload = []) {
+  const buf = new Uint8Array(16);
+  buf[0] = cmd & 0xff;
+  buf[4] = payload.length & 0xff;
+  for (let i = 0; i < payload.length && 5 + i < 15; i++) {
+    buf[5 + i] = payload[i] & 0xff;
+  }
+
+  let sum = 0;
+  for (let i = 0; i < buf.length - 1; i++) sum += buf[i];
+  sum &= 0xff;
+  const chk = (85 - sum) & 0xff;
+  buf[15] = (chk - REPORT_ID) & 0xff;
+
+  return buf;
+}
+
+function buildReadFlashPacket(addr, length) {
+  const buf = new Uint8Array(16);
+  buf[0] = CMD.ReadFlashData;
+  buf[1] = 0;
+  buf[2] = (addr >> 8) & 0xff;
+  buf[3] = addr & 0xff;
+  buf[4] = length & 0xff;
+
+  let sum = 0;
+  for (let i = 0; i < buf.length - 1; i++) sum += buf[i];
+  sum &= 0xff;
+  const chk = (85 - sum) & 0xff;
+  buf[15] = (chk - REPORT_ID) & 0xff;
+
+  return buf;
+}
+
+async function sendCommand(device, cmd, payload = [], timeoutMs = 1500) {
+  const packet = buildPacket(cmd, payload);
+  const writeBuf = Buffer.from([REPORT_ID, ...packet]);
+
+  const response = await new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error(`Timeout waiting for response to cmd ${cmd}`));
+    }, timeoutMs);
+
+    function onData(data) {
+      const buf = Buffer.from(data);
+      const payloadBuf = buf[0] === REPORT_ID ? buf.slice(1) : buf;
+      if (payloadBuf[0] !== cmd) return;
+      cleanup();
+      resolve(payloadBuf);
+    }
+
+    function cleanup() {
+      clearTimeout(timeout);
+      device.removeListener("data", onData);
+    }
+
+    device.on("data", onData);
+    device.write(writeBuf);
+  });
+
+  return response;
+}
+
+async function readFlash(device, addr, length, timeoutMs = 1500) {
+  const packet = buildReadFlashPacket(addr, length);
+  const writeBuf = Buffer.from([REPORT_ID, ...packet]);
+
+  const response = await new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error(`Timeout waiting for flash read at ${addr}`));
+    }, timeoutMs);
+
+    function onData(data) {
+      const buf = Buffer.from(data);
+      const payloadBuf = buf[0] === REPORT_ID ? buf.slice(1) : buf;
+      if (payloadBuf[0] !== CMD.ReadFlashData) return;
+      const respAddr = (payloadBuf[2] << 8) + payloadBuf[3];
+      if (respAddr !== addr) return;
+      cleanup();
+      resolve(payloadBuf);
+    }
+
+    function cleanup() {
+      clearTimeout(timeout);
+      device.removeListener("data", onData);
+    }
+
+    device.on("data", onData);
+    device.write(writeBuf);
+  });
+
+  return response;
+}
+
+async function tryCommand(device, cmd, payload = [], timeoutMs = 1500) {
+  try {
+    return await sendCommand(device, cmd, payload, timeoutMs);
+  } catch {
+    return null;
+  }
+}
+
+function randomBytes(len) {
+  const out = new Uint8Array(len);
+  for (let i = 0; i < len; i++) out[i] = Math.floor(Math.random() * 256);
+  return out;
+}
+
+async function ensureOnline(device) {
+  let resp = await tryCommand(device, CMD.DeviceOnLine, [], 800);
+  if (resp) return resp;
+
+  const payload = randomBytes(8);
+  await tryCommand(device, CMD.EncryptionData, Array.from(payload), 800);
+  resp = await tryCommand(device, CMD.DeviceOnLine, [], 800);
+  return resp;
+}
+
+function decodePollingRate(reportRateValue) {
+  if (!reportRateValue) return null;
+  if (reportRateValue >= 16) return Math.round((reportRateValue / 16) * 2000);
+  return Math.round(1000 / reportRateValue);
+}
+
+function getDevices() {
+  const devices = HID.devices();
+  if (!devices.length) {
+    console.log("No HID devices found.");
+    return [];
+  }
+
+  const seen = new Set();
+  const result = [];
+  for (const d of devices) {
+    const key = d.path || `${d.vendorId}:${d.productId}:${d.usagePage}:${d.interface}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(d);
+  }
+  return result;
+}
+
+
+function renderDeviceLine(d) {
+  return d.product || "(unknown product)";
+}
+
+function listDevices() {
+  const devices = getDevices();
+  if (!devices.length) return;
+  console.log("Available HID devices:");
+  for (const d of devices) console.log(`- ${renderDeviceLine(d)}`);
+}
+
+async function selectDeviceInteractive(devices) {
+  if (!devices.length) return null;
+
+  const groups = [];
+  const groupIndex = new Map();
+  for (const d of devices) {
+    const key = d.product || "(unknown product)";
+    if (!groupIndex.has(key)) {
+      groupIndex.set(key, groups.length);
+      groups.push({ name: key, devices: [d] });
+    } else {
+      groups[groupIndex.get(key)].devices.push(d);
+    }
+  }
+
+  let index = 0;
+  for (let i = 0; i < groups.length; i++) {
+    const name = groups[i].name.toLowerCase();
+    if (name.includes("scyrox")) {
+      index = i;
+      break;
+    }
+  }
+
+  const stdin = process.stdin;
+  stdin.setRawMode(true);
+  stdin.resume();
+  stdin.setEncoding("utf8");
+
+  let firstRender = true;
+  function render() {
+    if (firstRender) {
+      console.log("Select HID device (use arrow keys, Enter to confirm):\n");
+      firstRender = false;
+    } else {
+      process.stdout.write(`\x1b[${groups.length}A`);
+    }
+    for (let i = 0; i < groups.length; i++) {
+      const prefix = i === index ? ">" : " ";
+      process.stdout.write("\x1b[2K");
+      console.log(`${prefix} ${groups[i].name}`);
+    }
+  }
+
+  render();
+
+  return await new Promise((resolve) => {
+    function cleanup() {
+      stdin.setRawMode(false);
+      stdin.pause();
+      stdin.removeListener("data", onData);
+    }
+
+    function onData(key) {
+      if (key === "\u0003" || key === "q") {
+        cleanup();
+        resolve(null);
+        return;
+      }
+
+      if (key === "\r") {
+        const selectedGroup = groups[index].devices;
+        cleanup();
+        process.stdout.write(`\x1b[${groups.length}A`);
+        process.stdout.write("\x1b[0J");
+        console.log(`Selected: ${groups[index].name}`);
+        resolve(selectedGroup);
+        return;
+      }
+
+      if (key === "\u001b[A") {
+        index = (index - 1 + groups.length) % groups.length;
+        render();
+        return;
+      }
+
+      if (key === "\u001b[B") {
+        index = (index + 1) % groups.length;
+        render();
+      }
+    }
+
+    stdin.on("data", onData);
+  });
+}
+
+async function openResponsiveDevice(devices) {
+  const errors = [];
+  for (const info of devices) {
+    try {
+      const device = new HID.HID(info.path);
+      const onlineResp = await ensureOnline(device);
+      if (onlineResp) return { device, info, onlineResp, errors };
+      device.close();
+    } catch (err) {
+      errors.push({ path: info.path, message: err?.message || String(err) });
+    }
+  }
+  return { device: null, info: null, onlineResp: null, errors };
+}
+
+async function main() {
+  const args = process.argv.slice(2);
+  const argMap = new Map();
+  for (let i = 0; i < args.length; i += 2) {
+    argMap.set(args[i], args[i + 1]);
+  }
+
+  const useJson = args.includes("--json");
+
+  if (args.includes("--list")) {
+    listDevices();
+    return;
+  }
+
+  const vid = parseHexArg(argMap.get("--vid"));
+  const pid = parseHexArg(argMap.get("--pid"));
+  const path = argMap.get("--path");
+
+  let deviceInfo = null;
+  let device = null;
+  let onlineResp = null;
+  const devices = getDevices();
+  if (path) {
+    deviceInfo = devices.find((d) => d.path === path) || null;
+  } else if (Number.isFinite(vid) && Number.isFinite(pid)) {
+    deviceInfo = devices.find((d) => d.vendorId === vid && d.productId === pid) || null;
+  } else {
+    const selection = await selectDeviceInteractive(devices);
+    if (Array.isArray(selection)) {
+      const opened = await openResponsiveDevice(selection);
+      device = opened.device;
+      deviceInfo = opened.info;
+      onlineResp = opened.onlineResp;
+      if (!device) {
+        console.log("Could not open any interface for that device.");
+        for (const err of opened.errors) console.log(`- ${err.path}: ${err.message}`);
+      }
+    } else {
+      deviceInfo = selection;
+    }
+  }
+
+  if (!deviceInfo) {
+    console.log("Device not found. Use --list or provide --vid/--pid or --path.");
+    listDevices();
+    process.exit(1);
+  }
+
+  if (!device) device = new HID.HID(deviceInfo.path);
+  try {
+    if (!onlineResp) onlineResp = await ensureOnline(device);
+    if (!onlineResp) {
+      console.log("No response from device. Try sudo or a different interface.");
+      return;
+    }
+
+    const online = onlineResp[5] === 1;
+    if (!online) console.log("Device reports offline.");
+
+    const batteryResp = await sendCommand(device, CMD.BatteryLevel);
+    const level = batteryResp[5];
+    const charging = batteryResp[6] === 1;
+    const voltage = (batteryResp[7] << 8) + batteryResp[8];
+
+    const rateResp = await readFlash(device, 0, 2);
+    const reportRateValue = rateResp[5];
+    const pollingRate = decodePollingRate(reportRateValue);
+
+    if (useJson) {
+      const payload = {
+        battery: level,
+        charging,
+        voltage,
+        pollingRate,
+      };
+      console.log(JSON.stringify(payload));
+    } else {
+      console.log(`Battery: ${level}%`);
+      console.log(`Charging: ${charging ? "yes" : "no"}`);
+      console.log(`Voltage: ${voltage} mV`);
+      if (pollingRate) console.log(`Polling rate: ${pollingRate} Hz`);
+    }
+  } finally {
+    device.close();
+  }
+}
+
+main().catch((err) => {
+  console.error(err.message);
+  process.exit(1);
+});
