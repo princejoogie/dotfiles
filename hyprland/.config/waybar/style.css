@@ -95,6 +95,11 @@ tooltip {
   margin: 6px 6px 2px 0px;
 }
 
+#custom-mouse-battery {
+  margin: 6px 6px 2px 0px;
+  padding: 2px 8px;
+}
+
 #image {
   /* background-color: @base; */
   padding-right: 6px;

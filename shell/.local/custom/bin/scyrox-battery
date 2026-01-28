@@ -1,7 +1,17 @@
 #!/usr/bin/env bun
 
 import { spawnSync } from "node:child_process";
-if (typeof process.getuid === "function" && process.getuid() !== 0 && !process.env.SUDO_UID) {
+
+const args = process.argv.slice(2);
+const noSudo = args.includes("--no-sudo");
+
+if (
+  typeof process.getuid === "function" &&
+  process.getuid() !== 0 &&
+  !process.env.SUDO_UID &&
+  !noSudo &&
+  process.stdin.isTTY
+) {
   const argv = process.argv.slice(1);
   spawnSync("sudo", [process.execPath, ...argv], { stdio: "inherit" });
   process.exit(0);
@@ -186,6 +196,25 @@ function listDevices() {
   for (const d of devices) console.log(`- ${renderDeviceLine(d)}`);
 }
 
+function printHelp() {
+  console.log(`Usage: scyrox-battery [options]
+
+Options:
+  --list            List HID devices
+  --device <id>     Device id (path, product match, or vid:pid)
+  --vid <hex|dec>   Filter by vendor ID (e.g. 0x1234)
+  --pid <hex|dec>   Filter by product ID (e.g. 0xabcd)
+  --path <path>     Use specific HID path
+  --no-sudo         Skip sudo escalation (useful for non-tty)
+  --json            Output battery data as JSON
+  --help            Show this help message
+
+Notes:
+  - If no device is specified, an interactive selector is shown.
+  - Requires sudo if HID access is restricted.
+`);
+}
+
 async function selectDeviceInteractive(devices) {
   if (!devices.length) return null;
 
@@ -288,13 +317,30 @@ async function openResponsiveDevice(devices) {
 }
 
 async function main() {
-  const args = process.argv.slice(2);
   const argMap = new Map();
-  for (let i = 0; i < args.length; i += 2) {
-    argMap.set(args[i], args[i + 1]);
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (!arg.startsWith("--")) continue;
+    if (arg.includes("=")) {
+      const [key, value = ""] = arg.split("=", 2);
+      argMap.set(key, value);
+      continue;
+    }
+    const next = args[i + 1];
+    if (next && !next.startsWith("--")) {
+      argMap.set(arg, next);
+      i += 1;
+      continue;
+    }
+    argMap.set(arg, true);
   }
 
   const useJson = args.includes("--json");
+
+  if (args.includes("--help") || args.includes("-h")) {
+    printHelp();
+    return;
+  }
 
   if (args.includes("--list")) {
     listDevices();
@@ -304,13 +350,61 @@ async function main() {
   const vid = parseHexArg(argMap.get("--vid"));
   const pid = parseHexArg(argMap.get("--pid"));
   const path = argMap.get("--path");
+  const deviceId = argMap.get("--device");
 
   let deviceInfo = null;
   let device = null;
+  const stdin = process.stdin;
+
+  function cleanupStdin() {
+    if (stdin?.isTTY && stdin.isRaw) {
+      stdin.setRawMode(false);
+      stdin.pause();
+    }
+  }
+
+  process.once("SIGINT", () => {
+    cleanupStdin();
+    try {
+      device?.close();
+    } catch {}
+    process.exit(130);
+  });
   let onlineResp = null;
   const devices = getDevices();
   if (path) {
     deviceInfo = devices.find((d) => d.path === path) || null;
+  } else if (deviceId) {
+    const id = String(deviceId);
+    const split = id.split(":");
+    if (split.length === 2) {
+      const parsedVid = parseHexArg(split[0]);
+      const parsedPid = parseHexArg(split[1]);
+      if (Number.isFinite(parsedVid) && Number.isFinite(parsedPid)) {
+        deviceInfo = devices.find((d) => d.vendorId === parsedVid && d.productId === parsedPid) || null;
+      }
+    }
+
+    if (!deviceInfo) {
+      deviceInfo = devices.find((d) => d.path === id) || null;
+    }
+
+    if (!deviceInfo) {
+      const matches = devices.filter((d) => (d.product || "").toLowerCase().includes(id.toLowerCase()));
+      if (matches.length === 1) {
+        deviceInfo = matches[0];
+      } else if (matches.length > 1) {
+        const opened = await openResponsiveDevice(matches);
+        device = opened.device;
+        deviceInfo = opened.info;
+        onlineResp = opened.onlineResp;
+        if (!device) {
+          console.log("Could not open any interface for that device.");
+          for (const err of opened.errors) console.log(`- ${err.path}: ${err.message}`);
+          process.exit(1);
+        }
+      }
+    }
   } else if (Number.isFinite(vid) && Number.isFinite(pid)) {
     deviceInfo = devices.find((d) => d.vendorId === vid && d.productId === pid) || null;
   } else {
@@ -330,8 +424,13 @@ async function main() {
   }
 
   if (!deviceInfo) {
-    console.log("Device not found. Use --list or provide --vid/--pid or --path.");
-    listDevices();
+    const msg = "Device not found. Use --list or provide --vid/--pid or --path.";
+    if (useJson) {
+      console.error(msg);
+    } else {
+      console.log(msg);
+      listDevices();
+    }
     process.exit(1);
   }
 
@@ -339,12 +438,24 @@ async function main() {
   try {
     if (!onlineResp) onlineResp = await ensureOnline(device);
     if (!onlineResp) {
-      console.log("No response from device. Try sudo or a different interface.");
+      const msg = "No response from device. Try sudo or a different interface.";
+      if (useJson) {
+        console.error(msg);
+      } else {
+        console.log(msg);
+      }
       return;
     }
 
     const online = onlineResp[5] === 1;
-    if (!online) console.log("Device reports offline.");
+    if (!online) {
+      const msg = "Device reports offline.";
+      if (useJson) {
+        console.error(msg);
+      } else {
+        console.log(msg);
+      }
+    }
 
     const batteryResp = await sendCommand(device, CMD.BatteryLevel);
     const level = batteryResp[5];

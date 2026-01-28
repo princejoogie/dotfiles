@@ -2,8 +2,9 @@
 
 Personal configuration for a productive and aesthetic development environment, focused on Linux (Hyprland) and macOS.
 
-![sc1](https://github.com/user-attachments/assets/a129c2cb-e0a0-420b-b8bf-aa79c05728eb)
-![sc2](https://github.com/user-attachments/assets/af4f3786-5444-464f-b639-ffa916ebbb0c)
+![demo_1](.github/assets/demo_1.png)
+![demo_2](.github/assets/demo_2.png)
+![demo_3](.github/assets/demo_3.png)
 
 ## ✨ Highlights
 
@@ -69,3 +70,34 @@ stow shell
 
 > [!NOTE]
 > For SDDM theme installation, refer to the scripts within the `sddm/` directory.
+
+## 🖱️ Scyrox Mouse Battery (Waybar)
+
+This Waybar module reads the Scyrox mouse battery via HID and displays it with a custom icon.
+
+### 1. Install dependencies
+
+- `bun` (runtime for the script)
+- `node-hid` (HID access)
+
+```bash
+bun add -g node-hid
+```
+
+### 2. Allow user access to the HID device
+
+```bash
+sudo cp ~/dotfiles/system/udev/99-scyrox-hidraw.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules && sudo udevadm trigger
+sudo usermod -aG input $USER
+```
+
+Log out and back in (or reboot) so the group change takes effect.
+
+### 3. Verify
+
+```bash
+scyrox-battery --device=scyrox --json --no-sudo
+```
+
+If that returns JSON, restart Waybar and the module will appear between the mic input and Tailscale.
