@@ -9,6 +9,7 @@
     "modules-left": [
         "hyprland/workspaces",
         "tray",
+        "custom/hyprwhspr",
         "custom/spotify",
         "cpu"
     ],
@@ -58,7 +59,6 @@
     "cpu": {
         "tooltip": true,
         "interval": 1,
-        // reduce this to the number of cores you have
         "format": " {icon0}{icon1}{icon2}{icon4}{icon5}{icon6}{icon7}{icon8}{icon9}{icon10}{icon11}{icon12}{icon13}{icon14}{icon15}",
         "format-icons": [
             "<span color='#a6e3a1'>▁</span>",
@@ -155,5 +155,8 @@
         "tooltip": true,
         "return-type": "json",
         "on-click": "~/dotfiles/hyprland/.config/waybar/custom/tunnelbear/toggle.sh"
-    }
+    },
+    "include": [
+        "/home/joogie/.config/waybar/hyprwhspr-module.jsonc"
+    ]
 }

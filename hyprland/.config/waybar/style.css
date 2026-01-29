@@ -1,3 +1,4 @@
+@import "/usr/lib/hyprwhspr/config/waybar/hyprwhspr-style.css";
 @import "mocha.css";
 
 * {
@@ -98,6 +99,27 @@ tooltip {
 #custom-mouse-battery {
   margin: 6px 6px 2px 0px;
   padding: 2px 8px;
+}
+
+#custom-hyprwhspr {
+  background-color: @base;
+  border: 1px solid @surface1;
+  border-radius: 6px;
+  margin: 6px 6px 2px 2px;
+  padding: 2px 8px;
+}
+
+#custom-hyprwhspr.ready,
+#custom-hyprwhspr.stopped {
+  border-color: @surface1;
+}
+
+#custom-hyprwhspr.recording {
+  border-color: #E75143;
+}
+
+#custom-hyprwhspr.error {
+  border-color: #d97706;
 }
 
 #image {
