@@ -8,6 +8,7 @@ nvim/.config/wslu/
 nvim/.config/nvim/plugin/
 shell/.local/share 
 shell/.local/state
+shell/.local/bin
 
 .private.sh
 
