@@ -41,23 +41,50 @@ return {
         }),
         formatting = {
           fields = { "kind", "abbr", "menu" },
-          format = lspkind.cmp_format({
-            mode = "symbol",
-            preset = "codicons",
-            maxwidth = 50,
-            before = function(entry, vim_item)
-              vim_item.menu = ({
-                nvim_lsp = "[LSP ]",
-                buffer = "[Buf ]",
-                path = "[Path]",
-                luasnip = "[Snip]",
-                git = "[Git ]",
-                ["vim-dadbod-completion"] = "[DB  ]",
-              })[entry.source.name]
-
-              return vim_item
-            end,
-          }),
+          format = function(entry, vim_item)
+            local kind_icons = {
+              Text = "󰉿",
+              Method = "󰆧",
+              Function = "󰊕",
+              Constructor = "󰆧",
+              Field = "󰜢",
+              Variable = "󰀫",
+              Class = "󰠱",
+              Interface = "",
+              Module = "󱒌",
+              Property = "󰜢",
+              Unit = "󰑭",
+              Value = "󰎠",
+              Enum = "",
+              Keyword = "󰌋",
+              Snippet = "",
+              Color = "󰏘",
+              File = "󰈙",
+              Reference = "󰈇",
+              Folder = "󰉋",
+              EnumMember = "",
+              Constant = "󰏿",
+              Struct = "󰙅",
+              Event = "",
+              Operator = "󰆕",
+              TypeParameter = "",
+            }
+            vim_item.kind = string.format(" %s ", kind_icons[vim_item.kind] or vim_item.kind)
+            vim_item.menu = ({
+              nvim_lsp = "[LSP ]",
+              nvim_lua = "[Lua ]",
+              buffer = "[Buf ]",
+              path = "[Path]",
+              luasnip = "[Snip]",
+              git = "[Git ]",
+              supermaven = "[SM  ]",
+              lazydev = "[Dev ]",
+              spell = "[Spel]",
+              cmdline = "[Cmd ]",
+              ["vim-dadbod-completion"] = "[DB  ]",
+            })[entry.source.name]
+            return vim_item
+          end,
         },
         window = {
           completion = { border = "rounded" },
