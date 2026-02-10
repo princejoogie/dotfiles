@@ -88,7 +88,15 @@ run_logged() {
 
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting: $script" >>"$KOJARCHY_LOG"
 
-  bash -c "source '$KOJARCHY_DIR/lib/helpers.sh'; source '$script'" </dev/null >>"$KOJARCHY_LOG" 2>&1
+  # Only source packages.sh for install helpers — NOT errors.sh/presentation.sh
+  # which would re-register traps and break fd redirects inside the subshell
+  bash -c "
+    export KOJARCHY_DIR='$KOJARCHY_DIR'
+    export KOJARCHY_INSTALL='$KOJARCHY_INSTALL'
+    export KOJARCHY_LOG='$KOJARCHY_LOG'
+    source '$KOJARCHY_DIR/lib/packages.sh'
+    source '$script'
+  " </dev/null >>"$KOJARCHY_LOG" 2>&1
 
   local exit_code=$?
 

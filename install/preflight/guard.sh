@@ -1,7 +1,9 @@
 abort() {
   echo -e "\e[31mKojarchy install requires: $1\e[0m"
   echo
-  gum confirm "Proceed anyway?" || exit 1
+  if ! gum confirm "Proceed anyway?" </dev/tty; then
+    exit 1
+  fi
 }
 
 # Must be an Arch distro
@@ -15,7 +17,7 @@ if [ "$EUID" -eq 0 ]; then
 fi
 
 # Must have internet
-if ! ping -c 1 -W 3 1.1.1.1 &>/dev/null; then
+if ! ping -c 1 -W 3 1.1.1.1 &>/dev/null && ! ping -c 1 -W 3 8.8.8.8 &>/dev/null; then
   abort "Internet connection"
 fi
 
