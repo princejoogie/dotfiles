@@ -1,22 +1,11 @@
 # Kojarchy core package list installed via install/packaging/base.sh
 # One per line, # for comments, blank lines ignored
 
-# === System ===
-base
+# === System (supplements archinstall base) ===
 base-devel
-linux
-linux-firmware
-linux-headers
-amd-ucode
-btrfs-progs
 dkms
-efibootmgr
-efitools
 less
 man-db
-nano
-sbctl
-sbsigntools
 smartmontools
 unzip
 zip
@@ -24,26 +13,18 @@ zip
 
 # === Networking ===
 bind
-iwd
-netctl
 net-tools
 networkmanager
 network-manager-applet
 openvpn
 sshfs
-systemd-resolvconf
 tailscale
 traceroute
 wget
 wireguard-tools
-wireless_tools
 
-# === GPU (NVIDIA) ===
-nvidia-open-dkms
-lib32-nvidia-utils
-libva-nvidia-driver
+# === Graphics (generic) ===
 mesa-utils
-clinfo
 
 # === Hyprland & Desktop ===
 hyprland
@@ -145,9 +126,6 @@ sassc
 # === Firewall ===
 ufw
 
-# === AUR Helper ===
-yay-bin
-
 # === Misc Tools ===
 expac
 flatpak
@@ -158,19 +136,7 @@ tesseract-data-eng
 hunspell-en_us
 bc
 lshw
-v4l2loopback-dkms
 speedtest-cli
-
-# === Virtualization ===
-qemu-full
-libvirt
-virt-manager
-virt-install
-virt-viewer
-libosinfo
-guestfs-tools
-swtpm
-dnsmasq
 
 # === Document & Image Viewing ===
 zathura

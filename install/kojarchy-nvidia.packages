@@ -1,0 +1,6 @@
+# Kojarchy NVIDIA GPU packages - prompted during install
+# Only install these on systems with NVIDIA GPUs
+
+nvidia-open-dkms
+lib32-nvidia-utils
+libva-nvidia-driver

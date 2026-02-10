@@ -47,6 +47,18 @@ spotify
 # === RGB & Hardware ===
 openrgb
 
+# === Virtualization ===
+qemu-full
+libvirt
+virt-manager
+virt-install
+virt-viewer
+libosinfo
+guestfs-tools
+swtpm
+dnsmasq
+v4l2loopback-dkms
+
 # === Other ===
 kdeconnect
 video-trimmer
