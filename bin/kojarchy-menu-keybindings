@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Display Hyprland keybindings in an interactive search using wofi.
+# Display Hyprland keybindings in an interactive search using walker.
 
 output_keybindings() {
   hyprctl -j binds |
@@ -47,5 +47,5 @@ output_keybindings() {
 if [[ "$1" == "--print" || "$1" == "-p" ]]; then
   output_keybindings
 else
-  output_keybindings | wofi --show dmenu -p 'Keybindings' --width 800 --height 600
+  output_keybindings | walker --dmenu --width 600 --maxheight 630 -p "Keybindings…" 2>/dev/null
 fi

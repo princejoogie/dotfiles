@@ -1,12 +1,18 @@
 #!/bin/bash
 
-# Power menu — lock, reboot, or shutdown via gum.
-# Launched in a floating terminal from the keybinding.
+# Power menu — lock, reboot, or shutdown via walker dmenu.
+# Bound to ALT+ESCAPE.
 
-choice=$(gum choose "Lock" "Reboot" "Shutdown" "Cancel")
+OPTIONS="Lock
+Reboot
+Shutdown"
+
+choice=$(echo "$OPTIONS" | walker --dmenu --width 200 --minheight 1 --maxheight 150 -p "Power…" 2>/dev/null)
+
+[ -z "$choice" ] && exit 0
 
 case "$choice" in
-  "Lock")     kojarchy-lock-screen ;;
-  "Reboot")   kojarchy-cmd-reboot ;;
+  "Lock")      kojarchy-lock-screen ;;
+  "Reboot")    kojarchy-cmd-reboot ;;
   "Shutdown")  kojarchy-cmd-shutdown ;;
 esac
