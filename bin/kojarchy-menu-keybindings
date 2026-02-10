@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Display Hyprland keybindings in an interactive search using wofi.
+
+output_keybindings() {
+  hyprctl -j binds |
+    jq -r '.[] | {modmask, key, keycode, description, dispatcher, arg} | "\(.modmask),\(.key)@\(.keycode),\(.description),\(.dispatcher),\(.arg)"' |
+    sed -r \
+      -e 's/null//' \
+      -e 's/@0//' \
+      -e 's/,@/,code:/' \
+      -e 's/^0,/,/' \
+      -e 's/^1,/SHIFT,/' \
+      -e 's/^4,/CTRL,/' \
+      -e 's/^5,/SHIFT CTRL,/' \
+      -e 's/^8,/ALT,/' \
+      -e 's/^9,/SHIFT ALT,/' \
+      -e 's/^12,/CTRL ALT,/' \
+      -e 's/^13,/SHIFT CTRL ALT,/' \
+      -e 's/^64,/SUPER,/' \
+      -e 's/^65,/SUPER SHIFT,/' \
+      -e 's/^68,/SUPER CTRL,/' \
+      -e 's/^69,/SUPER SHIFT CTRL,/' \
+      -e 's/^72,/SUPER ALT,/' \
+      -e 's/^73,/SUPER SHIFT ALT,/' \
+      -e 's/^76,/SUPER CTRL ALT,/' \
+      -e 's/^77,/SUPER SHIFT CTRL ALT,/' |
+    awk -F, '{
+      key_combo = $1 " + " $2;
+      gsub(/^[ \t]*\+?[ \t]*/, "", key_combo);
+      gsub(/[ \t]+$/, "", key_combo);
+      action = $3;
+      if (action == "") {
+        for (i = 4; i <= NF; i++) {
+          action = action $i (i < NF ? "," : "");
+        }
+        sub(/,$/, "", action);
+        gsub(/(^|,)[[:space:]]*exec[[:space:]]*,?/, "", action);
+        gsub(/^[ \t]+|[ \t]+$/, "", action);
+      }
+      if (action != "") {
+        printf "%-35s  %s\n", key_combo, action;
+      }
+    }'
+}
+
+if [[ "$1" == "--print" || "$1" == "-p" ]]; then
+  output_keybindings
+else
+  output_keybindings | wofi --show dmenu -p 'Keybindings' --width 800 --height 600
+fi

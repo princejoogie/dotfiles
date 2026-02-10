@@ -1,0 +1,6 @@
+#!/bin/bash
+# This hook runs after kojarchy-update completes.
+# Rename this file to 'post-update' (remove .sample) to activate.
+#
+# Example: restart waybar after update
+# kojarchy-restart-waybar

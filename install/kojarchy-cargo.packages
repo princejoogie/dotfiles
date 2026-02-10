@@ -1,0 +1,9 @@
+# Kojarchy cargo packages (format: crate=binary)
+# If binary name matches crate name, just use the crate name
+# Installed via install/config/cargo.sh
+#
+# All packages moved to kojarchy-base.packages as prebuilt binaries:
+#   bob-nvim    -> bob (official repo)
+#   tree-sitter-cli -> tree-sitter-cli (official repo)
+#   cargo-update -> cargo-update (official repo)
+#   tmux-sessionizer -> tmux-sessionizer-bin (AUR)

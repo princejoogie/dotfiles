@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+KOJARCHY_PATH="${KOJARCHY_PATH:-$HOME/dotfiles}"
+
+trap 'echo ""; echo -e "\033[0;31mSomething went wrong during the update!\n\nPlease review the output above carefully, correct the error, and retry the update.\n\nIf you need help, open an issue at:\nhttps://github.com/princejoogie/dotfiles/issues\033[0m"' ERR
+
+if [[ $1 == "-y" ]] || kojarchy-update-confirm; then
+  kojarchy-update-git
+  kojarchy-update-perform
+fi

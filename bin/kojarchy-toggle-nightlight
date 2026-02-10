@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Toggle hyprsunset nightlight filter
+
+if pgrep -x hyprsunset > /dev/null; then
+    pkill -x hyprsunset
+    notify-send "'hyprsunset' stopped"
+else
+    hyprsunset --temperature 4000 &
+    notify-send "'hyprsunset' started"
+fi

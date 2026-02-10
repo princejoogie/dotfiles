@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Toggle focus mode: black wallpaper, hide waybar, move to workspace 10, hide cursor
+
+set -euo pipefail
+
+STATE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/toggle-black"
+BLACK_WALLPAPER="$HOME/dotfiles/wallpapers/black.png"
+DEFAULT_WALLPAPER="$HOME/dotfiles/wallpapers/pallete.png"
+CACHE_SEPARATOR=$'\t'
+DEFAULT_CURSOR_TIMEOUT=10
+
+get_option() {
+    local option="$1"
+    hyprctl -j getoption "$option" | jq -r '(.custom // .int)'
+}
+
+if [ -f "$STATE_FILE" ]; then
+    IFS=$'\t' read -r waybar_was_running cursor_timeout previous_workspace < "$STATE_FILE"
+    rm -f "$STATE_FILE"
+
+    pkill -x swaybg || true
+    swaybg -i "$DEFAULT_WALLPAPER" -m fill &
+
+    if [ -z "$cursor_timeout" ] || [ "$cursor_timeout" = "null" ]; then
+        cursor_timeout=$DEFAULT_CURSOR_TIMEOUT
+    fi
+    hyprctl keyword cursor:inactive_timeout "$cursor_timeout"
+
+    if [ -n "$previous_workspace" ]; then
+        hyprctl dispatch workspace "$previous_workspace"
+    fi
+
+    if [ "$waybar_was_running" = "1" ]; then
+        waybar &
+    fi
+else
+    waybar_was_running=0
+    if pgrep -x waybar >/dev/null; then
+        waybar_was_running=1
+    fi
+    cursor_timeout=$(get_option "cursor:inactive_timeout")
+    if [ -z "$cursor_timeout" ] || [ "$cursor_timeout" = "null" ]; then
+        cursor_timeout=$DEFAULT_CURSOR_TIMEOUT
+    fi
+    previous_workspace=$(hyprctl -j activeworkspace | jq -r '.id')
+    printf "%s%s%s%s%s\n" "$waybar_was_running" "$CACHE_SEPARATOR" "$cursor_timeout" "$CACHE_SEPARATOR" "$previous_workspace" > "$STATE_FILE"
+
+    pkill -x waybar || true
+    pkill -x swaybg || true
+    swaybg -i "$BLACK_WALLPAPER" -m fill &
+
+    hyprctl dispatch workspace 10
+    hyprctl keyword cursor:inactive_timeout 1
+fi

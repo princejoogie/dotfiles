@@ -1,0 +1,5 @@
+source ~/dotfiles/default/zsh/shell
+source ~/dotfiles/default/zsh/aliases
+source ~/dotfiles/default/zsh/functions
+source ~/dotfiles/default/zsh/init
+source ~/dotfiles/default/zsh/envs

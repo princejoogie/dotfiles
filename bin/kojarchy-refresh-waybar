@@ -1,0 +1,5 @@
+#!/bin/bash
+# Reset Waybar config to Kojarchy defaults and restart.
+kojarchy-refresh-config waybar/config.jsonc
+kojarchy-refresh-config waybar/style.css
+kojarchy-restart-waybar

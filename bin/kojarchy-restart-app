@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Restart an application by killing it and relaunching.
+# Usage: kojarchy-restart-app <application-name>
+
+pkill -x "$1" 2>/dev/null
+sleep 0.5
+setsid "$1" >/dev/null 2>&1 &

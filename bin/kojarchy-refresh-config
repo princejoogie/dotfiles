@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Refresh a config file from defaults. Takes a backup if file exists and differs.
+# Usage: kojarchy-refresh-config <relative-path>
+# Example: kojarchy-refresh-config hypr/hyprlock.conf
+
+KOJARCHY_PATH="${KOJARCHY_PATH:-$HOME/dotfiles}"
+
+config_file=$1
+
+if [[ -z "$config_file" ]]; then
+  echo "Usage: $0 <config_file>"
+  echo "Example: $0 hypr/hyprlock.conf"
+  exit 1
+fi
+
+user_config_file="${HOME}/.config/$config_file"
+default_config_file="${KOJARCHY_PATH}/config/$config_file"
+backup_config_file="$user_config_file.bak.$(date +%s)"
+
+if [[ ! -f "$default_config_file" ]]; then
+  echo "Default config not found: $default_config_file"
+  exit 1
+fi
+
+if [[ -f "$user_config_file" ]]; then
+  cp -f "$user_config_file" "$backup_config_file" 2>/dev/null
+  cp -f "$default_config_file" "$user_config_file" 2>/dev/null
+
+  if cmp -s "$user_config_file" "$backup_config_file"; then
+    rm "$backup_config_file"
+  else
+    echo -e "\e[31mReplaced $user_config_file with Kojarchy default.\nBackup saved as ${backup_config_file}.\n\n\e[32mChanges:\e[0m"
+    diff "$user_config_file" "$backup_config_file" || true
+  fi
+else
+  mkdir -p "$(dirname "$user_config_file")"
+  cp -f "$default_config_file" "$user_config_file" 2>/dev/null
+fi

@@ -1,0 +1,73 @@
+# Kojarchy optional packages - prompted during install (gum confirm)
+# One per line, # for comments, blank lines ignored
+
+# === Gaming ===
+steam
+prismlauncher
+protonup-qt
+protontricks
+goverlay
+tetrio-desktop
+
+# === Communication ===
+discord
+vesktop
+legcord
+slack-desktop
+telegram-desktop
+
+# === Productivity ===
+notion-calendar-electron
+obs-studio
+obs-backgroundremoval
+audacity
+blender
+
+# === Video Calling ===
+zoom
+uxplay
+
+# === Browsers ===
+chromium
+helium-browser-bin
+
+# === Remote ===
+rustdesk-bin
+localsend-bin
+ngrok
+rcon-cli
+
+# === Torrents ===
+qbittorrent
+qbittorrent-nox
+
+# === Music ===
+spotify
+
+# === RGB & Hardware ===
+openrgb
+
+# === Virtualization ===
+qemu-full
+libvirt
+virt-manager
+virt-install
+virt-viewer
+libosinfo
+guestfs-tools
+swtpm
+dnsmasq
+v4l2loopback-dkms
+
+# === Other ===
+kdeconnect
+video-trimmer
+spacedrive-bin
+cmatrix
+pipes.sh
+qalculate-qt
+ollama
+cuda
+cudnn
+onnxruntime-cuda
+nvidia-container-toolkit

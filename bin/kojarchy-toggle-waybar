@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Toggle waybar visibility and adjust gaps/rounding accordingly
+
+WAYBAR_PID=$(pgrep -x waybar)
+GAPS_STATE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/waybar-gaps"
+
+get_gap_value() {
+    local option="$1"
+    hyprctl -j getoption "$option" | jq -r '(.custom // .int)'
+}
+
+# Check if Waybar is running
+if [ -n "$WAYBAR_PID" ]; then
+    # Store current gaps/rounding and set to 0
+    gaps_in=$(get_gap_value "general:gaps_in")
+    gaps_out=$(get_gap_value "general:gaps_out")
+    rounding=$(get_gap_value "decoration:rounding")
+    printf "%s\t%s\t%s\n" "$gaps_in" "$gaps_out" "$rounding" > "$GAPS_STATE_FILE"
+    hyprctl keyword general:gaps_in 0
+    hyprctl keyword general:gaps_out 0
+    hyprctl keyword decoration:rounding 0
+
+    # Kill Waybar using its PID
+    kill "$WAYBAR_PID"
+else
+    # Restore gaps/rounding if saved
+    if [ -f "$GAPS_STATE_FILE" ]; then
+        IFS=$'\t' read -r gaps_in gaps_out rounding < "$GAPS_STATE_FILE"
+        hyprctl keyword general:gaps_in "$gaps_in"
+        hyprctl keyword general:gaps_out "$gaps_out"
+        hyprctl keyword decoration:rounding "$rounding"
+        rm -f "$GAPS_STATE_FILE"
+    fi
+
+    # Start Waybar
+    waybar &
+fi

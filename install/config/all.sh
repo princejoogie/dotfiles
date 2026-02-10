@@ -1,0 +1,35 @@
+run_logged $KOJARCHY_INSTALL/config/config.sh
+run_logged $KOJARCHY_INSTALL/config/bin.sh
+run_logged $KOJARCHY_INSTALL/config/shell.sh
+run_logged $KOJARCHY_INSTALL/config/tmux.sh
+run_logged $KOJARCHY_INSTALL/config/cargo.sh
+run_logged $KOJARCHY_INSTALL/config/neovim.sh
+run_logged $KOJARCHY_INSTALL/config/mise.sh
+# Pause log tail for interactive git prompt
+stop_log_output
+clear_logo
+source $KOJARCHY_INSTALL/config/git.sh
+clear_logo
+start_log_output
+run_logged $KOJARCHY_INSTALL/config/docker.sh
+run_logged $KOJARCHY_INSTALL/config/gtk.sh
+run_logged $KOJARCHY_INSTALL/config/gpg.sh
+run_logged $KOJARCHY_INSTALL/config/mimetypes.sh
+run_logged $KOJARCHY_INSTALL/config/ssh-flakiness.sh
+run_logged $KOJARCHY_INSTALL/config/increase-sudo-tries.sh
+run_logged $KOJARCHY_INSTALL/config/increase-lockout-limit.sh
+run_logged $KOJARCHY_INSTALL/config/usb-autosuspend.sh
+run_logged $KOJARCHY_INSTALL/config/systemd-tweaks.sh
+run_logged $KOJARCHY_INSTALL/config/default-keyring.sh
+run_logged $KOJARCHY_INSTALL/config/firewall.sh
+run_logged $KOJARCHY_INSTALL/config/dns-resolver.sh
+run_logged $KOJARCHY_INSTALL/config/input-group.sh
+run_logged $KOJARCHY_INSTALL/config/detect-keyboard-layout.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/network.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/bluetooth.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/intel.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/set-wireless-regdom.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/fix-fkeys.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/fix-synaptic-touchpad.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/powerprofiles.sh
+run_logged $KOJARCHY_INSTALL/config/hidden-apps.sh

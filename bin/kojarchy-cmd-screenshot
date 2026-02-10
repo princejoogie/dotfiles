@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Take a screenshot of the whole screen, a specific window, or a user-drawn region.
+# Saves to ~/Pictures by default. Change via KOJARCHY_SCREENSHOT_DIR or XDG_PICTURES_DIR.
+
+[[ -f ~/.config/user-dirs.dirs ]] && source ~/.config/user-dirs.dirs
+OUTPUT_DIR="${KOJARCHY_SCREENSHOT_DIR:-${XDG_PICTURES_DIR:-$HOME/Pictures}}"
+
+if [[ ! -d "$OUTPUT_DIR" ]]; then
+  mkdir -p "$OUTPUT_DIR" || {
+    notify-send "Screenshot directory does not exist: $OUTPUT_DIR" -u critical -t 3000
+    exit 1
+  }
+fi
+
+pkill slurp && exit 0
+
+MODE="${1:-region}"
+PROCESSING="${2:-edit}"
+
+get_rectangles() {
+  local active_workspace=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .activeWorkspace.id')
+  hyprctl monitors -j | jq -r --arg ws "$active_workspace" '.[] | select(.activeWorkspace.id == ($ws | tonumber)) | "\(.x),\(.y) \((.width / .scale) | floor)x\((.height / .scale) | floor)"'
+  hyprctl clients -j | jq -r --arg ws "$active_workspace" '.[] | select(.workspace.id == ($ws | tonumber)) | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"'
+}
+
+case "$MODE" in
+  region)
+    SELECTION=$(slurp 2>/dev/null)
+    ;;
+  window)
+    SELECTION=$(get_rectangles | slurp -r 2>/dev/null)
+    ;;
+  fullscreen)
+    SELECTION=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | "\(.x),\(.y) \((.width / .scale) | floor)x\((.height / .scale) | floor)"')
+    ;;
+esac
+
+[ -z "$SELECTION" ] && exit 0
+
+FILENAME="$OUTPUT_DIR/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png"
+
+if [[ "$PROCESSING" == "edit" ]] && command -v satty &>/dev/null; then
+  grim -g "$SELECTION" - |
+    satty --filename - \
+      --output-filename "$FILENAME" \
+      --early-exit \
+      --actions-on-enter save-to-clipboard \
+      --save-after-copy \
+      --copy-command 'wl-copy'
+elif [[ "$PROCESSING" == "clipboard" ]]; then
+  grim -g "$SELECTION" - | wl-copy
+  notify-send "Screenshot copied to clipboard" -t 2000
+else
+  grim -g "$SELECTION" "$FILENAME"
+  notify-send "Screenshot saved to $FILENAME" -t 2000
+fi

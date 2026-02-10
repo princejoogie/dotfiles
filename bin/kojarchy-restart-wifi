@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "Unblocking wifi..."
+rfkill unblock wifi
+rfkill list wifi

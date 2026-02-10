@@ -1,0 +1,148 @@
+# Kojarchy core package list installed via install/packaging/base.sh
+# One per line, # for comments, blank lines ignored
+
+# === System (supplements archinstall base) ===
+base-devel
+dkms
+less
+man-db
+smartmontools
+unzip
+zip
+7zip
+
+# === Networking ===
+bind
+net-tools
+networkmanager
+network-manager-applet
+openvpn
+sshfs
+tailscale
+traceroute
+wget
+wireguard-tools
+
+# === Graphics (generic) ===
+mesa-utils
+
+# === Hyprland & Desktop ===
+hyprland
+hypridle
+hyprlock
+hyprpicker
+hyprpolkitagent
+hyprsunset
+hyprshot
+hyprmon-bin
+hyprwhspr
+swaybg
+waybar
+dunst
+wofi
+wofi-calc
+xdg-desktop-portal-gtk
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-kde
+xdg-utils
+xorg-server
+xorg-xhost
+xorg-xinit
+xwaylandvideobridge
+sddm
+
+# === Terminal & Shell ===
+kitty
+tmux
+zsh
+zoxide
+fzf
+starship
+btop
+htop
+fastfetch
+direnv
+yad
+
+# === Development ===
+git
+git-delta
+github-cli
+docker
+docker-compose
+mise
+bun
+uv
+bob
+tree-sitter-cli
+cargo-update
+tmux-sessionizer-bin
+
+# === File Management ===
+dolphin
+yazi
+fd
+gdu
+ncdu
+tree
+
+# === Media & Graphics ===
+pipewire
+pipewire-alsa
+pipewire-jack
+pipewire-pulse
+gst-plugin-pipewire
+libpulse
+wireplumber
+pavucontrol
+imagemagick
+graphicsmagick
+grim
+slurp
+wl-clipboard
+ffmpegthumbs
+yt-dlp
+
+# === Fonts ===
+otf-geist-mono-nerd
+ttf-firacode-nerd
+ttf-nerd-fonts-symbols
+noto-fonts-cjk
+noto-color-emoji-fontconfig
+woff2-font-awesome
+apple-fonts
+font-manager
+
+# === Qt/GTK Theming ===
+qt5ct
+qt6ct
+qt5-wayland
+qt6-wayland
+qt5-quickcontrols2
+kvantum-qt5
+kvantum
+nwg-look
+breeze
+sassc
+
+# === Firewall ===
+ufw
+
+# === Misc Tools ===
+expac
+flatpak
+gum
+jq
+hyperfine
+tesseract-data-eng
+hunspell-en_us
+bc
+lshw
+speedtest-cli
+
+# === Document & Image Viewing ===
+zathura
+zathura-pdf-mupdf
+mupdf
+qview
+ocrmypdf
