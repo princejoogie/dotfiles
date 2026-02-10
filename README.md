@@ -1,103 +1,149 @@
-# dotfiles
+# Kojarchy
 
-Personal configuration for a productive and aesthetic development environment, focused on Linux (Hyprland) and macOS.
+Personal Hyprland desktop environment for Arch Linux, automated from a fresh `archinstall` to a fully configured system in one command.
 
 ![demo_1](.github/assets/demo_1.png)
 ![demo_2](.github/assets/demo_2.png)
 ![demo_3](.github/assets/demo_3.png)
 
-## ✨ Highlights
+## Install
 
-### 🖥️ Desktop (Linux)
-
-- **Window Manager**: [Hyprland](https://hyprland.org/) - A dynamic tiling Wayland compositor.
-- **Status Bar**: [Waybar](https://github.com/Alexays/Waybar) with custom modules for Spotify, Tailscale, and Tunnelbear.
-- **Widgets**: [Eww](https://github.com/elkowar/eww) for interactive desktop elements like calendars.
-- **Launcher**: [Wofi](https://hg.sr.ht/~scoopta/wofi) with a collection of custom utility scripts.
-- **Notifications**: [Dunst](https://dunst-project.org/) for lightweight system alerts.
-
-### ⌨️ Editor
-
-- **Neovim**: A modern Lua-based configuration using [lazy.nvim](https://github.com/folke/lazy.nvim).
-  - Built-in LSP, Treesitter, and snacks.nvim integration.
-  - Optimized for performance and a seamless coding experience.
-  - Custom UI components and statuslines.
-
-### 🛠️ Shell & Tools
-
-- **Terminal**: [Kitty](https://sw.kovidgoyal.net/kitty/) and [Alacritty](https://alacritty.org/) support.
-- **Shell**: Zsh with [Starship](https://starship.rs/) prompt.
-- **File Manager**: [yazi](https://github.com/sxyazi/yazi) - Blazing fast terminal file manager.
-- **Multiplexer**: [Tmux](https://github.com/tmux/tmux) for robust session management.
-- **Productivity**: Raycast scripts for macOS automation.
-
-## 📂 Structure
-
-| Folder        | Description                                         |
-| :------------ | :-------------------------------------------------- |
-| `hyprland/`   | Hyprland, Waybar, Wofi, and Eww configurations      |
-| `nvim/`       | Neovim configuration (Lua)                          |
-| `shell/`      | Shell environment (Zsh, Starship, Tmux, Git)        |
-| `sddm/`       | macOS-inspired login theme                          |
-| `wallpapers/` | A collection of curated high-resolution backgrounds |
-
-## 🚀 Setup
-
-### 1. Clone the repository
+After a fresh Arch Linux install via `archinstall`, reboot and run:
 
 ```bash
-git clone https://github.com/princejoogie/dotfiles.git ~/dotfiles
-cd ~/dotfiles
+curl -fsSL https://raw.githubusercontent.com/princejoogie/dotfiles/refs/heads/main/boot.sh | bash
 ```
 
-### 2. Install GNU Stow
+The installer handles everything: packages, configs, services, shell setup, and post-install.
 
-Ensure `stow` is installed on your system:
+## What's Included
 
-- **Arch Linux**: `sudo pacman -S stow`
-- **macOS**: `brew install stow`
+| Component | Tool |
+|:----------|:-----|
+| Window Manager | [Hyprland](https://hyprland.org/) |
+| Status Bar | [Waybar](https://github.com/Alexays/Waybar) with Spotify, Tailscale, Tunnelbear modules |
+| Launcher | [Wofi](https://hg.sr.ht/~scoopta/wofi) with custom utility scripts |
+| Notifications | [Dunst](https://dunst-project.org/) |
+| Wallpaper | [swaybg](https://github.com/swaywm/swaybg) |
+| Terminal | [Kitty](https://sw.kovidgoyal.net/kitty/) |
+| Shell | Zsh + [oh-my-zsh](https://ohmyz.sh/) + [Starship](https://starship.rs/) |
+| Editor | [Neovim](https://neovim.io/) (Lua config, lazy.nvim) |
+| File Manager | [yazi](https://github.com/sxyazi/yazi) |
+| Multiplexer | [Tmux](https://github.com/tmux/tmux) |
+| Version Manager | [mise](https://mise.jdx.dev/) (node, go, python) |
+| Display Manager | [SDDM](https://github.com/sddm/sddm) with macOS theme + autologin |
+| Theme | Adwaita-dark via gsettings, Catppuccin Mocha accents |
 
-### 3. Symlink configurations
+## Project Structure
 
-Use `stow` to link the configurations to your home directory:
+```
+~/dotfiles/
+├── boot.sh                  # Bootstrap (curl-pipe-bash entry point)
+├── install.sh               # Main orchestrator
+├── lib/                     # Helpers (presentation, logging, errors, packages)
+├── install/
+│   ├── preflight/           # Guard checks, install log setup
+│   ├── packaging/           # AUR helper, base/optional packages, fonts
+│   ├── config/              # Config deploy, shell, tmux, cargo, neovim, mise, git, docker, gtk
+│   ├── services/            # systemd, SDDM, udev
+│   ├── post-install/        # Summary, reboot prompt
+│   ├── kojarchy-base.packages
+│   ├── kojarchy-optional.packages
+│   └── kojarchy-cargo.packages
+├── config/                  # Copied to ~/.config/ on install (user-editable)
+│   ├── hypr/                # Hyprland (sources defaults, user overrides)
+│   ├── waybar/              # Waybar + custom modules
+│   ├── wofi/                # Wofi + dmenu scripts
+│   ├── dunst/               # Notification config
+│   ├── kitty/               # Terminal config
+│   ├── nvim/                # Neovim (lazy.nvim, LSP, treesitter)
+│   ├── tmux/                # Tmux config
+│   ├── yazi/                # File manager theme
+│   ├── opencode/            # OpenCode AI config + skills
+│   ├── btop/                # System monitor config
+│   ├── starship.toml        # Prompt config
+│   └── xdg-desktop-portal/  # Portal configs
+├── default/                 # Stays in repo, sourced at runtime (updated via git pull)
+│   ├── hypr/                # autostart, bindings, envs, looknfeel, input, windows
+│   └── zsh/                 # aliases, envs, init, functions, shell, rc
+├── bin/                     # CLI utilities -> ~/.local/custom/bin/
+├── sddm/macos/             # SDDM macOS theme
+├── wallpapers/              # Wallpaper collection
+├── system/udev/             # udev rules
+└── logo.txt                 # ASCII art for installer TUI
+```
+
+## Two-Layer Config System
+
+Configs are split into two layers:
+
+1. **`config/`** -- Copied to `~/.config/` on fresh install. These are your files to customize. They are never overwritten on updates.
+
+2. **`default/`** -- Stays in `~/dotfiles/default/` and is `source`d from the config files at runtime. Updated automatically when you `git pull`.
+
+This means defaults can be improved upstream without overwriting your personal tweaks.
+
+### Example: Hyprland
+
+```conf
+# ~/.config/hypr/hyprland.conf
+
+# Source defaults (updated via git pull)
+source = ~/dotfiles/default/hypr/autostart.conf
+source = ~/dotfiles/default/hypr/bindings.conf
+source = ~/dotfiles/default/hypr/envs.conf
+
+# Your overrides below:
+monitor=,2560x1440@240,auto,1
+```
+
+### Example: Zsh
 
 ```bash
-# Link core configurations
-stow hyprland
-stow nvim
-stow shell
+# ~/.zshrc sources ~/dotfiles/default/zsh/rc
+# which loads: aliases, envs, init, functions, shell
+
+# Add your own customizations at the bottom of ~/.zshrc
 ```
 
-> [!NOTE]
-> For SDDM theme installation, refer to the scripts within the `sddm/` directory.
+## Customization
 
-## 🖱️ Scyrox Mouse Battery (Waybar)
+1. **Edit configs**: Modify files in `~/.config/` directly. They're yours.
+2. **Update defaults**: `cd ~/dotfiles && git pull` -- changes propagate automatically since configs source the defaults.
+3. **Add overrides**: Uncomment or create override files referenced in the configs (e.g., `~/.config/hypr/overrides.conf`).
+4. **Private config**: Add secrets/tokens to `~/.private.sh` (sourced by `~/.zshrc`, gitignored).
 
-This Waybar module reads the Scyrox mouse battery via HID and displays it with a custom icon.
+## Key Bindings
 
-### 1. Install dependencies
+All bindings use `ALT` as the main modifier.
 
-- `bun` (runtime for the script)
-- `node-hid` (HID access)
+| Binding | Action |
+|:--------|:-------|
+| `ALT + Return` | Open terminal |
+| `ALT + Space` | App launcher (wofi drun) |
+| `ALT + CTRL + Space` | Dmenu scripts launcher |
+| `ALT + Q` | Kill active window |
+| `ALT + F` | Fullscreen |
+| `ALT + V` | Toggle floating |
+| `ALT + H/J/K/L` | Focus left/down/up/right |
+| `ALT + CTRL + H/J/K/L` | Move window |
+| `ALT + CTRL + SHIFT + H/J/K/L` | Resize window |
+| `ALT + 1-0` | Switch workspace |
+| `ALT + SHIFT + 1-0` | Move to workspace |
+| `ALT + W` | Toggle waybar |
+| `ALT + SHIFT + C` | Color picker |
+| `Print` | Screenshot region |
+| `ALT + Print` | Screenshot window |
 
-```bash
-bun add -g node-hid
-```
+## Optional Packages
 
-### 2. Allow user access to the HID device
+During install, you're prompted to install optional packages including:
 
-```bash
-sudo cp ~/dotfiles/system/udev/99-scyrox-hidraw.rules /etc/udev/rules.d/
-sudo udevadm control --reload-rules && sudo udevadm trigger
-sudo usermod -aG input $USER
-```
+- Gaming (Steam, Prismlauncher, Proton)
+- Communication (Discord, Slack, Telegram)
+- Productivity (OBS, Blender, Audacity)
+- And more
 
-Log out and back in (or reboot) so the group change takes effect.
+## Credits
 
-### 3. Verify
-
-```bash
-scyrox-battery --device=scyrox --json --no-sudo
-```
-
-If that returns JSON, restart Waybar and the module will appear between the mic input and Tailscale.
+Installer architecture inspired by [omarchy](https://github.com/basecamp/omarchy).
