@@ -26,10 +26,16 @@ get_rectangles() {
 
 case "$MODE" in
   region)
+    wayfreeze & PID=$!
+    sleep 0.1
     SELECTION=$(slurp 2>/dev/null)
+    kill $PID 2>/dev/null
     ;;
   window)
+    wayfreeze & PID=$!
+    sleep 0.1
     SELECTION=$(get_rectangles | slurp -r 2>/dev/null)
+    kill $PID 2>/dev/null
     ;;
   fullscreen)
     SELECTION=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | "\(.x),\(.y) \((.width / .scale) | floor)x\((.height / .scale) | floor)"')
