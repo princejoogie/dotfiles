@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# Kill a running process selected via wofi dmenu
 
 set -euo pipefail
 

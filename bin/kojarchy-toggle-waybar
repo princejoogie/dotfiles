@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# Toggle waybar visibility and adjust gaps/rounding accordingly
 
 WAYBAR_PID=$(pgrep -x waybar)
 GAPS_STATE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/waybar-gaps"

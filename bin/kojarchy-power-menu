@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Power menu — lock, reboot, or shutdown via gum.
+# Launched in a floating terminal from the keybinding.
+
+choice=$(gum choose "Lock" "Reboot" "Shutdown" "Cancel")
+
+case "$choice" in
+  "Lock")     kojarchy-lock-screen ;;
+  "Reboot")   kojarchy-cmd-reboot ;;
+  "Shutdown")  kojarchy-cmd-shutdown ;;
+esac

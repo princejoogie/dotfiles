@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# Toggle hyprsunset nightlight filter
 
 if pgrep -x hyprsunset > /dev/null; then
     pkill -x hyprsunset

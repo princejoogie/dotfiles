@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# Open camera feed or show which app is using it
 
 device=$(v4l2-ctl --list-devices | grep -E '/dev/video[0-9]+' | head -n1 | xargs)
 
@@ -22,7 +24,7 @@ if [ -n "$pids" ]; then
             fi
         fi
     done
-    
+
     if [ -n "$apps" ]; then
         notify-send "Camera" "Camera is in use by:\n$apps"
         exit 1

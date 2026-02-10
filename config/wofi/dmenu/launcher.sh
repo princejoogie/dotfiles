@@ -1,15 +1,17 @@
 #!/bin/bash
 
-SCRIPT_DIR="$HOME/.config/wofi/dmenu/scripts"
-SCRIPTS=$(ls "$SCRIPT_DIR")
+# Wofi dmenu launcher — lists all kojarchy commands, with web search fallback.
+# Bound to ALT+CTRL+SPACE.
 
-selected=$(printf "%s\n" "$SCRIPTS" | wofi --dmenu -p "Run script or Search web" --matching fuzzy)
+SCRIPTS=$(compgen -c kojarchy- | sort -u)
+
+selected=$(printf "%s\n" "$SCRIPTS" | wofi --dmenu -p "Run command or search web" --matching fuzzy)
 
 # Exit if user presses Escape (no input at all)
 [ -z "$selected" ] && exit
 
 if printf "%s\n" "$SCRIPTS" | grep -Fxq "$selected"; then
-  exec "$SCRIPT_DIR/$selected"
+  exec "$selected"
 else
   printf "%s" "$selected" | jq -sRr @uri | xargs -r -I{} xdg-open "https://www.google.com/search?q={}"
 fi

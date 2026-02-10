@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# Toggle RGB lights between green and off via OpenRGB
 
 STATE_FILE="$HOME/.rgb_state"
 
@@ -11,4 +13,3 @@ else
     echo "white" > "$STATE_FILE"
     notify-send "RGB lights set to white"
 fi
-

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Launch wofi calculator
+wofi-calc

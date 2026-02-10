@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Kojarchy menu — unified launcher for all commands and scripts.
+# Bound to ALT+SHIFT+SPACE. Runs in a floating terminal via gum.
+
+choice=$(gum choose \
+  "Screenshot" \
+  "Screenshot (clipboard)" \
+  "Screen record" \
+  "Color picker" \
+  "Lock screen" \
+  "Kill process" \
+  "Kill port" \
+  "Open file" \
+  "Calculator" \
+  "Camera" \
+  "Toggle waybar" \
+  "Toggle nightlight" \
+  "Toggle focus mode" \
+  "Toggle RGB" \
+  "Audio switch" \
+  "Keybindings" \
+  "Font set" \
+  "Package install" \
+  "Package remove" \
+  "Update system" \
+  "Refresh hyprland" \
+  "Refresh waybar" \
+  "Debug info" \
+  "Close all windows" \
+  "Reboot" \
+  "Shutdown" \
+)
+
+case "$choice" in
+  "Screenshot")              kojarchy-cmd-screenshot region edit ;;
+  "Screenshot (clipboard)")  kojarchy-cmd-screenshot region clipboard ;;
+  "Screen record")           kojarchy-cmd-screenrecord ;;
+  "Color picker")            hyprpicker | { read color; trimmed=$(printf "%s" "$color"); printf "%s" "$trimmed" | wl-copy; notify-send "Copied $color to clipboard"; } ;;
+  "Lock screen")             kojarchy-lock-screen ;;
+  "Kill process")            kojarchy-kill-process ;;
+  "Kill port")               kojarchy-kill-port ;;
+  "Open file")               kojarchy-open-file ;;
+  "Calculator")              kojarchy-calculator ;;
+  "Camera")                  kojarchy-camera ;;
+  "Toggle waybar")           kojarchy-toggle-waybar ;;
+  "Toggle nightlight")       kojarchy-toggle-nightlight ;;
+  "Toggle focus mode")       kojarchy-toggle-focusmode ;;
+  "Toggle RGB")              kojarchy-toggle-rgb ;;
+  "Audio switch")            kojarchy-cmd-audio-switch ;;
+  "Keybindings")             kojarchy-menu-keybindings ;;
+  "Font set")                font=$(kojarchy-font-list | gum filter --placeholder "Pick a font...") && kojarchy-font-set "$font" ;;
+  "Package install")         kojarchy-pkg-install ;;
+  "Package remove")          kojarchy-pkg-remove ;;
+  "Update system")           kojarchy-update ;;
+  "Refresh hyprland")        kojarchy-refresh-hyprland ;;
+  "Refresh waybar")          kojarchy-refresh-waybar ;;
+  "Debug info")              kojarchy-debug ;;
+  "Close all windows")       kojarchy-hyprland-window-close-all ;;
+  "Reboot")                  kojarchy-cmd-reboot ;;
+  "Shutdown")                kojarchy-cmd-shutdown ;;
+esac
