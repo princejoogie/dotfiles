@@ -1,0 +1,8 @@
+# Kojarchy cargo packages (format: crate=binary)
+# If binary name matches crate name, just use the crate name
+# Installed via install/config/cargo.sh
+
+bob-nvim=bob
+tmux-sessionizer=tms
+tree-sitter-cli=tree-sitter
+cargo-update=cargo-install-update

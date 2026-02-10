@@ -1,0 +1,182 @@
+# Kojarchy core package list installed via install/packaging/base.sh
+# One per line, # for comments, blank lines ignored
+
+# === System ===
+base
+base-devel
+linux
+linux-firmware
+linux-headers
+amd-ucode
+btrfs-progs
+dkms
+efibootmgr
+efitools
+less
+man-db
+nano
+sbctl
+sbsigntools
+smartmontools
+unzip
+zip
+7zip
+
+# === Networking ===
+bind
+iwd
+netctl
+net-tools
+networkmanager
+network-manager-applet
+openvpn
+sshfs
+systemd-resolvconf
+tailscale
+traceroute
+wget
+wireguard-tools
+wireless_tools
+
+# === GPU (NVIDIA) ===
+nvidia-open-dkms
+lib32-nvidia-utils
+libva-nvidia-driver
+mesa-utils
+clinfo
+
+# === Hyprland & Desktop ===
+hyprland
+hypridle
+hyprlock
+hyprpicker
+hyprpolkitagent
+hyprsunset
+hyprshot-git
+hyprmon-bin
+hyprwhspr
+swaybg
+waybar
+dunst
+wofi
+wofi-calc
+xdg-desktop-portal-gtk
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-kde
+xdg-utils
+xorg-server
+xorg-xhost
+xorg-xinit
+xwaylandvideobridge
+sddm
+
+# === Terminal & Shell ===
+kitty
+tmux
+zsh
+zoxide
+fzf
+starship
+btop
+htop
+fastfetch
+direnv
+yad
+
+# === Development ===
+git
+git-delta
+github-cli
+docker
+docker-compose
+mise
+bun
+uv
+postgresql
+
+# === File Management ===
+dolphin
+yazi
+fd
+gdu
+ncdu
+tree
+
+# === Media & Graphics ===
+pipewire
+pipewire-alsa
+pipewire-jack
+pipewire-pulse
+gst-plugin-pipewire
+libpulse
+wireplumber
+pavucontrol
+imagemagick
+graphicsmagick
+grim
+slurp
+wl-clipboard
+ffmpegthumbs
+chafa
+yt-dlp
+
+# === Fonts ===
+otf-geist-mono-nerd
+ttf-firacode-nerd
+ttf-nerd-fonts-symbols
+noto-fonts-cjk
+noto-color-emoji-fontconfig
+woff2-font-awesome
+apple-fonts
+font-manager
+
+# === Qt/GTK Theming ===
+qt5ct
+qt6ct
+qt5-wayland
+qt6-wayland
+qt5-quickcontrols2
+kvantum-qt5
+kvantum-git
+adwaita-qt5-git
+adwaita-qt6-git
+nwg-look
+breeze
+sassc
+
+# === Firewall ===
+ufw
+
+# === AUR Helper ===
+yay-bin
+
+# === Misc Tools ===
+expac
+flatpak
+gum
+jq
+hyperfine-git
+tesseract-data-eng
+hunspell-en_us
+bc
+lshw
+v4l2loopback-dkms
+speedtest-cli
+
+# === Virtualization ===
+qemu-full
+libvirt
+virt-manager
+virt-install
+virt-viewer
+libosinfo
+guestfs-tools
+swtpm
+dnsmasq
+
+# === Document & Image Viewing ===
+zathura
+zathura-pdf-mupdf
+mupdf-git
+qview
+ocrmypdf
