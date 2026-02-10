@@ -1,6 +1,11 @@
 # Installation complete!
 stop_install_log
 
+# Remove temporary NOPASSWD sudoers (created in preflight/begin.sh)
+if sudo test -f /etc/sudoers.d/99-kojarchy-installer; then
+  sudo rm -f /etc/sudoers.d/99-kojarchy-installer
+fi
+
 clear_logo
 
 # Calculate elapsed time
