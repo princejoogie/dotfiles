@@ -5,7 +5,19 @@ source ~/.private.sh
 BASE="https://claude.ai/api/organizations/$CLAUDE_ORG"
 UA="User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0"
 
-INTERVAL=${1:-10}
+INTERVAL=10
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --refetch)
+      INTERVAL="$2"
+      shift 2
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
 
 fetch() {
   curl -s "$BASE/$1" -H "$UA" -H "$CLAUDE_COOKIE"
@@ -105,45 +117,45 @@ while true; do
   OVERAGE_SPEND=$(cat "$OVERAGE_FILE")
   PREPAID=$(cat "$PREPAID_FILE")
 
-  # Skip render if API returned errors
-  if echo "$USAGE" | jq -e '.error' &>/dev/null; then
-    sleep "$INTERVAL"
-    continue
+  # Only update values if API responses are valid
+  if ! echo "$USAGE" | jq -e '.error' &>/dev/null; then
+    SESSION_PCT=$(echo "$USAGE" | jq -r '.five_hour.utilization // 0')
+    SESSION_RESET=$(echo "$USAGE" | jq -r '.five_hour.resets_at // empty')
+    WEEKLY_ALL_PCT=$(echo "$USAGE" | jq -r '.seven_day.utilization // 0')
+    WEEKLY_ALL_RESET=$(echo "$USAGE" | jq -r '.seven_day.resets_at // empty')
+    WEEKLY_SONNET_PCT=$(echo "$USAGE" | jq -r '.seven_day_sonnet.utilization // 0')
+    WEEKLY_SONNET_RESET=$(echo "$USAGE" | jq -r '.seven_day_sonnet.resets_at // empty')
   fi
 
-  # --- Plan Usage Limits ---
-  SESSION_PCT=$(echo "$USAGE" | jq -r '.five_hour.utilization // 0')
-  SESSION_RESET=$(echo "$USAGE" | jq -r '.five_hour.resets_at // empty')
-  WEEKLY_ALL_PCT=$(echo "$USAGE" | jq -r '.seven_day.utilization // 0')
-  WEEKLY_ALL_RESET=$(echo "$USAGE" | jq -r '.seven_day.resets_at // empty')
-  WEEKLY_SONNET_PCT=$(echo "$USAGE" | jq -r '.seven_day_sonnet.utilization // 0')
-  WEEKLY_SONNET_RESET=$(echo "$USAGE" | jq -r '.seven_day_sonnet.resets_at // empty')
+  if ! echo "$OVERAGE_SPEND" | jq -e '.error' &>/dev/null; then
+    EXTRA_ENABLED=$(echo "$OVERAGE_SPEND" | jq -r '.is_enabled // false')
+    USED_CENTS=$(echo "$OVERAGE_SPEND" | jq -r '.used_credits // 0')
+    LIMIT_CENTS=$(echo "$OVERAGE_SPEND" | jq -r '.monthly_credit_limit // 0')
+  fi
 
+  if ! echo "$PREPAID" | jq -e '.error' &>/dev/null; then
+    BALANCE_CENTS=$(echo "$PREPAID" | jq -r '.amount // 0')
+    AUTO_RELOAD=$(echo "$PREPAID" | jq -r '.auto_reload_settings.enabled // false')
+  fi
+
+  # Defaults for first run
   SESSION_PCT=${SESSION_PCT:-0}
   WEEKLY_ALL_PCT=${WEEKLY_ALL_PCT:-0}
   WEEKLY_SONNET_PCT=${WEEKLY_SONNET_PCT:-0}
-
-  # --- Extra Usage ---
-  EXTRA_ENABLED=$(echo "$OVERAGE_SPEND" | jq -r '.is_enabled // false')
-  USED_CENTS=$(echo "$OVERAGE_SPEND" | jq -r '.used_credits // 0')
-  LIMIT_CENTS=$(echo "$OVERAGE_SPEND" | jq -r '.monthly_credit_limit // 0')
-
   USED_CENTS=${USED_CENTS:-0}
   LIMIT_CENTS=${LIMIT_CENTS:-0}
+  BALANCE_CENTS=${BALANCE_CENTS:-0}
+  EXTRA_ENABLED=${EXTRA_ENABLED:-false}
+  AUTO_RELOAD=${AUTO_RELOAD:-false}
 
   # Convert cents to dollars
   USED_DOLLARS=$(awk "BEGIN { printf \"%.2f\", $USED_CENTS / 100 }")
   LIMIT_DOLLARS=$(awk "BEGIN { printf \"%.2f\", $LIMIT_CENTS / 100 }")
+  BALANCE_DOLLARS=$(awk "BEGIN { printf \"%.2f\", $BALANCE_CENTS / 100 }")
   EXTRA_PCT=0
   if [ "$LIMIT_CENTS" -gt 0 ] 2>/dev/null; then
     EXTRA_PCT=$(awk "BEGIN { printf \"%.0f\", ($USED_CENTS / $LIMIT_CENTS) * 100 }")
   fi
-
-  # Prepaid credits balance
-  BALANCE_CENTS=$(echo "$PREPAID" | jq -r '.amount // 0')
-  BALANCE_CENTS=${BALANCE_CENTS:-0}
-  BALANCE_DOLLARS=$(awk "BEGIN { printf \"%.2f\", $BALANCE_CENTS / 100 }")
-  AUTO_RELOAD=$(echo "$PREPAID" | jq -r '.auto_reload_settings.enabled // false')
 
   SESSION_RESET_FMT=$(format_reset "$SESSION_RESET")
   WEEKLY_RESET_FMT=$(format_reset "$WEEKLY_ALL_RESET")

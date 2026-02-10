@@ -73,6 +73,10 @@ docker-compose
 mise
 bun
 uv
+bob
+tree-sitter-cli
+cargo-update
+tmux-sessionizer-bin
 
 # === File Management ===
 dolphin
