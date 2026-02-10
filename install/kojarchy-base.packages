@@ -33,7 +33,7 @@ hyprlock
 hyprpicker
 hyprpolkitagent
 hyprsunset
-hyprshot-git
+hyprshot
 hyprmon-bin
 hyprwhspr
 swaybg
@@ -116,9 +116,9 @@ qt5-wayland
 qt6-wayland
 qt5-quickcontrols2
 kvantum-qt5
-kvantum-git
-adwaita-qt5-git
-adwaita-qt6-git
+kvantum
+adwaita-qt5
+adwaita-qt6
 nwg-look
 breeze
 sassc
@@ -131,7 +131,7 @@ expac
 flatpak
 gum
 jq
-hyperfine-git
+hyperfine
 tesseract-data-eng
 hunspell-en_us
 bc
@@ -141,6 +141,6 @@ speedtest-cli
 # === Document & Image Viewing ===
 zathura
 zathura-pdf-mupdf
-mupdf-git
+mupdf
 qview
 ocrmypdf
