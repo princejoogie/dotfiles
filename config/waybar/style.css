@@ -14,6 +14,7 @@
 window#waybar {
   background: transparent;
   border-radius: 0px;
+  color: @text;
 }
 
 tooltip {
@@ -28,6 +29,7 @@ tooltip {
 #battery,
 #network,
 #pulseaudio {
+  color: @text;
   margin: 6px 6px 2px 0px;
   padding: 2px 8px;
 }
@@ -81,22 +83,26 @@ tooltip {
 }
 
 .custom-spotify {
+  color: @text;
   padding-left: 6px;
   padding-right: 6px;
   padding-top: 4px;
 }
 
 #custom-tailscale {
+  color: @text;
   padding-right: 6px;
   margin: 6px 6px 2px 0px;
 }
 
 #custom-tunnelbear {
+  color: @text;
   padding-right: 6px;
   margin: 6px 6px 2px 0px;
 }
 
 #custom-mouse-battery {
+  color: @text;
   margin: 6px 6px 2px 0px;
   padding: 2px 8px;
 }
@@ -104,6 +110,7 @@ tooltip {
 #custom-hyprwhspr {
   background-color: @base;
   border: 1px solid @surface1;
+  color: @text;
   border-radius: 6px;
   margin: 6px 6px 2px 2px;
   padding: 2px 8px;
