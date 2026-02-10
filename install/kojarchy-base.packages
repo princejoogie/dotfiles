@@ -172,13 +172,6 @@ inxi
 speedtest-cli
 tzupdate
 
-# === Printing ===
-cups
-cups-browsed
-cups-filters
-cups-pdf
-system-config-printer
-
 # === Document & Image Viewing ===
 evince
 imv
