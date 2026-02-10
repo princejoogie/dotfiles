@@ -20,7 +20,7 @@ fi
 
 # Set zsh as default shell
 if [[ "$SHELL" != *"zsh"* ]]; then
-  chsh -s /usr/bin/zsh
+  sudo chsh -s /usr/bin/zsh "$USER"
 fi
 
 echo "Shell: OK"
