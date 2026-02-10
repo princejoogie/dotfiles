@@ -92,7 +92,6 @@ docker-compose
 mise
 bun
 uv
-postgresql
 
 # === File Management ===
 dolphin
@@ -117,7 +116,6 @@ grim
 slurp
 wl-clipboard
 ffmpegthumbs
-chafa
 yt-dlp
 
 # === Fonts ===
