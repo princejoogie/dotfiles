@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Add named packages if missing. Returns false if it couldn't be done.
+
+if kojarchy-pkg-missing "$@"; then
+  sudo pacman -S --noconfirm --needed "$@" || exit 1
+fi
+
+for pkg in "$@"; do
+  if ! pacman -Q "$pkg" &>/dev/null; then
+    echo -e "\033[31mError: Package '$pkg' did not install\033[0m" >&2
+    exit 1
+  fi
+done
+
+exit 0

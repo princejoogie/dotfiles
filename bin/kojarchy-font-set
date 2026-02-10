@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Set the system-wide monospace font (terminal, hyprlock, waybar, fontconfig).
+
+font_name="$1"
+
+if [[ -z "$font_name" ]]; then
+  echo "Usage: kojarchy-font-set <font-name>"
+  echo "Available fonts: kojarchy-font-list"
+  exit 1
+fi
+
+if ! fc-list | grep -iq "$font_name"; then
+  echo "Font '$font_name' not found."
+  exit 1
+fi
+
+if [[ -f ~/.config/kitty/kitty.conf ]]; then
+  sed -i "s/^font_family .*/font_family $font_name/g" ~/.config/kitty/kitty.conf
+  pkill -USR1 kitty 2>/dev/null || true
+fi
+
+if [[ -f ~/.config/hypr/hyprlock.conf ]]; then
+  sed -i "s/font_family = .*/font_family = $font_name/g" ~/.config/hypr/hyprlock.conf
+fi
+
+if [[ -f ~/.config/waybar/style.css ]]; then
+  sed -i "s/font-family: .*/font-family: '$font_name';/g" ~/.config/waybar/style.css
+  kojarchy-restart-waybar 2>/dev/null || true
+fi
+
+if [[ -f ~/.config/fontconfig/fonts.conf ]] && command -v xmlstarlet &>/dev/null; then
+  xmlstarlet ed -L \
+    -u '//match[@target="pattern"][test/string="monospace"]/edit[@name="family"]/string' \
+    -v "$font_name" \
+    ~/.config/fontconfig/fonts.conf
+fi
+
+kojarchy-hook font-set "$font_name" 2>/dev/null || true
+
+echo "Font set to: $font_name"

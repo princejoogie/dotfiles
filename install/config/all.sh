@@ -15,3 +15,16 @@ run_logged $KOJARCHY_INSTALL/config/increase-sudo-tries.sh
 run_logged $KOJARCHY_INSTALL/config/increase-lockout-limit.sh
 run_logged $KOJARCHY_INSTALL/config/usb-autosuspend.sh
 run_logged $KOJARCHY_INSTALL/config/systemd-tweaks.sh
+run_logged $KOJARCHY_INSTALL/config/default-keyring.sh
+run_logged $KOJARCHY_INSTALL/config/firewall.sh
+run_logged $KOJARCHY_INSTALL/config/dns-resolver.sh
+run_logged $KOJARCHY_INSTALL/config/input-group.sh
+run_logged $KOJARCHY_INSTALL/config/detect-keyboard-layout.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/network.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/bluetooth.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/intel.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/set-wireless-regdom.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/fix-fkeys.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/fix-synaptic-touchpad.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/powerprofiles.sh
+run_logged $KOJARCHY_INSTALL/config/hidden-apps.sh

@@ -1,0 +1,2 @@
+#!/bin/bash
+cat "${KOJARCHY_PATH:-$HOME/dotfiles}/version"

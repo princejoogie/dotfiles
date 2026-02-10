@@ -1,0 +1,3 @@
+#!/bin/bash
+# Reset all Hyprland user configs to Kojarchy defaults.
+kojarchy-refresh-config hypr/hyprland.conf
