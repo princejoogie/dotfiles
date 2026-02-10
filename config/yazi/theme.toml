@@ -137,7 +137,7 @@ files = [
   { name = "dockerfile", text = "󰡨", fg = "#89b4fa" },
   { name = ".git-blame-ignore-revs", text = "", fg = "#fab387" },
   { name = ".nvmrc", text = "", fg = "#a6e3a1" },
-  { name = "hyprpaper.conf", text = "", fg = "#74c7ec" },
+  { name = "hyprland.conf", text = "", fg = "#74c7ec" },
   { name = ".prettierignore", text = "", fg = "#89b4fa" },
   { name = "rakefile", text = "", fg = "#313244" },
   { name = "code_of_conduct", text = "", fg = "#f38ba8" },
