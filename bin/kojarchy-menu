@@ -1,42 +1,44 @@
 #!/bin/bash
 
 # Kojarchy menu — unified launcher for all commands and scripts.
-# Bound to ALT+SHIFT+SPACE. Runs in a floating terminal via gum.
+# Bound to ALT+SHIFT+SPACE. Uses walker in dmenu mode.
 
-choice=$(gum choose \
-  "Screenshot" \
-  "Screenshot (clipboard)" \
-  "Screen record" \
-  "Color picker" \
-  "Lock screen" \
-  "Kill process" \
-  "Kill port" \
-  "Open file" \
-  "Calculator" \
-  "Camera" \
-  "Toggle waybar" \
-  "Toggle nightlight" \
-  "Toggle focus mode" \
-  "Toggle RGB" \
-  "Audio switch" \
-  "Keybindings" \
-  "Font set" \
-  "Package install" \
-  "Package remove" \
-  "Update system" \
-  "Refresh hyprland" \
-  "Refresh waybar" \
-  "Debug info" \
-  "Close all windows" \
-  "Reboot" \
-  "Shutdown" \
-)
+OPTIONS="Screenshot
+Screenshot (clipboard)
+Screen record
+Color picker
+Lock screen
+Kill process
+Kill port
+Open file
+Calculator
+Camera
+Toggle waybar
+Toggle nightlight
+Toggle focus mode
+Toggle RGB
+Audio switch
+Keybindings
+Font set
+Package install
+Package remove
+Update system
+Refresh hyprland
+Refresh waybar
+Debug info
+Close all windows
+Reboot
+Shutdown"
+
+choice=$(echo "$OPTIONS" | walker --dmenu --width 295 --minheight 1 --maxheight 630 -p "Kojarchy…" 2>/dev/null)
+
+[ -z "$choice" ] && exit 0
 
 case "$choice" in
-  "Screenshot")              sleep 0.3 && kojarchy-cmd-screenshot region edit ;;
-  "Screenshot (clipboard)")  sleep 0.3 && kojarchy-cmd-screenshot region clipboard ;;
-  "Screen record")           sleep 0.3 && kojarchy-cmd-screenrecord ;;
-  "Color picker")            sleep 0.3 && hyprpicker | { read color; trimmed=$(printf "%s" "$color"); printf "%s" "$trimmed" | wl-copy; notify-send "Copied $color to clipboard"; } ;;
+  "Screenshot")              kojarchy-cmd-screenshot region edit ;;
+  "Screenshot (clipboard)")  kojarchy-cmd-screenshot region clipboard ;;
+  "Screen record")           kojarchy-cmd-screenrecord ;;
+  "Color picker")            hyprpicker | { read color; trimmed=$(printf "%s" "$color"); printf "%s" "$trimmed" | wl-copy; notify-send "Copied $color to clipboard"; } ;;
   "Lock screen")             kojarchy-lock-screen ;;
   "Kill process")            kojarchy-kill-process ;;
   "Kill port")               kojarchy-kill-port ;;
@@ -49,7 +51,7 @@ case "$choice" in
   "Toggle RGB")              kojarchy-toggle-rgb ;;
   "Audio switch")            kojarchy-cmd-audio-switch ;;
   "Keybindings")             kojarchy-menu-keybindings ;;
-  "Font set")                font=$(kojarchy-font-list | gum filter --placeholder "Pick a font...") && kojarchy-font-set "$font" ;;
+  "Font set")                font=$(kojarchy-font-list | walker --dmenu -p "Pick a font…" 2>/dev/null) && kojarchy-font-set "$font" ;;
   "Package install")         kojarchy-pkg-install ;;
   "Package remove")          kojarchy-pkg-remove ;;
   "Update system")           kojarchy-update ;;
