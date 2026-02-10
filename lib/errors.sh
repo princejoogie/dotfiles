@@ -71,8 +71,16 @@ catch_errors() {
   gum style "This command halted with exit code $exit_code:"
   show_failed_script_or_command
 
+  echo
+  gum style --foreground 245 "If you need help, open an issue at:"
+  gum style --foreground 4 "https://github.com/princejoogie/dotfiles/issues"
+  echo
+
   while true; do
-    options=("Retry installation" "View full log" "Exit")
+    local options=()
+    options+=("Retry installation")
+    options+=("View full log")
+    options+=("Exit")
 
     choice=$(gum choose "${options[@]}" --header "What would you like to do?" --height 5 --padding "1 $PADDING_LEFT")
 

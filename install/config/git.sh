@@ -1,4 +1,4 @@
-# Prompt for git identity if not already set
+# Prompt for git identity if not already set (runs via source, not run_logged)
 if [[ -z "$(git config --global user.name)" ]]; then
   name=$(gum input --placeholder "Your full name" --header "Git user.name:" </dev/tty)
   if [[ -n "$name" ]]; then
@@ -13,4 +13,4 @@ if [[ -z "$(git config --global user.email)" ]]; then
   fi
 fi
 
-echo "Git: OK"
+echo "Git: OK" >>"$KOJARCHY_LOG"

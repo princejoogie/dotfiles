@@ -5,7 +5,7 @@ run_logged $KOJARCHY_INSTALL/config/tmux.sh
 run_logged $KOJARCHY_INSTALL/config/cargo.sh
 run_logged $KOJARCHY_INSTALL/config/neovim.sh
 run_logged $KOJARCHY_INSTALL/config/mise.sh
-run_logged $KOJARCHY_INSTALL/config/git.sh
+source $KOJARCHY_INSTALL/config/git.sh
 run_logged $KOJARCHY_INSTALL/config/docker.sh
 run_logged $KOJARCHY_INSTALL/config/gtk.sh
 run_logged $KOJARCHY_INSTALL/config/gpg.sh
