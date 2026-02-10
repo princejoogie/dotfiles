@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# Kill a process listening on a port selected via wofi dmenu
 
 set -euo pipefail
 

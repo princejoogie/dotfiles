@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# Toggle focus mode: black wallpaper, hide waybar, move to workspace 10, hide cursor
 
 set -euo pipefail
 
