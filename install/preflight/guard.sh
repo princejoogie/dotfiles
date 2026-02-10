@@ -21,4 +21,9 @@ if ! ping -c 1 -W 3 1.1.1.1 &>/dev/null && ! ping -c 1 -W 3 8.8.8.8 &>/dev/null;
   abort "Internet connection"
 fi
 
+# Clear stale pacman lock from previous interrupted runs
+if [[ -f /var/lib/pacman/db.lck ]]; then
+  sudo rm -f /var/lib/pacman/db.lck
+fi
+
 echo "Guards: OK"
