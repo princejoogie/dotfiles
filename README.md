@@ -6,9 +6,29 @@ Personal Hyprland desktop environment for Arch Linux, automated from a fresh `ar
 ![demo_2](.github/assets/demo_2.png)
 ![demo_3](.github/assets/demo_3.png)
 
+## Arch Linux Installation
+
+Boot from the Arch ISO and run `archinstall`. Configure these settings (leave anything not mentioned as-is):
+
+| Section | Option |
+|:--------|:-------|
+| Mirrors and repositories | Select regions > Your country |
+| Disk configuration | Partitioning > Default partitioning layout > Select disk (with space + return) |
+| Disk > File system | btrfs (default structure: yes + use compression) |
+| Disk > Disk encryption | Encryption type: LUKS + Encryption password + Partitions (select the one) |
+| Hostname | Give your computer a name |
+| Bootloader | Limine |
+| Authentication > Root password | Set yours |
+| Authentication > User account | Add a user > Superuser: Yes > Confirm and exit |
+| Applications > Audio | pipewire |
+| Network configuration | Copy ISO network config |
+| Timezone | Set yours |
+
+Once done, let `archinstall` finish and reboot into your new system.
+
 ## Install
 
-After a fresh Arch Linux install via `archinstall`, reboot and run:
+After rebooting into your fresh Arch Linux install, run:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/princejoogie/dotfiles/refs/heads/main/boot.sh | bash
@@ -79,6 +99,8 @@ The installer handles everything: packages, configs, services, shell setup, and 
 │   ├── gpg/                 # GPG keyserver config (multiple fallbacks)
 │   └── systemd/             # Faster shutdown timeout
 ├── bin/                     # CLI utilities -> ~/.local/custom/bin/
+│   ├── kojarchy-menu        # Unified gum-based launcher (ALT+SHIFT+SPACE)
+│   ├── kojarchy-power-menu  # Power menu (lock/reboot/shutdown)
 │   ├── kojarchy-update      # Update system (git pull + packages + migrations)
 │   ├── kojarchy-migrate     # Run pending migrations
 │   ├── kojarchy-pkg-*       # Package management helpers (add, drop, install TUI)
@@ -86,7 +108,12 @@ The installer handles everything: packages, configs, services, shell setup, and 
 │   ├── kojarchy-restart-*   # Restart individual services (waybar, pipewire, bluetooth, etc.)
 │   ├── kojarchy-refresh-*   # Reset individual configs to defaults
 │   ├── kojarchy-font-*      # Font management (set, list, current)
-│   ├── kojarchy-lock-screen  # Lock screen via hyprlock
+│   ├── kojarchy-toggle-*    # Toggles (waybar, nightlight, focusmode, RGB)
+│   ├── kojarchy-kill-*      # Kill process or port (via wofi)
+│   ├── kojarchy-open-file   # Browse and open files (via wofi)
+│   ├── kojarchy-calculator  # Wofi calculator
+│   ├── kojarchy-camera      # Camera viewer
+│   ├── kojarchy-lock-screen # Lock screen via hyprlock
 │   ├── kojarchy-debug       # System debug info dump
 │   ├── kojarchy-version     # Show version, branch, last package update
 │   ├── kojarchy-hook        # Run user hooks
@@ -206,7 +233,8 @@ All bindings use `ALT` as the main modifier. Press `ALT + /` to search all keybi
 |:--------|:-------|
 | `ALT + Return` | Open terminal |
 | `ALT + Space` | App launcher (wofi drun) |
-| `ALT + CTRL + Space` | Dmenu scripts launcher |
+| `ALT + SHIFT + Space` | Kojarchy menu (unified launcher) |
+| `ALT + CTRL + Space` | Wofi command launcher |
 | `ALT + Q` | Kill active window |
 | `ALT + F` | Fullscreen |
 | `ALT + V` | Toggle floating |
@@ -234,6 +262,8 @@ All bindings use `ALT` as the main modifier. Press `ALT + /` to search all keybi
 
 | Command | Description |
 |:--------|:------------|
+| `kojarchy-menu` | Unified gum-based launcher for all commands |
+| `kojarchy-power-menu` | Power menu (lock/reboot/shutdown) |
 | `kojarchy-update` | Full system update |
 | `kojarchy-version` | Show version |
 | `kojarchy-debug` | System debug info dump |
@@ -246,6 +276,15 @@ All bindings use `ALT` as the main modifier. Press `ALT + /` to search all keybi
 | `kojarchy-font-set` | Change system monospace font |
 | `kojarchy-menu-keybindings` | Interactive keybinding search |
 | `kojarchy-pkg-install` | TUI package browser |
+| `kojarchy-toggle-waybar` | Toggle waybar with gaps/rounding |
+| `kojarchy-toggle-nightlight` | Toggle hyprsunset nightlight |
+| `kojarchy-toggle-focusmode` | Focus mode (black wallpaper, hide UI) |
+| `kojarchy-toggle-rgb` | Toggle RGB lights via OpenRGB |
+| `kojarchy-kill-process` | Kill a process (via wofi) |
+| `kojarchy-kill-port` | Kill a process by port (via wofi) |
+| `kojarchy-open-file` | Browse and open files (via wofi) |
+| `kojarchy-calculator` | Wofi calculator |
+| `kojarchy-camera` | Camera viewer |
 
 ## Optional Packages
 
