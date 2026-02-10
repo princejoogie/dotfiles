@@ -20,11 +20,11 @@ echo ""
 # Clone or update omarchy
 if [[ -d "$OMARCHY_LOCAL/.git" ]]; then
   echo "Updating omarchy clone..."
-  git -C "$OMARCHY_LOCAL" fetch origin main
-  git -C "$OMARCHY_LOCAL" reset --hard origin/main
+  git -C "$OMARCHY_LOCAL" fetch origin dev
+  git -C "$OMARCHY_LOCAL" reset --hard origin/dev
 else
   echo "Cloning omarchy..."
-  git clone --single-branch --branch main "$OMARCHY_REPO" "$OMARCHY_LOCAL"
+  git clone --single-branch --branch dev "$OMARCHY_REPO" "$OMARCHY_LOCAL"
 fi
 
 OMARCHY_LATEST=$(git -C "$OMARCHY_LOCAL" rev-parse HEAD)
