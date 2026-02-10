@@ -5,7 +5,12 @@ run_logged $KOJARCHY_INSTALL/config/tmux.sh
 run_logged $KOJARCHY_INSTALL/config/cargo.sh
 run_logged $KOJARCHY_INSTALL/config/neovim.sh
 run_logged $KOJARCHY_INSTALL/config/mise.sh
+# Pause log tail for interactive git prompt
+stop_log_output
+clear_logo
 source $KOJARCHY_INSTALL/config/git.sh
+clear_logo
+start_log_output
 run_logged $KOJARCHY_INSTALL/config/docker.sh
 run_logged $KOJARCHY_INSTALL/config/gtk.sh
 run_logged $KOJARCHY_INSTALL/config/gpg.sh
