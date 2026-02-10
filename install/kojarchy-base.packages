@@ -12,6 +12,8 @@ zip
 7zip
 
 # === Networking ===
+avahi
+nss-mdns
 bind
 net-tools
 networkmanager
@@ -22,6 +24,7 @@ tailscale
 traceroute
 wget
 wireguard-tools
+wireless-regdb
 
 # === Graphics (generic) ===
 mesa-utils
@@ -37,7 +40,9 @@ hyprshot
 hyprmon-bin
 hyprwhspr
 swaybg
+swayosd
 waybar
+wayfreeze
 dunst
 wofi
 wofi-calc
@@ -45,11 +50,19 @@ xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-kde
 xdg-utils
+xdg-terminal-exec
 xorg-server
 xorg-xhost
 xorg-xinit
 xwaylandvideobridge
 sddm
+uwsm
+gnome-keyring
+libsecret
+bolt
+playerctl
+brightnessctl
+bluetui
 
 # === Terminal & Shell ===
 kitty
@@ -70,6 +83,7 @@ git-delta
 github-cli
 docker
 docker-compose
+docker-buildx
 mise
 bun
 uv
@@ -77,6 +91,13 @@ bob
 tree-sitter-cli
 cargo-update
 tmux-sessionizer-bin
+clang
+llvm
+rust
+opencode
+ripgrep
+lazydocker
+lazygit
 
 # === File Management ===
 dolphin
@@ -85,6 +106,10 @@ fd
 gdu
 ncdu
 tree
+gvfs-mtp
+gvfs-nfs
+gvfs-smb
+exfatprogs
 
 # === Media & Graphics ===
 pipewire
@@ -94,9 +119,12 @@ pipewire-pulse
 gst-plugin-pipewire
 libpulse
 wireplumber
-pavucontrol
+alsa-utils
+wiremix
 imagemagick
 graphicsmagick
+mpv
+satty
 grim
 slurp
 wl-clipboard
@@ -104,13 +132,14 @@ ffmpegthumbs
 yt-dlp
 
 # === Fonts ===
-otf-geist-mono-nerd
 ttf-firacode-nerd
 ttf-nerd-fonts-symbols
+fontconfig
+noto-fonts
 noto-fonts-cjk
-noto-color-emoji-fontconfig
+noto-fonts-emoji
+noto-fonts-extra
 woff2-font-awesome
-apple-fonts
 font-manager
 
 # === Qt/GTK Theming ===
@@ -127,6 +156,7 @@ sassc
 
 # === Firewall ===
 ufw
+ufw-docker
 
 # === Misc Tools ===
 expac
@@ -138,11 +168,24 @@ tesseract-data-eng
 hunspell-en_us
 bc
 lshw
+inxi
 speedtest-cli
+tzupdate
+
+# === Printing ===
+cups
+cups-browsed
+cups-filters
+cups-pdf
+system-config-printer
 
 # === Document & Image Viewing ===
-zathura
-zathura-pdf-mupdf
-mupdf
-qview
-ocrmypdf
+evince
+imv
+
+# === Browsers ===
+helium-browser-bin
+
+# === System Utilities ===
+gnome-calculator
+gnome-disk-utility

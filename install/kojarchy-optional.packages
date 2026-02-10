@@ -29,7 +29,6 @@ uxplay
 
 # === Browsers ===
 chromium
-helium-browser-bin
 
 # === Remote ===
 rustdesk-bin
