@@ -20,6 +20,7 @@ echo
 gum style --padding "0 0 0 $PADDING_LEFT" "Reboot to start using your new desktop."
 echo
 
-if gum confirm "Reboot now?" </dev/tty; then
+if gum confirm --default --affirmative "Reboot now" --negative "Later" </dev/tty; then
+  echo "Rebooting system..." >>"$KOJARCHY_LOG"
   sudo reboot
 fi
