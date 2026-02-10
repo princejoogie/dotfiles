@@ -88,7 +88,5 @@ $DIFF_STAT
 5. After going through all items, apply ONLY the changes I confirmed
 6. Adapt all changes to kojarchy naming/structure — do not copy omarchy references verbatim
 7. Do NOT commit — just make the file changes
-8. After applying, print a summary of what was changed and remind me to:
-   - Review with: git diff
-   - Update baseline: sed -i 's/^OMARCHY_BASELINE=.*/OMARCHY_BASELINE=\"$OMARCHY_LATEST\"/' $KOJARCHY_DIR/check-upstream.sh
-   - Commit when ready"
+8. After applying, print a summary of what was changed and remind me to review with git diff and commit when ready
+9. Then update the OMARCHY_BASELINE variable in $KOJARCHY_DIR/check-upstream.sh from \"$OMARCHY_BASELINE\" to \"$OMARCHY_LATEST\" by editing the file directly"
