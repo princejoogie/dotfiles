@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Gracefully close all Hyprland windows before shutting down.
+# Schedules poweroff, then closes windows to give apps time to save state.
+
+sudo shutdown -P +0 &
+kojarchy-hyprland-window-close-all
