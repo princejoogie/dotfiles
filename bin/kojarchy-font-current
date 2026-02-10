@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Returns the current monospace font from the Waybar stylesheet.
+
+grep -oP 'font-family:\s*["'\''"]?\K[^;"'\'']+' ~/.config/waybar/style.css | head -n1

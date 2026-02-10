@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Check if kernel was updated and offer reboot
+if [ "$(uname -r | sed 's/-arch/\.arch/')" != "$(pacman -Q linux | awk '{print $2}')" ]; then
+  gum confirm "Linux kernel has been updated. Reboot?" && kojarchy-cmd-reboot
+elif [ -f "$HOME/.local/state/kojarchy/reboot-required" ]; then
+  gum confirm "Updates require reboot. Ready?" && kojarchy-cmd-reboot
+fi
+
+# Restart any services that flagged themselves
+for file in "$HOME"/.local/state/kojarchy/restart-*-required; do
+  if [ -f "$file" ]; then
+    filename=$(basename "$file")
+    service=$(echo "$filename" | sed 's/restart-\(.*\)-required/\1/')
+    echo "Restarting $service"
+    kojarchy-state clear "$filename"
+    kojarchy-restart-"$service" 2>/dev/null || true
+  fi
+done

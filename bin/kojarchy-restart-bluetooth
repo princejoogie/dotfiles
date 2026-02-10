@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "Unblocking bluetooth..."
+rfkill unblock bluetooth
+rfkill list bluetooth

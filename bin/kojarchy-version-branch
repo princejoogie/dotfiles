@@ -1,0 +1,2 @@
+#!/bin/bash
+git -C "${KOJARCHY_PATH:-$HOME/dotfiles}" rev-parse --abbrev-ref HEAD

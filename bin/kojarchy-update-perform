@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+# Capture update logs
+exec > >(tee "/tmp/kojarchy-update.log") 2>&1
+
+# Perform all update steps
+kojarchy-update-time
+kojarchy-update-system-pkgs
+kojarchy-migrate
+kojarchy-update-aur-pkgs
+kojarchy-update-orphan-pkgs
+kojarchy-hook post-update
+kojarchy-update-restart
