@@ -40,6 +40,7 @@ The installer handles everything: packages, configs, services, shell setup, and 
 ~/dotfiles/
 ├── boot.sh                  # Bootstrap (curl-pipe-bash entry point)
 ├── install.sh               # Main orchestrator
+├── update.sh                # Interactive updater (re-deploy configs, packages, etc.)
 ├── lib/                     # Helpers (presentation, logging, errors, packages)
 ├── install/
 │   ├── preflight/           # Guard checks, install log setup
@@ -105,6 +106,33 @@ monitor=,2560x1440@240,auto,1
 
 # Add your own customizations at the bottom of ~/.zshrc
 ```
+
+## Updating
+
+After changing configs or pulling new updates from the repo:
+
+```bash
+# Quick: defaults (hypr, zsh) update automatically — just git pull
+cd ~/dotfiles && git pull
+
+# Interactive: choose what to re-deploy
+~/dotfiles/update.sh
+```
+
+`update.sh` lets you pick what to reload:
+
+| Option | What it does |
+|:-------|:-------------|
+| Packages | Installs new/missing packages from package lists |
+| Configs | Re-copies `config/` to `~/.config/` (overwrites local changes) |
+| Bin scripts | Re-links `bin/` to `~/.local/custom/bin/` |
+| Shell | Re-deploys `~/.zshrc` from `default/zshrc` |
+| SDDM theme | Re-copies theme to `/usr/share/sddm/themes/macos/` |
+| Cargo packages | Installs any missing cargo tools |
+| Neovim plugins | Syncs lazy.nvim plugins |
+| Everything | All of the above |
+
+> **Note**: For most day-to-day changes, `git pull` is enough. The two-layer system means `default/` changes (keybindings, autostart, shell aliases, etc.) take effect immediately since they're sourced at runtime. Only use `update.sh` when you need to re-deploy `config/` files or install new packages.
 
 ## Customization
 
