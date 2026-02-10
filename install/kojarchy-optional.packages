@@ -14,14 +14,14 @@ discord
 vesktop
 legcord
 slack-desktop
-telegram-desktop-bin
+telegram-desktop
 
 # === Productivity ===
 notion-calendar-electron
 obs-studio
 obs-backgroundremoval
 audacity
-blender-bin
+blender
 
 # === Video Calling ===
 zoom
