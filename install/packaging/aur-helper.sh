@@ -1,3 +1,14 @@
+# Enable multilib repo (needed for lib32-* packages like lib32-nvidia-utils)
+if ! grep -q '^\[multilib\]' /etc/pacman.conf; then
+  echo "Enabling multilib repository..."
+  sudo tee -a /etc/pacman.conf >/dev/null <<'EOF'
+
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+EOF
+  sudo pacman -Sy
+fi
+
 # Install yay if not present
 if ! command -v yay &>/dev/null; then
   echo "Installing yay AUR helper..."
