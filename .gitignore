@@ -1,14 +1,4 @@
-nvim/.config/nvm/
-nvim/.config/gh/
-nvim/.config/devcert/
-nvim/.config/zsh/
-nvim/.config/github-copilot/
-nvim/.config/nextjs-nodejs/
-nvim/.config/wslu/
-nvim/.config/nvim/plugin/
-shell/.local/share 
-shell/.local/state
-shell/.local/bin
+config/nvim/plugin/
 
 .private.sh
 

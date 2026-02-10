@@ -1,0 +1,25 @@
+# starship
+if [[ -x "$(command -v starship)" ]]; then
+  eval "$(starship init zsh)"
+fi
+
+# mise (replaces fnm)
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
+# uv
+if [[ -x "$(command -v uv)" ]]; then
+  eval "$(uv generate-shell-completion zsh)"
+fi
+if [[ -x "$(command -v uvx)" ]]; then
+  eval "$(uvx --generate-shell-completion zsh)"
+fi
+
+# direnv
+if [[ -x "$(command -v direnv)" ]]; then
+  eval "$(direnv hook zsh)"
+fi
+
+# bun
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
