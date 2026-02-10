@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# Start and stop a screen recording, saved to ~/Videos by default.
+# Alternative location can be set via KOJARCHY_SCREENRECORD_DIR or XDG_VIDEOS_DIR.
+
+[[ -f ~/.config/user-dirs.dirs ]] && source ~/.config/user-dirs.dirs
+OUTPUT_DIR="${KOJARCHY_SCREENRECORD_DIR:-${XDG_VIDEOS_DIR:-$HOME/Videos}}"
+
+if [[ ! -d "$OUTPUT_DIR" ]]; then
+  mkdir -p "$OUTPUT_DIR" || {
+    notify-send "Screen recording directory does not exist: $OUTPUT_DIR" -u critical -t 3000
+    exit 1
+  }
+fi
+
+DESKTOP_AUDIO="false"
+MICROPHONE_AUDIO="false"
+STOP_RECORDING="false"
+
+for arg in "$@"; do
+  case "$arg" in
+    --with-desktop-audio) DESKTOP_AUDIO="true" ;;
+    --with-microphone-audio) MICROPHONE_AUDIO="true" ;;
+    --stop-recording) STOP_RECORDING="true" ;;
+  esac
+done
+
+start_screenrecording() {
+  local filename="$OUTPUT_DIR/screenrecording-$(date +'%Y-%m-%d_%H-%M-%S').mp4"
+  local audio_args=""
+
+  if [[ "$DESKTOP_AUDIO" == "true" ]] || [[ "$MICROPHONE_AUDIO" == "true" ]]; then
+    local audio_devices=""
+    [[ "$DESKTOP_AUDIO" == "true" ]] && audio_devices+="default_output"
+    if [[ "$MICROPHONE_AUDIO" == "true" ]]; then
+      [[ -n "$audio_devices" ]] && audio_devices+="|"
+      audio_devices+="default_input"
+    fi
+    audio_args="-a $audio_devices"
+  fi
+
+  if command -v gpu-screen-recorder &>/dev/null; then
+    gpu-screen-recorder -w portal -f 60 -fallback-cpu-encoding yes -o "$filename" $audio_args -ac aac &
+  elif command -v wf-recorder &>/dev/null; then
+    local wf_audio=""
+    [[ "$DESKTOP_AUDIO" == "true" ]] && wf_audio="--audio"
+    wf-recorder $wf_audio -f "$filename" &
+  else
+    notify-send "No screen recorder found" "Install gpu-screen-recorder or wf-recorder" -u critical -t 3000
+    exit 1
+  fi
+
+  notify-send "Screen recording started" -t 2000
+}
+
+stop_screenrecording() {
+  if pgrep -f "^gpu-screen-recorder" >/dev/null; then
+    pkill -SIGINT -f "^gpu-screen-recorder"
+  elif pgrep -f "^wf-recorder" >/dev/null; then
+    pkill -SIGINT -f "^wf-recorder"
+  fi
+
+  # Wait up to 5 seconds for clean exit
+  local count=0
+  while (pgrep -f "^gpu-screen-recorder" >/dev/null || pgrep -f "^wf-recorder" >/dev/null) && [ $count -lt 50 ]; do
+    sleep 0.1
+    count=$((count + 1))
+  done
+
+  if pgrep -f "^gpu-screen-recorder" >/dev/null || pgrep -f "^wf-recorder" >/dev/null; then
+    pkill -9 -f "^gpu-screen-recorder" 2>/dev/null
+    pkill -9 -f "^wf-recorder" 2>/dev/null
+    notify-send "Screen recording error" "Recording had to be force-killed. Video may be corrupted." -u critical -t 5000
+  else
+    notify-send "Screen recording saved to $OUTPUT_DIR" -t 2000
+  fi
+}
+
+screenrecording_active() {
+  pgrep -f "^gpu-screen-recorder" >/dev/null || pgrep -f "^wf-recorder" >/dev/null
+}
+
+if screenrecording_active; then
+  stop_screenrecording
+elif [[ "$STOP_RECORDING" == "false" ]]; then
+  start_screenrecording
+else
+  exit 1
+fi

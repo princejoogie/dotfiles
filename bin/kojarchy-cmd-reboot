@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Gracefully close all Hyprland windows before rebooting.
+# Schedules reboot, then closes windows to give apps time to save state.
+
+sudo shutdown -r +0 &
+kojarchy-hyprland-window-close-all

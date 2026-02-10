@@ -8,3 +8,10 @@ run_logged $KOJARCHY_INSTALL/config/mise.sh
 run_logged $KOJARCHY_INSTALL/config/git.sh
 run_logged $KOJARCHY_INSTALL/config/docker.sh
 run_logged $KOJARCHY_INSTALL/config/gtk.sh
+run_logged $KOJARCHY_INSTALL/config/gpg.sh
+run_logged $KOJARCHY_INSTALL/config/mimetypes.sh
+run_logged $KOJARCHY_INSTALL/config/ssh-flakiness.sh
+run_logged $KOJARCHY_INSTALL/config/increase-sudo-tries.sh
+run_logged $KOJARCHY_INSTALL/config/increase-lockout-limit.sh
+run_logged $KOJARCHY_INSTALL/config/usb-autosuspend.sh
+run_logged $KOJARCHY_INSTALL/config/systemd-tweaks.sh

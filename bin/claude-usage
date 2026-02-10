@@ -1,0 +1,193 @@
+#!/bin/bash
+
+BASE="https://claude.ai/api/organizations/$CLAUDE_ORG"
+UA="User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0"
+
+fetch() {
+  curl -s "$BASE/$1" -H "$UA" -H "$CLAUDE_COOKIE"
+}
+
+# Fetch all endpoints in parallel
+USAGE_FILE=$(mktemp)
+OVERAGE_FILE=$(mktemp)
+PREPAID_FILE=$(mktemp)
+trap 'rm -f "$USAGE_FILE" "$OVERAGE_FILE" "$PREPAID_FILE"' EXIT
+
+fetch "usage" > "$USAGE_FILE" &
+fetch "overage_spend_limit" > "$OVERAGE_FILE" &
+fetch "prepaid/credits" > "$PREPAID_FILE" &
+wait
+
+USAGE=$(cat "$USAGE_FILE")
+OVERAGE_SPEND=$(cat "$OVERAGE_FILE")
+PREPAID=$(cat "$PREPAID_FILE")
+
+# --- Plan Usage Limits ---
+SESSION_PCT=$(echo "$USAGE" | jq -r '.five_hour.utilization // 0')
+SESSION_RESET=$(echo "$USAGE" | jq -r '.five_hour.resets_at // empty')
+WEEKLY_ALL_PCT=$(echo "$USAGE" | jq -r '.seven_day.utilization // 0')
+WEEKLY_ALL_RESET=$(echo "$USAGE" | jq -r '.seven_day.resets_at // empty')
+WEEKLY_SONNET_PCT=$(echo "$USAGE" | jq -r '.seven_day_sonnet.utilization // 0')
+WEEKLY_SONNET_RESET=$(echo "$USAGE" | jq -r '.seven_day_sonnet.resets_at // empty')
+
+# --- Extra Usage ---
+EXTRA_ENABLED=$(echo "$OVERAGE_SPEND" | jq -r '.is_enabled')
+USED_CENTS=$(echo "$OVERAGE_SPEND" | jq -r '.used_credits // 0')
+LIMIT_CENTS=$(echo "$OVERAGE_SPEND" | jq -r '.monthly_credit_limit // 0')
+CURRENCY=$(echo "$OVERAGE_SPEND" | jq -r '.currency // "USD"')
+
+# Convert cents to dollars
+USED_DOLLARS=$(awk "BEGIN { printf \"%.2f\", $USED_CENTS / 100 }")
+LIMIT_DOLLARS=$(awk "BEGIN { printf \"%.2f\", $LIMIT_CENTS / 100 }")
+EXTRA_PCT=0
+if [ "$LIMIT_CENTS" -gt 0 ] 2>/dev/null; then
+  EXTRA_PCT=$(awk "BEGIN { printf \"%.0f\", ($USED_CENTS / $LIMIT_CENTS) * 100 }")
+fi
+
+# Prepaid credits balance
+BALANCE_CENTS=$(echo "$PREPAID" | jq -r '.amount // 0')
+BALANCE_DOLLARS=$(awk "BEGIN { printf \"%.2f\", $BALANCE_CENTS / 100 }")
+AUTO_RELOAD=$(echo "$PREPAID" | jq -r '.auto_reload_settings.enabled // false')
+
+# Format reset times
+format_reset() {
+  local reset_at="$1"
+  if [ -z "$reset_at" ] || [ "$reset_at" = "null" ]; then
+    echo "N/A"
+    return
+  fi
+  local reset_epoch=$(date -d "$reset_at" +%s 2>/dev/null)
+  local now_epoch=$(date +%s)
+  local diff=$((reset_epoch - now_epoch))
+
+  if [ "$diff" -le 0 ]; then
+    echo "now"
+    return
+  fi
+
+  # Show relative time + absolute day/time
+  local days=$((diff / 86400))
+  local hours=$(( (diff % 86400) / 3600 ))
+  local mins=$(( (diff % 3600) / 60 ))
+
+  local relative=""
+  if [ "$days" -gt 0 ]; then
+    local day_label="day"; [ "$days" -gt 1 ] && day_label="days"
+    relative="${days} ${day_label} ${hours}h ${mins}m"
+  elif [ "$hours" -gt 0 ]; then
+    relative="${hours}h ${mins}m"
+  else
+    relative="${mins}m"
+  fi
+
+  local absolute
+  local today=$(date +%Y-%m-%d)
+  local tomorrow=$(date -d "+1 day" +%Y-%m-%d)
+  local reset_date=$(date -d "$reset_at" +%Y-%m-%d)
+  local reset_time=$(date -d "$reset_at" '+%-I:%M %p')
+
+  if [ "$reset_date" = "$today" ]; then
+    absolute="today $reset_time"
+  elif [ "$reset_date" = "$tomorrow" ]; then
+    absolute="tomorrow $reset_time"
+  else
+    absolute="$(date -d "$reset_at" '+%a %-I:%M %p')"
+  fi
+
+  echo "$absolute (in $relative)"
+}
+
+SESSION_RESET_FMT=$(format_reset "$SESSION_RESET")
+WEEKLY_RESET_FMT=$(format_reset "$WEEKLY_ALL_RESET")
+
+# Progress bar generator
+bar() {
+  local pct=$1
+  local width=${2:-40}
+  local filled=$(awk "BEGIN { printf \"%d\", ($pct / 100) * $width }")
+  local empty=$((width - filled))
+  local bar=""
+  for ((i = 0; i < filled; i++)); do bar+="█"; done
+  for ((i = 0; i < empty; i++)); do bar+="░"; done
+  echo "$bar"
+}
+
+# Colors
+BOLD="\033[1m"
+DIM="\033[2m"
+BLUE="\033[34m"
+GREEN="\033[32m"
+YELLOW="\033[33m"
+RED="\033[31m"
+CYAN="\033[36m"
+RESET="\033[0m"
+
+# Color based on percentage
+pct_color() {
+  local pct=$1
+  if [ "$pct" -ge 80 ] 2>/dev/null; then echo -e "$RED"
+  elif [ "$pct" -ge 50 ] 2>/dev/null; then echo -e "$YELLOW"
+  else echo -e "$BLUE"
+  fi
+}
+
+# Display
+clear
+echo ""
+echo -e "${BOLD}  Plan usage limits${RESET}"
+echo -e "  ─────────────────────────────────────────────────────────"
+echo ""
+
+C=$(pct_color "${SESSION_PCT%.*}")
+echo -e "  ${BOLD}Current session${RESET}"
+echo -e "  ${DIM}Resets ${SESSION_RESET_FMT}${RESET}"
+echo -e "  ${C}$(bar "${SESSION_PCT%.*}")${RESET}  ${SESSION_PCT%.*}% used"
+echo ""
+
+echo -e "  ${BOLD}Weekly limits${RESET}"
+echo ""
+
+C=$(pct_color "${WEEKLY_ALL_PCT%.*}")
+echo -e "  ${BOLD}All models${RESET}"
+echo -e "  ${DIM}Resets ${WEEKLY_RESET_FMT}${RESET}"
+echo -e "  ${C}$(bar "${WEEKLY_ALL_PCT%.*}")${RESET}  ${WEEKLY_ALL_PCT%.*}% used"
+echo ""
+
+C=$(pct_color "${WEEKLY_SONNET_PCT%.*}")
+echo -e "  ${BOLD}Sonnet only${RESET}"
+if [ "${WEEKLY_SONNET_PCT%.*}" = "0" ]; then
+  echo -e "  ${DIM}You haven't used Sonnet yet${RESET}"
+else
+  echo -e "  ${DIM}Resets $(format_reset "$WEEKLY_SONNET_RESET")${RESET}"
+fi
+echo -e "  ${C}$(bar "${WEEKLY_SONNET_PCT%.*}")${RESET}  ${WEEKLY_SONNET_PCT%.*}% used"
+echo ""
+
+echo -e "  ─────────────────────────────────────────────────────────"
+echo ""
+
+echo -e "${BOLD}  Extra usage${RESET}"
+if [ "$EXTRA_ENABLED" = "true" ]; then
+  echo -e "  ${GREEN}ON${RESET} ${DIM}Extra usage enabled${RESET}"
+else
+  echo -e "  ${RED}OFF${RESET} ${DIM}Extra usage disabled${RESET}"
+fi
+echo ""
+
+C=$(pct_color "${EXTRA_PCT}")
+echo -e "  ${BOLD}\$${USED_DOLLARS} spent${RESET}"
+echo -e "  ${DIM}Resets $(date -d "$(date +%Y-%m-01) +1 month" '+%b %-d')${RESET}"
+echo -e "  ${C}$(bar "$EXTRA_PCT")${RESET}  ${EXTRA_PCT}% used"
+echo ""
+
+echo -e "  ${BOLD}\$${LIMIT_DOLLARS}${RESET}"
+echo -e "  ${DIM}Monthly spending limit${RESET}"
+echo ""
+
+echo -e "  ${BOLD}${CYAN}\$${BALANCE_DOLLARS}${RESET}"
+if [ "$AUTO_RELOAD" = "true" ]; then
+  echo -e "  ${DIM}Current balance - auto-reload on${RESET}"
+else
+  echo -e "  ${DIM}Current balance${RESET}"
+fi
+echo ""
