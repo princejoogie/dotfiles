@@ -100,7 +100,7 @@ lazydocker
 lazygit
 
 # === File Management ===
-dolphin
+nautilus
 yazi
 fd
 gdu
@@ -143,16 +143,14 @@ woff2-font-awesome
 font-manager
 
 # === Qt/GTK Theming ===
-qt5ct
-qt6ct
 qt5-wayland
 qt6-wayland
-qt5-quickcontrols2
-kvantum-qt5
 kvantum
+kvantum-qt5
+kvantum-theme-catppuccin-git
+catppuccin-gtk-theme-mocha
 nwg-look
-breeze
-sassc
+gnome-themes-extra
 
 # === Firewall ===
 ufw

@@ -1,3 +1,7 @@
 #!/bin/bash
 # Reset all Hyprland user configs to Kojarchy defaults.
 kojarchy-refresh-config hypr/hyprland.conf
+kojarchy-refresh-config hypr/hyprlock.conf
+kojarchy-refresh-config hypr/hypridle.conf
+kojarchy-refresh-config hypr/hyprsunset.conf
+hyprctl reload >/dev/null
