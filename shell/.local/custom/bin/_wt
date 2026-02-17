@@ -30,18 +30,19 @@ case "$1" in
 
         # Check if a specific worktree is provided as argument
         if [ -n "$2" ]; then
-            SELECTED="$2"
+            SELECTED="$BARE_ROOT/$2"
         else
-            # Get all worktree paths, make them relative to bare root, then fzf and cd
-            SELECTED=$(git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2 | sed "s|$BARE_ROOT||g" | sed 's|^/||' | sed '/^$/d' | fzf)
+            # Get all worktree paths (excluding bare repo), select with fzf
+            SELECTED=$(git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2 | grep -v "^$BARE_ROOT$" | fzf)
         fi
 
         if [ -n "$SELECTED" ]; then
-            cd "$BARE_ROOT/$SELECTED"
+            cd "$SELECTED"
         fi
         ;;
     add)
-        BARE_ROOT=$(get_bare_root)
+        MAIN_REPO=$(get_bare_root)
+        REPO_NAME=$(basename "$MAIN_REPO")
 
         # Check if a specific branch is provided as argument
         if [ -n "$2" ]; then
@@ -52,45 +53,94 @@ case "$1" in
         fi
 
         if [ -n "$SELECTED_BRANCH" ]; then
-            # Create worktree in bare root directory
-            if git worktree add "$BARE_ROOT/$SELECTED_BRANCH" "$SELECTED_BRANCH"; then
-                # Post-add hook: process .wtconfig.yaml if it exists (only if worktree add succeeded)
-                if [ -f "$BARE_ROOT/.wtconfig.yaml" ]; then
-                echo "Processing post-add hooks..."
-                
-                # Parse YAML and copy files
-                awk -v bare_root="$BARE_ROOT" -v branch="$SELECTED_BRANCH" '
-                BEGIN { in_copy_files = 0 }
-                /^post-add:/ { in_post_add = 1; next }
-                /^  copy-files:/ && in_post_add { in_copy_files = 1; next }
-                /^    - src:/ && in_copy_files { 
-                    gsub(/^    - src: /, "")
-                    gsub(/\$BARE_ROOT/, bare_root)
-                    src = $0
-                    getline
-                    gsub(/^      dst: /, "")
-                    dst = bare_root "/" branch "/" $0
-                    
-                    # Create destination directory if it doesn'\''t exist
-                    cmd = "mkdir -p \"" dirname(dst) "\""
-                    system(cmd)
-                    
-                    # Copy file
-                    cmd = "cp \"" src "\" \"" dst "\""
-                    print "Copying " src " -> " dst
-                    system(cmd)
-                }
-                /^[^ ]/ && !/^post-add:/ { in_post_add = 0; in_copy_files = 0 }
-                
-                function dirname(path) {
-                    gsub(/\/[^\/]*$/, "", path)
-                    return path
-                }
-                ' "$BARE_ROOT/.wtconfig.yaml"
+            # Derive slug from branch name (last path component, lowercased)
+            SLUG=$(echo "$SELECTED_BRANCH" | sed 's|.*/||' | tr '[:upper:]' '[:lower:]')
+            WORKTREE="$HOME/.worktrees/$REPO_NAME/$SLUG"
+
+            mkdir -p "$(dirname "$WORKTREE")"
+
+            if git worktree add "$WORKTREE" "$SELECTED_BRANCH"; then
+                # Look for .cursor/worktrees.json config
+                CONFIG=""
+                if [ -f "$WORKTREE/.cursor/worktrees.json" ]; then
+                    CONFIG="$WORKTREE/.cursor/worktrees.json"
+                elif [ -f "$MAIN_REPO/.cursor/worktrees.json" ]; then
+                    CONFIG="$MAIN_REPO/.cursor/worktrees.json"
                 fi
-                
-                # Change to the new worktree directory
-                cd "$BARE_ROOT/$SELECTED_BRANCH"
+
+                if [ -n "$CONFIG" ] && command -v jq >/dev/null 2>&1; then
+                    echo "Running setup from $CONFIG..."
+                    export ROOT_WORKTREE_PATH="$MAIN_REPO"
+
+                    # Prefer setup-worktree-unix, fallback to setup-worktree
+                    SETUP_KEY="setup-worktree-unix"
+                    if ! jq -e ".[\"$SETUP_KEY\"]" "$CONFIG" >/dev/null 2>&1; then
+                        SETUP_KEY="setup-worktree"
+                    fi
+
+                    SETUP_TYPE=$(jq -r ".[\"$SETUP_KEY\"] | type" "$CONFIG" 2>/dev/null)
+
+                    if [ "$SETUP_TYPE" = "array" ]; then
+                        # Execute each command sequentially, stop on failure
+                        jq -r ".[\"$SETUP_KEY\"][]" "$CONFIG" > "/tmp/wt_setup_$$"
+                        while IFS= read -r cmd; do
+                            echo "  Running: $cmd"
+                            (cd "$WORKTREE" && eval "$cmd")
+                            if [ $? -ne 0 ]; then
+                                echo "  Setup failed on: $cmd"
+                                break
+                            fi
+                        done < "/tmp/wt_setup_$$"
+                        rm -f "/tmp/wt_setup_$$"
+                    elif [ "$SETUP_TYPE" = "string" ]; then
+                        # Single string = script path relative to worktree
+                        SCRIPT=$(jq -r ".[\"$SETUP_KEY\"]" "$CONFIG")
+                        echo "  Running script: $SCRIPT"
+                        (cd "$WORKTREE" && sh "$SCRIPT")
+                    fi
+                else
+                    # No config — copy env files and install deps manually
+
+                    # Copy gitignored .env* files from main repo
+                    echo "Copying environment files..."
+                    (cd "$MAIN_REPO" && find . -name '.env*' -type f \
+                        -not -name '*.sample' \
+                        -not -path '*/node_modules/*' \
+                        -not -path '*/.git/*' | while read -r f; do
+                        if git check-ignore -q "$f" 2>/dev/null; then
+                            mkdir -p "$WORKTREE/$(dirname "$f")"
+                            cp "$f" "$WORKTREE/$f"
+                            echo "  Copied $f"
+                        fi
+                    done)
+
+                    # Install dependencies based on lockfile
+                    echo "Installing dependencies..."
+                    if [ -f "$WORKTREE/pnpm-lock.yaml" ]; then
+                        (cd "$WORKTREE" && pnpm install)
+                    elif [ -f "$WORKTREE/bun.lockb" ] || [ -f "$WORKTREE/bun.lock" ]; then
+                        (cd "$WORKTREE" && bun install)
+                    elif [ -f "$WORKTREE/yarn.lock" ]; then
+                        (cd "$WORKTREE" && yarn install)
+                    elif [ -f "$WORKTREE/package-lock.json" ]; then
+                        (cd "$WORKTREE" && npm install)
+                    elif [ -f "$WORKTREE/Cargo.toml" ]; then
+                        (cd "$WORKTREE" && cargo build)
+                    elif [ -f "$WORKTREE/requirements.txt" ]; then
+                        (cd "$WORKTREE" && pip install -r requirements.txt)
+                    elif [ -f "$WORKTREE/pyproject.toml" ]; then
+                        (cd "$WORKTREE" && pip install -e .)
+                    elif [ -f "$WORKTREE/go.mod" ]; then
+                        (cd "$WORKTREE" && go mod download)
+                    else
+                        echo "  No recognized lockfile found, skipping"
+                    fi
+                fi
+
+                cd "$WORKTREE"
+                echo ""
+                echo "Worktree ready at $WORKTREE"
+                echo "Branch: $SELECTED_BRANCH"
             fi
         fi
         ;;
@@ -99,16 +149,16 @@ case "$1" in
 
         # Check if a specific worktree is provided as argument
         if [ -n "$2" ]; then
-            SELECTED="$2"
+            SELECTED="$BARE_ROOT/$2"
         else
-            # Get all worktree paths (excluding bare repo), make them relative, then fzf
-            SELECTED=$(git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2 | grep -v "^$BARE_ROOT$" | sed "s|$BARE_ROOT||g" | sed 's|^/||' | fzf)
+            # Get all worktree paths (excluding bare repo), select with fzf
+            SELECTED=$(git worktree list --porcelain | grep '^worktree' | cut -d' ' -f2 | grep -v "^$BARE_ROOT$" | fzf)
         fi
 
         if [ -n "$SELECTED" ]; then
             # Remove the selected worktree
-            if git worktree remove "$BARE_ROOT/$SELECTED"; then
-                echo "Worktree '$SELECTED' removed successfully"
+            if git worktree remove --force "$SELECTED"; then
+                echo "Worktree removed successfully"
             fi
         fi
         ;;
