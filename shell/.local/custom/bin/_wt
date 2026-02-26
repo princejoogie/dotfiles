@@ -9,7 +9,7 @@ wt_root() {
 
 # Replace $HOME with ~ in a path
 wt_short_path() {
-    case "$1" in
+case "$1" in
         "$HOME"*) printf '%s' "~${1#"$HOME"}" ;;
         *) printf '%s' "$1" ;;
     esac
@@ -17,7 +17,7 @@ wt_short_path() {
 
 # ── fzf helpers ───────────────────────────────────────────────────────
 
-# Wrapper around fzf with popup style
+# Wrapper around fzf with tmux popup
 wt_fzf() {
     if [ -n "$TMUX" ]; then
         fzf --ansi --tmux=center,80%,50% --layout=reverse --border "$@"
@@ -67,11 +67,24 @@ wt_fzf_list() {
 }
 
 # Interactive worktree selection via fzf, returns full path
-# Passes extra args (e.g. --include-root) to wt_fzf_list
+# Supports --include-root and --no-popup
 wt_select() {
     _sel_root="$1"
+    _no_popup=0
+    _include_root=""
     shift
-    wt_fzf_list "$_sel_root" "$@" | wt_fzf --with-nth=2 --delimiter="$(printf '\t')" | cut -f1
+    for _a in "$@"; do
+        case "$_a" in
+            --no-popup) _no_popup=1 ;;
+            --include-root) _include_root="--include-root" ;;
+        esac
+    done
+
+    if [ "$_no_popup" = "1" ]; then
+        wt_fzf_list "$_sel_root" $_include_root | fzf --ansi --with-nth=2 --delimiter="$(printf '\t')" | cut -f1
+    else
+        wt_fzf_list "$_sel_root" $_include_root | wt_fzf --with-nth=2 --delimiter="$(printf '\t')" | cut -f1
+    fi
 }
 
 # ── Setup helpers (used by add) ───────────────────────────────────────
@@ -164,16 +177,29 @@ case "$1" in
 
     cd)
         ROOT=$(wt_root)
+        _print=0
+        _cd_flags=""
+        shift
+        for _a in "$@"; do
+            case "$_a" in
+                --print) _print=1 ;;
+                --no-popup) _cd_flags="--no-popup" ;;
+                *) _cd_flags="$_a" ;;
+            esac
+        done
 
-        if [ -n "$2" ]; then
-            SELECTED="$ROOT/$2"
+        if [ -n "$_cd_flags" ] && [ "$_cd_flags" != "--no-popup" ]; then
+            SELECTED="$ROOT/$_cd_flags"
         else
-            SELECTED=$(wt_select "$ROOT" --include-root)
+            SELECTED=$(wt_select "$ROOT" --include-root $_cd_flags)
         fi
 
         if [ -n "$SELECTED" ]; then
-            cd "$SELECTED"
-            echo "Switched to $(wt_short_path "$SELECTED")"
+            if [ "$_print" = "1" ]; then
+                echo "$SELECTED"
+            elif cd "$SELECTED"; then
+                echo "Switched to $(wt_short_path "$SELECTED")"
+            fi
         fi
         ;;
 
@@ -181,10 +207,10 @@ case "$1" in
         ROOT=$(wt_root)
         REPO_NAME=$(basename "$ROOT")
 
-        if [ -n "$2" ]; then
+        if [ -n "$2" ] && [ "$2" != "--no-popup" ]; then
             BRANCH="$2"
         else
-            BRANCH=$(git branch -a | sed 's/^[* ] //' | sed 's|remotes/origin/||' | sort -u | grep -v '^HEAD' | wt_fzf)
+            BRANCH=$(git branch -a | sed 's/^[* ] //' | sed 's|remotes/origin/||' | sort -u | grep -v '^HEAD' | if [ "$2" = "--no-popup" ]; then fzf --ansi; else wt_fzf; fi)
         fi
 
         if [ -n "$BRANCH" ]; then
@@ -219,10 +245,10 @@ case "$1" in
     remove|rm)
         ROOT=$(wt_root)
 
-        if [ -n "$2" ]; then
+        if [ -n "$2" ] && [ "$2" != "--no-popup" ]; then
             SELECTED="$ROOT/$2"
         else
-            SELECTED=$(wt_select "$ROOT")
+            SELECTED=$(wt_select "$ROOT" "$2")
         fi
 
         if [ -n "$SELECTED" ]; then
