@@ -210,7 +210,7 @@ case "$1" in
         if [ -n "$2" ] && [ "$2" != "--no-popup" ]; then
             BRANCH="$2"
         else
-            BRANCH=$(git branch -a | sed 's/^[* ] //' | sed 's|remotes/origin/||' | sort -u | grep -v '^HEAD' | if [ "$2" = "--no-popup" ]; then fzf --ansi; else wt_fzf; fi)
+            BRANCH=$(git branch -a | sed 's/^[*+ ] //' | sed 's|remotes/origin/||' | sort -u | grep -v '^HEAD' | if [ "$2" = "--no-popup" ]; then fzf --ansi; else wt_fzf; fi)
         fi
 
         if [ -n "$BRANCH" ]; then
@@ -242,6 +242,85 @@ case "$1" in
         fi
         ;;
 
+    create)
+        ROOT=$(wt_root)
+        REPO_NAME=$(basename "$ROOT")
+        _no_popup=0
+        BRANCH=""
+        BASE=""
+        shift
+        for _a in "$@"; do
+            case "$_a" in
+                --no-popup) _no_popup=1 ;;
+                *) if [ -z "$BRANCH" ]; then BRANCH="$_a"; else BASE="$_a"; fi ;;
+            esac
+        done
+
+        _branch_fzf() {
+            git branch -a | sed 's/^[*+ ] //' | sed 's|remotes/origin/||' | sort -u | grep -v '^HEAD' | if [ "$_no_popup" = "1" ]; then fzf --ansi; else wt_fzf; fi
+        }
+
+        if [ -z "$BRANCH" ]; then
+            printf "New branch name: "
+            read BRANCH
+        fi
+        [ -z "$BRANCH" ] && return 1
+
+        if [ -z "$BASE" ]; then
+            echo "Select base branch:"
+            BASE=$(_branch_fzf)
+        fi
+        [ -z "$BASE" ] && return 1
+
+        SLUG=$(echo "$BRANCH" | sed 's|.*/||' | tr '[:upper:]' '[:lower:]')
+        WORKTREE="$HOME/.worktrees/$REPO_NAME/$SLUG"
+
+        mkdir -p "$(dirname "$WORKTREE")"
+
+        if git worktree add -b "$BRANCH" "$WORKTREE" "$BASE"; then
+            CONFIG=""
+            if [ -f "$WORKTREE/.cursor/worktrees.json" ]; then
+                CONFIG="$WORKTREE/.cursor/worktrees.json"
+            elif [ -f "$ROOT/.cursor/worktrees.json" ]; then
+                CONFIG="$ROOT/.cursor/worktrees.json"
+            fi
+
+            if [ -n "$CONFIG" ] && command -v jq >/dev/null 2>&1; then
+                wt_run_config "$CONFIG" "$WORKTREE" "$ROOT"
+            else
+                wt_copy_env "$ROOT" "$WORKTREE"
+                wt_install_deps "$WORKTREE"
+            fi
+
+            cd "$WORKTREE"
+            echo ""
+            echo "Worktree ready at $(wt_short_path "$WORKTREE")"
+            echo "Branch: $BRANCH (based on $BASE)"
+        fi
+        ;;
+
+    sync)
+        echo "Syncing all worktrees..."
+        echo ""
+        echo "Fetching remote..."
+        git fetch --all --prune 2>&1 | sed 's/^/  /'
+        echo ""
+        git worktree list --porcelain | awk '/^worktree/ { print substr($0, 10) }' \
+            | xargs -P 0 -n 1 sh -c '
+                _branch=$(git -C "$1" rev-parse --abbrev-ref HEAD 2>/dev/null)
+                [ -z "$_branch" ] || [ "$_branch" = "HEAD" ] && exit 0
+                _out=$(git -C "$1" merge --ff-only 2>&1)
+                if [ $? -eq 0 ]; then
+                    echo "  $1 ($_branch): ok"
+                else
+                    echo "  $1 ($_branch): failed"
+                fi
+                echo "$_out" | sed "s/^/    /"
+            ' _
+        echo ""
+        echo "Done."
+        ;;
+
     remove|rm)
         ROOT=$(wt_root)
 
@@ -264,7 +343,9 @@ case "$1" in
         echo "Commands:"
         echo "  list|ls           List all worktrees"
         echo "  cd [name]         Switch to a worktree"
-        echo "  add [branch]      Create a worktree from a branch"
-        echo "  remove|rm [name]  Remove a worktree"
+        echo "  add [branch]          Add a worktree from an existing branch"
+        echo "  create [branch] [base] Create a new branch + worktree"
+        echo "  sync                  Pull updates for all worktrees"
+        echo "  remove|rm [name]      Remove a worktree"
         ;;
 esac

@@ -184,6 +184,8 @@ return {
             "Config Change Detected",
             "Executing query",
             "Done after",
+            "No file name for buffer",
+            "%d+ buffers deleted",
             '^".*" %d+L, %d+B written$',
           }
 
