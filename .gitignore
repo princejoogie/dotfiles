@@ -9,6 +9,7 @@ nvim/.config/nvim/plugin/
 shell/.local/share 
 shell/.local/state
 shell/.local/bin
+claude/.claude/
 
 .private.sh
 

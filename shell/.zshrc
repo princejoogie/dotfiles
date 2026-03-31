@@ -44,6 +44,7 @@ alias pip=pip3
 alias wt=". _wt"
 alias ai="noglob opencode run --model \"opencode/gemini-3-flash\""
 alias open=xdg-open
+alias claude="claude --dangerously-skip-permissions"
 # alises end
 
 # variables
