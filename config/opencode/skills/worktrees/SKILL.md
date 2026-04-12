@@ -9,7 +9,7 @@ description: >
 
 # Git Worktrees
 
-All worktrees go in `~/.worktrees/<repo-name>/<slug>/` — outside the project, no `.gitignore` needed.
+All worktrees go in `~/.worktrees/<repo-name>/<slug>/` -- outside the project, no `.gitignore` needed.
 
 ## Workflow
 
@@ -29,7 +29,7 @@ Derive `<slug>` from the branch name (e.g. `fix/IH-694-missing-icon` -> `ih-694`
 
 ### 2. Run setup
 
-Check for `.cursor/worktrees.json` first. If it exists, execute its hooks and skip steps 3–4.
+Check for `.cursor/worktrees.json` first. If it exists, execute its hooks and skip steps 3-4.
 
 See [references/cursor-worktrees-json.md](references/cursor-worktrees-json.md) for full schema.
 
@@ -63,7 +63,7 @@ find . -name '.env*' -type f -not -name '*.sample' -not -path '*/node_modules/*'
   done
 ```
 
-Never use `ln -s` — glob-based tooling (bundlers, config loaders) silently ignores symlinks.
+Never use `ln -s` -- glob-based tooling (bundlers, config loaders) silently ignores symlinks.
 
 ### 4. Install dependencies
 

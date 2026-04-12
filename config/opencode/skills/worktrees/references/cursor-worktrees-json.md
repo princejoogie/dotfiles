@@ -31,7 +31,7 @@ Set this before executing any commands from the config.
 
 ## Examples
 
-**Command array** — each string runs sequentially:
+**Command array** -- each string runs sequentially:
 
 ```json
 {
@@ -43,7 +43,7 @@ Set this before executing any commands from the config.
 }
 ```
 
-**Script reference** — single string, resolved relative to the worktree root:
+**Script reference** -- single string, resolved relative to the worktree root:
 
 ```json
 {
@@ -52,7 +52,7 @@ Set this before executing any commands from the config.
 }
 ```
 
-**Script with args** — `$ROOT_WORKTREE_PATH` is available:
+**Script with args** -- `$ROOT_WORKTREE_PATH` is available:
 
 ```json
 {
@@ -67,4 +67,4 @@ Set this before executing any commands from the config.
 1. Run commands **sequentially** from the worktree directory.
 2. Export `ROOT_WORKTREE_PATH` pointing to the main repo before running.
 3. If the value is a single string (not array), treat it as a script path relative to the worktree root.
-4. **Stop on failure** — if a command exits non-zero, halt and report the error.
+4. **Stop on failure** -- if a command exits non-zero, halt and report the error.
