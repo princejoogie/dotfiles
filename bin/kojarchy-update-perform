@@ -5,9 +5,6 @@ set -e
 # Ensure screensaver/sleep doesn't set in during updates
 hyprctl dispatch tagwindow +noidle &>/dev/null || true
 
-# Capture update logs
-exec > >(tee "/tmp/kojarchy-update.log") 2>&1
-
 # Perform all update steps
 kojarchy-update-time
 kojarchy-update-system-pkgs

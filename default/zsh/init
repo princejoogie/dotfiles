@@ -1,11 +1,11 @@
 # starship
-if [[ -x "$(command -v starship)" ]]; then
+if [[ $- == *i* ]] && [[ ${TERM:-} != "dumb" ]] && [[ -x "$(command -v starship)" ]]; then
   eval "$(starship init zsh)"
 fi
 
 # mise (replaces fnm)
 if command -v mise &>/dev/null; then
-  eval "$(mise activate zsh)"
+  eval "$(mise activate zsh --shims)"
 fi
 
 # uv

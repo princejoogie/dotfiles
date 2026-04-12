@@ -94,13 +94,13 @@ tmux-sessionizer-bin
 clang
 llvm
 rust
-opencode
 ripgrep
 lazydocker
 lazygit
 
 # === File Management ===
 nautilus
+nautilus-python
 yazi
 fd
 gdu

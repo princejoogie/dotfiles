@@ -14,4 +14,9 @@ if [[ -d "$THEME_DIR" ]]; then
   ln -snf "$THEME_DIR/gtk-dark.css" ~/.config/gtk-4.0/gtk-dark.css
 fi
 
+# Default Chromium to follow the system appearance for newly created profiles.
+if [[ -d /usr/lib/chromium ]]; then
+  printf '%s\n' '{"browser":{"theme":{"color_scheme":0}}}' | sudo tee /usr/lib/chromium/initial_preferences >/dev/null
+fi
+
 echo "GTK theme: OK"

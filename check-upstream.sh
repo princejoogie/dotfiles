@@ -11,7 +11,7 @@ OMARCHY_LOCAL="/tmp/kojarchy-omarchy-upstream"
 DIFF_FILE="/tmp/kojarchy-omarchy-diff.patch"
 
 # Last omarchy commit hash we synced against
-OMARCHY_BASELINE="ffafe1727e32c38ba5a291bf3a12d5995a01fda0"
+OMARCHY_BASELINE="1732551873aae48a8418595ef9bc3b2cbb756b0c"
 
 echo "=== Kojarchy Upstream Sync Check ==="
 echo "Baseline: $OMARCHY_BASELINE"

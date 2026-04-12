@@ -13,6 +13,7 @@ clear_logo
 start_log_output
 run_logged $KOJARCHY_INSTALL/config/docker.sh
 run_logged $KOJARCHY_INSTALL/config/gtk.sh
+run_logged $KOJARCHY_INSTALL/config/nautilus-python.sh
 run_logged $KOJARCHY_INSTALL/config/gpg.sh
 run_logged $KOJARCHY_INSTALL/config/mimetypes.sh
 run_logged $KOJARCHY_INSTALL/config/ssh-flakiness.sh
@@ -28,6 +29,7 @@ run_logged $KOJARCHY_INSTALL/config/detect-keyboard-layout.sh
 run_logged $KOJARCHY_INSTALL/config/hardware/network.sh
 run_logged $KOJARCHY_INSTALL/config/hardware/bluetooth.sh
 run_logged $KOJARCHY_INSTALL/config/hardware/intel.sh
+run_logged $KOJARCHY_INSTALL/config/hardware/vulkan.sh
 run_logged $KOJARCHY_INSTALL/config/hardware/set-wireless-regdom.sh
 run_logged $KOJARCHY_INSTALL/config/hardware/fix-fkeys.sh
 run_logged $KOJARCHY_INSTALL/config/hardware/fix-synaptic-touchpad.sh

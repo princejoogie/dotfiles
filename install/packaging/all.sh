@@ -1,5 +1,6 @@
 run_logged $KOJARCHY_INSTALL/packaging/aur-helper.sh
 run_logged $KOJARCHY_INSTALL/packaging/base.sh
+run_logged $KOJARCHY_INSTALL/packaging/npx.sh
 
 # Pause log tail for interactive prompts (it overwrites the screen)
 stop_log_output
