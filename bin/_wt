@@ -9,7 +9,7 @@ wt_root() {
 
 # Replace $HOME with ~ in a path
 wt_short_path() {
-case "$1" in
+    case "$1" in
         "$HOME"*) printf '%s' "~${1#"$HOME"}" ;;
         *) printf '%s' "$1" ;;
     esac

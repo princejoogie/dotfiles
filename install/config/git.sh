@@ -1,3 +1,10 @@
+# Keep shared git defaults in-repo so they update with git pull.
+include_path="$KOJARCHY_DIR/default/gitconfig"
+
+if [[ -f "$include_path" ]] && ! git config --global --get-all include.path 2>/dev/null | grep -Fxq "$include_path"; then
+  git config --global --add include.path "$include_path"
+fi
+
 # Prompt for git identity if not already set (runs via source, not run_logged)
 if [[ -z "$(git config --global user.name)" ]]; then
   name=$(gum input --placeholder "Your full name" --header "Git user.name:" </dev/tty)
