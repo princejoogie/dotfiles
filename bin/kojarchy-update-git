@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+KOJARCHY_PATH="${KOJARCHY_PATH:-$HOME/dotfiles}"
+
+echo -e "\e[32mUpdate Kojarchy\e[0m"
+git -C "$KOJARCHY_PATH" pull --autostash
+git -C "$KOJARCHY_PATH" --no-pager diff --check || git -C "$KOJARCHY_PATH" reset --merge
+
+if [[ -x "$KOJARCHY_PATH/bin/kojarchy-sync-config" ]]; then
+  KOJARCHY_PATH="$KOJARCHY_PATH" "$KOJARCHY_PATH/bin/kojarchy-sync-config"
+fi

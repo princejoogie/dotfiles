@@ -1,0 +1,7 @@
+#!/bin/bash
+# This hook runs after kojarchy-font-set changes the font.
+# The new font name is passed as $1.
+# Rename this file to 'font-set' (remove .sample) to activate.
+#
+# Example: notify about font change
+# notify-send "Font changed to $1"

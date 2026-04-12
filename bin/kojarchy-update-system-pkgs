@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+echo -e "\e[32m\nUpdate Arch signing keys\e[0m"
+sudo pacman -Sy --noconfirm archlinux-keyring >/dev/null
+
+echo -e "\e[32m\nUpdate system packages\e[0m"
+sudo pacman -Syyu --noconfirm

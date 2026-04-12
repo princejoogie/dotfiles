@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Returns true (exit 0) if all named packages are installed.
+
+for pkg in "$@"; do
+  pacman -Q "$pkg" &>/dev/null || exit 1
+done
+
+exit 0

@@ -1,0 +1,183 @@
+# Kojarchy core package list installed via install/packaging/base.sh
+# One per line, # for comments, blank lines ignored
+
+# === System (supplements archinstall base) ===
+base-devel
+dkms
+less
+man-db
+smartmontools
+unzip
+zip
+7zip
+
+# === Networking ===
+avahi
+nss-mdns
+bind
+net-tools
+networkmanager
+network-manager-applet
+openvpn
+sshfs
+tailscale
+traceroute
+wget
+wireguard-tools
+wireless-regdb
+
+# === Graphics (generic) ===
+mesa-utils
+
+# === Hyprland & Desktop ===
+hyprland
+hypridle
+hyprlock
+hyprpicker
+hyprpolkitagent
+hyprsunset
+hyprshot
+hyprmon-bin
+hyprwhspr
+swaybg
+swayosd
+waybar
+wayfreeze
+dunst
+wofi
+wofi-calc
+xdg-desktop-portal-gtk
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-kde
+xdg-utils
+xdg-terminal-exec
+xorg-server
+xorg-xhost
+xorg-xinit
+xwaylandvideobridge
+sddm
+uwsm
+gnome-keyring
+libsecret
+bolt
+playerctl
+brightnessctl
+bluetui
+
+# === Terminal & Shell ===
+kitty
+tmux
+zsh
+zoxide
+fzf
+starship
+btop
+htop
+fastfetch
+direnv
+yad
+
+# === Development ===
+git
+git-delta
+github-cli
+docker
+docker-compose
+docker-buildx
+mise
+bun
+uv
+bob
+tree-sitter-cli
+cargo-update
+tmux-sessionizer-bin
+clang
+llvm
+rust
+ripgrep
+lazydocker
+lazygit
+
+# === File Management ===
+nautilus
+nautilus-python
+yazi
+fd
+gdu
+ncdu
+tree
+gvfs-mtp
+gvfs-nfs
+gvfs-smb
+exfatprogs
+
+# === Media & Graphics ===
+pipewire
+pipewire-alsa
+pipewire-jack
+pipewire-pulse
+gst-plugin-pipewire
+libpulse
+wireplumber
+alsa-utils
+wiremix
+imagemagick
+graphicsmagick
+mpv
+satty
+grim
+slurp
+wl-clipboard
+ffmpegthumbs
+yt-dlp
+
+# === Fonts ===
+ttf-firacode-nerd
+ttf-nerd-fonts-symbols
+fontconfig
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+noto-fonts-extra
+woff2-font-awesome
+font-manager
+
+# === Qt/GTK Theming ===
+qt5-wayland
+qt6-wayland
+kvantum
+kvantum-qt5
+kvantum-theme-catppuccin-git
+catppuccin-gtk-theme-mocha
+walker-bin
+nwg-look
+gnome-themes-extra
+
+# === Firewall ===
+ufw
+ufw-docker
+
+# === Misc Tools ===
+expac
+flatpak
+gum
+jq
+hyperfine
+tesseract-data-eng
+hunspell-en_us
+bc
+lshw
+inxi
+speedtest-cli
+tzupdate
+
+# === Document & Image Viewing ===
+evince
+imv
+
+# === Browsers ===
+helium-browser-bin
+
+# === System Utilities ===
+gnome-calculator
+gnome-disk-utility

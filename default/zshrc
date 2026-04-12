@@ -1,0 +1,7 @@
+# Source defaults from dotfiles (updated via git pull)
+source ~/dotfiles/default/zsh/rc
+
+# Add your own customizations below:
+if [[ -f "$HOME/.private.sh" ]]; then
+  source "$HOME/.private.sh"
+fi

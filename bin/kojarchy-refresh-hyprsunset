@@ -1,0 +1,3 @@
+#!/bin/bash
+kojarchy-refresh-config hypr/hyprsunset.conf
+kojarchy-restart-hyprsunset

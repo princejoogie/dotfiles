@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Gracefully close all Hyprland windows before shutting down.
+# Schedules poweroff, then closes windows to give apps time to save state.
+
+kojarchy-state clear re*-required
+
+# Schedule the shutdown to happen after closing windows (detached from terminal)
+nohup bash -c "sleep 2 && systemctl poweroff --no-wall" >/dev/null 2>&1 &
+
+# Now close all windows
+kojarchy-hyprland-window-close-all
+sleep 1 # Allow apps like Chrome to shutdown correctly

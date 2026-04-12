@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Lock the screen using hyprlock.
+
+pidof hyprlock || hyprlock &
+
+# Reset keyboard layout to default
+hyprctl switchxkblayout all 0 > /dev/null 2>&1

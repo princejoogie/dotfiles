@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+KOJARCHY_PATH="${KOJARCHY_PATH:-$HOME/dotfiles}"
+KOJARCHY_DIR="$KOJARCHY_PATH"
+
+source "$KOJARCHY_PATH/install/config/config.sh"
+source "$KOJARCHY_PATH/install/config/bin.sh"
+source "$KOJARCHY_PATH/install/config/detect-keyboard-layout.sh"
