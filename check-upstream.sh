@@ -11,7 +11,7 @@ OMARCHY_LOCAL="/tmp/kojarchy-omarchy-upstream"
 DIFF_FILE="/tmp/kojarchy-omarchy-diff.patch"
 
 # Last omarchy commit hash we synced against
-OMARCHY_BASELINE="1732551873aae48a8418595ef9bc3b2cbb756b0c"
+OMARCHY_BASELINE="e852895e5c2810350dff48ced51df6eca3fdec1c"
 
 echo "=== Kojarchy Upstream Sync Check ==="
 echo "Baseline: $OMARCHY_BASELINE"
@@ -55,7 +55,7 @@ echo "Handing off to opencode..."
 echo ""
 
 # Single interactive opencode session that analyzes, asks, and applies
-opencode run "You are reviewing upstream changes from omarchy to sync into our kojarchy dotfiles repo.
+echo "You are reviewing upstream changes from omarchy to sync into our kojarchy dotfiles repo.
 
 ## Context
 - Our kojarchy repo: $KOJARCHY_DIR
@@ -89,4 +89,8 @@ $DIFF_STAT
 6. Adapt all changes to kojarchy naming/structure — do not copy omarchy references verbatim
 7. Do NOT commit — just make the file changes
 8. After applying, print a summary of what was changed and remind me to review with git diff and commit when ready
-9. Then update the OMARCHY_BASELINE variable in $KOJARCHY_DIR/check-upstream.sh from \"$OMARCHY_BASELINE\" to \"$OMARCHY_LATEST\" by editing the file directly"
+9. Then update the OMARCHY_BASELINE variable in $KOJARCHY_DIR/check-upstream.sh from \"$OMARCHY_BASELINE\" to \"$OMARCHY_LATEST\" by editing the file directly" | opencode run
+
+echo "continuing session..."
+
+opencode -c

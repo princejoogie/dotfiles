@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Toggle persistent Hyprland config fragments and reload Hyprland.
+
+set -euo pipefail
+
+ENABLED_NOTIFICATION=""
+DISABLED_NOTIFICATION=""
+
+while [[ $# -gt 1 ]]; do
+  case "$1" in
+    --enabled-notification) ENABLED_NOTIFICATION="$2"; shift 2 ;;
+    --disabled-notification) DISABLED_NOTIFICATION="$2"; shift 2 ;;
+    *) break ;;
+  esac
+done
+
+FLAG_NAME="${1:-}"
+FLAG_DIR="$HOME/.local/state/kojarchy/toggles/hypr"
+FLAG="$FLAG_DIR/$FLAG_NAME.conf"
+FLAG_SOURCE="$HOME/dotfiles/default/hypr/toggles/$FLAG_NAME.conf"
+
+if [[ -z "$FLAG_NAME" ]]; then
+  echo "Usage: kojarchy-hyprland-toggle [--enabled-notification msg] [--disabled-notification msg] <flag-name>" >&2
+  exit 1
+fi
+
+mkdir -p "$FLAG_DIR"
+
+if [[ -f "$FLAG" ]]; then
+  rm -f "$FLAG"
+  [[ -n "$DISABLED_NOTIFICATION" ]] && notify-send -u low "$DISABLED_NOTIFICATION"
+elif [[ -f "$FLAG_SOURCE" ]]; then
+  cp "$FLAG_SOURCE" "$FLAG"
+  [[ -n "$ENABLED_NOTIFICATION" ]] && notify-send -u low "$ENABLED_NOTIFICATION"
+else
+  echo "Unknown Hyprland toggle: $FLAG_NAME" >&2
+  exit 1
+fi
+
+hyprctl reload >/dev/null

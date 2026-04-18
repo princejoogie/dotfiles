@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Check if a Kojarchy toggle is currently enabled.
+
+[[ -f "$HOME/.local/state/kojarchy/toggles/$1" ]]

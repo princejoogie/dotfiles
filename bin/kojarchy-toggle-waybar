@@ -2,8 +2,15 @@
 
 # Toggle waybar visibility and adjust gaps/rounding accordingly
 
-WAYBAR_PID=$(pgrep -x waybar)
+set -euo pipefail
+
 GAPS_STATE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/waybar-gaps"
+WAYBAR_FLAG="waybar-off"
+
+WAYBAR_RUNNING=0
+if pgrep -x waybar >/dev/null; then
+    WAYBAR_RUNNING=1
+fi
 
 get_gap_value() {
     local option="$1"
@@ -11,7 +18,7 @@ get_gap_value() {
 }
 
 # Check if Waybar is running
-if [ -n "$WAYBAR_PID" ]; then
+if [ "$WAYBAR_RUNNING" -eq 1 ]; then
     # Store current gaps/rounding and set to 0
     gaps_in=$(get_gap_value "general:gaps_in")
     gaps_out=$(get_gap_value "general:gaps_out")
@@ -21,8 +28,14 @@ if [ -n "$WAYBAR_PID" ]; then
     hyprctl keyword general:gaps_out 0
     hyprctl keyword decoration:rounding 0
 
-    # Kill Waybar using its PID
-    kill "$WAYBAR_PID"
+    if kojarchy-toggle-disabled "$WAYBAR_FLAG"; then
+        kojarchy-toggle \
+            --enabled-notification "   Bar hidden" \
+            --disabled-notification "   Bar visible" \
+            "$WAYBAR_FLAG"
+    fi
+
+    pkill -x waybar || true
 else
     # Restore gaps/rounding if saved
     if [ -f "$GAPS_STATE_FILE" ]; then
@@ -31,6 +44,13 @@ else
         hyprctl keyword general:gaps_out "$gaps_out"
         hyprctl keyword decoration:rounding "$rounding"
         rm -f "$GAPS_STATE_FILE"
+    fi
+
+    if kojarchy-toggle-enabled "$WAYBAR_FLAG"; then
+        kojarchy-toggle \
+            --enabled-notification "   Bar hidden" \
+            --disabled-notification "   Bar visible" \
+            "$WAYBAR_FLAG"
     fi
 
     # Start Waybar

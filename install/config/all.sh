@@ -25,6 +25,7 @@ run_logged $KOJARCHY_INSTALL/config/default-keyring.sh
 run_logged $KOJARCHY_INSTALL/config/firewall.sh
 run_logged $KOJARCHY_INSTALL/config/dns-resolver.sh
 run_logged $KOJARCHY_INSTALL/config/input-group.sh
+run_logged $KOJARCHY_INSTALL/config/kojarchy-toggles.sh
 run_logged $KOJARCHY_INSTALL/config/detect-keyboard-layout.sh
 run_logged $KOJARCHY_INSTALL/config/hardware/network.sh
 run_logged $KOJARCHY_INSTALL/config/hardware/bluetooth.sh
