@@ -9,14 +9,14 @@ fi
 
 URL="$1"
 
-echo "Cleaning up..."
-rm -rf /tmp/transcript.mp3*
+echo "[LOG] Cleaning up temporary files..."
+rm -rf /tmp/transcript.mp3* >/dev/null 2>&1
 
-echo "Downloading audio from: $URL"
-yt-dlp --extract-audio --audio-format mp3 --output /tmp/transcript.mp3 "$URL"
+echo "[LOG] Downloading audio..."
+yt-dlp --extract-audio --audio-format mp3 --output /tmp/transcript.mp3 "$URL" >/dev/null 2>&1
 
-echo "Transcribing audio..."
-whisper-cli -otxt -m ~/documents/codes/whisper.cpp/models/ggml-small.bin -l auto /tmp/transcript.mp3
+echo "[LOG] Generating transcript..."
+whisper-cli -otxt -m ~/documents/codes/whisper.cpp/models/ggml-small.bin -l auto /tmp/transcript.mp3 >/dev/null 2>&1
 
-echo "Generating summary..."
-opencode run -m openrouter/anthropic/claude-4-sonnet-20250522 "summarize and provide bullet points on important topics. the file is located at \`/tmp/transcript.mp3.txt\`"
+echo "[LOG] Summarizing transcript..."
+opencode run "summarize the provided transcript. the file is located at \`/tmp/transcript.mp3.txt\`"

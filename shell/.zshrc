@@ -45,6 +45,7 @@ alias wt=". _wt"
 alias ai="noglob opencode run --model \"openai/gpt-5.3-codex-spark\""
 alias open=xdg-open
 alias claude="claude --dangerously-skip-permissions"
+alias cb="codexbar usage --provider codex --source cli --status"
 # alises end
 
 # variables
