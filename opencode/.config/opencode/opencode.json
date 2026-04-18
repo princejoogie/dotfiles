@@ -1,6 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["opencode-anthropic-auth"],
+  "permission": {
+    "external_directory": {
+      "/**": "allow"
+    }
+  },
   "mcp": {
     "playwriter": {
       "type": "local",
