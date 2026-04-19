@@ -1,14 +1,17 @@
 #!/usr/bin/sh
 
 main() {
-  # Check if URL argument is provided
-  if [ $# -eq 0 ]; then
+  LISTEN=0
+  URL=''
+  CHATTERBOX_PATH="/home/joogie/documents/codes/github/chatterbox"
+
+  parse_args "$@"
+
+  if [ -z "$URL" ]; then
     echo "Error: No URL provided" >&2
-    echo "Usage: $0 <youtube_url>" >&2
+    print_usage >&2
     exit 1
   fi
-
-  URL="$1"
 
   run_with_log_window "Cleaning up temporary files" 0 - rm -rf /tmp/transcript.mp3*
 
@@ -17,7 +20,59 @@ main() {
   run_with_log_window "Generating transcript" 3 - whisper-cli -otxt -m ~/documents/codes/whisper.cpp/models/ggml-small.bin -l auto /tmp/transcript.mp3
 
   echo "[LOG] Summarizing transcript..." >&2
-  opencode run "summarize the provided transcript. do not ask follow up questions. You should do what you're about to ask since this convesation will not be continued and only your output will be used. Do not mention anything like 'the transcript says...' etc. Just proceed with the summarization immediately. The transcript is located at \`/tmp/transcript.mp3.txt\`."
+  opencode run "You are a summarizer.
+
+Read the transcript at \`/tmp/transcript.mp3.txt\` and write a concise summary.
+
+Reply with only the summary.
+Do not ask follow-up questions.
+Do not add prefaces, explanations, or meta commentary.
+Do not say things like 'the transcript says' or 'here is a summary' or anythinig along those lines.
+
+You may insert occasional reaction markers when they fit naturally.
+Allowed markers: [clear throat], [sigh], [shush], [cough], [groan], [sniff], [gasp], [chuckle], [laugh].
+
+Example: Hi everyone, [clear throat] I'm so excited to be here with all of you!" | tee /tmp/transcript.mp3.summary
+
+  if [ "$LISTEN" -eq 1 ]; then
+    run_with_log_window "Playing summary" 0 - "$CHATTERBOX_PATH/.venv/bin/python" "$CHATTERBOX_PATH/tts_play.py" /tmp/transcript.mp3.summary
+  fi
+}
+
+print_usage() {
+  echo "Usage: $0 [--listen] <youtube_url>"
+  echo
+  echo "Options:"
+  echo "  --listen  Play the generated summary after summarizing"
+  echo "  --help    Show this help message"
+}
+
+parse_args() {
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --listen)
+        LISTEN=1
+        ;;
+      --help)
+        print_usage
+        exit 0
+        ;;
+      -*)
+        echo "Error: Unknown flag: $1" >&2
+        print_usage >&2
+        exit 1
+        ;;
+      *)
+        if [ -n "$URL" ]; then
+          echo "Error: Too many arguments" >&2
+          print_usage >&2
+          exit 1
+        fi
+        URL="$1"
+        ;;
+    esac
+    shift
+  done
 }
 
 render_last_lines() {
