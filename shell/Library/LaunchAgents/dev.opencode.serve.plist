@@ -7,12 +7,7 @@
 
   <key>ProgramArguments</key>
   <array>
-    <string>/Users/pjuguilon/.opencode/bin/opencode</string>
-    <string>serve</string>
-    <string>--hostname</string>
-    <string>127.0.0.1</string>
-    <string>--port</string>
-    <string>4096</string>
+    <string>/Users/pjuguilon/.local/custom/bin/opencode-serve</string>
   </array>
 
   <key>WorkingDirectory</key>
@@ -23,7 +18,7 @@
     <key>HOME</key>
     <string>/Users/pjuguilon</string>
     <key>PATH</key>
-    <string>/Users/pjuguilon/.local/bin:/Users/pjuguilon/.local/custom/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <string>/usr/bin:/bin:/usr/sbin:/sbin</string>
   </dict>
 
   <key>RunAtLoad</key>

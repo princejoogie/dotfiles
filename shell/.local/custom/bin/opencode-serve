@@ -1,0 +1,32 @@
+#!/bin/zsh
+
+set -e
+
+export HOME="/Users/pjuguilon"
+
+# Keep this PATH in sync with shell/.zshrc for launchd, which does not load shell startup files.
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH="$PATH:/opt/homebrew/bin"
+export PATH="$PATH:$HOME/.cargo/bin"
+export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:$HOME/.local/share/fnm"
+export PATH="$PATH:$HOME/.local/custom/bin"
+export PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
+export PATH="$PATH:$HOME/.duckdb/cli/latest"
+export PATH="$PATH:$HOME/.opencode/bin"
+export PATH="$PATH:$HOME/.lmstudio/bin"
+export PATH="$PATH:$HOME/go/bin"
+
+if [[ -f "$HOME/.private.sh" ]]; then
+  source "$HOME/.private.sh"
+fi
+
+if [[ -x "$(command -v fnm)" ]]; then
+  eval "$(fnm env --use-on-cd --shell zsh)"
+  fnm use --silent default >/dev/null 2>&1 || true
+fi
+
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+exec "$HOME/.opencode/bin/opencode" serve --hostname 127.0.0.1 --port 4096
