@@ -3,7 +3,7 @@ local toggle_diffview = utils.toggle_diffview
 local cmd = utils.cmd
 
 return {
-  "sindrets/diffview.nvim",
+  "dlyongemallo/diffview.nvim",
   keys = {
     {
       "<leader>dO",
