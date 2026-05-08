@@ -15,6 +15,41 @@ case "$1" in
     esac
 }
 
+# Resolve a branch-ish to a commit ref, trying origin/<name> for local-less remotes
+wt_resolve_ref() {
+    _ref="$1"
+
+    if git rev-parse --verify --quiet "$_ref^{commit}" >/dev/null; then
+        printf '%s' "$_ref"
+        return 0
+    fi
+
+    if git rev-parse --verify --quiet "origin/$_ref^{commit}" >/dev/null; then
+        printf '%s' "origin/$_ref"
+        return 0
+    fi
+
+    return 1
+}
+
+# Best-effort default branch ref for setup config fallback
+wt_default_branch() {
+    _default=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null)
+    if [ -n "$_default" ]; then
+        printf '%s' "$_default"
+        return 0
+    fi
+
+    for _default in main master origin/main origin/master; do
+        if git rev-parse --verify --quiet "$_default^{commit}" >/dev/null; then
+            printf '%s' "$_default"
+            return 0
+        fi
+    done
+
+    git branch --format='%(refname:short)' | head -1
+}
+
 # ── fzf helpers ───────────────────────────────────────────────────────
 
 # Wrapper around fzf with tmux popup
@@ -94,8 +129,13 @@ wt_run_config() {
     _config="$1"
     _worktree="$2"
     _main_repo="$3"
+    _config_label="$4"
 
-    echo "Running setup from $(wt_short_path "$_config")..."
+    if [ -n "$_config_label" ]; then
+        echo "Running setup from $_config_label..."
+    else
+        echo "Running setup from $(wt_short_path "$_config")..."
+    fi
     export ROOT_WORKTREE_PATH="$_main_repo"
 
     _key="setup-worktree-unix"
@@ -121,6 +161,36 @@ wt_run_config() {
         echo "  Running script: $_script"
         (cd "$_worktree" && sh "$_script")
     fi
+}
+
+# Run setup from .cursor/worktrees.json at a git ref; otherwise use generic setup
+wt_setup_worktree() {
+    _worktree="$1"
+    _main_repo="$2"
+    _config_ref="$3"
+    _config=""
+    _config_tmp=""
+
+    if [ -n "$_config_ref" ]; then
+        _config_tmp="/tmp/wt_worktrees_config_$$"
+        if git show "$_config_ref:.cursor/worktrees.json" > "$_config_tmp" 2>/dev/null; then
+            _config="$_config_tmp"
+        else
+            rm -f "$_config_tmp"
+            _config_tmp=""
+        fi
+    fi
+
+    if [ -n "$_config" ] && command -v jq >/dev/null 2>&1; then
+        wt_run_config "$_config" "$_worktree" "$_main_repo" "$_config_ref:.cursor/worktrees.json"
+        _setup_status=$?
+        rm -f "$_config_tmp"
+        return "$_setup_status"
+    fi
+
+    rm -f "$_config_tmp"
+    wt_copy_env "$_main_repo" "$_worktree"
+    wt_install_deps "$_worktree"
 }
 
 # Copy gitignored .env* files from main repo into worktree
@@ -220,19 +290,11 @@ case "$1" in
             mkdir -p "$(dirname "$WORKTREE")"
 
             if git worktree add "$WORKTREE" "$BRANCH"; then
-                CONFIG=""
-                if [ -f "$WORKTREE/.cursor/worktrees.json" ]; then
-                    CONFIG="$WORKTREE/.cursor/worktrees.json"
-                elif [ -f "$ROOT/.cursor/worktrees.json" ]; then
-                    CONFIG="$ROOT/.cursor/worktrees.json"
+                CONFIG_REF=$(wt_default_branch)
+                if [ -n "$CONFIG_REF" ]; then
+                    CONFIG_REF=$(wt_resolve_ref "$CONFIG_REF")
                 fi
-
-                if [ -n "$CONFIG" ] && command -v jq >/dev/null 2>&1; then
-                    wt_run_config "$CONFIG" "$WORKTREE" "$ROOT"
-                else
-                    wt_copy_env "$ROOT" "$WORKTREE"
-                    wt_install_deps "$WORKTREE"
-                fi
+                wt_setup_worktree "$WORKTREE" "$ROOT" "$CONFIG_REF"
 
                 cd "$WORKTREE"
                 echo ""
@@ -267,8 +329,11 @@ case "$1" in
         [ -z "$BRANCH" ] && return 1
 
         if [ -z "$BASE" ]; then
-            echo "Select base branch:"
-            BASE=$(_branch_fzf)
+            BASE=$(wt_default_branch)
+            if [ -z "$BASE" ]; then
+                echo "Select base branch:"
+                BASE=$(_branch_fzf)
+            fi
         fi
         [ -z "$BASE" ] && return 1
 
@@ -278,19 +343,8 @@ case "$1" in
         mkdir -p "$(dirname "$WORKTREE")"
 
         if git worktree add -b "$BRANCH" "$WORKTREE" "$BASE"; then
-            CONFIG=""
-            if [ -f "$WORKTREE/.cursor/worktrees.json" ]; then
-                CONFIG="$WORKTREE/.cursor/worktrees.json"
-            elif [ -f "$ROOT/.cursor/worktrees.json" ]; then
-                CONFIG="$ROOT/.cursor/worktrees.json"
-            fi
-
-            if [ -n "$CONFIG" ] && command -v jq >/dev/null 2>&1; then
-                wt_run_config "$CONFIG" "$WORKTREE" "$ROOT"
-            else
-                wt_copy_env "$ROOT" "$WORKTREE"
-                wt_install_deps "$WORKTREE"
-            fi
+            CONFIG_REF=$(wt_resolve_ref "$BASE")
+            wt_setup_worktree "$WORKTREE" "$ROOT" "$CONFIG_REF"
 
             cd "$WORKTREE"
             echo ""
