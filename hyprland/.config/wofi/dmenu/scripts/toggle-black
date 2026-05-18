@@ -3,7 +3,9 @@
 set -euo pipefail
 
 STATE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/toggle-black"
-HYPRPAPER_CONFIG="$HOME/dotfiles/hyprland/.config/hypr/_black.conf"
+BLACK_WALLPAPER="$HOME/dotfiles/wallpapers/black.png"
+DEFAULT_WALLPAPER="$HOME/dotfiles/wallpapers/pallete.png"
+WALLPAPER_FIT_MODE=cover
 CACHE_SEPARATOR=$'\t'
 DEFAULT_CURSOR_TIMEOUT=10
 
@@ -21,12 +23,55 @@ stop_process() {
     fi
 }
 
+get_wallpaper_monitor() {
+    hyprctl -j monitors | jq -r 'map(select(.focused))[0].name // .[0].name // empty'
+}
+
+set_wallpaper() {
+    local wallpaper="$1"
+    local monitor
+    local request
+    local output
+
+    monitor=$(get_wallpaper_monitor)
+    if [ -z "$monitor" ]; then
+        printf 'toggle-black: failed to find a monitor for hyprpaper\n' >&2
+        return 1
+    fi
+
+    if ! pgrep -x hyprpaper >/dev/null; then
+        hyprpaper &
+    fi
+
+    request="$monitor, $wallpaper, $WALLPAPER_FIT_MODE"
+    for _ in {1..20}; do
+        if hyprctl hyprpaper wallpaper "$request" >/dev/null 2>&1; then
+            return 0
+        fi
+        sleep 0.1
+    done
+
+    if output=$(hyprctl hyprpaper wallpaper "$request" 2>&1); then
+        return 0
+    fi
+
+    printf '%s\n' "$output" >&2
+    return 1
+}
+
+try_set_wallpaper() {
+    local wallpaper="$1"
+
+    if ! set_wallpaper "$wallpaper"; then
+        printf 'toggle-black: failed to set wallpaper to %s\n' "$wallpaper" >&2
+    fi
+}
+
 if [ -f "$STATE_FILE" ]; then
     IFS=$'\t' read -r waybar_was_running cursor_timeout previous_workspace < "$STATE_FILE"
     rm -f "$STATE_FILE"
 
-    stop_process hyprpaper
-    hyprpaper &
+    try_set_wallpaper "$DEFAULT_WALLPAPER"
 
     if [ -z "$cursor_timeout" ] || [ "$cursor_timeout" = "null" ]; then
         cursor_timeout=$DEFAULT_CURSOR_TIMEOUT
@@ -52,9 +97,8 @@ else
     previous_workspace=$(hyprctl -j activeworkspace | jq -r '.id')
     printf "%s%s%s%s%s\n" "$waybar_was_running" "$CACHE_SEPARATOR" "$cursor_timeout" "$CACHE_SEPARATOR" "$previous_workspace" > "$STATE_FILE"
 
+    try_set_wallpaper "$BLACK_WALLPAPER"
     stop_process waybar
-    stop_process hyprpaper
-    hyprpaper -c "$HYPRPAPER_CONFIG" &
 
     hyprctl dispatch workspace 10
     hyprctl keyword cursor:inactive_timeout 1
