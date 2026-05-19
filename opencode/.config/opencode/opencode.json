@@ -5,6 +5,13 @@
       "/**": "allow"
     }
   },
+  "agent": {
+    "design": {
+      "mode": "subagent",
+      "description": "Designs elegant and intuitive user interfaces",
+      "model": "google/gemini-3.1-pro-preview"
+    }
+  },
   "mcp": {
     "playwriter": {
       "type": "local",

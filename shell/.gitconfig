@@ -57,6 +57,8 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/opt/homebrew/bin/gh auth git-credential
+[url "git@gitlab.com:"]
+	insteadOf = https://gitlab.com/
 [user]
 	name = princejoogie
 	email = princejoogie@gmail.com
