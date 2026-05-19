@@ -45,7 +45,7 @@ alias wt=". _wt"
 alias claude="claude --dangerously-skip-permissions"
 alias oc="opencode attach http://localhost:4096 --dir ."
 ask() {
-  opencode run --model openai/gpt-5.3-codex-spark "$*"
+  opencode run --model openai/gpt-5.3-codex-spark --variant low "$*"
 }
 alias ask="noglob ask"
 # alises end
