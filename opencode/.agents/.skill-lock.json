@@ -122,6 +122,24 @@
       "skillFolderHash": "3116f3e62dbd02b44a598b1aa690d2a8938e8f89",
       "installedAt": "2026-05-21T20:24:20.177Z",
       "updatedAt": "2026-05-21T20:24:20.177Z"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/shadcn/ui.git",
+      "skillPath": "skills/shadcn/SKILL.md",
+      "skillFolderHash": "a8404703769866faf15bee897c9ae6e252ac2d35",
+      "installedAt": "2026-05-21T20:38:53.242Z",
+      "updatedAt": "2026-05-21T20:38:53.242Z"
+    },
+    "gpt-image-2": {
+      "source": "agentspace-so/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/agentspace-so/agent-skills.git",
+      "skillPath": "gpt-image-2/SKILL.md",
+      "skillFolderHash": "15b3a48babf955f2460520833bc82c772ce71417",
+      "installedAt": "2026-05-21T20:38:55.717Z",
+      "updatedAt": "2026-05-21T20:38:55.717Z"
     }
   },
   "dismissed": {
