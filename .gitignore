@@ -20,3 +20,4 @@ claude/.claude/
 mcpservers.json
 
 *.cbor
+.tmp
