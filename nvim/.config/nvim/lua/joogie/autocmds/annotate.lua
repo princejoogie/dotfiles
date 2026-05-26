@@ -11,8 +11,12 @@ local config = {
     list = "<leader>anl",
     delete = "<leader>and",
     delete_all = "<leader>anD",
+    previous = "[a",
+    next = "]a",
   },
   list_keymaps = {
+    previous = "k",
+    next = "j",
     open = "o",
     copy = "cc",
     copy_all = "ca",
@@ -181,6 +185,10 @@ local function bounded(value, min, max)
   return math.min(math.max(value, min), max)
 end
 
+local function wrapped_index(index, delta, count)
+  return ((index - 1 + delta) % count) + 1
+end
+
 ---@param linenumber AnnotateLineNumber
 ---@return integer?, integer?
 local function line_range(linenumber)
@@ -223,6 +231,91 @@ local function annotation_at_line(annotations, filename, line)
   return nil, nil
 end
 
+local function current_file_annotations()
+  local path = current_buffer_path()
+  if not path then
+    return nil
+  end
+
+  local root = repo_root(path)
+  local filename = relative_path(path, root)
+  local annotations = read_annotations(root)
+  if not annotations then
+    return nil
+  end
+
+  local file_annotations = {}
+  for _, annotation in ipairs(annotations) do
+    if annotation.filename == filename then
+      local start_line, end_line = line_range(annotation.linenumber)
+      if start_line and end_line then
+        table.insert(file_annotations, {
+          start_line = start_line,
+          end_line = end_line,
+        })
+      end
+    end
+  end
+
+  table.sort(file_annotations, function(a, b)
+    if a.start_line == b.start_line then
+      return a.end_line < b.end_line
+    end
+
+    return a.start_line < b.start_line
+  end)
+
+  return file_annotations
+end
+
+local function jump_source_annotation(direction)
+  local file_annotations = current_file_annotations()
+  if not file_annotations then
+    notify("Cannot navigate annotations from this buffer", vim.log.levels.WARN)
+    return
+  end
+
+  if #file_annotations == 0 then
+    notify("No annotations in current file", vim.log.levels.WARN)
+    return
+  end
+
+  local current_line = vim.api.nvim_win_get_cursor(0)[1]
+  local current_index
+  local target_index
+
+  for index, annotation in ipairs(file_annotations) do
+    if current_line >= annotation.start_line and current_line <= annotation.end_line then
+      current_index = index
+      break
+    end
+  end
+
+  if current_index then
+    target_index = wrapped_index(current_index, direction, #file_annotations)
+  elseif direction > 0 then
+    for index, annotation in ipairs(file_annotations) do
+      if annotation.start_line > current_line then
+        target_index = index
+        break
+      end
+    end
+    target_index = target_index or 1
+  else
+    for index, annotation in ipairs(file_annotations) do
+      if annotation.start_line < current_line then
+        target_index = index
+      else
+        break
+      end
+    end
+    target_index = target_index or #file_annotations
+  end
+
+  local line_count = vim.api.nvim_buf_line_count(0)
+  pcall(vim.api.nvim_win_set_cursor, 0, { bounded(file_annotations[target_index].start_line, 1, line_count), 0 })
+end
+
 local function refresh_annotation_signs(buf, annotations, root)
   buf = buf or vim.api.nvim_get_current_buf()
   vim.fn.sign_unplace(sign_group, { buffer = buf })
@@ -250,7 +343,7 @@ local function refresh_annotation_signs(buf, annotations, root)
     if annotation.filename == filename then
       local start_line, end_line = line_range(annotation.linenumber)
       if start_line and end_line and end_line >= 1 and start_line <= line_count then
-        local sign_line = bounded(end_line, 1, line_count)
+        local sign_line = bounded(start_line, 1, line_count)
         if not signed_lines[sign_line] then
           signed_lines[sign_line] = true
           vim.fn.sign_place(sign_line, sign_group, sign_name, buf, { lnum = sign_line, priority = config.sign_priority })
@@ -427,7 +520,9 @@ end
 
 local function render_list(buf, root, annotations)
   local lines = {
-    ("Shortcuts: %s open source | %s copy annotation | %s copy all annotations | %s delete annotation"):format(
+    ("Shortcuts: %s/%s navigate | %s open source | %s copy annotation | %s copy all annotations | %s delete annotation"):format(
+      config.list_keymaps.next,
+      config.list_keymaps.previous,
       config.list_keymaps.open,
       config.list_keymaps.copy,
       config.list_keymaps.copy_all,
@@ -436,6 +531,7 @@ local function render_list(buf, root, annotations)
     "",
   }
   local line_map = {}
+  local index_lines = {}
 
   if #annotations == 0 then
     table.insert(lines, "No annotations.")
@@ -443,6 +539,7 @@ local function render_list(buf, root, annotations)
     for index, annotation in ipairs(annotations) do
       local start_line = #lines + 1
       local annotation_lines = split_annotation_lines(annotation_text(annotation))
+      index_lines[index] = start_line
 
       table.insert(lines, ("file: %s:%s"):format(annotation.filename or "", line_label(annotation)))
       table.insert(lines, "annotation: " .. annotation_lines[1])
@@ -469,6 +566,7 @@ local function render_list(buf, root, annotations)
   vim.bo[buf].modifiable = false
   vim.b[buf].annotate_root = root
   vim.b[buf].annotate_line_map = line_map
+  vim.b[buf].annotate_index_lines = index_lines
 end
 
 local function current_annotations_root()
@@ -493,6 +591,41 @@ local function list_annotation_at_cursor(buf)
   end
 
   return annotations[index], index, annotations, root
+end
+
+local function jump_list_annotation(buf, direction)
+  local index_lines = vim.b[buf].annotate_index_lines or {}
+  if #index_lines == 0 then
+    notify("No annotations to navigate", vim.log.levels.WARN)
+    return
+  end
+
+  local current_line = vim.api.nvim_win_get_cursor(0)[1]
+  local current_index = (vim.b[buf].annotate_line_map or {})[current_line]
+  local target_index
+
+  if current_index then
+    target_index = wrapped_index(current_index, direction, #index_lines)
+  elseif direction > 0 then
+    for index, line in ipairs(index_lines) do
+      if line > current_line then
+        target_index = index
+        break
+      end
+    end
+    target_index = target_index or 1
+  else
+    for index, line in ipairs(index_lines) do
+      if line < current_line then
+        target_index = index
+      else
+        break
+      end
+    end
+    target_index = target_index or #index_lines
+  end
+
+  pcall(vim.api.nvim_win_set_cursor, 0, { index_lines[target_index], 0 })
 end
 
 local function copy_current_annotation(buf)
@@ -843,6 +976,17 @@ function M.list()
 
   render_list(buf, root, annotations)
   local list_win = open_float(buf, "Annotations")
+  local index_lines = vim.b[buf].annotate_index_lines or {}
+  local start_line = index_lines[1] or math.min(3, vim.api.nvim_buf_line_count(buf))
+  pcall(vim.api.nvim_win_set_cursor, list_win, { start_line, 0 })
+
+  vim.keymap.set("n", config.list_keymaps.next, function()
+    jump_list_annotation(buf, 1)
+  end, { buffer = buf, desc = "Next annotation" })
+
+  vim.keymap.set("n", config.list_keymaps.previous, function()
+    jump_list_annotation(buf, -1)
+  end, { buffer = buf, desc = "Previous annotation" })
 
   vim.keymap.set("n", config.list_keymaps.open, function()
     open_source_annotation(buf, list_win, source_win)
@@ -881,6 +1025,14 @@ function M.deleteall()
     end
     notify("Annotations cleared")
   end
+end
+
+function M.previous()
+  jump_source_annotation(-1)
+end
+
+function M.next()
+  jump_source_annotation(1)
 end
 
 vim.api.nvim_create_user_command("Annotate", function(opts)
@@ -942,5 +1094,7 @@ vim.keymap.set("v", config.keymaps.add, ":Annotate add<cr>", { desc = "Add annot
 vim.keymap.set("n", config.keymaps.list, "<cmd>Annotate list<cr>", { desc = "List annotations" })
 vim.keymap.set("n", config.keymaps.delete, "<cmd>Annotate delete<cr>", { desc = "Delete annotation" })
 vim.keymap.set("n", config.keymaps.delete_all, "<cmd>Annotate deleteall<cr>", { desc = "Delete all annotations" })
+vim.keymap.set("n", config.keymaps.previous, M.previous, { desc = "Previous annotation" })
+vim.keymap.set("n", config.keymaps.next, M.next, { desc = "Next annotation" })
 
 return M
