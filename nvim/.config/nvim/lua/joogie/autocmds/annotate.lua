@@ -22,7 +22,7 @@ local config = {
     copy_all = "ca",
     delete = "dd",
   },
-  post_instruction = "after resolving each annotation, edit the item from .tmp/annotations.json and prepend the annotation with 'RESOLVED: '",
+  post_instruction = "after resolving each annotation, edit the item from annotation file and prepend the annotation with 'RESOLVED: '",
 }
 
 local subcommands = { "add", "list", "delete", "deleteall" }
@@ -186,12 +186,17 @@ local function formatted_annotation(annotation)
   return ("file: %s:%s\nannotation: %s"):format(annotation.filename or "", line_label(annotation), annotation_text(annotation))
 end
 
-local function append_post_instruction(text)
+local function append_post_instruction(text, root)
   if not config.post_instruction or config.post_instruction == "" then
     return text
   end
 
-  return text .. "\n\n" .. config.post_instruction
+  local result = text .. "\n\n---\n\n" .. config.post_instruction
+  if root then
+    result = result .. "\nannotations file: " .. annotations_path(root)
+  end
+
+  return result
 end
 
 local function copy_to_clipboard(text, success_message)
@@ -670,13 +675,13 @@ local function clamp_list_cursor(buf)
 end
 
 local function copy_current_annotation(buf)
-  local annotation = list_annotation_at_cursor(buf)
+  local annotation, _, _, root = list_annotation_at_cursor(buf)
   if not annotation then
     notify("No annotation at current line", vim.log.levels.WARN)
     return
   end
 
-  copy_to_clipboard(append_post_instruction(formatted_annotation(annotation)), "Copied annotation")
+  copy_to_clipboard(append_post_instruction(formatted_annotation(annotation), root), "Copied annotation")
 end
 
 local function copy_all_annotations(buf)
@@ -696,7 +701,7 @@ local function copy_all_annotations(buf)
     table.insert(formatted, formatted_annotation(annotation))
   end
 
-  copy_to_clipboard(append_post_instruction(table.concat(formatted, "\n\n---\n\n")), "Copied all annotations")
+  copy_to_clipboard(append_post_instruction(table.concat(formatted, "\n\n---\n\n"), root), "Copied all annotations")
 end
 
 local function annotation_path(root, annotation)
