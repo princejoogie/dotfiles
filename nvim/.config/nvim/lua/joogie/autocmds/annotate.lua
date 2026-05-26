@@ -50,6 +50,11 @@ local function current_buffer_path(buf)
     return nil
   end
 
+  local diffview_path = path:match("^diffview://(/.*)$")
+  if diffview_path then
+    return vim.fn.fnamemodify(diffview_path, ":p"), true
+  end
+
   return vim.fn.fnamemodify(path, ":p")
 end
 
@@ -85,6 +90,29 @@ local function relative_path(path, root)
   end
 
   return absolute
+end
+
+local function annotation_filename(path, root, is_diffview)
+  local filename = relative_path(path, vim.fn.getcwd())
+  if filename == vim.fn.fnamemodify(path, ":p") then
+    filename = relative_path(path, root)
+  end
+
+  if is_diffview then
+    local worktree_filename = filename:match("^%.git/worktrees/[^/]+/[^/]+/(.+)$")
+    if worktree_filename then
+      return worktree_filename
+    end
+
+    local git_filename = filename:match("^%.git/[^/]+/(.+)$")
+    if git_filename then
+      return git_filename
+    end
+
+    filename = filename:gsub("^[^/]+/", "", 1)
+  end
+
+  return filename
 end
 
 local function annotations_path(root)
@@ -232,13 +260,13 @@ local function annotation_at_line(annotations, filename, line)
 end
 
 local function current_file_annotations()
-  local path = current_buffer_path()
+  local path, is_diffview = current_buffer_path()
   if not path then
     return nil
   end
 
   local root = repo_root(path)
-  local filename = relative_path(path, root)
+  local filename = annotation_filename(path, root, is_diffview)
   local annotations = read_annotations(root)
   if not annotations then
     return nil
@@ -320,7 +348,7 @@ local function refresh_annotation_signs(buf, annotations, root)
   buf = buf or vim.api.nvim_get_current_buf()
   vim.fn.sign_unplace(sign_group, { buffer = buf })
 
-  local path = current_buffer_path(buf)
+  local path, is_diffview = current_buffer_path(buf)
   if not path then
     return
   end
@@ -331,7 +359,7 @@ local function refresh_annotation_signs(buf, annotations, root)
     return
   end
 
-  local filename = relative_path(path, root)
+  local filename = annotation_filename(path, root, is_diffview)
   local line_count = vim.api.nvim_buf_line_count(buf)
   local signed_lines = {}
 
@@ -425,7 +453,7 @@ local function open_float(buf, title, opts)
 end
 
 local function source_context(opts)
-  local path = current_buffer_path()
+  local path, is_diffview = current_buffer_path()
   if not path then
     notify("Cannot annotate this buffer", vim.log.levels.WARN)
     return nil
@@ -448,7 +476,7 @@ local function source_context(opts)
 
   return {
     root = root,
-    filename = relative_path(path, root),
+    filename = annotation_filename(path, root, is_diffview),
     linenumber = linenumber,
   }
 end
@@ -567,6 +595,7 @@ local function render_list(buf, root, annotations)
   vim.b[buf].annotate_root = root
   vim.b[buf].annotate_line_map = line_map
   vim.b[buf].annotate_index_lines = index_lines
+  vim.b[buf].annotate_min_line = index_lines[1] or math.min(3, vim.api.nvim_buf_line_count(buf))
 end
 
 local function current_annotations_root()
@@ -626,6 +655,18 @@ local function jump_list_annotation(buf, direction)
   end
 
   pcall(vim.api.nvim_win_set_cursor, 0, { index_lines[target_index], 0 })
+end
+
+local function clamp_list_cursor(buf)
+  local min_line = vim.b[buf].annotate_min_line
+  if not min_line then
+    return
+  end
+
+  local line = vim.api.nvim_win_get_cursor(0)[1]
+  if line < min_line then
+    pcall(vim.api.nvim_win_set_cursor, 0, { min_line, 0 })
+  end
 end
 
 local function copy_current_annotation(buf)
@@ -778,13 +819,13 @@ local function line_contains(linenumber, line)
 end
 
 local function source_annotation_at_cursor()
-  local path = current_buffer_path()
+  local path, is_diffview = current_buffer_path()
   if not path then
     return nil, nil, nil, nil
   end
 
   local root = repo_root(path)
-  local filename = relative_path(path, root)
+  local filename = annotation_filename(path, root, is_diffview)
   local current_line = vim.api.nvim_win_get_cursor(0)[1]
   local annotations = read_annotations(root)
   if not annotations then
@@ -976,9 +1017,16 @@ function M.list()
 
   render_list(buf, root, annotations)
   local list_win = open_float(buf, "Annotations")
-  local index_lines = vim.b[buf].annotate_index_lines or {}
-  local start_line = index_lines[1] or math.min(3, vim.api.nvim_buf_line_count(buf))
-  pcall(vim.api.nvim_win_set_cursor, list_win, { start_line, 0 })
+  pcall(vim.api.nvim_win_set_cursor, list_win, { vim.b[buf].annotate_min_line or 1, 0 })
+
+  local group = vim.api.nvim_create_augroup("joogie_annotate_list_" .. buf, { clear = true })
+  vim.api.nvim_create_autocmd("CursorMoved", {
+    group = group,
+    buffer = buf,
+    callback = function()
+      clamp_list_cursor(buf)
+    end,
+  })
 
   vim.keymap.set("n", config.list_keymaps.next, function()
     jump_list_annotation(buf, 1)
