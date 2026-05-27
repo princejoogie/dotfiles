@@ -159,6 +159,36 @@
       "skillFolderHash": "461989110d1cd43c4809bea01c9a61b9fd432056",
       "installedAt": "2026-05-21T20:52:38.261Z",
       "updatedAt": "2026-05-21T20:52:38.261Z"
+    },
+    "to-prd": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/to-prd/SKILL.md",
+      "skillFolderHash": "d6eff3e99a325d2d9c2acbe31b4d76fa5340a154",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-05-27T05:03:51.564Z",
+      "updatedAt": "2026-05-27T05:03:51.564Z"
+    },
+    "to-issues": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/to-issues/SKILL.md",
+      "skillFolderHash": "b38c5aa6ae5d6903e60d3f74a7aafd32d02f2c06",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-05-27T05:03:51.565Z",
+      "updatedAt": "2026-05-27T05:03:51.565Z"
+    },
+    "zoom-out": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/engineering/zoom-out/SKILL.md",
+      "skillFolderHash": "6ecebabdea814d12888f56a611da7bf182b5fb26",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-05-27T05:03:51.565Z",
+      "updatedAt": "2026-05-27T05:03:51.565Z"
     }
   },
   "dismissed": {

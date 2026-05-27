@@ -43,7 +43,7 @@ alias lta="ls -ltar --human-readable | grep -vE '^\.| \.$| \.\.$'"
 alias pip=pip3
 alias wt=". _wt"
 alias claude="claude --dangerously-skip-permissions"
-alias oc="opencode"
+alias oc="opencode attach http://localhost:4096 --dir ."
 ask() {
   opencode run --model openai/gpt-5.3-codex-spark --variant low "$*"
 }
