@@ -4,6 +4,7 @@ local cmd = utils.cmd
 
 return {
   "dlyongemallo/diffview.nvim",
+  cmd = "DiffviewOpen",
   keys = {
     {
       "<leader>dO",
@@ -43,16 +44,9 @@ return {
     {
       "<leader>do",
       function()
-        vim.ui.select(utils.git.branches(), {
-          prompt = "Select first branch:",
-        }, function(branch)
-          if not branch then
-            return
-          end
-          vim.cmd("DiffviewOpen " .. (branch == "HEAD" and "" or branch))
-        end)
+        vim.cmd("DiffviewOpen")
       end,
-      desc = "Diffview: on a branch",
+      desc = "Diffview: open",
     },
     {
       "<leader>dc",

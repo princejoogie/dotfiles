@@ -108,8 +108,22 @@ return {
       zen = { enabled = true, toggles = { dim = false } },
       dashboard = {
         enabled = true,
+        width = 100,
+        sections = {
+          { section = "header" },
+          { section = "keys", gap = 1, padding = 1 },
+          { section = "startup" },
+        },
         preset = {
-          keys = { { icon = " ", key = "q", desc = "Quit", action = ":qa" } },
+          keys = {
+            { icon = " ", key = "g", desc = "Git Status", action = ":lua Snacks.picker.git_status()" },
+            { icon = " ", key = "d", desc = "Diff view", action = ":DiffviewOpen" },
+            { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('recent')" },
+            { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', { cwd = vim.fn.stdpath('config'), hidden = true })" },
+            { icon = " ", key = "s", desc = "Restore Session", section = "session" },
+            { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
+            { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+          },
           header = dashboard_header,
         },
       },

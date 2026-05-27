@@ -74,6 +74,10 @@ return {
       require("lspconfig.ui.windows").default_options.border = "rounded"
       require("mason").setup({ ui = { border = "rounded" } })
 
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+      vim.lsp.config("*", { capabilities = capabilities })
+
       mlsp.setup({
         automatic_enable = true,
         ensure_installed = {
@@ -91,10 +95,6 @@ return {
           "yamlls",
         },
       })
-
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
-      vim.lsp.config("*", { capabilities = capabilities })
     end,
   },
 }

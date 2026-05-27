@@ -6,5 +6,21 @@
     "missing-fields"
   ],
   "Lua.workspace.checkThirdParty": false,
-  "diagnostics.globals": ["vim", "Snacks"]
+  "Lua.workspace.ignoreDir": [
+    ".git",
+    ".opencode",
+    ".tmp",
+    "shell/.local/bin",
+    "shell/.local/share",
+    "shell/.local/state"
+  ],
+  "files.exclude": {
+    ".git": true,
+    ".opencode": true,
+    ".tmp": true,
+    "shell/.local/bin": true,
+    "shell/.local/share": true,
+    "shell/.local/state": true
+  },
+  "Lua.diagnostics.globals": ["vim", "Snacks"]
 }

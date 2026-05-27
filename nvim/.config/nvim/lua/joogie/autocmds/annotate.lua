@@ -8,6 +8,7 @@ local config = {
   sign_priority = 8,
   keymaps = {
     add = "<leader>ana",
+    copy = "<leader>anc",
     list = "<leader>anl",
     delete = "<leader>and",
     delete_all = "<leader>anD",
@@ -25,7 +26,7 @@ local config = {
   post_instruction = "after resolving each annotation, edit the item from annotation file and prepend the annotation with 'RESOLVED: '",
 }
 
-local subcommands = { "add", "list", "delete", "deleteall" }
+local subcommands = { "add", "copy", "list", "delete", "deleteall" }
 local namespace = vim.api.nvim_create_namespace("joogie_annotate")
 local ghost_namespace = vim.api.nvim_create_namespace("joogie_annotate_ghost")
 local sign_name = "JoogieAnnotateSign"
@@ -1068,6 +1069,22 @@ function M.delete()
   delete_source_annotation()
 end
 
+function M.copy()
+  local buf = vim.api.nvim_get_current_buf()
+  if vim.b[buf].annotate_line_map then
+    copy_current_annotation(buf)
+    return
+  end
+
+  local annotation, _, _, root = source_annotation_at_cursor()
+  if not annotation then
+    notify("No annotation at current line", vim.log.levels.WARN)
+    return
+  end
+
+  copy_to_clipboard(append_post_instruction(formatted_annotation(annotation), root), "Copied annotation")
+end
+
 function M.deleteall()
   local root = current_annotations_root()
   if write_annotations(root, {}) then
@@ -1093,6 +1110,8 @@ vim.api.nvim_create_user_command("Annotate", function(opts)
 
   if command == "add" then
     M.add(opts)
+  elseif command == "copy" then
+    M.copy()
   elseif command == "list" then
     M.list()
   elseif command == "delete" then
@@ -1100,7 +1119,7 @@ vim.api.nvim_create_user_command("Annotate", function(opts)
   elseif command == "deleteall" then
     M.deleteall()
   else
-    notify("Usage: :Annotate add|list|delete|deleteall", vim.log.levels.WARN)
+    notify("Usage: :Annotate add|copy|list|delete|deleteall", vim.log.levels.WARN)
   end
 end, {
   nargs = "*",
@@ -1144,6 +1163,7 @@ vim.api.nvim_create_autocmd({ "BufLeave", "InsertEnter" }, {
 
 vim.keymap.set("n", config.keymaps.add, "<cmd>Annotate add<cr>", { desc = "Add annotation" })
 vim.keymap.set("v", config.keymaps.add, ":Annotate add<cr>", { desc = "Add annotation" })
+vim.keymap.set("n", config.keymaps.copy, "<cmd>Annotate copy<cr>", { desc = "Copy annotation" })
 vim.keymap.set("n", config.keymaps.list, "<cmd>Annotate list<cr>", { desc = "List annotations" })
 vim.keymap.set("n", config.keymaps.delete, "<cmd>Annotate delete<cr>", { desc = "Delete annotation" })
 vim.keymap.set("n", config.keymaps.delete_all, "<cmd>Annotate deleteall<cr>", { desc = "Delete all annotations" })
