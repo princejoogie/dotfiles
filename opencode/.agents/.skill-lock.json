@@ -189,6 +189,16 @@
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-05-27T05:03:51.565Z",
       "updatedAt": "2026-05-27T05:03:51.565Z"
+    },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "skillFolderHash": "2a1ad17028306ebe45f0e49703fa28b9b2e7f499",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-05-28T03:38:04.708Z",
+      "updatedAt": "2026-05-28T03:38:04.708Z"
     }
   },
   "dismissed": {
@@ -207,6 +217,7 @@
     "github-copilot",
     "kimi-cli",
     "opencode",
-    "warp"
+    "warp",
+    "zed"
   ]
 }

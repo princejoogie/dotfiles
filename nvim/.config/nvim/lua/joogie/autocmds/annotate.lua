@@ -3,6 +3,7 @@ local M = {}
 local config = {
   annotate_icon = "󰍨 ",
   show_ghost_annotations = true,
+  includeHunksOnCopy = true,
   ghost_max_length = 80,
   sign_highlight = "DiagnosticSignInfo",
   sign_priority = 8,
@@ -40,9 +41,43 @@ vim.fn.sign_define(sign_name, { text = config.annotate_icon, texthl = config.sig
 ---@field filename string
 ---@field linenumber AnnotateLineNumber
 ---@field annotation string
+---@field hunk? string
 
 local function notify(message, level)
   vim.notify(message, level or vim.log.levels.INFO, { title = "Annotate" })
+end
+
+local function checkout_root_from_git_worktree_dir(worktree_dir)
+  local gitdir_path = worktree_dir .. "/gitdir"
+  if vim.fn.filereadable(gitdir_path) == 0 then
+    return nil
+  end
+
+  local gitdir = vim.fn.readfile(gitdir_path)[1]
+  if not gitdir or gitdir == "" then
+    return nil
+  end
+
+  gitdir = gitdir:gsub("%s+$", "")
+  if not gitdir:match("^/") then
+    gitdir = vim.fn.fnamemodify(worktree_dir .. "/" .. gitdir, ":p")
+  end
+
+  return vim.fn.fnamemodify(gitdir, ":h")
+end
+
+local function resolved_diffview_worktree_path(path)
+  local worktree_dir, filename = path:match("^(.-/%.git/worktrees/[^/]+)/[^/]+/(.+)$")
+  if not worktree_dir or not filename then
+    return nil
+  end
+
+  local worktree_root = checkout_root_from_git_worktree_dir(worktree_dir)
+  if not worktree_root then
+    return nil
+  end
+
+  return vim.fn.fnamemodify(worktree_root .. "/" .. filename, ":p")
 end
 
 local function current_buffer_path(buf)
@@ -53,7 +88,13 @@ local function current_buffer_path(buf)
 
   local diffview_path = path:match("^diffview://(/.*)$")
   if diffview_path then
-    return vim.fn.fnamemodify(diffview_path, ":p"), true
+    local absolute = vim.fn.fnamemodify(diffview_path, ":p")
+    local worktree_path = resolved_diffview_worktree_path(absolute)
+    if worktree_path then
+      return worktree_path, true, false
+    end
+
+    return absolute, true, true
   end
 
   return vim.fn.fnamemodify(path, ":p")
@@ -93,13 +134,13 @@ local function relative_path(path, root)
   return absolute
 end
 
-local function annotation_filename(path, root, is_diffview)
+local function annotation_filename(path, root, is_diffview, use_diffview_virtual_filename)
   local filename = relative_path(path, vim.fn.getcwd())
   if filename == vim.fn.fnamemodify(path, ":p") then
     filename = relative_path(path, root)
   end
 
-  if is_diffview then
+  if is_diffview and use_diffview_virtual_filename ~= false then
     local worktree_filename = filename:match("^%.git/worktrees/[^/]+/[^/]+/(.+)$")
     if worktree_filename then
       return worktree_filename
@@ -114,6 +155,11 @@ local function annotation_filename(path, root, is_diffview)
   end
 
   return filename
+end
+
+local function source_is_diffview(buf)
+  local _, is_diffview = current_buffer_path(buf)
+  return is_diffview == true
 end
 
 local function annotations_path(root)
@@ -170,6 +216,10 @@ local function annotation_text(annotation)
   return tostring(annotation.annotation or "")
 end
 
+local function hunk_text(annotation)
+  return tostring(annotation.hunk or "")
+end
+
 local function ghost_annotation_text(annotation)
   local text = annotation_text(annotation):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
   if text == "" then
@@ -184,7 +234,14 @@ local function ghost_annotation_text(annotation)
 end
 
 local function formatted_annotation(annotation)
-  return ("file: %s:%s\nannotation: %s"):format(annotation.filename or "", line_label(annotation), annotation_text(annotation))
+  local formatted = ("file: %s:%s\nannotation: %s"):format(annotation.filename or "", line_label(annotation), annotation_text(annotation))
+  local hunk = hunk_text(annotation)
+
+  if config.includeHunksOnCopy and hunk ~= "" then
+    formatted = formatted .. "\nhunk:\n```\n" .. hunk .. "\n```"
+  end
+
+  return formatted
 end
 
 local function append_post_instruction(text, root)
@@ -254,6 +311,21 @@ local function line_range(linenumber)
   return nil, nil
 end
 
+local function source_hunk(buf, line1, line2)
+  local line_count = vim.api.nvim_buf_line_count(buf)
+  if line_count == 0 then
+    return ""
+  end
+
+  line1 = bounded(line1, 1, line_count)
+  line2 = bounded(line2, 1, line_count)
+  if line1 > line2 then
+    line1, line2 = line2, line1
+  end
+
+  return table.concat(vim.api.nvim_buf_get_lines(buf, line1 - 1, line2, false), "\n")
+end
+
 local function annotation_at_line(annotations, filename, line)
   for index, annotation in ipairs(annotations) do
     local start_line, end_line = line_range(annotation.linenumber)
@@ -266,13 +338,13 @@ local function annotation_at_line(annotations, filename, line)
 end
 
 local function current_file_annotations()
-  local path, is_diffview = current_buffer_path()
+  local path, is_diffview, use_diffview_virtual_filename = current_buffer_path()
   if not path then
     return nil
   end
 
   local root = repo_root(path)
-  local filename = annotation_filename(path, root, is_diffview)
+  local filename = annotation_filename(path, root, is_diffview, use_diffview_virtual_filename)
   local annotations = read_annotations(root)
   if not annotations then
     return nil
@@ -354,7 +426,7 @@ local function refresh_annotation_signs(buf, annotations, root)
   buf = buf or vim.api.nvim_get_current_buf()
   vim.fn.sign_unplace(sign_group, { buffer = buf })
 
-  local path, is_diffview = current_buffer_path(buf)
+  local path, is_diffview, use_diffview_virtual_filename = current_buffer_path(buf)
   if not path then
     return
   end
@@ -365,7 +437,7 @@ local function refresh_annotation_signs(buf, annotations, root)
     return
   end
 
-  local filename = annotation_filename(path, root, is_diffview)
+  local filename = annotation_filename(path, root, is_diffview, use_diffview_virtual_filename)
   local line_count = vim.api.nvim_buf_line_count(buf)
   local signed_lines = {}
 
@@ -459,7 +531,7 @@ local function open_float(buf, title, opts)
 end
 
 local function source_context(opts)
-  local path, is_diffview = current_buffer_path()
+  local path, is_diffview, use_diffview_virtual_filename = current_buffer_path()
   if not path then
     notify("Cannot annotate this buffer", vim.log.levels.WARN)
     return nil
@@ -482,8 +554,9 @@ local function source_context(opts)
 
   return {
     root = root,
-    filename = annotation_filename(path, root, is_diffview),
+    filename = annotation_filename(path, root, is_diffview, use_diffview_virtual_filename),
     linenumber = linenumber,
+    hunk = source_hunk(0, line1, line2),
   }
 end
 
@@ -528,6 +601,7 @@ local function save_annotation(buf, context)
     filename = context.filename,
     linenumber = context.linenumber,
     annotation = annotation,
+    hunk = context.hunk,
   }
 
   if context.saved_index and annotations[context.saved_index] then
@@ -722,10 +796,43 @@ local function normal_window(win)
   return win and vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_config(win).relative == ""
 end
 
-local function find_normal_window_for_buffer(buf)
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    if normal_window(win) and vim.api.nvim_win_get_buf(win) == buf then
+local function diffview_buffer(buf)
+  local name = vim.api.nvim_buf_get_name(buf)
+  if name:match("^diffview://") then
+    return true
+  end
+
+  return vim.bo[buf].filetype:lower():match("^diffview") ~= nil
+end
+
+local function diffview_tab(tab)
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+    if normal_window(win) and diffview_buffer(vim.api.nvim_win_get_buf(win)) then
+      return true
+    end
+  end
+
+  return false
+end
+
+local function find_normal_window_in_tab(tab, target_buf)
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+    if normal_window(win) and (not target_buf or vim.api.nvim_win_get_buf(win) == target_buf) then
       return win
+    end
+  end
+
+  return nil
+end
+
+local function find_normal_window_for_buffer(buf, opts)
+  opts = opts or {}
+  for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
+    if not opts.exclude_diffview_tabs or not diffview_tab(tab) then
+      local win = find_normal_window_in_tab(tab, buf)
+      if win then
+        return win
+      end
     end
   end
 
@@ -733,27 +840,52 @@ local function find_normal_window_for_buffer(buf)
 end
 
 local function find_loaded_buffer(path)
+  local target_path = vim.fn.fnamemodify(path, ":p")
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_loaded(buf) and vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":p") == path then
-      return buf
+    local name = vim.api.nvim_buf_get_name(buf)
+    if vim.api.nvim_buf_is_loaded(buf) and name ~= "" and not name:match("^%a[%w+.-]*://") then
+      if vim.fn.fnamemodify(name, ":p") == target_path then
+        return buf
+      end
     end
   end
 
   return nil
 end
 
-local function fallback_window(preferred_win)
+local function fallback_window(preferred_win, opts)
+  opts = opts or {}
   if normal_window(preferred_win) then
-    return preferred_win
+    local tab = vim.api.nvim_win_get_tabpage(preferred_win)
+    if not opts.exclude_diffview_tabs or not diffview_tab(tab) then
+      return preferred_win
+    end
   end
 
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    if normal_window(win) then
-      return win
+  for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
+    if not opts.exclude_diffview_tabs or not diffview_tab(tab) then
+      local win = find_normal_window_in_tab(tab)
+      if win then
+        return win
+      end
     end
   end
 
   return nil
+end
+
+local function use_target_window(target_win, create_tab)
+  if target_win and vim.api.nvim_win_is_valid(target_win) then
+    vim.api.nvim_set_current_win(target_win)
+    return true
+  end
+
+  if create_tab then
+    vim.cmd.tabnew()
+    return true
+  end
+
+  return false
 end
 
 local function jump_to_annotation_line(annotation)
@@ -779,16 +911,16 @@ local function open_source_annotation(buf, list_win, source_win)
     return
   end
 
+  local open_in_non_diffview_tab = vim.b[buf].annotate_source_is_diffview == true
+  local window_opts = { exclude_diffview_tabs = open_in_non_diffview_tab }
   local target_buf = find_loaded_buffer(path)
-  local target_win = target_buf and find_normal_window_for_buffer(target_buf) or fallback_window(source_win)
+  local target_win = target_buf and find_normal_window_for_buffer(target_buf, window_opts) or fallback_window(source_win, window_opts)
 
   if list_win and vim.api.nvim_win_is_valid(list_win) then
     pcall(vim.api.nvim_win_close, list_win, true)
   end
 
-  if target_win and vim.api.nvim_win_is_valid(target_win) then
-    vim.api.nvim_set_current_win(target_win)
-  end
+  use_target_window(target_win, open_in_non_diffview_tab)
 
   if target_buf then
     vim.api.nvim_win_set_buf(0, target_buf)
@@ -825,13 +957,13 @@ local function line_contains(linenumber, line)
 end
 
 local function source_annotation_at_cursor()
-  local path, is_diffview = current_buffer_path()
+  local path, is_diffview, use_diffview_virtual_filename = current_buffer_path()
   if not path then
     return nil, nil, nil, nil
   end
 
   local root = repo_root(path)
-  local filename = annotation_filename(path, root, is_diffview)
+  local filename = annotation_filename(path, root, is_diffview, use_diffview_virtual_filename)
   local current_line = vim.api.nvim_win_get_cursor(0)[1]
   local annotations = read_annotations(root)
   if not annotations then
@@ -921,6 +1053,8 @@ end
 
 local function open_annotation_editor(annotation, index, root)
   local lines = split_annotation_lines(annotation_text(annotation))
+  local start_line, end_line = line_range(annotation.linenumber)
+  local hunk = start_line and end_line and source_hunk(0, start_line, end_line) or hunk_text(annotation)
   local buf = vim.api.nvim_create_buf(false, true)
   local uv = vim.uv or vim.loop
 
@@ -937,6 +1071,7 @@ local function open_annotation_editor(annotation, index, root)
     filename = annotation.filename,
     linenumber = annotation.linenumber,
     saved_index = index,
+    hunk = hunk,
   }
 
   local group = vim.api.nvim_create_augroup("joogie_annotate_edit_" .. buf, { clear = true })
@@ -1012,6 +1147,7 @@ function M.list()
   end
 
   local source_win = vim.api.nvim_get_current_win()
+  local source_buf = vim.api.nvim_win_get_buf(source_win)
   local buf = vim.api.nvim_create_buf(false, true)
   local uv = vim.uv or vim.loop
 
@@ -1022,6 +1158,7 @@ function M.list()
   vim.api.nvim_buf_set_name(buf, "annotate://list/" .. uv.hrtime())
 
   render_list(buf, root, annotations)
+  vim.b[buf].annotate_source_is_diffview = source_is_diffview(source_buf)
   local list_win = open_float(buf, "Annotations")
   pcall(vim.api.nvim_win_set_cursor, list_win, { vim.b[buf].annotate_min_line or 1, 0 })
 

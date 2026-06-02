@@ -30,14 +30,24 @@ Before testing, connect `agent-browser` to that browser:
 agent-browser connect 9222
 ```
 
-Then use the normal `agent-browser open`, `snapshot`, `click`, `fill`, `wait`, `screenshot`, etc commands.
+Then use the normal `agent-browser open`, `snapshot`, `click`, `fill`, `get url`, `screenshot`, etc commands.
+
+## Waiting Policy
+
+Use bounded waits only. Nothing in the Admin app should take 10 seconds to load; if it does, treat that as test signal rather than waiting indefinitely.
+
+- Prefer `agent-browser snapshot -i` and `agent-browser get url` after clicks or submits.
+- If using `agent-browser wait`, always cap it at about 10 seconds using the CLI timeout flag when available, or the shell command timeout as a fallback.
+- Be especially careful with `wait --url`; verify the current URL first because the app may already have navigated.
+- Use visible UI state, current URL, disabled/enabled buttons, form values, and sidebar presence as assertions.
+- If a transition does not complete within the bounded wait, capture the current URL, snapshot, screenshot, and relevant network/console hints as a failure.
 
 ## Login Flow
 
 1. Open `http://localhost:<ADMIN_APP_PORT>` or the protected Admin URL under test.
 2. If already logged in, click `Log out` from the sidebar.
 3. On the sign-in screen, click the Google sign-in button.
-4. Wait for Google login or account chooser.
+4. Check snapshots until Google login or account chooser appears.
 5. Ask which Google account to use unless the user already specified it.
 6. If Google asks for credentials, passkeys, or two-factor approval, pause for the user to complete the secure step.
 7. After Google redirects back to Admin, check the current URL.
