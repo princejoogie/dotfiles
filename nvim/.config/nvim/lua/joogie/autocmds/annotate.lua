@@ -6,6 +6,7 @@ local config = {
   includeHunksOnCopy = true,
   ghost_max_length = 80,
   sign_highlight = "DiagnosticSignInfo",
+  resolved_highlight = "JoogieAnnotateResolved",
   sign_priority = 8,
   keymaps = {
     add = "<leader>ana",
@@ -23,8 +24,9 @@ local config = {
     copy = "cc",
     copy_all = "ca",
     delete = "dd",
+    toggle_resolved = "<space>",
   },
-  post_instruction = "after resolving each annotation, edit the item from annotation file and prepend the annotation with 'RESOLVED: '",
+  post_instruction = "after resolving each annotation, edit the item from annotation file and set its resolved property to true",
 }
 
 local subcommands = { "add", "copy", "list", "delete", "deleteall" }
@@ -34,6 +36,7 @@ local sign_name = "JoogieAnnotateSign"
 local sign_group = "joogie_annotate_signs"
 
 vim.fn.sign_define(sign_name, { text = config.annotate_icon, texthl = config.sign_highlight, numhl = "" })
+vim.api.nvim_set_hl(0, config.resolved_highlight, { strikethrough = true })
 
 ---@alias AnnotateLineNumber integer|string
 
@@ -42,6 +45,7 @@ vim.fn.sign_define(sign_name, { text = config.annotate_icon, texthl = config.sig
 ---@field linenumber AnnotateLineNumber
 ---@field annotation string
 ---@field hunk? string
+---@field resolved? boolean
 
 local function notify(message, level)
   vim.notify(message, level or vim.log.levels.INFO, { title = "Annotate" })
@@ -184,6 +188,12 @@ local function read_annotations(root)
     return nil
   end
 
+  for _, annotation in ipairs(annotations) do
+    if type(annotation) == "table" then
+      annotation.resolved = annotation.resolved == true
+    end
+  end
+
   return annotations
 end
 
@@ -218,6 +228,10 @@ end
 
 local function hunk_text(annotation)
   return tostring(annotation.hunk or "")
+end
+
+local function annotation_resolved(annotation)
+  return annotation.resolved == true
 end
 
 local function ghost_annotation_text(annotation)
@@ -557,6 +571,7 @@ local function source_context(opts)
     filename = annotation_filename(path, root, is_diffview, use_diffview_virtual_filename),
     linenumber = linenumber,
     hunk = source_hunk(0, line1, line2),
+    resolved = false,
   }
 end
 
@@ -602,6 +617,7 @@ local function save_annotation(buf, context)
     linenumber = context.linenumber,
     annotation = annotation,
     hunk = context.hunk,
+    resolved = context.resolved == true,
   }
 
   if context.saved_index and annotations[context.saved_index] then
@@ -628,9 +644,10 @@ end
 
 local function render_list(buf, root, annotations)
   local lines = {
-    ("Shortcuts: %s/%s navigate | %s open source | %s copy annotation | %s copy all annotations | %s delete annotation"):format(
+    ("Shortcuts: %s/%s navigate | %s toggle resolved | %s open source | %s copy annotation | %s copy all annotations | %s delete annotation"):format(
       config.list_keymaps.next,
       config.list_keymaps.previous,
+      config.list_keymaps.toggle_resolved,
       config.list_keymaps.open,
       config.list_keymaps.copy,
       config.list_keymaps.copy_all,
@@ -640,6 +657,7 @@ local function render_list(buf, root, annotations)
   }
   local line_map = {}
   local index_lines = {}
+  local resolved_ranges = {}
 
   if #annotations == 0 then
     table.insert(lines, "No annotations.")
@@ -647,13 +665,19 @@ local function render_list(buf, root, annotations)
     for index, annotation in ipairs(annotations) do
       local start_line = #lines + 1
       local annotation_lines = split_annotation_lines(annotation_text(annotation))
+      local resolved = annotation_resolved(annotation)
+      local checkbox = resolved and "- [x]" or "- [ ]"
       index_lines[index] = start_line
 
-      table.insert(lines, ("file: %s:%s"):format(annotation.filename or "", line_label(annotation)))
+      table.insert(lines, ("%s file: %s:%s"):format(checkbox, annotation.filename or "", line_label(annotation)))
       table.insert(lines, "annotation: " .. annotation_lines[1])
 
       for i = 2, #annotation_lines do
         table.insert(lines, annotation_lines[i])
+      end
+
+      if resolved then
+        table.insert(resolved_ranges, { start_line = start_line, end_line = #lines })
       end
 
       table.insert(lines, "")
@@ -670,6 +694,13 @@ local function render_list(buf, root, annotations)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
   vim.api.nvim_buf_clear_namespace(buf, namespace, 0, -1)
   vim.api.nvim_buf_add_highlight(buf, namespace, "Comment", 0, 0, -1)
+
+  for _, range in ipairs(resolved_ranges) do
+    for line = range.start_line, range.end_line do
+      vim.api.nvim_buf_add_highlight(buf, namespace, config.resolved_highlight, line - 1, 0, -1)
+    end
+  end
+
   vim.bo[buf].modified = false
   vim.bo[buf].modifiable = false
   vim.b[buf].annotate_root = root
@@ -756,6 +787,11 @@ local function copy_current_annotation(buf)
     return
   end
 
+  if annotation_resolved(annotation) then
+    notify("Annotation is resolved", vim.log.levels.WARN)
+    return
+  end
+
   copy_to_clipboard(append_post_instruction(formatted_annotation(annotation), root), "Copied annotation")
 end
 
@@ -773,10 +809,37 @@ local function copy_all_annotations(buf)
 
   local formatted = {}
   for _, annotation in ipairs(annotations) do
-    table.insert(formatted, formatted_annotation(annotation))
+    if not annotation_resolved(annotation) then
+      table.insert(formatted, formatted_annotation(annotation))
+    end
   end
 
-  copy_to_clipboard(append_post_instruction(table.concat(formatted, "\n\n---\n\n"), root), "Copied all annotations")
+  if #formatted == 0 then
+    notify("No unresolved annotations to copy", vim.log.levels.WARN)
+    return
+  end
+
+  copy_to_clipboard(append_post_instruction(table.concat(formatted, "\n\n---\n\n"), root), "Copied unresolved annotations")
+end
+
+local function toggle_list_annotation_resolved(buf)
+  local annotation, index, annotations, root = list_annotation_at_cursor(buf)
+  if not annotation or not index then
+    notify("No annotation at current line", vim.log.levels.WARN)
+    return
+  end
+
+  local resolved = not annotation_resolved(annotation)
+  annotations[index].resolved = resolved
+
+  if write_annotations(root, annotations) then
+    local current_line = vim.api.nvim_win_get_cursor(0)[1]
+    refresh_annotation_signs_for_root(root)
+    render_list(buf, root, annotations)
+    local line_count = vim.api.nvim_buf_line_count(buf)
+    pcall(vim.api.nvim_win_set_cursor, 0, { math.min(current_line, line_count), 0 })
+    notify(resolved and "Annotation resolved" or "Annotation unresolved")
+  end
 end
 
 local function annotation_path(root, annotation)
@@ -1072,6 +1135,7 @@ local function open_annotation_editor(annotation, index, root)
     linenumber = annotation.linenumber,
     saved_index = index,
     hunk = hunk,
+    resolved = annotation_resolved(annotation),
   }
 
   local group = vim.api.nvim_create_augroup("joogie_annotate_edit_" .. buf, { clear = true })
@@ -1179,6 +1243,10 @@ function M.list()
     jump_list_annotation(buf, -1)
   end, { buffer = buf, desc = "Previous annotation" })
 
+  vim.keymap.set("n", config.list_keymaps.toggle_resolved, function()
+    toggle_list_annotation_resolved(buf)
+  end, { buffer = buf, desc = "Toggle annotation resolved" })
+
   vim.keymap.set("n", config.list_keymaps.open, function()
     open_source_annotation(buf, list_win, source_win)
   end, { buffer = buf, desc = "Open annotation source" })
@@ -1216,6 +1284,11 @@ function M.copy()
   local annotation, _, _, root = source_annotation_at_cursor()
   if not annotation then
     notify("No annotation at current line", vim.log.levels.WARN)
+    return
+  end
+
+  if annotation_resolved(annotation) then
+    notify("Annotation is resolved", vim.log.levels.WARN)
     return
   end
 
