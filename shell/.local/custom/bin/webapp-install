@@ -1,0 +1,90 @@
+#!/bin/bash
+
+set -euo pipefail
+
+usage() {
+  printf 'Usage: webapp-install <name> <url> [icon-path-or-url-or-name]\n' >&2
+  printf 'Creates a .desktop launcher that opens the URL with launch-webapp.\n' >&2
+}
+
+if [[ ${1:-} == "-h" || ${1:-} == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+if (( $# < 2 )); then
+  usage
+  exit 1
+fi
+
+app_name="$1"
+app_url="$2"
+icon_ref="${3:-}"
+
+if [[ ! $app_url =~ ^[a-zA-Z][a-zA-Z0-9+.-]*: ]]; then
+  app_url="https://$app_url"
+fi
+
+data_home="${XDG_DATA_HOME:-$HOME/.local/share}"
+desktop_dir="$data_home/applications"
+icon_dir="$desktop_dir/icons"
+launcher="${WEBAPP_LAUNCHER:-$HOME/.local/custom/bin/launch-webapp}"
+
+safe_name=$(printf '%s' "$app_name" | tr '[:upper:]' '[:lower:]' | tr -cs '[:alnum:]._-' '-')
+safe_name=${safe_name#-}
+safe_name=${safe_name%-}
+
+if [[ -z $safe_name ]]; then
+  printf 'Could not derive a desktop filename from app name: %s\n' "$app_name" >&2
+  exit 1
+fi
+
+mkdir -p "$desktop_dir" "$icon_dir"
+
+desktop_file="$desktop_dir/$safe_name.desktop"
+desktop_url=${app_url//%/%%}
+desktop_url=${desktop_url//\"/\\\"}
+desktop_name=${app_name//$'\n'/ }
+
+if [[ -z $icon_ref ]]; then
+  icon_path="$icon_dir/$safe_name.png"
+  if command -v curl >/dev/null 2>&1 && curl -fsSL -o "$icon_path" "https://www.google.com/s2/favicons?domain=$app_url&sz=128" && [[ -s $icon_path ]]; then
+    desktop_icon="$icon_path"
+  else
+    rm -f "$icon_path"
+    desktop_icon="web-browser"
+  fi
+elif [[ $icon_ref =~ ^https?:// ]]; then
+  icon_path="$icon_dir/$safe_name.png"
+  if ! command -v curl >/dev/null 2>&1; then
+    printf 'curl is required to download icon URLs.\n' >&2
+    exit 1
+  fi
+  curl -fsSL -o "$icon_path" "$icon_ref"
+  desktop_icon="$icon_path"
+elif [[ -f $icon_ref ]]; then
+  desktop_icon="$icon_ref"
+else
+  desktop_icon="$icon_ref"
+fi
+
+cat > "$desktop_file" <<EOF
+[Desktop Entry]
+Version=1.0
+Name=$desktop_name
+Comment=$desktop_name
+Exec="$launcher" "$desktop_url"
+Terminal=false
+Type=Application
+Icon=$desktop_icon
+Categories=Network;WebBrowser;
+StartupNotify=true
+EOF
+
+chmod +x "$desktop_file"
+
+if command -v update-desktop-database >/dev/null 2>&1; then
+  update-desktop-database "$desktop_dir" >/dev/null 2>&1 || true
+fi
+
+printf 'Installed %s at %s\n' "$app_name" "$desktop_file"

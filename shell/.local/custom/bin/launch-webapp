@@ -1,0 +1,172 @@
+#!/bin/bash
+
+set -euo pipefail
+
+usage() {
+  printf 'Usage: launch-webapp <url> [browser-flags...]\n' >&2
+  printf 'Launches a URL in Chromium app mode, without tabs or browser chrome.\n' >&2
+}
+
+if [[ ${1:-} == "-h" || ${1:-} == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+if (( $# == 0 )); then
+  usage
+  exit 1
+fi
+
+url="$1"
+shift
+
+if [[ ! $url =~ ^[a-zA-Z][a-zA-Z0-9+.-]*: ]]; then
+  url="https://$url"
+fi
+
+browser_command=()
+
+is_chromium_desktop() {
+  case $1 in
+  chromium* | google-chrome* | brave* | microsoft-edge* | opera* | vivaldi* | helium* | org.chromium.Chromium* | com.google.Chrome* | com.brave.Browser* | com.microsoft.Edge* | com.vivaldi.Vivaldi*) return 0 ;;
+  *) return 1 ;;
+  esac
+}
+
+flatpak_app_for_desktop() {
+  case $1 in
+  org.chromium.Chromium.desktop) printf '%s\n' 'org.chromium.Chromium' ;;
+  com.google.Chrome.desktop) printf '%s\n' 'com.google.Chrome' ;;
+  com.brave.Browser.desktop) printf '%s\n' 'com.brave.Browser' ;;
+  com.microsoft.Edge.desktop) printf '%s\n' 'com.microsoft.Edge' ;;
+  com.vivaldi.Vivaldi.desktop) printf '%s\n' 'com.vivaldi.Vivaldi' ;;
+  esac
+}
+
+find_desktop_file() {
+  local desktop_id="$1"
+  local dir
+
+  for dir in \
+    "$HOME/.local/share/applications" \
+    "$HOME/.local/share/flatpak/exports/share/applications" \
+    "$HOME/.nix-profile/share/applications" \
+    /var/lib/flatpak/exports/share/applications \
+    /usr/local/share/applications \
+    /usr/share/applications; do
+    if [[ -f "$dir/$desktop_id" ]]; then
+      printf '%s\n' "$dir/$desktop_id"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+browser_exec_from_desktop() {
+  local desktop_file="$1"
+  local exec_line candidate
+
+  exec_line=$(sed -n 's/^Exec=//p' "$desktop_file" | head -n 1)
+  exec_line=${exec_line//%[fFuUdDnNickvm]/}
+  exec_line=${exec_line//%%/%}
+
+  read -r candidate _ <<< "$exec_line"
+
+  if [[ -n $candidate && $candidate != "env" && $candidate != "/usr/bin/env" ]] && command -v "$candidate" >/dev/null 2>&1; then
+    printf '%s\n' "$candidate"
+    return 0
+  fi
+
+  return 1
+}
+
+set_browser_from_env() {
+  if [[ -z ${WEBAPP_BROWSER:-} ]]; then
+    return 1
+  fi
+
+  if command -v "$WEBAPP_BROWSER" >/dev/null 2>&1; then
+    browser_command=("$WEBAPP_BROWSER")
+    return 0
+  fi
+
+  printf 'WEBAPP_BROWSER must be an executable name or path: %s\n' "$WEBAPP_BROWSER" >&2
+  return 1
+}
+
+set_browser_from_default() {
+  local desktop_id desktop_file flatpak_id browser_exec
+
+  desktop_id=$(xdg-settings get default-web-browser 2>/dev/null || true)
+  if [[ -z $desktop_id ]] || ! is_chromium_desktop "$desktop_id"; then
+    return 1
+  fi
+
+  flatpak_id=$(flatpak_app_for_desktop "$desktop_id")
+  if [[ -n $flatpak_id ]] && command -v flatpak >/dev/null 2>&1 && flatpak info "$flatpak_id" >/dev/null 2>&1; then
+    browser_command=(flatpak run "$flatpak_id")
+    return 0
+  fi
+
+  desktop_file=$(find_desktop_file "$desktop_id" || true)
+  if [[ -z $desktop_file ]]; then
+    return 1
+  fi
+
+  browser_exec=$(browser_exec_from_desktop "$desktop_file" || true)
+  if [[ -z $browser_exec ]]; then
+    return 1
+  fi
+
+  browser_command=("$browser_exec")
+}
+
+set_browser_from_path() {
+  local candidate
+
+  for candidate in "$@"; do
+    if command -v "$candidate" >/dev/null 2>&1; then
+      browser_command=("$candidate")
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+set_browser_from_flatpak() {
+  local flatpak_id
+
+  if ! command -v flatpak >/dev/null 2>&1; then
+    return 1
+  fi
+
+  for flatpak_id in "$@"; do
+    if flatpak info "$flatpak_id" >/dev/null 2>&1; then
+      browser_command=(flatpak run "$flatpak_id")
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+set_browser_from_env \
+  || set_browser_from_default \
+  || set_browser_from_path chromium chromium-browser google-chrome-stable google-chrome brave-browser brave microsoft-edge-stable microsoft-edge vivaldi-stable vivaldi opera helium \
+  || set_browser_from_flatpak org.chromium.Chromium com.google.Chrome com.brave.Browser com.microsoft.Edge com.vivaldi.Vivaldi \
+  || {
+    printf 'Could not find a Chromium-family browser. Install Chromium/Chrome/Brave/Edge/Vivaldi or set WEBAPP_BROWSER.\n' >&2
+    exit 1
+  }
+
+if command -v uwsm-app >/dev/null 2>&1 && command -v setsid >/dev/null 2>&1; then
+  exec setsid uwsm-app -- "${browser_command[@]}" --app="$url" "$@"
+fi
+
+if command -v setsid >/dev/null 2>&1; then
+  exec setsid "${browser_command[@]}" --app="$url" "$@"
+fi
+
+exec "${browser_command[@]}" --app="$url" "$@"
