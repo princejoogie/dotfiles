@@ -34,6 +34,12 @@ local namespace = vim.api.nvim_create_namespace("joogie_annotate")
 local ghost_namespace = vim.api.nvim_create_namespace("joogie_annotate_ghost")
 local sign_name = "JoogieAnnotateSign"
 local sign_group = "joogie_annotate_signs"
+local list_state = {
+  buf = nil,
+  win = nil,
+  source_win = nil,
+  cursor = nil,
+}
 
 vim.fn.sign_define(sign_name, { text = config.annotate_icon, texthl = config.sign_highlight, numhl = "" })
 vim.api.nvim_set_hl(0, config.resolved_highlight, { strikethrough = true })
@@ -542,6 +548,27 @@ local function open_float(buf, title, opts)
   vim.wo[win].wrap = true
 
   return win
+end
+
+local function valid_window(win)
+  return win and vim.api.nvim_win_is_valid(win)
+end
+
+local function valid_buffer(buf)
+  return buf and vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf)
+end
+
+local function close_list_window()
+  if not valid_window(list_state.win) then
+    list_state.win = nil
+    return false
+  end
+
+  list_state.cursor = vim.api.nvim_win_get_cursor(list_state.win)
+  pcall(vim.api.nvim_win_close, list_state.win, true)
+  list_state.win = nil
+
+  return true
 end
 
 local function source_context(opts)
@@ -1204,6 +1231,10 @@ function M.add(opts)
 end
 
 function M.list()
+  if close_list_window() then
+    return
+  end
+
   local root = current_annotations_root()
   local annotations = read_annotations(root)
   if not annotations then
@@ -1212,19 +1243,28 @@ function M.list()
 
   local source_win = vim.api.nvim_get_current_win()
   local source_buf = vim.api.nvim_win_get_buf(source_win)
-  local buf = vim.api.nvim_create_buf(false, true)
-  local uv = vim.uv or vim.loop
+  local buf = list_state.buf
 
-  vim.bo[buf].buftype = "nofile"
-  vim.bo[buf].bufhidden = "wipe"
-  vim.bo[buf].swapfile = false
-  vim.bo[buf].filetype = "markdown"
-  vim.api.nvim_buf_set_name(buf, "annotate://list/" .. uv.hrtime())
+  if not valid_buffer(buf) then
+    local uv = vim.uv or vim.loop
+
+    buf = vim.api.nvim_create_buf(false, true)
+    list_state.buf = buf
+
+    vim.bo[buf].buftype = "nofile"
+    vim.bo[buf].bufhidden = "hide"
+    vim.bo[buf].swapfile = false
+    vim.bo[buf].filetype = "markdown"
+    vim.api.nvim_buf_set_name(buf, "annotate://list/" .. uv.hrtime())
+  end
 
   render_list(buf, root, annotations)
   vim.b[buf].annotate_source_is_diffview = source_is_diffview(source_buf)
-  local list_win = open_float(buf, "Annotations")
-  pcall(vim.api.nvim_win_set_cursor, list_win, { vim.b[buf].annotate_min_line or 1, 0 })
+  list_state.source_win = source_win
+  list_state.win = open_float(buf, "Annotations")
+
+  local cursor = list_state.cursor or { vim.b[buf].annotate_min_line or 1, 0 }
+  pcall(vim.api.nvim_win_set_cursor, list_state.win, { math.min(cursor[1], vim.api.nvim_buf_line_count(buf)), 0 })
 
   local group = vim.api.nvim_create_augroup("joogie_annotate_list_" .. buf, { clear = true })
   vim.api.nvim_create_autocmd("CursorMoved", {
@@ -1248,7 +1288,14 @@ function M.list()
   end, { buffer = buf, desc = "Toggle annotation resolved" })
 
   vim.keymap.set("n", config.list_keymaps.open, function()
-    open_source_annotation(buf, list_win, source_win)
+    if valid_window(list_state.win) then
+      list_state.cursor = vim.api.nvim_win_get_cursor(list_state.win)
+    end
+
+    open_source_annotation(buf, list_state.win, list_state.source_win)
+    if not valid_window(list_state.win) then
+      list_state.win = nil
+    end
   end, { buffer = buf, desc = "Open annotation source" })
 
   vim.keymap.set("n", config.list_keymaps.copy, function()
