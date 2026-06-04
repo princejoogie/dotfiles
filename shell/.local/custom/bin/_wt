@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 
 # ── Utility functions ─────────────────────────────────────────────────
 
@@ -70,35 +70,49 @@ wt_fzf_list() {
     _wt_dir="$HOME/.worktrees/$(basename "$_root")"
 
     git worktree list --porcelain | awk -v root="$_root" -v wt="$_wt_dir" -v home="$HOME" -v inc_root="$_include_root" '
-    /^worktree/ { path = substr($0, 10) }
+    function reset() {
+        path = ""
+        branch = ""
+        detached = 0
+        bare = 0
+    }
+
+    function emit() {
+        if (path == "") return
+        if (path == root && !inc_root) {
+            reset()
+            return
+        }
+
+        dir = path
+        if (bare) {
+            sub("^" home, "~", dir)
+            printf "%s\t\033[1m(root)\033[0m  \033[90m%s\033[0m\n", path, dir
+        } else {
+            gsub(/\/[^\/]*$/, "", dir)
+            sub("^" home, "~", dir)
+
+            label = branch
+            if (detached) label = "detached"
+            if (label == "") label = "unknown"
+
+            printf "%s\t%s  \033[90m(%s)\033[0m\n", path, label, dir
+        }
+
+        reset()
+    }
+
+    BEGIN { reset() }
+    /^$/ { emit(); next }
+    /^worktree/ { path = substr($0, 10); next }
     /^branch/ {
         branch = $2
         gsub("refs/heads/", "", branch)
-        if (path == root && !inc_root) next
-
-        dir = path
-        gsub(/\/[^\/]*$/, "", dir)
-        sub("^" home, "~", dir)
-
-        printf "%s\t%s  \033[90m(%s)\033[0m\n", path, branch, dir
+        next
     }
-    /^bare$/ {
-        if (!inc_root) next
-
-        dir = path
-        sub("^" home, "~", dir)
-
-        printf "%s\t\033[1m(root)\033[0m  \033[90m%s\033[0m\n", path, dir
-    }
-    /^detached/ {
-        if (path == root && !inc_root) next
-
-        dir = path
-        gsub(/\/[^\/]*$/, "", dir)
-        sub("^" home, "~", dir)
-
-        printf "%s\tdetached  \033[90m(%s)\033[0m\n", path, dir
-    }'
+    /^bare$/ { bare = 1; next }
+    /^detached/ { detached = 1; next }
+    END { emit() }'
 }
 
 # Interactive worktree selection via fzf, returns full path
@@ -248,17 +262,23 @@ case "$1" in
     cd)
         ROOT=$(wt_root)
         _print=0
+        _select=0
         _cd_flags=""
+        SELECTED=""
         shift
         for _a in "$@"; do
             case "$_a" in
                 --print) _print=1 ;;
+                --select) _select=1 ;;
                 --no-popup) _cd_flags="--no-popup" ;;
                 *) _cd_flags="$_a" ;;
             esac
         done
 
-        if [ -n "$_cd_flags" ] && [ "$_cd_flags" != "--no-popup" ]; then
+        if [ "$_print" = "1" ] && [ "$_select" != "1" ] && [ "$_cd_flags" = "--no-popup" ]; then
+            git worktree list --porcelain | awk '/^worktree/ { print substr($0, 10) }'
+            SELECTED=""
+        elif [ -n "$_cd_flags" ] && [ "$_cd_flags" != "--no-popup" ]; then
             SELECTED="$ROOT/$_cd_flags"
         else
             SELECTED=$(wt_select "$ROOT" --include-root $_cd_flags)

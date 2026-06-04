@@ -26,7 +26,7 @@ local config = {
     delete = "dd",
     toggle_resolved = "<space>",
   },
-  post_instruction = "after resolving each annotation, edit the item from annotation file and set its resolved property to true",
+  post_instruction = "after resolving each annotation, use jq to edit the item from the annotations file and set its resolved property to true",
 }
 
 local subcommands = { "add", "copy", "list", "delete", "deleteall" }

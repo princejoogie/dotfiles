@@ -9,7 +9,9 @@
     "design": {
       "mode": "subagent",
       "description": "Designs elegant and intuitive user interfaces",
-      "model": "google/gemini-3.1-pro-preview"
+      "model": "google/gemini-3.1-pro-preview",
+      "options": {},
+      "permission": {}
     }
   },
   "mcp": {

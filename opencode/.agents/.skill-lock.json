@@ -199,6 +199,15 @@
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-05-28T03:38:04.708Z",
       "updatedAt": "2026-05-28T03:38:04.708Z"
+    },
+    "terminal-control": {
+      "source": "kitlangton/terminal-control",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kitlangton/terminal-control.git",
+      "skillPath": "skills/terminal-control/SKILL.md",
+      "skillFolderHash": "a1cd114e830ac8bbd2a557f55395ec06d80cd5e2",
+      "installedAt": "2026-06-04T06:38:44.244Z",
+      "updatedAt": "2026-06-04T06:38:44.244Z"
     }
   },
   "dismissed": {
@@ -207,15 +216,14 @@
   "lastSelectedAgents": [
     "amp",
     "antigravity",
+    "antigravity-cli",
     "cline",
     "codex",
     "cursor",
     "deepagents",
-    "dexto",
-    "firebender",
     "gemini-cli",
     "github-copilot",
-    "kimi-cli",
+    "kimi-code-cli",
     "opencode",
     "warp",
     "zed"
