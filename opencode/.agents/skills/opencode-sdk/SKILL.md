@@ -1,254 +1,244 @@
 ---
 name: opencode-sdk
-description: |
-  [WHAT] TypeScript SDK for programmatic control of OpenCode AI coding agent.
-  [HOW] Client/server architecture: start embedded server or connect to existing instance.
-  [WHEN] Use when automating OpenCode, building integrations, or controlling sessions programmatically.
-  [WHY] Enables headless coding agent workflows, CI/CD integration, and custom tooling.
-
-  Triggers: "opencode", "opencode sdk", "opencode api", "opencode programmatic",
-            "control opencode", "opencode automation", "opencode typescript",
-            "opencode client", "opencode server", "coding agent sdk"
-
-  Category: EXECUTE (run agents) + GET (session data)
-version: 1.0.0
-npm: "@opencode-ai/sdk"
-npm_version: "1.1.36"
-docs: "https://opencode.ai/docs/sdk"
+description: Use when automating OpenCode with the TypeScript SDK, building integrations that start or connect to an OpenCode server, create/control sessions, stream events, handle permissions, inspect files, or drive the TUI programmatically. Not for configuring OpenCode agent settings or authoring skills; skill-creator for those.
 ---
 
 # OpenCode SDK
 
-TypeScript SDK for the OpenCode AI coding agent. Control sessions, send prompts, and subscribe to events programmatically.
+Use `@opencode-ai/sdk` for programmatic control of OpenCode. The current checked source at `/Users/pjuguilon/Documents/codes/vervio/vendio/opencode` exposes SDK version `1.15.13` and exports the main SDK from `@opencode-ai/sdk`, plus versioned exports under `@opencode-ai/sdk/v2`.
 
-## Quick Start
+## Workflow
+
+1. Decide whether the integration owns an OpenCode server or connects to an existing one.
+2. Use `createOpencode()` when your code should start the server and close it later.
+3. Use `createOpencodeClient({ baseUrl })` when the server is already running.
+4. Create or select a session before sending prompts, commands, shell commands, or file-oriented requests.
+5. Subscribe to events before long-running prompts when you need progress, completion, or permission handling.
+6. Use `throwOnError: true` or explicit response checks when callers need fail-fast behavior.
+
+## Install
 
 ```bash
 npm install @opencode-ai/sdk
 ```
 
-### Full Instance (Server + Client)
+Use the host repository's package manager when adding the dependency.
+
+## Start Server And Client
 
 ```typescript
 import { createOpencode } from "@opencode-ai/sdk"
 
-const { client, server } = await createOpencode({
+const opencode = await createOpencode({
   hostname: "127.0.0.1",
   port: 4096,
   timeout: 5000,
   config: {
-    model: "anthropic/claude-sonnet-4-20250514"
-  }
+    model: "anthropic/claude-3-5-sonnet-20241022",
+  },
 })
 
-// Use client...
-server.close()
+try {
+  const session = await opencode.client.session.create({
+    body: { title: "Automated task" },
+  })
+
+  await opencode.client.session.prompt({
+    path: { id: session.id },
+    body: {
+      model: { providerID: "anthropic", modelID: "claude-3-5-sonnet-20241022" },
+      parts: [{ type: "text", text: "Implement the requested change." }],
+    },
+  })
+} finally {
+  opencode.server.close()
+}
 ```
 
-### Client Only (Connect to Running Instance)
+`createOpencode()` starts both a server and a client. Common options are `hostname`, `port`, `signal`, `timeout`, and `config`.
+
+## Connect To Existing Server
 
 ```typescript
 import { createOpencodeClient } from "@opencode-ai/sdk"
 
 const client = createOpencodeClient({
-  baseUrl: "http://localhost:4096"
+  baseUrl: "http://localhost:4096",
 })
 ```
 
-## Core APIs
+Client options include `baseUrl`, `fetch`, `parseAs`, `responseStyle`, `throwOnError`, and `directory`. The v2 client also supports `experimental_workspaceID`.
 
-### Sessions
+## Core Session Calls
 
 ```typescript
-// Create session
 const session = await client.session.create({
-  body: { title: "My Task" }
+  body: { title: "My session" },
 })
 
-// Send prompt
-const result = await client.session.prompt({
+const sessions = await client.session.list()
+const current = await client.session.get({ path: { id: session.id } })
+const messages = await client.session.messages({ path: { id: session.id } })
+
+await client.session.prompt({
   path: { id: session.id },
   body: {
-    model: { providerID: "anthropic", modelID: "claude-sonnet-4-20250514" },
-    parts: [{ type: "text", text: "Implement a function to..." }]
-  }
+    model: { providerID: "anthropic", modelID: "claude-3-5-sonnet-20241022" },
+    parts: [{ type: "text", text: "Hello!" }],
+  },
 })
 
-// Inject context without AI response
 await client.session.prompt({
   path: { id: session.id },
   body: {
     noReply: true,
-    parts: [{ type: "text", text: "Context: This project uses..." }]
-  }
+    parts: [{ type: "text", text: "Context only. Do not respond." }],
+  },
 })
-
-// List sessions
-const sessions = await client.session.list()
-
-// Get session messages
-const messages = await client.session.messages({ path: { id: session.id } })
 ```
 
-### Files & Search
+Use `noReply: true` to inject context without triggering an assistant response. Use `session.promptAsync()` when you need to enqueue work and return immediately.
+
+Other current session APIs include `status`, `children`, `todo`, `init`, `fork`, `abort`, `share`, `unshare`, `diff`, `summarize`, `message`, `command`, `shell`, `revert`, and `unrevert`.
+
+## Structured Output
+
+Request structured JSON from `session.prompt()` with `outputFormat`.
 
 ```typescript
-// Search text in files
+const result = await client.session.prompt({
+  path: { id: session.id },
+  body: {
+    parts: [{ type: "text", text: "Research Anthropic and return company info." }],
+    outputFormat: {
+      type: "json_schema",
+      schema: {
+        type: "object",
+        properties: {
+          company: { type: "string", description: "Company name" },
+          founded: { type: "number", description: "Year founded" },
+        },
+        required: ["company", "founded"],
+      },
+      retryCount: 2,
+    },
+  },
+})
+
+console.log(result.data.info.structured_output)
+```
+
+If structured output fails, check `result.data.info.error?.name === "StructuredOutputError"`.
+
+## Files And Search
+
+```typescript
 const textResults = await client.find.text({
-  query: { pattern: "function.*handler" }
+  query: { pattern: "function.*opencode" },
 })
 
-// Find files by name
 const files = await client.find.files({
-  query: { query: "*.ts", type: "file", limit: 50 }
+  query: { query: "*.ts", type: "file", limit: 50 },
 })
 
-// Find symbols
+const directories = await client.find.files({
+  query: { query: "packages", type: "directory", limit: 20 },
+})
+
 const symbols = await client.find.symbols({
-  query: { query: "handleRequest" }
+  query: { query: "handleRequest" },
 })
 
-// Read file content
 const content = await client.file.read({
-  query: { path: "src/index.ts" }
+  query: { path: "src/index.ts" },
 })
+
+const status = await client.file.status()
 ```
 
-### Events (SSE Stream)
+## Events And Completion
+
+Subscribe to `event.subscribe()` before sending work if you need to wait for completion.
 
 ```typescript
 const events = await client.event.subscribe()
 
-for await (const event of events.stream) {
-  switch (event.type) {
-    case "message.updated":
-      console.log("Message:", event.properties.info)
-      break
-    case "session.status":
-      console.log("Status:", event.properties.status)
-      break
-    case "permission.updated":
-      // Handle permission requests
-      break
-  }
-}
-```
-
-### TUI Control
-
-```typescript
-// Append to prompt
-await client.tui.appendPrompt({ body: { text: "Add this text" } })
-
-// Submit prompt
-await client.tui.submitPrompt()
-
-// Show toast
-await client.tui.showToast({
-  body: { message: "Task complete", variant: "success" }
-})
-
-// Execute command
-await client.tui.executeCommand({ body: { name: "agent_cycle" } })
-```
-
-## Key Types
-
-```typescript
-import type {
-  Session,
-  Message,
-  UserMessage,
-  AssistantMessage,
-  Part,
-  TextPart,
-  ToolPart,
-  Permission,
-  SessionStatus
-} from "@opencode-ai/sdk"
-```
-
-## Decision Tree
-
-```
-What do you need?
-│
-├─→ Start OpenCode + control it?
-│   └─→ createOpencode() - starts server + returns client
-│
-├─→ Connect to running OpenCode?
-│   └─→ createOpencodeClient({ baseUrl }) - client only
-│
-├─→ Send prompts programmatically?
-│   └─→ client.session.prompt()
-│
-├─→ Inject context without response?
-│   └─→ client.session.prompt({ body: { noReply: true, ... } })
-│
-├─→ Stream events in real-time?
-│   └─→ client.event.subscribe()
-│
-└─→ Control TUI remotely?
-    └─→ client.tui.* methods
-```
-
-## Integration Patterns
-
-### Headless Agent Loop
-
-```typescript
-import { createOpencode } from "@opencode-ai/sdk"
-
-const { client, server } = await createOpencode()
-const session = await client.session.create({ body: { title: "Automated" } })
-
-// Subscribe to events for progress
-const events = await client.event.subscribe()
-
-// Send task
 await client.session.prompt({
   path: { id: session.id },
   body: {
-    model: { providerID: "anthropic", modelID: "claude-sonnet-4-20250514" },
-    parts: [{ type: "text", text: "Fix all TypeScript errors in src/" }]
-  }
+    parts: [{ type: "text", text: "Fix all TypeScript errors." }],
+  },
 })
 
-// Wait for completion via events
 for await (const event of events.stream) {
   if (event.type === "session.idle" && event.properties.sessionID === session.id) {
     break
   }
 }
-
-server.close()
 ```
 
-### Permission Handling
+Useful event types include `message.updated`, `session.status`, `session.idle`, `permission.updated`, `permission.replied`, `session.compacted`, and `file.edited`.
+
+## Permission Handling
+
+Respond to permission requests with `postSessionIdPermissionsPermissionId()`.
 
 ```typescript
 for await (const event of events.stream) {
-  if (event.type === "permission.updated") {
-    const perm = event.properties
-    // Auto-approve file reads, prompt for writes
-    if (perm.type === "file_read") {
-      await client.postSessionIdPermissionsPermissionId({
-        path: { id: perm.sessionID, permissionId: perm.id },
-        body: { response: "allow" }
-      })
-    }
+  if (event.type !== "permission.updated") continue
+
+  const permission = event.properties
+  if (permission.type === "file_read") {
+    await client.postSessionIdPermissionsPermissionId({
+      path: { id: permission.sessionID, permissionID: permission.id },
+      body: { response: "allow" },
+    })
   }
 }
 ```
 
-## References
+Do not auto-approve write, shell, network, or destructive permissions unless the integration has an explicit policy for that trust boundary.
 
-- `references/api-reference.md` - Complete API documentation
-- `references/types.md` - Full TypeScript type definitions
-- `references/events.md` - All event types and properties
+## TUI Control
 
-## See Also
+Use TUI APIs only when controlling an interactive OpenCode TUI remotely.
 
-- Official docs: https://opencode.ai/docs/sdk
-- OpenCode CLI: `opencode` (TUI)
-- GitHub: https://github.com/anomalyco/opencode
+```typescript
+await client.tui.appendPrompt({ body: { text: "Add this to the prompt" } })
+await client.tui.submitPrompt()
+await client.tui.clearPrompt()
+
+await client.tui.openHelp()
+await client.tui.openSessions()
+await client.tui.openThemes()
+await client.tui.openModels()
+
+await client.tui.executeCommand({ body: { name: "agent_cycle" } })
+await client.tui.showToast({
+  body: { message: "Task complete", variant: "success" },
+})
+```
+
+The current generated client also exposes `tui.publish()` and `tui.control` for lower-level TUI integrations.
+
+## Other API Groups
+
+Use `global.event()` for global server events and `event.subscribe()` for the main event stream.
+
+Use `project.list()` and `project.current()` for project context.
+
+Use `path.get()` for current path info.
+
+Use `config.get()` and `config.providers()` for configuration and provider defaults.
+
+Use `app.log()` and `app.agents()` for app-level integration hooks.
+
+Use `mcp.*`, `lsp.status()`, and `formatter.status()` only when the integration specifically needs those subsystems.
+
+Use `auth.set()` to set provider credentials through the server API.
+
+## Types
+
+```typescript
+import type { Message, Part, Permission, Session } from "@opencode-ai/sdk"
+```
