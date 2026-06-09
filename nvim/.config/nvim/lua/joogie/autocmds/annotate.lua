@@ -2,10 +2,12 @@ local M = {}
 
 local config = {
   annotate_icon = "󰍨 ",
+  resolved_annotate_icon = "󰄬 ",
   show_ghost_annotations = true,
   includeHunksOnCopy = true,
   ghost_max_length = 80,
   sign_highlight = "DiagnosticSignInfo",
+  resolved_sign_highlight = "DiagnosticSignHint",
   resolved_highlight = "JoogieAnnotateResolved",
   sign_priority = 8,
   keymaps = {
@@ -33,6 +35,7 @@ local subcommands = { "add", "copy", "list", "delete", "deleteall" }
 local namespace = vim.api.nvim_create_namespace("joogie_annotate")
 local ghost_namespace = vim.api.nvim_create_namespace("joogie_annotate_ghost")
 local sign_name = "JoogieAnnotateSign"
+local resolved_sign_name = "JoogieAnnotateResolvedSign"
 local sign_group = "joogie_annotate_signs"
 local list_state = {
   buf = nil,
@@ -42,6 +45,10 @@ local list_state = {
 }
 
 vim.fn.sign_define(sign_name, { text = config.annotate_icon, texthl = config.sign_highlight, numhl = "" })
+vim.fn.sign_define(
+  resolved_sign_name,
+  { text = config.resolved_annotate_icon, texthl = config.resolved_sign_highlight, numhl = "" }
+)
 vim.api.nvim_set_hl(0, config.resolved_highlight, { strikethrough = true })
 
 ---@alias AnnotateLineNumber integer|string
@@ -470,12 +477,17 @@ local function refresh_annotation_signs(buf, annotations, root)
       local start_line, end_line = line_range(annotation.linenumber)
       if start_line and end_line and end_line >= 1 and start_line <= line_count then
         local sign_line = bounded(start_line, 1, line_count)
-        if not signed_lines[sign_line] then
-          signed_lines[sign_line] = true
-          vim.fn.sign_place(sign_line, sign_group, sign_name, buf, { lnum = sign_line, priority = config.sign_priority })
+        local resolved = annotation_resolved(annotation)
+        if not signed_lines[sign_line] or (signed_lines[sign_line] == "resolved" and not resolved) then
+          signed_lines[sign_line] = resolved and "resolved" or "unresolved"
         end
       end
     end
+  end
+
+  for sign_line, state in pairs(signed_lines) do
+    local name = state == "resolved" and resolved_sign_name or sign_name
+    vim.fn.sign_place(sign_line, sign_group, name, buf, { lnum = sign_line, priority = config.sign_priority })
   end
 end
 
