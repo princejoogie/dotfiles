@@ -2,6 +2,7 @@ local M = {}
 
 local config = {
   annotate_icon = "󰍨 ",
+  github_icon = " ",
   show_ghost_annotations = true,
   includeHunksOnCopy = true,
   ghost_max_length = 80,
@@ -14,6 +15,7 @@ local config = {
     list = "<leader>anl",
     delete = "<leader>and",
     delete_all = "<leader>anD",
+    gh_comments = "<leader>ang",
     previous = "[a",
     next = "]a",
   },
@@ -29,7 +31,7 @@ local config = {
   post_instruction = "after resolving each annotation, use jq to edit the item from the annotations file and set its resolved property to true",
 }
 
-local subcommands = { "add", "copy", "list", "delete", "deleteall" }
+local subcommands = { "add", "copy", "list", "delete", "deleteall", "gh_comments" }
 local namespace = vim.api.nvim_create_namespace("joogie_annotate")
 local ghost_namespace = vim.api.nvim_create_namespace("joogie_annotate_ghost")
 local sign_name = "JoogieAnnotateSign"
@@ -52,6 +54,7 @@ vim.api.nvim_set_hl(0, config.resolved_highlight, { strikethrough = true })
 ---@field annotation string
 ---@field hunk? string
 ---@field resolved? boolean
+---@field meta? table
 
 local function notify(message, level)
   vim.notify(message, level or vim.log.levels.INFO, { title = "Annotate" })
@@ -224,12 +227,224 @@ local function write_annotations(root, annotations)
   return true
 end
 
+local function command_output(args, cwd)
+  if vim.system then
+    local result = vim.system(args, { cwd = cwd, text = true }):wait()
+    return result.stdout or "", result.stderr or "", result.code or 0
+  end
+
+  local previous_cwd = cwd and vim.fn.getcwd() or nil
+  if cwd then
+    vim.fn.chdir(cwd)
+  end
+
+  local result = vim.fn.systemlist(args)
+  local code = vim.v.shell_error
+
+  if previous_cwd then
+    vim.fn.chdir(previous_cwd)
+  end
+
+  return table.concat(result, "\n"), "", code
+end
+
+local function gh_error_message(stdout, stderr)
+  local message = (stderr ~= "" and stderr or stdout):gsub("^%s+", ""):gsub("%s+$", "")
+  return message ~= "" and message or "gh command failed"
+end
+
+local function gh_pr_number(root)
+  local stdout, stderr, code = command_output({
+    "gh",
+    "pr",
+    "view",
+    "--json",
+    "number",
+    "--jq",
+    ".number",
+  }, root)
+  if code ~= 0 then
+    notify("Could not determine PR: " .. gh_error_message(stdout, stderr), vim.log.levels.ERROR)
+    return nil
+  end
+
+  local pr = stdout:gsub("%s+", "")
+  if pr == "" then
+    notify("Could not determine PR for current branch", vim.log.levels.ERROR)
+    return nil
+  end
+
+  return pr
+end
+
+local function flatten_gh_pages(data)
+  local comments = {}
+
+  if type(data) ~= "table" then
+    return comments
+  end
+
+  for _, item in ipairs(data) do
+    if type(item) == "table" and item.path then
+      table.insert(comments, item)
+    elseif type(item) == "table" then
+      for _, comment in ipairs(item) do
+        if type(comment) == "table" and comment.path then
+          table.insert(comments, comment)
+        end
+      end
+    end
+  end
+
+  return comments
+end
+
+local function gh_review_comments(root, pr)
+  local stdout, stderr, code = command_output({
+    "gh",
+    "api",
+    "--method",
+    "GET",
+    "--paginate",
+    "--slurp",
+    "-f",
+    "per_page=100",
+    "repos/{owner}/{repo}/pulls/" .. pr .. "/comments",
+  }, root)
+
+  if code ~= 0 then
+    notify("Could not fetch PR comments: " .. gh_error_message(stdout, stderr), vim.log.levels.ERROR)
+    return nil
+  end
+
+  local ok, data = pcall(vim.json.decode, stdout)
+  if not ok then
+    notify("Could not parse PR comments from gh", vim.log.levels.ERROR)
+    return nil
+  end
+
+  return flatten_gh_pages(data)
+end
+
+local function json_value(value)
+  if value == vim.NIL then
+    return nil
+  end
+
+  return value
+end
+
+local function gh_comment_linenumber(comment)
+  local start_line = tonumber(json_value(comment.start_line) or json_value(comment.original_start_line))
+  local line = tonumber(json_value(comment.line) or json_value(comment.original_line))
+
+  if start_line and line and start_line ~= line then
+    if start_line > line then
+      start_line, line = line, start_line
+    end
+
+    return ("%d-%d"):format(start_line, line)
+  end
+
+  return line or start_line
+end
+
+local function gh_comment_author(comment)
+  if type(comment.user) == "table" then
+    local login = json_value(comment.user.login)
+    if login then
+      return tostring(login)
+    end
+  end
+
+  return "unknown"
+end
+
+local function gh_imported_annotations(annotations)
+  local imported = {}
+
+  for _, annotation in ipairs(annotations) do
+    local meta = annotation.meta
+    if type(meta) == "table" and meta.github == true and meta.comment_id then
+      imported[tostring(meta.comment_id)] = annotation.resolved == true
+    end
+  end
+
+  return imported
+end
+
+local function keep_non_gh_annotations(annotations)
+  local kept = {}
+
+  for _, annotation in ipairs(annotations) do
+    local meta = annotation.meta
+    if not (type(meta) == "table" and meta.github == true) then
+      table.insert(kept, annotation)
+    end
+  end
+
+  return kept
+end
+
+local function gh_comment_annotation(comment, previous_resolved, pr)
+  local filename = json_value(comment.path)
+  local linenumber = gh_comment_linenumber(comment)
+  local body = tostring(json_value(comment.body) or "")
+
+  if not filename or filename == "" or not linenumber or body == "" then
+    return nil
+  end
+
+  local source_id = json_value(comment.id) or json_value(comment.node_id) or json_value(comment.html_url)
+  if not source_id then
+    source_id = filename .. ":" .. linenumber .. ":" .. body
+  end
+
+  source_id = tostring(source_id)
+  local author = gh_comment_author(comment)
+
+  return {
+    filename = filename,
+    linenumber = linenumber,
+    annotation = body,
+    hunk = tostring(json_value(comment.diff_hunk) or ""),
+    resolved = previous_resolved[source_id] == true,
+    meta = {
+      github = true,
+      pr_number = tonumber(pr) or pr,
+      comment_id = source_id,
+      author = author,
+      url = json_value(comment.html_url),
+    },
+  }
+end
+
 local function line_label(annotation)
   return tostring(annotation.linenumber or "")
 end
 
 local function annotation_text(annotation)
   return tostring(annotation.annotation or "")
+end
+
+local function annotation_meta(annotation)
+  return type(annotation.meta) == "table" and annotation.meta or {}
+end
+
+local function rendered_annotation_text(annotation)
+  local text = annotation_text(annotation)
+  local meta = annotation_meta(annotation)
+
+  if meta.github == true then
+    local author = meta.author and tostring(meta.author) or ""
+    if author ~= "" then
+      return config.github_icon .. "@" .. author .. ": " .. text
+    end
+
+    return config.github_icon .. text
+  end
+
+  return text
 end
 
 local function hunk_text(annotation)
@@ -241,7 +456,7 @@ local function annotation_resolved(annotation)
 end
 
 local function ghost_annotation_text(annotation)
-  local text = annotation_text(annotation):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+  local text = rendered_annotation_text(annotation):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
   if text == "" then
     return nil
   end
@@ -254,7 +469,7 @@ local function ghost_annotation_text(annotation)
 end
 
 local function formatted_annotation(annotation)
-  local formatted = ("file: %s:%s\nannotation: %s"):format(annotation.filename or "", line_label(annotation), annotation_text(annotation))
+  local formatted = ("file: %s:%s\nannotation: %s"):format(annotation.filename or "", line_label(annotation), rendered_annotation_text(annotation))
   local hunk = hunk_text(annotation)
 
   if config.includeHunksOnCopy and hunk ~= "" then
@@ -647,6 +862,10 @@ local function save_annotation(buf, context)
     resolved = context.resolved == true,
   }
 
+  if context.meta then
+    entry.meta = context.meta
+  end
+
   if context.saved_index and annotations[context.saved_index] then
     annotations[context.saved_index] = entry
   else
@@ -691,7 +910,7 @@ local function render_list(buf, root, annotations)
   else
     for index, annotation in ipairs(annotations) do
       local start_line = #lines + 1
-      local annotation_lines = split_annotation_lines(annotation_text(annotation))
+      local annotation_lines = split_annotation_lines(rendered_annotation_text(annotation))
       local resolved = annotation_resolved(annotation)
       local checkbox = resolved and "- [x]" or "- [ ]"
       index_lines[index] = start_line
@@ -1163,6 +1382,7 @@ local function open_annotation_editor(annotation, index, root)
     saved_index = index,
     hunk = hunk,
     resolved = annotation_resolved(annotation),
+    meta = annotation.meta,
   }
 
   local group = vim.api.nvim_create_augroup("joogie_annotate_edit_" .. buf, { clear = true })
@@ -1354,6 +1574,66 @@ function M.deleteall()
   end
 end
 
+function M.gh_comments(opts)
+  if vim.fn.executable("gh") ~= 1 then
+    notify("gh executable not found", vim.log.levels.ERROR)
+    return
+  end
+
+  local root = current_annotations_root()
+  local annotations = read_annotations(root)
+  if not annotations then
+    return
+  end
+
+  local pr = opts and opts.fargs and opts.fargs[2]
+  if not pr or pr == "" then
+    pr = gh_pr_number(root)
+  end
+
+  if not pr then
+    return
+  end
+
+  notify("Fetching GitHub PR comments for #" .. pr)
+
+  local comments = gh_review_comments(root, pr)
+  if not comments then
+    return
+  end
+
+  local previous_resolved = gh_imported_annotations(annotations)
+  local next_annotations = keep_non_gh_annotations(annotations)
+  local imported = 0
+  local skipped = 0
+
+  for _, comment in ipairs(comments) do
+    local annotation = gh_comment_annotation(comment, previous_resolved, pr)
+    if annotation then
+      table.insert(next_annotations, annotation)
+      imported = imported + 1
+    else
+      skipped = skipped + 1
+    end
+  end
+
+  if write_annotations(root, next_annotations) then
+    refresh_annotation_signs_for_root(root)
+
+    local buf = vim.api.nvim_get_current_buf()
+    if vim.b[buf].annotate_line_map then
+      render_list(buf, root, next_annotations)
+    end
+
+    local message = ("Imported %d GitHub PR comment%s"):format(imported, imported == 1 and "" or "s")
+    if skipped > 0 then
+      message = message .. (" (%d skipped)"):format(skipped)
+    end
+
+    notify(message)
+  end
+end
+
 function M.previous()
   jump_source_annotation(-1)
 end
@@ -1375,8 +1655,10 @@ vim.api.nvim_create_user_command("Annotate", function(opts)
     M.delete()
   elseif command == "deleteall" then
     M.deleteall()
+  elseif command == "gh_comments" then
+    M.gh_comments(opts)
   else
-    notify("Usage: :Annotate add|copy|list|delete|deleteall", vim.log.levels.WARN)
+    notify("Usage: :Annotate add|copy|list|delete|deleteall|gh_comments", vim.log.levels.WARN)
   end
 end, {
   nargs = "*",
@@ -1424,6 +1706,7 @@ vim.keymap.set("n", config.keymaps.copy, "<cmd>Annotate copy<cr>", { desc = "Cop
 vim.keymap.set("n", config.keymaps.list, "<cmd>Annotate list<cr>", { desc = "List annotations" })
 vim.keymap.set("n", config.keymaps.delete, "<cmd>Annotate delete<cr>", { desc = "Delete annotation" })
 vim.keymap.set("n", config.keymaps.delete_all, "<cmd>Annotate deleteall<cr>", { desc = "Delete all annotations" })
+vim.keymap.set("n", config.keymaps.gh_comments, "<cmd>Annotate gh_comments<cr>", { desc = "Import GitHub PR comments" })
 vim.keymap.set("n", config.keymaps.previous, M.previous, { desc = "Previous annotation" })
 vim.keymap.set("n", config.keymaps.next, M.next, { desc = "Next annotation" })
 
