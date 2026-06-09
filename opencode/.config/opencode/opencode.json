@@ -5,6 +5,20 @@
       "/**": "allow"
     }
   },
+  "provider": {
+    "mlx": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "MLX (local)",
+      "options": {
+        "baseURL": "http://127.0.0.1:8080/v1"
+      },
+      "models": {
+        "default_model": {
+          "name": "Default MLX Model"
+        }
+      }
+    }
+  },
   "agent": {
     "design": {
       "mode": "subagent",
