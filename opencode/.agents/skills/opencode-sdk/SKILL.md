@@ -10,11 +10,12 @@ Use `@opencode-ai/sdk` for programmatic control of OpenCode. The current checked
 ## Workflow
 
 1. Decide whether the integration owns an OpenCode server or connects to an existing one.
-2. Use `createOpencode()` when your code should start the server and close it later.
-3. Use `createOpencodeClient({ baseUrl })` when the server is already running.
-4. Create or select a session before sending prompts, commands, shell commands, or file-oriented requests.
-5. Subscribe to events before long-running prompts when you need progress, completion, or permission handling.
-6. Use `throwOnError: true` or explicit response checks when callers need fail-fast behavior.
+2. For read-only historical audits such as daily work logs, prefer `scripts/export-sessions.mjs` instead of starting an SDK-managed server.
+3. Use `createOpencode()` when your code should start the server and close it later.
+4. Use `createOpencodeClient({ baseUrl })` when the server is already running.
+5. Create or select a session before sending prompts, commands, shell commands, or file-oriented requests.
+6. Subscribe to events before long-running prompts when you need progress, completion, or permission handling.
+7. Use `throwOnError: true` or explicit response checks when callers need fail-fast behavior.
 
 ## Install
 
@@ -23,6 +24,41 @@ npm install @opencode-ai/sdk
 ```
 
 Use the host repository's package manager when adding the dependency.
+
+Bundled helper scripts have their own dependency manifest:
+
+```bash
+cd /Users/pjuguilon/.agents/skills/opencode-sdk/scripts
+npm install
+```
+
+Install those script dependencies once before using SDK-backed script modes.
+
+## Read-Only Session Export
+
+Use `scripts/export-sessions.mjs` when auditing previous sessions/messages, building daily work logs, extracting preference corrections, or collecting usage metrics. Do not start an SDK-managed server just to read local history; it can contend with the local store and fail around SQLite WAL checkpointing such as `PRAGMA wal_checkpoint(PASSIVE)`.
+
+Preferred modes:
+
+1. If an OpenCode server is already running, use the SDK client path with `--base-url`.
+2. If no server is running, or SDK-managed server startup fails, use the read-only SQLite store path.
+3. Report which source mode was used in the consuming analysis, but do not treat the SQLite path as an error when the task is read-only.
+
+Examples:
+
+```bash
+node /Users/pjuguilon/.agents/skills/opencode-sdk/scripts/export-sessions.mjs \
+  --date 2026-06-09 \
+  --timezone Asia/Manila \
+  --output /tmp/opencode-sessions-2026-06-09.json
+
+node /Users/pjuguilon/.agents/skills/opencode-sdk/scripts/export-sessions.mjs \
+  --base-url http://localhost:4096 \
+  --date 2026-06-09 \
+  --timezone Asia/Manila
+```
+
+The default SQLite database is `/Users/pjuguilon/.local/share/opencode/opencode.db`. The exporter groups sessions by project/workspace label so downstream worklogs can keep unrelated projects separate.
 
 ## Start Server And Client
 
