@@ -6,6 +6,6 @@
     "export:sessions": "node export-sessions.mjs"
   },
   "dependencies": {
-    "@opencode-ai/sdk": "1.15.13"
+    "@opencode-ai/sdk": "1.17.7"
   }
 }

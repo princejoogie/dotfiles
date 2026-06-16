@@ -1,29 +1,45 @@
 # OpenCode SDK Types Reference
 
-All TypeScript types exported from `@opencode-ai/sdk`.
+Notable TypeScript types exported from `@opencode-ai/sdk/v2` in SDK version `1.17.7`.
 
 ## Import
 
 ```typescript
 import type {
-  Session,
-  Message,
-  UserMessage,
   AssistantMessage,
+  Message,
+  OutputFormat,
   Part,
-  TextPart,
-  ReasoningPart,
-  FilePart,
-  ToolPart,
-  Permission,
+  PermissionRuleset,
+  PermissionV2Reply,
+  Session,
   SessionStatus,
   Todo,
-  Project,
-  Config,
-  Provider,
-  Agent
-} from "@opencode-ai/sdk"
+  ToolState,
+  UserMessage,
+} from "@opencode-ai/sdk/v2"
 ```
+
+## Response Handling
+
+Generated clients default to field responses:
+
+```typescript
+const response = await client.session.create({ title: "Example" })
+const session = response.data
+```
+
+For direct data returns:
+
+```typescript
+const client = createOpencodeClient({
+  baseUrl: "http://localhost:4096",
+  throwOnError: true,
+  responseStyle: "data",
+})
+```
+
+Native `client.v2.*` endpoints often return a server envelope such as `{ data: ... }`; `responseStyle: "data"` removes the fetch wrapper, not the API envelope.
 
 ## Core Types
 
@@ -32,23 +48,33 @@ import type {
 ```typescript
 type Session = {
   id: string
+  slug: string
   projectID: string
+  workspaceID?: string
   directory: string
+  path?: string
   parentID?: string
   summary?: {
     additions: number
     deletions: number
     files: number
-    diffs?: FileDiff[]
+    diffs?: SnapshotFileDiff[]
   }
+  cost?: number
+  tokens?: TokenUsage
   share?: { url: string }
   title: string
+  agent?: string
+  model?: { id: string; providerID: string; variant?: string }
   version: string
+  metadata?: Record<string, unknown>
   time: {
     created: number
     updated: number
     compacting?: number
+    archived?: number
   }
+  permission?: PermissionRuleset
   revert?: {
     messageID: string
     partID?: string
@@ -58,7 +84,23 @@ type Session = {
 }
 ```
 
-### Message Types
+### Permission Rules
+
+```typescript
+type PermissionAction = "allow" | "deny" | "ask"
+
+type PermissionRule = {
+  permission: string
+  pattern: string
+  action: PermissionAction
+}
+
+type PermissionRuleset = PermissionRule[]
+
+type PermissionV2Reply = "once" | "always" | "reject"
+```
+
+### Messages
 
 ```typescript
 type Message = UserMessage | AssistantMessage
@@ -68,44 +110,52 @@ type UserMessage = {
   sessionID: string
   role: "user"
   time: { created: number }
-  summary?: {
-    title?: string
-    body?: string
-    diffs: FileDiff[]
-  }
+  format?: OutputFormat
+  summary?: { title?: string; body?: string; diffs: SnapshotFileDiff[] }
   agent: string
-  model: { providerID: string; modelID: string }
+  model: { providerID: string; modelID: string; variant?: string }
   system?: string
-  tools?: { [key: string]: boolean }
+  tools?: Record<string, boolean>
 }
 
 type AssistantMessage = {
   id: string
   sessionID: string
   role: "assistant"
-  time: {
-    created: number
-    completed?: number
-  }
-  error?: ProviderAuthError | UnknownError | MessageOutputLengthError | MessageAbortedError | ApiError
+  time: { created: number; completed?: number }
+  error?: MessageError
   parentID: string
   modelID: string
   providerID: string
   mode: string
+  agent: string
   path: { cwd: string; root: string }
   summary?: boolean
   cost: number
-  tokens: {
-    input: number
-    output: number
-    reasoning: number
-    cache: { read: number; write: number }
-  }
+  tokens: TokenUsage
+  structured?: unknown
+  variant?: string
   finish?: string
 }
 ```
 
-### Part Types
+`MessageError` includes `ProviderAuthError`, `UnknownError`, `MessageOutputLengthError`, `MessageAbortedError`, `StructuredOutputError`, `ContextOverflowError`, `ContentFilterError`, and `ApiError`.
+
+### Output Format
+
+```typescript
+type OutputFormat =
+  | { type: "text" }
+  | {
+      type: "json_schema"
+      schema: Record<string, unknown>
+      retryCount?: number
+    }
+```
+
+Use v2 `format` on `session.prompt()`, not legacy `outputFormat`.
+
+### Parts
 
 ```typescript
 type Part =
@@ -121,257 +171,43 @@ type Part =
   | AgentPart
   | RetryPart
   | CompactionPart
-
-type TextPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "text"
-  text: string
-  synthetic?: boolean
-  ignored?: boolean
-  time?: { start: number; end?: number }
-  metadata?: { [key: string]: unknown }
-}
-
-type ReasoningPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "reasoning"
-  text: string
-  metadata?: { [key: string]: unknown }
-  time: { start: number; end?: number }
-}
-
-type FilePart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "file"
-  mime: string
-  filename?: string
-  url: string
-  source?: FileSource | SymbolSource
-}
-
-type ToolPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "tool"
-  callID: string
-  tool: string
-  state: ToolState
-  metadata?: { [key: string]: unknown }
-}
-
-type SubtaskPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "subtask"
-  prompt: string
-  description: string
-  agent: string
-}
-
-type StepStartPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "step-start"
-  snapshot?: string
-}
-
-type StepFinishPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "step-finish"
-  reason: string
-  snapshot?: string
-  cost: number
-  tokens: {
-    input: number
-    output: number
-    reasoning: number
-    cache: { read: number; write: number }
-  }
-}
-
-type SnapshotPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "snapshot"
-  snapshot: string
-}
-
-type PatchPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "patch"
-  hash: string
-  files: string[]
-}
-
-type AgentPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "agent"
-  name: string
-  source?: { value: string; start: number; end: number }
-}
-
-type RetryPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "retry"
-  attempt: number
-  error: ApiError
-  time: { created: number }
-}
-
-type CompactionPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "compaction"
-  auto: boolean
-}
 ```
 
-### Tool State Types
+Notable 1.17.7 fields:
+
+1. `SubtaskPart` may include `model` and `command`.
+2. `FilePart.source` may be a file, symbol, or MCP resource source.
+3. `StepFinishPart.tokens` may include `total`.
+4. `CompactionPart` may include `overflow` and `tail_start_id`.
+
+### Tool State
 
 ```typescript
 type ToolState =
-  | ToolStatePending
-  | ToolStateRunning
-  | ToolStateCompleted
-  | ToolStateError
-
-type ToolStatePending = {
-  status: "pending"
-  input: { [key: string]: unknown }
-  raw: string
-}
-
-type ToolStateRunning = {
-  status: "running"
-  input: { [key: string]: unknown }
-  title?: string
-  metadata?: { [key: string]: unknown }
-  time: { start: number }
-}
-
-type ToolStateCompleted = {
-  status: "completed"
-  input: { [key: string]: unknown }
-  output: string
-  title: string
-  metadata: { [key: string]: unknown }
-  time: {
-    start: number
-    end: number
-    compacted?: number
-  }
-  attachments?: FilePart[]
-}
-
-type ToolStateError = {
-  status: "error"
-  input: { [key: string]: unknown }
-  error: string
-  time: {
-    start: number
-    end: number
-  }
-}
-```
-
-### File Source Types
-
-```typescript
-type FilePartSourceText = {
-  value: string
-  start: number
-  end: number
-}
-
-type FileSource = {
-  text: FilePartSourceText
-  type: "file"
-  path: string
-}
-
-type SymbolSource = {
-  text: FilePartSourceText
-  type: "symbol"
-  path: string
-  range: Range
-  name: string
-  kind: number
-}
-
-type Range = {
-  start: { line: number; character: number }
-  end: { line: number; character: number }
-}
-```
-
-### Error Types
-
-```typescript
-type ProviderAuthError = {
-  name: "ProviderAuthError"
-  data: { providerID: string; message: string }
-}
-
-type UnknownError = {
-  name: "UnknownError"
-  data: { message: string }
-}
-
-type MessageOutputLengthError = {
-  name: "MessageOutputLengthError"
-  data: { [key: string]: unknown }
-}
-
-type MessageAbortedError = {
-  name: "MessageAbortedError"
-  data: { message: string }
-}
-
-type ApiError = {
-  name: "APIError"
-  data: {
-    message: string
-    statusCode?: number
-    isRetryable: boolean
-    responseHeaders?: { [key: string]: string }
-    responseBody?: string
-  }
-}
-```
-
-### Permission Types
-
-```typescript
-type Permission = {
-  id: string
-  type: string
-  pattern?: string | string[]
-  sessionID: string
-  messageID: string
-  callID?: string
-  title: string
-  metadata: { [key: string]: unknown }
-  time: { created: number }
-}
+  | { status: "pending"; input: Record<string, unknown>; raw: string }
+  | {
+      status: "running"
+      input: Record<string, unknown>
+      title?: string
+      metadata?: Record<string, unknown>
+      time: { start: number }
+    }
+  | {
+      status: "completed"
+      input: Record<string, unknown>
+      output: string
+      title: string
+      metadata: Record<string, unknown>
+      time: { start: number; end: number; compacted?: number }
+      attachments?: FilePart[]
+    }
+  | {
+      status: "error"
+      input: Record<string, unknown>
+      error: string
+      metadata?: Record<string, unknown>
+      time: { start: number; end: number }
+    }
 ```
 
 ### Session Status
@@ -379,7 +215,20 @@ type Permission = {
 ```typescript
 type SessionStatus =
   | { type: "idle" }
-  | { type: "retry"; attempt: number; message: string; next: number }
+  | {
+      type: "retry"
+      attempt: number
+      message: string
+      action?: {
+        reason: string
+        provider: string
+        title: string
+        message: string
+        label: string
+        link?: string
+      }
+      next: number
+    }
   | { type: "busy" }
 ```
 
@@ -387,57 +236,39 @@ type SessionStatus =
 
 ```typescript
 type Todo = {
-  id: string
   content: string
-  status: "pending" | "in_progress" | "completed" | "cancelled"
-  priority: "high" | "medium" | "low"
+  status: string
+  priority: string
 }
 ```
 
-### FileDiff
+The schema documents the usual values as `pending`, `in_progress`, `completed`, `cancelled` and `high`, `medium`, `low`, but the latest exported type is `string`.
+
+## Location And Workspace
+
+Top-level v2 APIs usually accept `directory?: string` and `workspace?: string` directly.
+
+Native `client.v2.*` query APIs usually accept a location object:
 
 ```typescript
-type FileDiff = {
-  file: string
-  before: string
-  after: string
-  additions: number
-  deletions: number
-}
-```
-
-## Client Configuration Types
-
-```typescript
-type Config = {
-  model?: string
-  // Additional config options from opencode.json
-  [key: string]: unknown
-}
-
-type ServerOptions = {
-  hostname?: string    // Default: "127.0.0.1"
-  port?: number        // Default: 4096
-  signal?: AbortSignal
-  timeout?: number     // Default: 5000
-  config?: Config
-}
-
-type TuiOptions = {
-  project?: string
-  model?: string
-  session?: string
-  agent?: string
-  signal?: AbortSignal
-  config?: Config
-}
-
-type ClientConfig = {
-  baseUrl?: string        // Default: "http://localhost:4096"
-  fetch?: typeof fetch
-  parseAs?: string
-  responseStyle?: "data" | "fields"
-  throwOnError?: boolean
+type LocationQuery = {
   directory?: string
+  workspace?: string
+}
+
+await client.v2.fs.find({
+  location: { directory: process.cwd() },
+  query: "*.ts",
+})
+```
+
+Native session creation uses the body `LocationRef` shape:
+
+```typescript
+type LocationRef = {
+  directory: string
+  workspaceID?: string
 }
 ```
+
+The v2 client constructor also supports `directory` and `experimental_workspaceID` defaults.

@@ -1,292 +1,216 @@
 # OpenCode SDK API Reference
 
-Complete API documentation for `@opencode-ai/sdk`.
+Quick API reference for `@opencode-ai/sdk@1.17.7` from `/Users/pjuguilon/Documents/codes/vervio/vendio/opencode`.
+
+## Exports
+
+| Export | Use |
+| --- | --- |
+| `@opencode-ai/sdk` | Legacy generated client with `{ path, query, body }` method arguments. |
+| `@opencode-ai/sdk/server` | Legacy `createOpencodeServer()` and `createOpencodeTui()` helpers. |
+| `@opencode-ai/sdk/v2` | Latest generated client with direct parameter objects and `client.v2.*` native endpoints. |
+| `@opencode-ai/sdk/v2/server` | V2 server/TUI process helpers. |
+
+Generated clients default to field responses. Use `responseStyle: "data"` for direct data returns or unwrap `.data`.
 
 ## Client Creation
 
-### createOpencode(options?)
-
-Creates both a server and client instance.
+### V2 Client
 
 ```typescript
-import { createOpencode } from "@opencode-ai/sdk"
+import { createOpencodeClient } from "@opencode-ai/sdk/v2"
 
-const { client, server } = await createOpencode({
-  hostname: "127.0.0.1",  // Server hostname
-  port: 4096,             // Server port
-  signal: AbortSignal,    // Abort signal for cancellation
-  timeout: 5000,          // Timeout in ms for server start
-  config: {               // Configuration overrides
-    model: "anthropic/claude-sonnet-4-20250514"
-  }
+const client = createOpencodeClient({
+  baseUrl: "http://localhost:4096",
+  directory: process.cwd(),
+  throwOnError: true,
+  responseStyle: "data",
 })
+```
 
-// When done
+V2 client options include `baseUrl`, `fetch`, `parseAs`, `responseStyle`, `throwOnError`, `headers`, `directory`, and `experimental_workspaceID`.
+
+### Server Helper
+
+```typescript
+import { createOpencodeClient, createOpencodeServer } from "@opencode-ai/sdk/v2"
+
+const server = await createOpencodeServer({ hostname: "127.0.0.1", port: 4096 })
+const client = createOpencodeClient({ baseUrl: server.url, throwOnError: true, responseStyle: "data" })
+
 server.close()
 ```
 
-### createOpencodeClient(config?)
+`createOpencodeServer()` options are `hostname`, `port`, `signal`, `timeout`, and `config`.
 
-Creates a client that connects to an existing server.
-
-```typescript
-import { createOpencodeClient } from "@opencode-ai/sdk"
-
-const client = createOpencodeClient({
-  baseUrl: "http://localhost:4096",  // Server URL
-  fetch: globalThis.fetch,           // Custom fetch implementation
-  parseAs: "auto",                   // Response parsing mode
-  responseStyle: "fields",           // Return style: "data" or "fields"
-  throwOnError: false                // Throw errors instead of return
-})
-```
-
-### createOpencodeTui(options?)
-
-Creates a TUI instance.
+### TUI Helper
 
 ```typescript
-import { createOpencodeTui } from "@opencode-ai/sdk/server"
+import { createOpencodeTui } from "@opencode-ai/sdk/v2/server"
 
 const tui = createOpencodeTui({
   project: "/path/to/project",
-  model: "anthropic/claude-sonnet-4-20250514",
   session: "session-id",
   agent: "build",
-  signal: AbortSignal,
-  config: {}
+  config: {},
 })
 
 tui.close()
 ```
 
-## API Namespaces
+## Call Shape Diff
 
-### client.global
+Legacy root export:
 
-| Method | Description | Response |
-|--------|-------------|----------|
-| `health()` | Check server health | `{ healthy: true, version: string }` |
+```typescript
+await legacy.session.prompt({
+  path: { id: sessionID },
+  query: { directory: process.cwd() },
+  body: { parts: [{ type: "text", text: "Hello" }] },
+})
+```
 
-### client.project
-
-| Method | Description | Response |
-|--------|-------------|----------|
-| `list()` | List all projects | `Project[]` |
-| `current()` | Get current project | `Project` |
-
-### client.session
-
-| Method | Description |
-|--------|-------------|
-| `list()` | List all sessions |
-| `create({ body })` | Create new session |
-| `get({ path: { id } })` | Get session by ID |
-| `update({ path, body })` | Update session |
-| `delete({ path: { id } })` | Delete session |
-| `status({ path: { id } })` | Get session status |
-| `children({ path: { id } })` | Get child sessions |
-| `todo({ path: { id } })` | Get session todos |
-| `init({ path: { id } })` | Initialize session |
-| `fork({ path: { id } })` | Fork session |
-| `abort({ path: { id } })` | Abort running session |
-| `share({ path: { id } })` | Share session |
-| `unshare({ path: { id } })` | Unshare session |
-| `diff({ path: { id } })` | Get session diff |
-| `summarize({ path: { id } })` | Summarize session |
-| `messages({ path: { id } })` | List messages |
-| `message({ path: { id, messageId } })` | Get single message |
-| `prompt({ path, body })` | Send prompt |
-| `promptAsync({ path, body })` | Send async prompt |
-| `command({ path, body })` | Send command |
-| `shell({ path, body })` | Run shell command |
-| `revert({ path, body })` | Revert message |
-| `unrevert({ path })` | Restore reverted |
-
-### Session Prompt Body
+V2 export:
 
 ```typescript
 await client.session.prompt({
-  path: { id: sessionId },
-  body: {
-    model: {
-      providerID: "anthropic",
-      modelID: "claude-sonnet-4-20250514"
-    },
-    parts: [
-      { type: "text", text: "Your prompt here" }
-    ],
-    noReply: false,  // true = inject context only
-    agent: "build"   // or "plan"
-  }
+  sessionID,
+  directory: process.cwd(),
+  parts: [{ type: "text", text: "Hello" }],
 })
 ```
 
-### client.find
-
-| Method | Description | Response |
-|--------|-------------|----------|
-| `text({ query: { pattern } })` | Search text in files | Match objects with path, lines, line_number |
-| `files({ query })` | Find files/directories | `string[]` paths |
-| `symbols({ query })` | Find workspace symbols | `Symbol[]` |
+Native `/api` namespace under the v2 export:
 
 ```typescript
-// Find files
-await client.find.files({
-  query: {
-    query: "*.ts",       // Pattern
-    type: "file",        // "file" or "directory"
-    directory: "/src",   // Override project root
-    limit: 50            // Max results (1-200)
-  }
+await client.v2.session.prompt({
+  sessionID,
+  prompt: { text: "Hello" },
+  delivery: "queue",
+  resume: true,
 })
 ```
 
-### client.file
+## Top-Level V2 API Groups
 
-| Method | Description | Response |
-|--------|-------------|----------|
-| `read({ query: { path } })` | Read file content | `{ type: "raw" | "patch", content: string }` |
-| `status({ query? })` | Get tracked file status | `File[]` |
-| `list()` | List files | `File[]` |
+| Group | Methods |
+| --- | --- |
+| `auth` | `set`, `remove` |
+| `app` | `log`, `agents`, `skills` |
+| `global` | `health`, `event`, `dispose`, `upgrade`, `config.get`, `config.update` |
+| `event` | `subscribe` |
+| `config` | `get`, `update`, `providers` |
+| `tool` | `list`, `ids` |
+| `worktree` | `list`, `create`, `remove`, `reset` |
+| `find` | `text`, `files`, `symbols` |
+| `file` | `list`, `read`, `status` |
+| `instance` | `dispose` |
+| `path` | `get` |
+| `vcs` | `get`, `status`, `diff`, `apply`, `diff2.raw` |
+| `command` | `list` |
+| `lsp` | `status` |
+| `formatter` | `status` |
+| `mcp` | `status`, `add`, `connect`, `disconnect`, `auth.start`, `auth.callback`, `auth.authenticate`, `auth.remove` |
+| `project` | `list`, `current`, `initGit`, `update`, `directories` |
+| `pty` | `shells`, `list`, `create`, `get`, `update`, `remove`, `connectToken`, `connect` |
+| `question` | `list`, `reply`, `reject` |
+| `permission` | `list`, `reply`, deprecated `respond` |
+| `provider` | `list`, `auth`, `oauth.authorize`, `oauth.callback` |
+| `session` | `list`, `create`, `status`, `get`, `update`, `delete`, `children`, `todo`, `diff`, `messages`, `prompt`, `deleteMessage`, `message`, `fork`, `abort`, `init`, `share`, `unshare`, `summarize`, `promptAsync`, `command`, `shell`, `revert`, `unrevert` |
+| `part` | `delete`, `update` |
+| `sync` | `start`, `replay`, `steal`, `history.list` |
+| `tui` | `appendPrompt`, `openHelp`, `openSessions`, `openThemes`, `openModels`, `submitPrompt`, `clearPrompt`, `executeCommand`, `showToast`, `publish`, `selectSession`, `control.next`, `control.response` |
+| `experimental` | `controlPlane.moveSession`, `console.get`, `console.listOrgs`, `console.switchOrg`, `session.list`, `session.background`, `resource.list`, `projectCopy.generateName`, `workspace.*` |
 
-### client.config
+## Native `client.v2` API Groups
 
-| Method | Description |
-|--------|-------------|
-| `get()` | Get config info |
-| `update({ body })` | Update config |
-| `providers()` | List providers and default models |
+| Group | Methods |
+| --- | --- |
+| `health` | `get` |
+| `location` | `get` |
+| `agent` | `list` |
+| `session` | `list`, `create`, `get`, `prompt`, `compact`, `wait`, `context`, `messages`, `permission.list`, `permission.reply`, `question.list`, `question.reply`, `question.reject` |
+| `model` | `list` |
+| `provider` | `list`, `get` |
+| `integration` | `list`, `get`, `connect.key`, `connect.oauth`, `attempt.status`, `attempt.complete`, `attempt.cancel` |
+| `credential` | `update`, `remove` |
+| `permission` | `request.list`, `saved.list`, `saved.remove` |
+| `fs` | `read`, `list`, `find` |
+| `command` | `list` |
+| `skill` | `list` |
+| `event` | `subscribe` |
+| `pty` | `list`, `create`, `get`, `update`, `remove`, `connectToken`, `connect` |
+| `question` | `request.list` |
+| `reference` | `list` |
+| `projectCopy` | `create`, `refresh`, `remove` |
 
-### client.provider
-
-| Method | Description |
-|--------|-------------|
-| `list()` | List all providers |
-| `auth({ path: { id } })` | Get auth status |
-| `oauth.authorize({ path })` | Start OAuth flow |
-| `oauth.callback({ path, query })` | Handle OAuth callback |
-
-### client.tool
-
-| Method | Description |
-|--------|-------------|
-| `ids({ path: { sessionId } })` | Get tool IDs for session |
-| `list({ path: { sessionId } })` | List tools for session |
-
-### client.mcp
-
-| Method | Description |
-|--------|-------------|
-| `status()` | Get MCP server status |
-| `add({ body })` | Add MCP server |
-| `connect({ path: { id } })` | Connect to MCP server |
-| `disconnect({ path: { id } })` | Disconnect MCP server |
-| `auth.start({ path })` | Start MCP auth |
-| `auth.callback({ path, query })` | MCP auth callback |
-| `auth.authenticate({ path, body })` | Authenticate MCP |
-| `auth.remove({ path })` | Remove MCP auth |
-
-### client.tui
-
-| Method | Description |
-|--------|-------------|
-| `appendPrompt({ body: { text } })` | Append text to prompt |
-| `submitPrompt()` | Submit current prompt |
-| `clearPrompt()` | Clear prompt |
-| `openHelp()` | Open help dialog |
-| `openSessions()` | Open session selector |
-| `openThemes()` | Open theme selector |
-| `openModels()` | Open model selector |
-| `executeCommand({ body: { name } })` | Execute TUI command |
-| `showToast({ body })` | Show toast notification |
-| `publish({ body })` | Publish TUI event |
-| `control.next()` | Get next TUI request |
-| `control.response({ body })` | Submit TUI response |
-
-### client.event
-
-| Method | Description |
-|--------|-------------|
-| `subscribe()` | Subscribe to SSE stream |
-
-### client.auth
-
-| Method | Description |
-|--------|-------------|
-| `set({ path: { id }, body })` | Set authentication |
+## Session Examples
 
 ```typescript
-await client.auth.set({
-  path: { id: "anthropic" },
-  body: { type: "api", key: "sk-..." }
+const session = await client.session.create({ title: "My session", agent: "build" })
+
+await client.session.prompt({
+  sessionID: session.id,
+  parts: [{ type: "text", text: "Hello" }],
+})
+
+await client.session.promptAsync({
+  sessionID: session.id,
+  parts: [{ type: "text", text: "Run this in the background" }],
+})
+
+const messages = await client.session.messages({ sessionID: session.id, limit: 50 })
+```
+
+Native v2 session example:
+
+```typescript
+const session = await client.v2.session.create({ location: { directory: process.cwd() } })
+
+await client.v2.session.prompt({
+  sessionID: session.data.id,
+  prompt: { text: "Implement the fix" },
+  delivery: "queue",
+  resume: true,
+})
+
+await client.v2.session.wait({ sessionID: session.data.id })
+```
+
+## Permission Examples
+
+```typescript
+await client.permission.reply({
+  requestID,
+  reply: "once",
+})
+
+await client.v2.session.permission.reply({
+  sessionID,
+  requestID,
+  reply: "once",
 })
 ```
 
-### client.app
+Valid permission replies are `"once"`, `"always"`, and `"reject"`.
 
-| Method | Description |
-|--------|-------------|
-| `log({ body })` | Write log entry |
-| `agents()` | List available agents |
+## Legacy Root Client
 
-### client.path
-
-| Method | Description |
-|--------|-------------|
-| `get()` | Get current path info |
-
-### client.vcs
-
-| Method | Description |
-|--------|-------------|
-| `get()` | Get VCS info |
-
-### client.pty
-
-| Method | Description |
-|--------|-------------|
-| `list()` | List PTY sessions |
-| `create({ body })` | Create PTY |
-| `get({ path: { id } })` | Get PTY |
-| `update({ path, body })` | Update PTY |
-| `remove({ path: { id } })` | Remove PTY |
-| `connect({ path: { id } })` | Connect to PTY |
-
-### client.lsp
-
-| Method | Description |
-|--------|-------------|
-| `status()` | Get LSP server status |
-
-### client.formatter
-
-| Method | Description |
-|--------|-------------|
-| `status()` | Get formatter status |
-
-### client.instance
-
-| Method | Description |
-|--------|-------------|
-| `dispose()` | Dispose server instance |
-
-### client.command
-
-| Method | Description |
-|--------|-------------|
-| `list()` | List available commands |
-
-### Permission Handling
+The root export remains useful for existing integrations and the bundled `export-sessions.mjs` helper.
 
 ```typescript
-await client.postSessionIdPermissionsPermissionId({
-  path: {
-    id: sessionId,
-    permissionId: permissionId
-  },
-  body: {
-    response: "allow" | "deny" | "always" | "never"
-  }
+import { createOpencodeClient } from "@opencode-ai/sdk"
+
+const legacy = createOpencodeClient({
+  baseUrl: "http://localhost:4096",
+  throwOnError: true,
+  responseStyle: "data",
+})
+
+const session = await legacy.session.create({ body: { title: "Legacy" } })
+
+await legacy.session.prompt({
+  path: { id: session.id },
+  body: { parts: [{ type: "text", text: "Hello" }] },
 })
 ```

@@ -1,8 +1,8 @@
 # OpenCode SDK Events Reference
 
-All SSE (Server-Sent Events) types emitted by the OpenCode server.
+Current event guidance for `@opencode-ai/sdk@1.17.7`.
 
-## Subscribing to Events
+## Subscribe
 
 ```typescript
 const events = await client.event.subscribe()
@@ -12,276 +12,134 @@ for await (const event of events.stream) {
 }
 ```
 
-## Event Types
+Use `client.event.subscribe()` for top-level event streams. Use `client.v2.event.subscribe({ location })` when working specifically with native `/api` location-scoped event streams.
 
-### Server Events
+## Common Event Families
 
-| Event Type | Properties | Description |
-|------------|------------|-------------|
-| `server.instance.disposed` | `{ directory: string }` | Server instance disposed |
+| Family | Event types |
+| --- | --- |
+| Server/global | `server.connected`, `server.instance.disposed`, `global.disposed` |
+| Installation | `installation.updated`, `installation.update-available` |
+| Catalog/plugins | `models-dev.refreshed`, `plugin.added`, `integration.updated`, `catalog.updated` |
+| Session lifecycle | `session.created`, `session.updated`, `session.deleted`, `session.status`, `session.idle`, `session.compacted`, `session.diff`, `session.error` |
+| Message lifecycle | `message.updated`, `message.removed`, `message.part.updated`, `message.part.removed`, `message.part.delta` |
+| Agent loop progress | `session.next.*` events for prompt, step, text, reasoning, tool, shell, retry, and compaction progress |
+| Permissions | `permission.asked`, `permission.replied`, `permission.v2.asked`, `permission.v2.replied` |
+| Questions | `question.asked`, `question.replied`, `question.rejected`, `question.v2.asked`, `question.v2.replied`, `question.v2.rejected` |
+| Files/VCS | `file.edited`, `file.watcher.updated`, `vcs.branch.updated` |
+| PTY | `pty.created`, `pty.updated`, `pty.exited`, `pty.deleted` |
+| Project/workspace | `project.updated`, `project.directories.updated`, `workspace.ready`, `workspace.failed`, `workspace.status`, `worktree.ready`, `worktree.failed` |
+| Other | `todo.updated`, `lsp.updated`, `mcp.tools.changed`, `mcp.browser.open.failed`, `command.executed`, `reference.updated` |
 
-### Installation Events
+Legacy root `@opencode-ai/sdk` events still include `permission.updated`; v2 direct clients emit the newer `permission.asked`/`permission.v2.asked` families.
 
-| Event Type | Properties | Description |
-|------------|------------|-------------|
-| `installation.updated` | `{ version: string }` | OpenCode was updated |
-| `installation.update-available` | `{ version: string }` | New version available |
+## Wait For Completion
 
-### Session Events
-
-| Event Type | Properties | Description |
-|------------|------------|-------------|
-| `session.created` | `{ info: Session }` | Session was created |
-| `session.updated` | `{ info: Session }` | Session was updated |
-| `session.status` | `{ sessionID, status: SessionStatus }` | Session status changed |
-| `session.idle` | `{ sessionID: string }` | Session became idle |
-| `session.compacted` | `{ sessionID: string }` | Session was compacted |
-
-### Message Events
-
-| Event Type | Properties | Description |
-|------------|------------|-------------|
-| `message.updated` | `{ info: Message }` | Message was updated |
-| `message.removed` | `{ sessionID, messageID }` | Message was removed |
-| `message.part.updated` | `{ part: Part, delta?: string }` | Message part updated |
-| `message.part.removed` | `{ sessionID, messageID, partID }` | Message part removed |
-
-### Permission Events
-
-| Event Type | Properties | Description |
-|------------|------------|-------------|
-| `permission.updated` | `Permission` | Permission request created |
-| `permission.replied` | `{ sessionID, permissionID, response }` | Permission was answered |
-
-### File Events
-
-| Event Type | Properties | Description |
-|------------|------------|-------------|
-| `file.edited` | `{ file: string }` | File was edited |
-
-### Todo Events
-
-| Event Type | Properties | Description |
-|------------|------------|-------------|
-| `todo.updated` | `{ sessionID, todos: Todo[] }` | Todos were updated |
-
-### Command Events
-
-| Event Type | Properties | Description |
-|------------|------------|-------------|
-| `command.executed` | `{ name, sessionID, arguments, messageID }` | Command was executed |
-
-### LSP Events
-
-| Event Type | Properties | Description |
-|------------|------------|-------------|
-| `lsp.updated` | `{ [key: string]: unknown }` | LSP state changed |
-| `lsp.client.diagnostics` | `{ serverID, path }` | Diagnostics received |
-
-## Key Types
-
-### SessionStatus
+Use events when you need progress details:
 
 ```typescript
-type SessionStatus =
-  | { type: "idle" }
-  | { type: "retry"; attempt: number; message: string; next: number }
-  | { type: "busy" }
-```
-
-### Message
-
-```typescript
-type Message = UserMessage | AssistantMessage
-
-type UserMessage = {
-  id: string
-  sessionID: string
-  role: "user"
-  time: { created: number }
-  summary?: { title?: string; body?: string; diffs: FileDiff[] }
-  agent: string
-  model: { providerID: string; modelID: string }
-  system?: string
-  tools?: { [key: string]: boolean }
-}
-
-type AssistantMessage = {
-  id: string
-  sessionID: string
-  role: "assistant"
-  time: { created: number; completed?: number }
-  error?: MessageError
-  parentID: string
-  modelID: string
-  providerID: string
-  mode: string
-  path: { cwd: string; root: string }
-  summary?: boolean
-  cost: number
-  tokens: {
-    input: number
-    output: number
-    reasoning: number
-    cache: { read: number; write: number }
-  }
-  finish?: string
-}
-```
-
-### Part Types
-
-```typescript
-type Part =
-  | TextPart
-  | ReasoningPart
-  | FilePart
-  | ToolPart
-  | StepStartPart
-  | StepFinishPart
-  | SnapshotPart
-  | PatchPart
-  | AgentPart
-  | RetryPart
-  | CompactionPart
-  | SubtaskPart
-
-type TextPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "text"
-  text: string
-  synthetic?: boolean
-  ignored?: boolean
-  time?: { start: number; end?: number }
-  metadata?: { [key: string]: unknown }
-}
-
-type ToolPart = {
-  id: string
-  sessionID: string
-  messageID: string
-  type: "tool"
-  callID: string
-  tool: string
-  state: ToolState
-  metadata?: { [key: string]: unknown }
-}
-
-type ToolState =
-  | { status: "pending"; input: object; raw: string }
-  | { status: "running"; input: object; title?: string; metadata?: object; time: { start: number } }
-  | { status: "completed"; input: object; output: string; title: string; metadata: object; time: { start: number; end: number; compacted?: number }; attachments?: FilePart[] }
-  | { status: "error"; input: object; error: string; time: { start: number; end: number } }
-```
-
-### Permission
-
-```typescript
-type Permission = {
-  id: string
-  type: string
-  pattern?: string | string[]
-  sessionID: string
-  messageID: string
-  callID?: string
-  title: string
-  metadata: { [key: string]: unknown }
-  time: { created: number }
-}
-```
-
-### Todo
-
-```typescript
-type Todo = {
-  id: string
-  content: string
-  status: "pending" | "in_progress" | "completed" | "cancelled"
-  priority: "high" | "medium" | "low"
-}
-```
-
-## Event Patterns
-
-### Wait for Session Completion
-
-```typescript
-async function waitForIdle(client: OpencodeClient, sessionId: string) {
+async function waitForIdle(client: OpencodeClient, sessionID: string) {
   const events = await client.event.subscribe()
-  
+
   for await (const event of events.stream) {
-    if (event.type === "session.idle" && event.properties.sessionID === sessionId) {
+    if (event.type === "session.idle" && event.properties.sessionID === sessionID) {
       return
     }
   }
 }
 ```
 
-### Stream Assistant Responses
+For native v2 session prompts, use the built-in wait endpoint when progress details are unnecessary:
 
 ```typescript
-async function streamResponse(client: OpencodeClient, sessionId: string) {
+await client.v2.session.wait({ sessionID })
+```
+
+## Stream Text Deltas
+
+Native loop progress uses `session.next.text.*` events.
+
+```typescript
+async function streamText(client: OpencodeClient, sessionID: string) {
   const events = await client.event.subscribe()
-  
+
   for await (const event of events.stream) {
-    if (event.type === "message.part.updated") {
-      const { part, delta } = event.properties
-      if (part.sessionID === sessionId && part.type === "text" && delta) {
-        process.stdout.write(delta)
-      }
+    if (event.type === "session.next.text.delta" && event.properties.sessionID === sessionID) {
+      process.stdout.write(event.properties.delta)
     }
-    
-    if (event.type === "session.idle" && event.properties.sessionID === sessionId) {
+
+    if (event.type === "session.idle" && event.properties.sessionID === sessionID) {
       break
     }
   }
 }
 ```
 
-### Auto-Approve Permissions
+Legacy message part streaming still uses `message.part.updated` and `message.part.delta`.
+
+## Handle Permissions
+
+Top-level v2 permission event:
 
 ```typescript
-async function autoApprove(client: OpencodeClient, patterns: string[]) {
-  const events = await client.event.subscribe()
-  
-  for await (const event of events.stream) {
-    if (event.type === "permission.updated") {
-      const perm = event.properties
-      
-      // Check if permission matches allowed patterns
-      const shouldAllow = patterns.some(p => perm.type.includes(p))
-      
-      await client.postSessionIdPermissionsPermissionId({
-        path: { id: perm.sessionID, permissionId: perm.id },
-        body: { response: shouldAllow ? "allow" : "deny" }
-      })
-    }
-  }
+for await (const event of events.stream) {
+  if (event.type !== "permission.asked") continue
+
+  const request = event.properties
+  const allowed = request.permission === "read"
+
+  await client.permission.reply({
+    requestID: request.id,
+    reply: allowed ? "once" : "reject",
+  })
 }
 ```
 
-### Track Tool Execution
+Native v2 session-owned permission event:
 
 ```typescript
-async function trackTools(client: OpencodeClient, sessionId: string) {
-  const events = await client.event.subscribe()
-  const tools = new Map<string, ToolState>()
-  
-  for await (const event of events.stream) {
-    if (event.type === "message.part.updated") {
-      const { part } = event.properties
-      if (part.sessionID === sessionId && part.type === "tool") {
-        tools.set(part.callID, part.state)
-        
-        if (part.state.status === "completed") {
-          console.log(`Tool ${part.tool} completed:`, part.state.output)
-        } else if (part.state.status === "error") {
-          console.log(`Tool ${part.tool} failed:`, part.state.error)
-        }
-      }
-    }
+for await (const event of events.stream) {
+  if (event.type !== "permission.v2.asked") continue
+
+  await client.v2.session.permission.reply({
+    sessionID: event.properties.sessionID,
+    requestID: event.properties.id,
+    reply: "once",
+  })
+}
+```
+
+Valid replies are `"once"`, `"always"`, and `"reject"`.
+
+## Handle Questions
+
+```typescript
+for await (const event of events.stream) {
+  if (event.type !== "question.asked") continue
+
+  await client.question.reply({
+    requestID: event.properties.id,
+    answers: [["Proceed"]],
+  })
+}
+```
+
+For `question.v2.asked`, use `client.v2.session.question.reply({ sessionID, requestID, questionV2Reply: { answers } })` or `client.v2.session.question.reject()` with the event `sessionID` and request ID.
+
+## Track Tools
+
+```typescript
+for await (const event of events.stream) {
+  if (event.type === "session.next.tool.called") {
+    console.log("tool called", event.properties.tool, event.properties.input)
+  }
+
+  if (event.type === "session.next.tool.success") {
+    console.log("tool success", event.properties.callID, event.properties.result)
+  }
+
+  if (event.type === "session.next.tool.failed") {
+    console.log("tool failed", event.properties.callID, event.properties.error)
   }
 }
 ```
