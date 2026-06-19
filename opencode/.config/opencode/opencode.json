@@ -1,10 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "permission": {
-    "external_directory": {
-      "/**": "allow"
-    }
-  },
+  "permission": "allow",
   "provider": {
     "mlx": {
       "npm": "@ai-sdk/openai-compatible",
@@ -24,8 +20,7 @@
       "mode": "subagent",
       "description": "Designs elegant and intuitive user interfaces",
       "model": "google/gemini-3.1-pro-preview",
-      "options": {},
-      "permission": {}
+      "options": {}
     }
   },
   "mcp": {
@@ -36,6 +31,15 @@
     "context7": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp"
+    },
+    "opentelemetry-mcp": {
+      "type": "local",
+      "command": ["uvx", "opentelemetry-mcp"],
+      "enabled": true,
+      "env": {
+        "BACKEND_TYPE": "jaeger",
+        "BACKEND_URL": "http://localhost:16686"
+      }
     }
   }
 }

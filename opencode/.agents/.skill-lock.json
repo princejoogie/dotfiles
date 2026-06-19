@@ -92,9 +92,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel/turborepo.git",
       "skillPath": "skills/turborepo/SKILL.md",
-      "skillFolderHash": "bb5d30e55debb99693fcac9f7469657b7395a29a",
+      "skillFolderHash": "ba2a7071bef3d3fa30c6c4113cc808871a1a728b",
       "installedAt": "2026-05-21T20:23:26.198Z",
-      "updatedAt": "2026-05-21T20:23:26.198Z"
+      "updatedAt": "2026-06-17T02:21:40.777Z"
     },
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
@@ -128,9 +128,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/shadcn/ui.git",
       "skillPath": "skills/shadcn/SKILL.md",
-      "skillFolderHash": "a8404703769866faf15bee897c9ae6e252ac2d35",
+      "skillFolderHash": "53547268e4c90c0dd7981e098e1ea4a89393575a",
       "installedAt": "2026-05-21T20:38:53.242Z",
-      "updatedAt": "2026-05-21T20:38:53.242Z"
+      "updatedAt": "2026-06-17T02:21:59.482Z"
     },
     "gpt-image-2": {
       "source": "agentspace-so/agent-skills",
@@ -141,34 +141,14 @@
       "installedAt": "2026-05-21T20:38:55.717Z",
       "updatedAt": "2026-05-21T20:38:55.717Z"
     },
-    "better-auth-best-practices": {
-      "source": "better-auth/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/better-auth/skills.git",
-      "skillPath": "better-auth/best-practices/SKILL.md",
-      "skillFolderHash": "58f87c7fe7c2c487779728c1e73ea43717612d37",
-      "pluginName": "auth-skills",
-      "installedAt": "2026-05-21T20:49:05.294Z",
-      "updatedAt": "2026-05-21T20:49:05.294Z"
-    },
-    "organization-best-practices": {
-      "source": "better-auth/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/better-auth/skills.git",
-      "skillPath": "better-auth/organization/SKILL.md",
-      "skillFolderHash": "461989110d1cd43c4809bea01c9a61b9fd432056",
-      "installedAt": "2026-05-21T20:52:38.261Z",
-      "updatedAt": "2026-05-21T20:52:38.261Z"
-    },
     "to-prd": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/mattpocock/skills.git",
       "skillPath": "skills/engineering/to-prd/SKILL.md",
-      "skillFolderHash": "d6eff3e99a325d2d9c2acbe31b4d76fa5340a154",
-      "pluginName": "mattpocock-skills",
+      "skillFolderHash": "fb4503f54bc618da08df2fd74109fbe57e4d8150",
       "installedAt": "2026-05-27T05:03:51.564Z",
-      "updatedAt": "2026-05-27T05:03:51.564Z"
+      "updatedAt": "2026-06-17T02:21:36.350Z"
     },
     "to-issues": {
       "source": "mattpocock/skills",
@@ -214,10 +194,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/mattpocock/skills.git",
       "skillPath": "skills/productivity/teach/SKILL.md",
-      "skillFolderHash": "fdc61615b4d56a04d88a69a135337f0cad9df235",
-      "pluginName": "mattpocock-skills",
+      "skillFolderHash": "975430f7801bac2258ed18f4d80860024443b4f7",
       "installedAt": "2026-06-09T15:37:14.334Z",
-      "updatedAt": "2026-06-09T15:37:14.334Z"
+      "updatedAt": "2026-06-17T02:21:38.220Z"
     }
   },
   "dismissed": {

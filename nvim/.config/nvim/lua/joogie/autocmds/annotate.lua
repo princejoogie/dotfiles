@@ -341,6 +341,180 @@ local function json_value(value)
   return value
 end
 
+local function json_table(value)
+  return type(value) == "table" and value or nil
+end
+
+local function gh_pr_repository(root, pr)
+  local stdout, stderr, code = command_output({
+    "gh",
+    "pr",
+    "view",
+    tostring(pr),
+    "--json",
+    "url",
+    "--jq",
+    ".url",
+  }, root)
+
+  if code ~= 0 then
+    notify("Could not determine PR repository: " .. gh_error_message(stdout, stderr), vim.log.levels.WARN)
+    return nil, nil
+  end
+
+  local url = stdout:gsub("^%s+", ""):gsub("%s+$", "")
+  local owner, name = url:match("^[^:]+://[^/]+/([^/]+)/([^/]+)/pull/%d+")
+  if not owner or not name then
+    notify("Could not determine PR repository from " .. url, vim.log.levels.WARN)
+    return nil, nil
+  end
+
+  return owner, name:gsub("%.git$", "")
+end
+
+local gh_review_threads_query = [[
+query($owner: String!, $name: String!, $number: Int!, $cursor: String) {
+  repository(owner: $owner, name: $name) {
+    pullRequest(number: $number) {
+      reviewThreads(first: 100, after: $cursor) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          isOutdated
+          isResolved
+          comments(first: 100) {
+            nodes {
+              databaseId
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+]]
+
+local function gh_graphql_error(data)
+  local errors = json_table(data.errors)
+  if not errors then
+    return nil
+  end
+
+  local first = json_table(errors[1])
+  local message = first and json_value(first.message)
+  return message and tostring(message) or "GraphQL query failed"
+end
+
+local function gh_review_thread_resolution_page(root, owner, name, pr, cursor)
+  local pr_number = tonumber(pr)
+  if not pr_number then
+    notify("Invalid PR number: " .. tostring(pr), vim.log.levels.WARN)
+    return nil
+  end
+
+  local args = {
+    "gh",
+    "api",
+    "graphql",
+    "-f",
+    "query=" .. gh_review_threads_query,
+    "-F",
+    "owner=" .. owner,
+    "-F",
+    "name=" .. name,
+    "-F",
+    "number=" .. pr_number,
+  }
+
+  if cursor then
+    table.insert(args, "-F")
+    table.insert(args, "cursor=" .. tostring(cursor))
+  end
+
+  local stdout, stderr, code = command_output(args, root)
+  if code ~= 0 then
+    notify("Could not fetch PR comment resolved states: " .. gh_error_message(stdout, stderr), vim.log.levels.WARN)
+    return nil
+  end
+
+  local ok, data = pcall(vim.json.decode, stdout)
+  if not ok or type(data) ~= "table" then
+    notify("Could not parse PR comment resolved states from gh", vim.log.levels.WARN)
+    return nil
+  end
+
+  local error_message = gh_graphql_error(data)
+  if error_message then
+    notify("Could not fetch PR comment resolved states: " .. error_message, vim.log.levels.WARN)
+    return nil
+  end
+
+  local response = json_table(data.data)
+  local repository = response and json_table(response.repository)
+  local pull_request = repository and json_table(repository.pullRequest)
+  local review_threads = pull_request and json_table(pull_request.reviewThreads)
+  if not review_threads then
+    notify("Could not read PR comment resolved states from gh", vim.log.levels.WARN)
+    return nil
+  end
+
+  return review_threads
+end
+
+local function gh_review_thread_resolutions(root, pr)
+  local owner, name = gh_pr_repository(root, pr)
+  if not owner or not name then
+    return nil
+  end
+
+  local resolutions = {}
+  local cursor = nil
+
+  while true do
+    local review_threads = gh_review_thread_resolution_page(root, owner, name, pr, cursor)
+    if not review_threads then
+      return nil
+    end
+
+    for _, thread in ipairs(json_table(review_threads.nodes) or {}) do
+      if type(thread) == "table" then
+        local resolved = thread.isResolved == true or thread.isOutdated == true
+        local comments = json_table(thread.comments)
+
+        for _, comment in ipairs(comments and json_table(comments.nodes) or {}) do
+          if type(comment) == "table" then
+            local database_id = json_value(comment.databaseId)
+            local node_id = json_value(comment.id)
+
+            if database_id then
+              resolutions[tostring(database_id)] = resolved
+            end
+
+            if node_id then
+              resolutions[tostring(node_id)] = resolved
+            end
+          end
+        end
+      end
+    end
+
+    local page_info = json_table(review_threads.pageInfo)
+    if not (page_info and page_info.hasNextPage == true) then
+      break
+    end
+
+    cursor = json_value(page_info.endCursor)
+    if not cursor or cursor == "" then
+      break
+    end
+  end
+
+  return resolutions
+end
+
 local function gh_comment_linenumber(comment)
   local start_line = tonumber(json_value(comment.start_line) or json_value(comment.original_start_line))
   local line = tonumber(json_value(comment.line) or json_value(comment.original_line))
@@ -393,7 +567,7 @@ local function keep_non_gh_annotations(annotations)
   return kept
 end
 
-local function gh_comment_annotation(comment, previous_resolved, pr)
+local function gh_comment_annotation(comment, previous_resolved, resolved_comments, pr)
   local filename = json_value(comment.path)
   local linenumber = gh_comment_linenumber(comment)
   local body = tostring(json_value(comment.body) or "")
@@ -409,13 +583,32 @@ local function gh_comment_annotation(comment, previous_resolved, pr)
 
   source_id = tostring(source_id)
   local author = gh_comment_author(comment)
+  local resolved = previous_resolved[source_id] == true
+  local source_candidates = { source_id }
+  local rest_id = json_value(comment.id)
+  local node_id = json_value(comment.node_id)
+
+  if rest_id then
+    table.insert(source_candidates, tostring(rest_id))
+  end
+
+  if node_id then
+    table.insert(source_candidates, tostring(node_id))
+  end
+
+  for _, candidate in ipairs(source_candidates) do
+    if resolved_comments[candidate] ~= nil then
+      resolved = resolved_comments[candidate] == true
+      break
+    end
+  end
 
   return {
     filename = filename,
     linenumber = linenumber,
     annotation = body,
     hunk = tostring(json_value(comment.diff_hunk) or ""),
-    resolved = previous_resolved[source_id] == true,
+    resolved = resolved,
     meta = {
       github = true,
       pr_number = tonumber(pr) or pr,
@@ -1614,13 +1807,19 @@ function M.gh_comments(opts)
     return
   end
 
+  local resolved_comments = gh_review_thread_resolutions(root, pr)
+  if not resolved_comments then
+    resolved_comments = {}
+    notify("Falling back to locally stored GitHub comment resolved states", vim.log.levels.WARN)
+  end
+
   local previous_resolved = gh_imported_annotations(annotations)
   local next_annotations = keep_non_gh_annotations(annotations)
   local imported = 0
   local skipped = 0
 
   for _, comment in ipairs(comments) do
-    local annotation = gh_comment_annotation(comment, previous_resolved, pr)
+    local annotation = gh_comment_annotation(comment, previous_resolved, resolved_comments, pr)
     if annotation then
       table.insert(next_annotations, annotation)
       imported = imported + 1
