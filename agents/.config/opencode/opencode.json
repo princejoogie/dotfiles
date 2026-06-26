@@ -1,7 +1,9 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "permission": "allow",
-  "plugin": ["opencode-with-claude"],
+  "plugin": [
+    "opencode-with-claude"
+  ],
   "provider": {
     "anthropic": {
       "options": {
@@ -41,7 +43,10 @@
     },
     "opentelemetry-mcp": {
       "type": "local",
-      "command": ["uvx", "opentelemetry-mcp"],
+      "command": [
+        "uvx",
+        "opentelemetry-mcp"
+      ],
       "enabled": true,
       "environment": {
         "BACKEND_TYPE": "jaeger",
