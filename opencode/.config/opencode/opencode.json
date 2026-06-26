@@ -1,7 +1,14 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "permission": "allow",
+  "plugin": ["opencode-with-claude"],
   "provider": {
+    "anthropic": {
+      "options": {
+        "baseURL": "http://127.0.0.1:3456",
+        "apiKey": "dummy"
+      }
+    },
     "mlx": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "MLX (local)",
@@ -36,7 +43,7 @@
       "type": "local",
       "command": ["uvx", "opentelemetry-mcp"],
       "enabled": true,
-      "env": {
+      "environment": {
         "BACKEND_TYPE": "jaeger",
         "BACKEND_URL": "http://localhost:16686"
       }
