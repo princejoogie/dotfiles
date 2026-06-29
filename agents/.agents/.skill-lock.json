@@ -197,6 +197,24 @@
       "skillFolderHash": "975430f7801bac2258ed18f4d80860024443b4f7",
       "installedAt": "2026-06-09T15:37:14.334Z",
       "updatedAt": "2026-06-17T02:21:38.220Z"
+    },
+    "git-merge": {
+      "source": "vervio-digital/vervio-agentics",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vervio-digital/vervio-agentics.git",
+      "skillPath": "plugins/git-merge/skills/git-merge/SKILL.md",
+      "skillFolderHash": "497331894420cfc91490226a6c8088b9d0880dacb5d1c92895b3f014bf67d07e",
+      "installedAt": "2026-06-29T06:56:58.437Z",
+      "updatedAt": "2026-06-29T06:56:58.437Z"
+    },
+    "worklog": {
+      "source": "vervio-digital/vervio-agentics",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vervio-digital/vervio-agentics.git",
+      "skillPath": "plugins/worklog/skills/worklog/SKILL.md",
+      "skillFolderHash": "92406a77dd163f53e43810809305c8a311aa35ddcc6e2a8a99c1f9567be36720",
+      "installedAt": "2026-06-29T06:56:58.441Z",
+      "updatedAt": "2026-06-29T06:56:58.441Z"
     }
   },
   "dismissed": {

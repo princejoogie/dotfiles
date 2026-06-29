@@ -7,6 +7,12 @@
 # stats, and commits from each branch — everything needed to plan a merge
 # without running additional git commands.
 #
+# Also surfaces documentation (*.md, *.mdx, *.rst, *.adr) changed on EITHER
+# branch — prose that often explains *why* a side changed, which the code diff
+# can't carry — so it doesn't slip past just because it changed on only one
+# side and never conflicted. A per-PR decision log a repo keeps (e.g. under
+# .worklogs/) rides along here and is especially high-signal.
+#
 # Usage: list-common-changes.sh <source-branch> <target-branch>
 #
 # Run from inside the git repository (uses the current working directory's
@@ -149,6 +155,27 @@ SRC_ONLY_COUNT=$(comm -23 <(echo "$SRC_PATHS") <(echo "$TGT_PATHS") | grep -c . 
 TGT_ONLY_COUNT=$(comm -13 <(echo "$SRC_PATHS") <(echo "$TGT_PATHS") | grep -c . || true)
 TOTAL_COUNT=$((BOTH_COUNT + SRC_ONLY_COUNT + TGT_ONLY_COUNT))
 
+# Documentation changed on EITHER branch, regardless of whether it conflicted.
+# Prose (READMEs, design notes, ADRs, and any per-PR decision log a repo keeps)
+# states *why* a side changed — signal the code diff can't carry. Detected by
+# extension from the union of all changed paths.
+ALL_FILES=$( { echo "$SRC_PATHS"; echo "$TGT_PATHS"; } | sort -u | grep -v '^$' || true)
+
+is_doc() {
+    case "$1" in
+        *.md|*.mdx|*.rst|*.adr) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+DOC_FILES=""
+while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    if is_doc "$f"; then DOC_FILES+="${f}"$'\n'; fi
+done <<< "$ALL_FILES"
+
+DOC_COUNT=$(echo "$DOC_FILES" | grep -c . || true)
+
 # ===========================================================================
 # Helpers
 # ===========================================================================
@@ -186,6 +213,28 @@ print_commits() {
     fi
 }
 
+# Which side(s) changed a path: "both" | "source" | "target"
+side_of() {
+    local path="$1" s="" t=""
+    [[ -n "${SRC_STATUS[$path]:-}" ]] && s=1
+    [[ -n "${TGT_STATUS[$path]:-}" ]] && t=1
+    if [[ -n "$s" && -n "$t" ]]; then echo "both"
+    elif [[ -n "$s" ]]; then echo "source"
+    else echo "target"; fi
+}
+
+print_signal_file() {
+    local file="$1"
+    echo ""
+    echo "--- ${file}  [$(side_of "$file")] ---"
+    if [[ -n "${SRC_STATUS[$file]:-}" ]]; then
+        echo "  Source: $(format_file_status "${SRC_STATUS[$file]}" "${SRC_ADDED[$file]:-0}" "${SRC_REMOVED[$file]:-0}" "${SRC_OLD[$file]:-}")"
+    fi
+    if [[ -n "${TGT_STATUS[$file]:-}" ]]; then
+        echo "  Target: $(format_file_status "${TGT_STATUS[$file]}" "${TGT_ADDED[$file]:-0}" "${TGT_REMOVED[$file]:-0}" "${TGT_OLD[$file]:-}")"
+    fi
+}
+
 # ===========================================================================
 # Output
 # ===========================================================================
@@ -211,10 +260,11 @@ Target Branch: ${TARGET}
   Commits: ${TGT_COUNT}
 
 File Summary
-  Changed on both branches:  ${BOTH_COUNT} files  (listed below)
+  Changed on both branches:  ${BOTH_COUNT} files  (interaction surface, listed below)
   Source-only:               ${SRC_ONLY_COUNT} files
   Target-only:               ${TGT_ONLY_COUNT} files
   Total changed:             ${TOTAL_COUNT} files
+  Documentation changed:     ${DOC_COUNT} file(s)  (either branch — listed below)
 EOF
 
 # Interaction Surface
@@ -248,4 +298,29 @@ if [[ "$BOTH_COUNT" -gt 0 ]]; then
 else
     echo ""
     echo "No files changed on both branches."
+fi
+
+# Documentation Changes
+echo ""
+cat <<EOF
+
+================================================================================
+DOCUMENTATION CHANGES (${DOC_COUNT} file(s))
+================================================================================
+
+Documentation added or modified on either branch — high-signal context for the
+change. Documentation explains the code, so reading it can reveal intent the
+code diff doesn't; some kinds (changelogs, worklogs) state outright what changed
+and why. Consider reading the documents listed below before you resolve.
+Read content with:  git show <branch>:<path>
+EOF
+
+if [[ "$DOC_COUNT" -gt 0 ]]; then
+    while IFS= read -r file; do
+        [ -z "$file" ] && continue
+        print_signal_file "$file"
+    done <<< "$DOC_FILES"
+else
+    echo ""
+    echo "No documentation changed on either branch."
 fi
