@@ -2,6 +2,8 @@
 
 Use this reference when a meeting package includes more than plain transcript text.
 
+All generated artifacts for these optional inputs must be written inside the package folder in the current working directory.
+
 ## Transcript-Only
 
 - Preserve the original transcript as `raw-transcript.md` or reference the supplied source file.
@@ -11,7 +13,7 @@ Use this reference when a meeting package includes more than plain transcript te
 ## Audio Or Video
 
 - Probe media first with `ffprobe` or equivalent to capture duration, streams, channels, and codec.
-- Use `scripts/probe_media.py` when you need a reusable Markdown/JSON probe artifact.
+- Use `scripts/probe_media.py` when you need a reusable Markdown/JSON probe artifact, and write it inside the package folder.
 - Verify whether channels are actually separable before promising channel-based diarization.
 - Prefer a known local Whisper environment or cached model before installing anything new.
 - Keep the raw transcription and speaker-labeled transcript as separate files.
@@ -29,7 +31,7 @@ Use this reference when a meeting package includes more than plain transcript te
 ## GitHub PR Or Annotation JSON
 
 - If a PR URL is supplied, inspect current comments only when the user asks to use PR context.
-- If exported annotations JSON is supplied, convert it into `github-comments.md` before summarizing or grouping.
+- If exported annotations JSON is supplied, convert it into `github-comments.md` inside the package folder before summarizing or grouping.
 - Group related comments by behavior or ownership boundary, not just by filename.
 - Keep comment URLs and file/line references when available.
 - Do not resolve comments, push code, or change repo files unless the user separately asks for implementation.

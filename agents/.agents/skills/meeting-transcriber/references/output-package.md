@@ -2,6 +2,12 @@
 
 Use this reference before creating a multi-file meeting package.
 
+## Package Root Rule
+
+Create the package folder in the current working directory, for example `.tmp/meeting-transcriber-YYYY-MM-DD-<slug>/`.
+
+All artifacts created by this skill must stay inside that package folder. This includes transcripts, probes, screenshots, OCR text, converted comments, plans, manifests, and temporary helper outputs. Do not write generated files beside the source media, in the skill directory, or in another workspace unless the user explicitly asks for a different output location.
+
 ## Recommended Layout
 
 ```text
@@ -21,7 +27,7 @@ Use this reference before creating a multi-file meeting package.
   manifest.json
 ```
 
-Create only the files justified by inputs and requested outputs.
+Create only the files justified by inputs and requested outputs, and keep all of them under the package root.
 
 ## README Contents
 
