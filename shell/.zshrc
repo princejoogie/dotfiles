@@ -62,6 +62,7 @@ export PATH=$PATH:$HOME/.local/share/bob/nvim-bin
 export PATH=$PATH:$HOME/.duckdb/cli/latest
 export PATH=$PATH:$HOME/.opencode/bin
 export PATH=$PATH:$HOME/.lmstudio/bin
+export PATH=$PATH:$HOME/.maestro/bin
 export PATH=$PATH:$HOME/go/bin
 
 if [[ -f "$HOME/.private.sh" ]]; then
