@@ -3,7 +3,7 @@ local toggle_diffview = utils.toggle_diffview
 local cmd = utils.cmd
 
 return {
-  dir = "/Users/pjuguilon/Documents/codes/personal/diffview-plus.nvim",
+  "dlyongemallo/diffview-plus.nvim",
   cmd = "DiffviewOpen",
   keys = {
     {
