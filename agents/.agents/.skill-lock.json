@@ -181,13 +181,13 @@
       "updatedAt": "2026-05-28T03:38:04.708Z"
     },
     "terminal-control": {
-      "source": "kitlangton/terminal-control",
+      "source": "anomalyco/terminal-control",
       "sourceType": "github",
-      "sourceUrl": "https://github.com/kitlangton/terminal-control.git",
+      "sourceUrl": "https://github.com/anomalyco/terminal-control.git",
       "skillPath": "skills/terminal-control/SKILL.md",
-      "skillFolderHash": "a1cd114e830ac8bbd2a557f55395ec06d80cd5e2",
+      "skillFolderHash": "652efdccf2cc06c20550238e9df85788d3fc1d3b",
       "installedAt": "2026-06-04T06:38:44.244Z",
-      "updatedAt": "2026-06-04T06:38:44.244Z"
+      "updatedAt": "2026-07-27T18:06:51.420Z"
     },
     "teach": {
       "source": "mattpocock/skills",
