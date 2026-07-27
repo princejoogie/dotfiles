@@ -22,3 +22,4 @@ mcpservers.json
 
 *.cbor
 .tmp
+.agents/
