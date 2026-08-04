@@ -3,6 +3,7 @@ format = """
 [ 󰘧 ](bg:#a6adc8 fg:#11111b)\
 [](bg:#89b4fa fg:#a6adc8)\
 $directory\
+${custom.git_repo_name}\
 [](fg:#89b4fa bg:#313244)\
 $git_branch\
 $git_status\
@@ -18,8 +19,27 @@ $php\
 [directory]
 style = "fg:#15161E bg:#89b4fa"
 format = "[ $path ]($style)"
+before_repo_root_style = "fg:#15161E bg:#89b4fa"
+repo_root_format = ""
+repo_root_style = "fg:#15161E bg:#89b4fa"
 truncation_length = 3
 truncation_symbol = "…/"
+
+[custom.git_repo_name]
+command = '''
+repo="$(git remote get-url origin 2>/dev/null)"
+if [ -z "$repo" ]; then
+  repo="$(git rev-parse --show-toplevel)"
+fi
+repo="${repo%/}"
+repo="${repo##*/}"
+repo="${repo##*:}"
+printf '%s' "${repo%.git}"
+'''
+require_repo = true
+when = true
+style = "fg:#15161E bg:#89b4fa"
+format = "[ $output ]($style)"
 
 [git_branch]
 symbol = ""

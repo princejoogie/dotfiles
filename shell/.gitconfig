@@ -1,7 +1,7 @@
 [credential]
 	helper = store
 [alias]
-	co = "!f() { git branch -a | awk '{gsub(\"remotes/origin/\", \"\", $1); print $1}' | sort -u | fzf-tmux -p --reverse | xargs git checkout; }; f"
+	co = "!f() { branch=$(git for-each-ref --sort=-committerdate --format='%(if)%(symref)%(then)%(else)%(refname:short)%(end)' refs/heads refs/remotes/origin | awk '{ sub(\"^origin/\", \"\"); if ($0 != \"\" && !seen[$0]++) print }' | fzf-tmux -p --reverse); [ -n \"$branch\" ] && git checkout \"$branch\"; }; f"
 	col = "!f() { git branch | awk '{gsub(\"remotes/origin/\", \"\", $1); print $1}' | sort -u | fzf-tmux -p --reverse | xargs git checkout; }; f"
 	squash = "!f(){ git reset --soft HEAD~${1} && git commit --edit -m\"$(git log --format=%B --reverse HEAD..HEAD@{1})\"; }; f"
 	gone = "!f() { git fetch --all --prune; git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -D; }; f"
