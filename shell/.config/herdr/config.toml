@@ -1,0 +1,65 @@
+onboarding = false
+
+[ui]
+pane_gaps = false
+
+[keys]
+prefix = "ctrl+a"
+
+# Match tmux's window and split creation bindings.
+new_tab = "prefix+c"
+split_vertical = "prefix+backslash"
+split_horizontal = "prefix+="
+last_pane = "prefix+l"
+
+# Treat Herdr spaces like tmux sessions managed by tms.
+workspace_picker = "prefix+s"
+settings = "prefix+comma"
+goto = "prefix+shift+p"
+new_workspace = "prefix+shift+n"
+previous_tab = ""
+rename_pane = ""
+navigate_workspace_up = ["k", "up"]
+navigate_workspace_down = ["j", "down"]
+navigate_pane_up = "shift+k"
+navigate_pane_down = "shift+j"
+previous_agent = "prefix+{"
+next_agent = "prefix+}"
+
+# Open worktrees as spaces; keep the displaced sidebar action available.
+open_worktree = "prefix+b"
+toggle_sidebar = "prefix+shift+b"
+
+# Match vim-tmux-navigator-style pane movement.
+focus_pane_left = "ctrl+h"
+focus_pane_down = "ctrl+j"
+focus_pane_up = "ctrl+k"
+focus_pane_right = "ctrl+l"
+
+# tmux uses prefix+r to reload; resizing stays on direct ctrl+arrow bindings below.
+reload_config = "prefix+r"
+resize_mode = ""
+
+[[keys.command]]
+key = "ctrl+left"
+type = "shell"
+command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direction left'
+description = "resize pane left"
+
+[[keys.command]]
+key = "ctrl+down"
+type = "shell"
+command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direction down'
+description = "resize pane down"
+
+[[keys.command]]
+key = "ctrl+up"
+type = "shell"
+command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direction up'
+description = "resize pane up"
+
+[[keys.command]]
+key = "ctrl+right"
+type = "shell"
+command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direction right'
+description = "resize pane right"

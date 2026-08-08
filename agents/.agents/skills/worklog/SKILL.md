@@ -1,15 +1,26 @@
 ---
 name: worklog
-description: "Per-PR worklog — a decision log extracted from this session's record: the notable decisions behind a change (those that shaped what shipped and could have gone another way), why they were made, and the alternatives set aside, in a committed .worklogs/ file that the diff, PR description, and review thread don't hold. Opt-in per project: use only when the repo's AGENTS.md/CLAUDE.md asks for worklogs to be kept — don't invoke it otherwise. One per PR, produced as you open the PR by extracting from the session transcript via a sub-agent — never written from memory. Requires git; scaffolds via scripts/new-worklog.ts and locates the session via scripts/find-current-session.ts + get-session-transcript.ts."
+description: "Keep a per-PR worklog — a durable record of the notable decisions behind a change (why this path and not another, and the alternatives set aside) that the diff, PR description, and review thread don't preserve, reconstructed from the session's own record rather than written from memory. Opt-in per project: use only when a repo's AGENTS.md/CLAUDE.md asks for worklogs to be kept. Reach for it when producing the worklog for a change or PR, or regenerating one after the work has diverged."
 ---
 
 # Worklog
 
-A worklog is a per-PR markdown file that records the **notable decisions** behind a change and the reasoning for them — the *why this and not that*, and the alternatives set aside, that the diff, the PR description, and the review thread don't keep. It is **extracted from this session's record on disk, not written from memory**: memory, especially after a compaction, loses exactly the decisions worth keeping. Produce one as you open the PR, keep it current through review, and commit it with the change.
-
+A worklog is a per-PR markdown file that records the **notable decisions** behind a change and the reasoning for them — the *why this and not that*, and the alternatives set aside, that the diff, the PR description, and the review thread don't keep. It is **extracted from this session's record on disk, not written from memory**: memory, especially after a compaction, loses exactly the decisions worth keeping. Produce it by extracting from the record, and commit it with the change; when it needs to keep pace with the work, **regenerate it rather than hand-editing it** (see *Updating a worklog*).
 ## When to use this skill — opt-in per project
 
 Worklogs are **off by default**. Keep one only when the project asks for it — the repo's `AGENTS.md` / `CLAUDE.md` says worklogs are kept here, or the user asks. **In a project that doesn't opt in, don't invoke this skill at all.** Each repo keeps its own worklogs under its own `.worklogs/` store, so the record travels with the code.
+
+## Generating a worklog is expensive — spend it deliberately
+
+Extracting a worklog is **slow and token-heavy**: a sub-agent reads the whole session transcript to produce it. So generation — and regeneration — is reserved for a few key moments in a change's life, never a reflex or a background loop. Which moments those are is dictated by the specific repo, project, or user.
+
+When such a moment comes, (re)generate only when it would change what the worklog says:
+
+- **no worklog yet** → generate one;
+- **the work has drifted** since the current worklog was extracted → regenerate it (see *Updating a worklog*) — an out-of-date worklog going into a landing change is worse than an honest gap;
+- **the work is unchanged** since it was extracted → leave it; regenerating would spend tokens to reproduce what's already there.
+
+The cost is a reason to *decide* at these moments, not a reason to skip them: where the moment calls for a worklog and the work has moved, regenerating is worth it.
 
 ## One worklog per branch of work
 
@@ -40,7 +51,7 @@ Keep it honest:
 
 ## Method
 
-Run this as you open the PR. The bundled scripts (in `${CLAUDE_SKILL_DIR}/scripts/`) hide the harness-specific mechanics, so the steps are the same on any harness — "this session", "a sub-agent". If `${CLAUDE_SKILL_DIR}` comes through unexpanded you're not on Claude Code: treat it as an indicator that the scripts live in *this skill's* directory and run them from the skill base directory your harness provides.
+Run this to produce a worklog. The bundled scripts (in `${CLAUDE_SKILL_DIR}/scripts/`) hide the harness-specific mechanics, so the steps are the same on any harness — "this session", "a sub-agent". If `${CLAUDE_SKILL_DIR}` comes through unexpanded you're not on Claude Code: treat it as an indicator that the scripts live in *this skill's* directory and run them from the skill base directory your harness provides.
 
 1. **Scaffold the worklog file:**
 
@@ -69,7 +80,11 @@ Run this as you open the PR. The bundled scripts (in `${CLAUDE_SKILL_DIR}/script
 
 4. **Extract via a sub-agent.** Take the brief template at `${CLAUDE_SKILL_DIR}/assets/extraction-brief.md`, fill `{{CHANGE}}` (a one-line description, e.g. the PR title), `{{TRANSCRIPT_PATH}}` (from step 3) and `{{WORKLOG_PATH}}` (from step 1), and dispatch a **fresh sub-agent** with it. The sub-agent reads the transcript and writes the decisions into the worklog file. Use a sub-agent deliberately: a fresh one has no memory of the work to fill gaps with, so extraction stays honest, and the large transcript stays out of your own context.
 
-5. **Triangulate and commit.** Skim the result against the diff and the PR; fix any anchor a reader couldn't open. Commit the worklog with the change. Keep it current through review: when review changes or adds a decision, update the worklog to match.
+5. **Triangulate and commit.** Skim the result against the diff and the PR; fix any anchor a reader couldn't open. Commit the worklog with the change.
+
+## Updating a worklog
+
+Updating a worklog means **regenerating it, never hand-patching it.** A worklog is an extraction from the session record; editing it by hand readmits memory and invention — the very failure modes the extraction exists to prevent — so patching is a violation of the process, not a shortcut within it. To update one, re-run the Method above: it rebuilds the file wholesale from the current record.
 
 ## Naming and location
 
