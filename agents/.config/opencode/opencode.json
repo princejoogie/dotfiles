@@ -41,6 +41,14 @@
       "type": "remote",
       "url": "https://mcp.context7.com/mcp"
     },
+    "open-computer-use": {
+      "type": "local",
+      "command": [
+        "open-computer-use",
+        "mcp"
+      ],
+      "enabled": true
+    },
     "opentelemetry-mcp": {
       "type": "local",
       "command": [

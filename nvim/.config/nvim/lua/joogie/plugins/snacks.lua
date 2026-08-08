@@ -214,18 +214,20 @@ return {
       },
     },
     init = function()
-      require("tmux.wrapper.nvim").is_nvim_float = function()
-        if Snacks then
-          local is_explorer = vim
-            .iter(Snacks.picker.get({ source = "explorer" }))
-            :any(function(picker)
-              return picker:is_focused()
-            end)
-          if is_explorer then
-            return false
+      if vim.env.TMUX and vim.env.HERDR_ENV ~= "1" then
+        require("tmux.wrapper.nvim").is_nvim_float = function()
+          if Snacks then
+            local is_explorer = vim
+              .iter(Snacks.picker.get({ source = "explorer" }))
+              :any(function(picker)
+                return picker:is_focused()
+              end)
+            if is_explorer then
+              return false
+            end
           end
+          return vim.api.nvim_win_get_config(0).relative ~= ""
         end
-        return vim.api.nvim_win_get_config(0).relative ~= ""
       end
 
       vim.api.nvim_create_autocmd("User", {

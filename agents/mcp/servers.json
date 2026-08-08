@@ -8,6 +8,11 @@
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
     },
+    "open-computer-use": {
+      "type": "stdio",
+      "command": "open-computer-use",
+      "args": ["mcp"]
+    },
     "opentelemetry-mcp": {
       "type": "stdio",
       "command": "uvx",

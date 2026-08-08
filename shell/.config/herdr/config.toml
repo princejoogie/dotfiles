@@ -30,15 +30,40 @@ next_agent = "prefix+}"
 open_worktree = "prefix+b"
 toggle_sidebar = "prefix+shift+b"
 
-# Match vim-tmux-navigator-style pane movement.
-focus_pane_left = "ctrl+h"
-focus_pane_down = "ctrl+j"
-focus_pane_up = "ctrl+k"
-focus_pane_right = "ctrl+l"
+# Keep prefix-based pane movement as a fallback. Direct Ctrl+h/j/k/l bindings
+# below forward into Neovim and move Herdr panes for other processes.
+focus_pane_left = "prefix+shift+h"
+focus_pane_down = "prefix+shift+j"
+focus_pane_up = "prefix+shift+k"
+focus_pane_right = "prefix+shift+l"
 
 # tmux uses prefix+r to reload; resizing stays on direct ctrl+arrow bindings below.
 reload_config = "prefix+r"
 resize_mode = ""
+
+[[keys.command]]
+key = "ctrl+h"
+type = "shell"
+command = '"$HOME/dotfiles/shell/.config/herdr/navigate" left'
+description = "navigate left across Neovim and Herdr panes"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "shell"
+command = '"$HOME/dotfiles/shell/.config/herdr/navigate" down'
+description = "navigate down across Neovim and Herdr panes"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "shell"
+command = '"$HOME/dotfiles/shell/.config/herdr/navigate" up'
+description = "navigate up across Neovim and Herdr panes"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "shell"
+command = '"$HOME/dotfiles/shell/.config/herdr/navigate" right'
+description = "navigate right across Neovim and Herdr panes"
 
 [[keys.command]]
 key = "ctrl+left"
