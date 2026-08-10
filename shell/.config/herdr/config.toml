@@ -29,7 +29,7 @@ next_agent = "prefix+}"
 
 # Open worktrees as spaces; keep the displaced sidebar action available.
 open_worktree = "prefix+b"
-toggle_sidebar = "prefix+shift+b"
+toggle_sidebar = ["prefix+shift+b", "cmd+b"]
 
 # Keep prefix-based pane movement as a fallback. Direct Ctrl+h/j/k/l bindings
 # below forward into Neovim and move Herdr panes for other processes.
@@ -91,4 +91,4 @@ command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direct
 description = "resize pane right"
 
 [ui.toast]
-delivery = "system"
+delivery = "herdr"
