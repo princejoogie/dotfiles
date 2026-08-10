@@ -3,6 +3,7 @@ onboarding = false
 [ui]
 pane_gaps = false
 
+show_agent_labels_on_pane_borders = false
 [keys]
 prefix = "ctrl+a"
 
@@ -44,25 +45,25 @@ resize_mode = ""
 [[keys.command]]
 key = "ctrl+h"
 type = "shell"
-command = '"$HOME/dotfiles/shell/.config/herdr/navigate" left'
+command = 'herdr_navigate left'
 description = "navigate left across Neovim and Herdr panes"
 
 [[keys.command]]
 key = "ctrl+j"
 type = "shell"
-command = '"$HOME/dotfiles/shell/.config/herdr/navigate" down'
+command = 'herdr_navigate down'
 description = "navigate down across Neovim and Herdr panes"
 
 [[keys.command]]
 key = "ctrl+k"
 type = "shell"
-command = '"$HOME/dotfiles/shell/.config/herdr/navigate" up'
+command = 'herdr_navigate up'
 description = "navigate up across Neovim and Herdr panes"
 
 [[keys.command]]
 key = "ctrl+l"
 type = "shell"
-command = '"$HOME/dotfiles/shell/.config/herdr/navigate" right'
+command = 'herdr_navigate right'
 description = "navigate right across Neovim and Herdr panes"
 
 [[keys.command]]
@@ -88,3 +89,6 @@ key = "ctrl+right"
 type = "shell"
 command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direction right'
 description = "resize pane right"
+
+[ui.toast]
+delivery = "system"

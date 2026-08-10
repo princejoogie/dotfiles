@@ -2,7 +2,7 @@
 
 set -eu
 
-direction=${1:?usage: navigate left|down|up|right}
+direction=${1:?usage: herdr_navigate left|down|up|right}
 
 case "$direction" in
   left) key=ctrl+h ;;
@@ -10,7 +10,7 @@ case "$direction" in
   up) key=ctrl+k ;;
   right) key=ctrl+l ;;
   *)
-    printf 'navigate: invalid direction: %s\n' "$direction" >&2
+    printf 'herdr_navigate: invalid direction: %s\n' "$direction" >&2
     exit 2
     ;;
 esac
@@ -19,7 +19,7 @@ herdr=${HERDR_BIN_PATH:-herdr}
 pane_id=${HERDR_ACTIVE_PANE_ID:-${HERDR_PANE_ID:-}}
 
 if [ -z "$pane_id" ]; then
-  printf 'navigate: missing Herdr pane ID\n' >&2
+  printf 'herdr_navigate: missing Herdr pane ID\n' >&2
   exit 1
 fi
 
