@@ -29,7 +29,7 @@ next_agent = "prefix+}"
 
 # Open worktrees as spaces; keep the displaced sidebar action available.
 open_worktree = "prefix+b"
-toggle_sidebar = ["prefix+shift+b", "cmd+b"]
+toggle_sidebar = "cmd+b"
 
 # Keep prefix-based pane movement as a fallback. Direct Ctrl+h/j/k/l bindings
 # below forward into Neovim and move Herdr panes for other processes.
@@ -90,5 +90,27 @@ type = "shell"
 command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direction right'
 description = "resize pane right"
 
+[[keys.command]]
+key = "prefix+cmd+b"
+type = "shell"
+command = '"$HERDR_BIN_PATH" plugin pane open --plugin official.browser --entrypoint browser --placement split --target-pane "$HERDR_ACTIVE_PANE_ID" --direction right --focus && "$HERDR_BIN_PATH" pane close "$HERDR_ACTIVE_PANE_ID"'
+description = "replace current pane with browser"
+
+[[keys.command]]
+key = "prefix+p"
+type = "plugin_action"
+command = "princejoogie.repo-picker.open"
+description = "open repository as a workspace"
+
 [ui.toast]
 delivery = "herdr"
+
+[experimental]
+kitty_graphics = true
+
+[worktrees]
+directory = "~/.worktrees"
+
+[theme]
+name = "catppuccin"
+auto_switch = false
