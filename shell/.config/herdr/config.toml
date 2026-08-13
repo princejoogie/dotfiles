@@ -111,6 +111,29 @@ kitty_graphics = true
 [worktrees]
 directory = "~/.worktrees"
 
+[[worktrees.hooks.after_create]]
+command = ["sh", "-c", "if [ -f scripts/setup-worktree.sh ]; then bash scripts/setup-worktree.sh; fi"]
+
 [theme]
-name = "catppuccin"
+name = "vesper"
 auto_switch = false
+
+# opencode-black, adapted from ~/.config/opencode/themes/opencode-black.json.
+[theme.custom]
+accent = "#fab283"
+panel_bg = "#1e1e1e"
+sidebar_bg = "#141414"
+surface0 = "#282828"
+surface1 = "#323232"
+surface_dim = "#141414"
+overlay0 = "#808080"
+overlay1 = "#a0a0a0"
+text = "#eeeeee"
+subtext0 = "#a0a0a0"
+mauve = "#9d7cd8"
+green = "#7fd88f"
+yellow = "#e5c07b"
+red = "#e06c75"
+blue = "#5c9cf5"
+teal = "#56b6c2"
+peach = "#f5a742"

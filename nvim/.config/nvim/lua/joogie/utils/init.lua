@@ -170,6 +170,8 @@ M.noop = function() end
 M.exclude = {
   "node_modules",
   ".mastra",
+  ".tmp",
+  ".eve",
   ".cache",
   ".git",
   ".next",
