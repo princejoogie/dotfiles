@@ -11,6 +11,7 @@ shell/.local/state
 shell/.local/bin
 shell/.local/lib
 claude/.claude/
+agents/.config/opencode/node_modules/
 
 .private.sh
 

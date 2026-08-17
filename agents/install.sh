@@ -20,6 +20,12 @@ hdr "prereqs"
 mkdir -p "$HOME/.claude/skills" "$HOME/.config/opencode" "$HOME/.codex"
 log "ensured ~/.claude/skills, ~/.config/opencode, ~/.codex"
 
+OC_SOURCE="$DOTFILES/$PKG/.config/opencode"
+if [ -f "$OC_SOURCE/package-lock.json" ]; then
+  npm ci --ignore-scripts --prefix "$OC_SOURCE"
+  log "installed OpenCode plugin dependencies"
+fi
+
 # 2. stow ---------------------------------------------------------------------
 hdr "stow $PKG"
 stow -d "$DOTFILES" -t "$HOME" -R "$PKG"
