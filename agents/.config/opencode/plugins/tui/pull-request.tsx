@@ -329,6 +329,8 @@ function View(props: { context: Context; sessionID: string }) {
               {label(item().mergeable, "Mergeability unknown")}
             </text>
             <text>
+              <span style={{ fg: theme.text.subdued }}></span>
+              {" "}
               <span style={{ fg: theme.diff.text.added }}>+{item().additions.toLocaleString()}</span>
               {" "}
               <span style={{ fg: theme.diff.text.removed }}>-{item().deletions.toLocaleString()}</span>
