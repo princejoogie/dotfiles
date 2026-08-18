@@ -21,7 +21,15 @@ type PullRequest = {
   deletions: number
   changedFiles: number
   mergeable: string
+  reviewDecision: string
+  reviews: Review[]
   checks: Check[]
+}
+
+type Review = {
+  author: { login: string }
+  state: string
+  submittedAt: string
 }
 
 type Check = {
@@ -83,6 +91,10 @@ function gitPush(command: string) {
   return /\bgit\b(?:\s+(?:"[^"]*"|'[^']*'|[^\s;&|]+))*\s+push\b/.test(command)
 }
 
+function pullRequestCreate(command: string) {
+  return /\bgh\b(?:\s+(?:"[^"]*"|'[^']*'|[^\s;&|]+))*\s+pr\s+create\b/.test(command)
+}
+
 function remoteOwner(remote: string) {
   return remote.replace(/\/$/, "").match(/[:/]([^/:]+)\/[^/]+(?:\.git)?$/)?.[1]
 }
@@ -107,7 +119,7 @@ function View(props: { context: Context; sessionID: string }) {
   const session = createMemo(() => props.context.data.session.get(props.sessionID))
   const location = createMemo(() => session()?.location)
   const branch = createMemo(() => props.context.data.location.vcs.info(location())?.branch.current)
-  const pushes = new Set<string>()
+  const refreshCommands = new Set<string>()
   let timer: ReturnType<typeof setTimeout> | undefined
   let controller: AbortController | undefined
   let generation = 0
@@ -156,6 +168,8 @@ function View(props: { context: Context; sessionID: string }) {
         "deletions",
         "changedFiles",
         "mergeable",
+        "reviewDecision",
+        "reviews",
         "headRepositoryOwner",
       ].join(",")
       const result = await run(
@@ -241,15 +255,16 @@ function View(props: { context: Context; sessionID: string }) {
 
   const dispose = [
     props.context.data.on("shell.created", (event) => {
-      if (!gitPush(event.data.info.command) || !sameWorkspace(event.data.info.cwd, event.location)) return
-      pushes.add(event.data.info.id)
+      const command = event.data.info.command
+      if ((!gitPush(command) && !pullRequestCreate(command)) || !sameWorkspace(event.data.info.cwd, event.location)) return
+      refreshCommands.add(event.data.info.id)
     }),
     props.context.data.on("shell.exited", (event) => {
-      const push = pushes.delete(event.data.id)
-      if (!push || event.data.status !== "exited" || event.data.exit !== 0) return
+      const refresh = refreshCommands.delete(event.data.id)
+      if (!refresh || event.data.status !== "exited" || event.data.exit !== 0) return
       void refresh()
     }),
-    props.context.data.on("shell.deleted", (event) => pushes.delete(event.data.id)),
+    props.context.data.on("shell.deleted", (event) => refreshCommands.delete(event.data.id)),
   ]
 
   onCleanup(() => {
@@ -257,7 +272,7 @@ function View(props: { context: Context; sessionID: string }) {
     request++
     controller?.abort()
     clearTimer()
-    pushes.clear()
+    refreshCommands.clear()
     for (const cleanup of dispose) cleanup()
   })
 
@@ -280,6 +295,22 @@ function View(props: { context: Context; sessionID: string }) {
     if (check.bucket === "pending") return theme.text.feedback.warning.default
     return theme.text.subdued
   }
+  const reviewColor = (decision: string) => {
+    if (decision === "APPROVED") return theme.text.feedback.success.default
+    if (decision === "CHANGES_REQUESTED") return theme.text.feedback.error.default
+    return theme.text.feedback.warning.default
+  }
+  const reviewDecision = (item: PullRequest) => {
+    if (item.reviewDecision) return item.reviewDecision
+    const latest = new Map<string, Review>()
+    for (const review of item.reviews.toSorted((a, b) => a.submittedAt.localeCompare(b.submittedAt))) {
+      latest.set(review.author.login, review)
+    }
+    const states = [...latest.values()].map((review) => review.state)
+    if (states.includes("CHANGES_REQUESTED")) return "CHANGES_REQUESTED"
+    if (states.includes("APPROVED")) return "APPROVED"
+    return ""
+  }
   const checkIcon = (check: Check) => {
     if (check.bucket === "pass") return ""
     if (check.bucket === "fail") return ""
@@ -289,29 +320,41 @@ function View(props: { context: Context; sessionID: string }) {
   }
 
   return (
-    <Show when={pullRequest()}>
-      {(item) => (
-        <box>
-          <box flexDirection="row" justifyContent="space-between">
-            <box flexDirection="row" gap={1} onMouseDown={() => setPullRequestOpen((value) => !value)}>
-              <text fg={theme.text.default}>{pullRequestOpen() ? "▼" : "▶"}</text>
-              <text fg={theme.text.default}>
-                <b>Pull Request</b> <span style={{ fg: theme.text.subdued }}>(#{item().number})</span>
-              </text>
-            </box>
-            <box flexDirection="row" gap={1}>
-              <Show when={warning()}>
-                <text fg={theme.text.feedback.warning.default}></text>
-              </Show>
-              <text
-                fg={refreshing() ? theme.text.feedback.warning.default : theme.text.subdued}
-                onMouseUp={() => void refresh()}
-              >
-                {refreshing() ? SPINNER_FRAMES[spinnerFrame()] : "󰑐"}
-              </text>
-            </box>
-          </box>
+    <box>
+      <box flexDirection="row" justifyContent="space-between">
+        <box
+          flexDirection="row"
+          gap={1}
+          onMouseDown={() => pullRequest() && setPullRequestOpen((value) => !value)}
+        >
+          <Show when={pullRequest()}>
+            <text fg={refreshing() ? theme.text.subdued : theme.text.default}>{pullRequestOpen() ? "▼" : "▶"}</text>
+          </Show>
+          <text fg={pullRequest() && !refreshing() ? theme.text.default : theme.text.subdued}>
+            <b>Pull Request</b>
+            <Show
+              when={pullRequest()}
+              fallback={<span style={{ fg: theme.text.subdued }}> ({refreshing() ? "Checking..." : "No pull request"})</span>}
+            >
+              {(item) => <span style={{ fg: theme.text.subdued }}> (#{item().number})</span>}
+            </Show>
+          </text>
+        </box>
+        <box flexDirection="row" gap={1}>
+          <Show when={warning()}>
+            <text fg={theme.text.feedback.warning.default}></text>
+          </Show>
+          <text
+            fg={refreshing() ? theme.text.feedback.warning.default : theme.text.subdued}
+            onMouseUp={() => void refresh()}
+          >
+            {refreshing() ? SPINNER_FRAMES[spinnerFrame()] : "󰑐"}
+          </text>
+        </box>
+      </box>
 
+      <Show when={pullRequest()}>
+        {(item) => (
           <Show when={pullRequestOpen()}>
             <text fg={theme.markdown.link} wrapMode="word" onMouseUp={() => openURL(item().url)}>
               <a href={item().url}>
@@ -327,6 +370,14 @@ function View(props: { context: Context; sessionID: string }) {
               </span>
               {" · "}
               {label(item().mergeable, "Mergeability unknown")}
+              <Show when={reviewDecision(item())}>
+                {(decision) => (
+                  <>
+                    {" · "}
+                    <span style={{ fg: reviewColor(decision()) }}>{label(decision(), "")}</span>
+                  </>
+                )}
+              </Show>
             </text>
             <text>
               <span style={{ fg: theme.text.subdued }}></span>
@@ -393,9 +444,9 @@ function View(props: { context: Context; sessionID: string }) {
               </box>
             </Show>
           </Show>
-        </box>
-      )}
-    </Show>
+        )}
+      </Show>
+    </box>
   )
 }
 

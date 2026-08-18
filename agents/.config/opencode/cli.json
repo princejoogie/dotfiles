@@ -1,0 +1,39 @@
+{
+  "theme": {
+    "name": "opencode-black"
+  },
+  "diffs": {
+    "wrap": "none",
+    "tree": true,
+    "single": true
+  },
+  "session": {
+    "sidebar": "auto",
+    "scrollbar": false,
+    "thinking": "hide"
+  },
+  "animations": true,
+  "keybinds": {
+    "session.tab.next": "ctrl+tab,<leader>right,<leader>j,alt+shift+]",
+    "session.tab.previous": "ctrl+shift+tab,<leader>left,<leader>k,alt+shift+["
+  },
+  "tabs": {
+    "enabled": false,
+    "vertical": false,
+    "scope": "global",
+    "layout": "horizontal"
+  },
+  "attention": {
+    "enabled": false,
+    "volume": 0,
+    "sound": false,
+    "notifications": false
+  },
+  "terminal": {
+    "title": true
+  },
+  "debug": {
+    "devtools": false,
+    "turn_tokens": false
+  }
+}

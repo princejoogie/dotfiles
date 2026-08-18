@@ -3,13 +3,17 @@
  * Scaffold a new per-PR worklog file in the repo's worklog store (.worklogs/).
  *
  * Usage:
- *   .agents/skills/worklog/scripts/new-worklog.ts [--related URL]... [--title "..."] [--dir PATH]
+ *   .../scripts/new-worklog.ts --session <id> [--related URL]... [--title "..."] [--dir PATH]
  *
  * Picks a random, human-readable, collision-checked filename (Changesets-style, e.g.
  * brave-otter-listens.md) so concurrent PRs in the monorepo never clash on the same file, creates
- * the worklog store if absent, writes the fixed-schema template (with any --related links and
- * --title pre-filled), and prints the path. The agent then fills the template in. Re-run once per
- * PR. Pass --related once per link (the ticket, the PR, related docs) as a full URL.
+ * the worklog store if absent, writes the v2 template (with any --related links and --title
+ * pre-filled), and prints the path. Run once per PR. Pass --related once per link (the ticket, the
+ * PR, related docs) as a full URL.
+ *
+ * --session (from find-current-session.ts) seeds the `sources` bookmark, which is what lets later
+ * entries be appended from a slice of the record rather than a re-read of the whole transcript. It
+ * is seeded at epoch zero — nothing consumed — so the first entry covers the session from its start.
  *
  * The store defaults to <repo-root>/.worklogs, located via `git rev-parse --show-toplevel`;
  * outside a git repo it errors unless you pass --dir.
@@ -141,42 +145,59 @@ function uniqueSlug(taken: Set<string>): string {
   return die('could not find a free worklog name after 100 attempts — clear out .worklogs');
 }
 
-function template(opts: { related: string[]; title: string; date: string }): string {
+function template(opts: {
+  related: string[];
+  title: string;
+  date: string;
+  harness: string;
+  session: string;
+  through: string;
+}): string {
   const related =
     opts.related.length > 0
       ? opts.related.map((url) => `  - ${url}`).join('\n')
       : '  # - https://…  (full links to shared things: the ticket, the PR, related docs)';
   return `---
+worklog: 2
 related:
 ${related}
 date: ${opts.date}
+sources:
+  - harness: ${opts.harness}
+    session: ${opts.session}
+    through: ${opts.through}
 ---
 
 # Worklog: ${opts.title}
 
-<!-- A decision log, extracted from the session record (not written from memory). Capture the
-     notable decisions behind this change: those that shaped what shipped AND could have gone
-     another way (surprising, not the obvious approach, contested, or a real pick among options).
-     Leave out how the work was run (which agent/model, the testing, ticket/PR mechanics) and the
-     cosmetic, copy-level churn. Attach a reason only when one was actually stated ("no reason
-     given" is valid — never invent one). Anchor every rationale to something any developer can
-     open; where the only anchor is out of reach, put its substance here. -->
-
-## Context
-
-<!-- What this change is, and the brief as it was actually given (what was asked for). Light
-     scene-setting — not a story of the work. -->
-
-## Decisions
-
-<!-- The spine. One entry per notable decision: what was decided, the alternatives weighed and why
-     they were set aside, and any stated reason. A decision reached through back-and-forth is one
-     entry with where it landed; distinct decisions stay separate. -->
-
-## Final state
-
-<!-- What shipped, and where it diverged from the brief (and why, if a reason was stated). -->
+## Starting point
 `;
+}
+
+/**
+ * How to fill the scaffolded file. Printed rather than written into it: the guidance is the same for
+ * every worklog, so committing a copy into each one puts hundreds of identical paragraphs into the
+ * repo, in the artifact whose whole point is to carry what is particular to this change. The skill
+ * is the durable home for it; this is the reminder at the moment it's needed.
+ */
+function guidance(path: string, session: string, through: string): string {
+  return `
+Write the Starting point now, in a few lines: WHERE THE WORK STARTED — what was asked for at
+the outset, and anything already true that shaped it. A snapshot of one moment, not a summary
+of the brief as it finally stood, and not a narrative.
+
+Anything that arrived LATER belongs to the entry for the stretch it arrived in — an amended or
+expanded brief, a new requirement, a change of direction. If you are writing about something
+that happened after the work began, it is not the starting point.
+
+Then append the first entry:
+  get-session-transcript.ts ${session} --since ${through}
+  → extract the slice into an entry via a sub-agent (assets/extraction-brief.md)
+  → append-entry.ts --worklog ${path} --entry <file> --session ${session} --through <new> --label "<locator>"
+
+Entries are appended by append-entry.ts and are never edited afterwards — a later entry that
+reverses an earlier decision says so and points back. Write to this shape and the skill; don't
+read other worklogs for reference, as the store holds worklogs written to older shapes.`;
 }
 
 function main(): void {
@@ -184,6 +205,8 @@ function main(): void {
   const related: string[] = [];
   let title = '';
   let dir: string | undefined;
+  let session = '';
+  let harness = 'claude-code';
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     const next = (): string => (i + 1 < args.length ? args[++i] : die(`${arg} requires a value`));
@@ -193,9 +216,16 @@ function main(): void {
       title = next();
     } else if (arg === '--dir') {
       dir = next();
+    } else if (arg === '--session') {
+      session = next();
+    } else if (arg === '--harness') {
+      harness = next();
     } else {
       die(`unexpected argument: ${arg}`);
     }
+  }
+  if (!session) {
+    die('--session is required — run find-current-session.ts first and pass the id it prints');
   }
 
   const store = findStore(dir);
@@ -209,13 +239,13 @@ function main(): void {
   const path = join(store, `${slug}.md`);
 
   const date = new Date().toISOString().slice(0, 10);
-  writeFileSync(path, template({ related, title: title || slug, date }));
+  // Epoch zero means "nothing consumed yet", so the first slice covers the session from its start —
+  // including the decisions made before anyone thought to scaffold a worklog.
+  const through = '1970-01-01T00:00:00.000Z';
+  writeFileSync(path, template({ related, title: title || slug, date, harness, session, through }));
 
   console.log(`created ${path}`);
-  console.log(
-    '\nnext: extract the worklog from the session record into this file (see SKILL.md) —' +
-      ' find-current-session.ts → get-session-transcript.ts → sub-agent. Commit it with the PR.',
-  );
+  console.log(guidance(path, session, through));
 }
 
 main();

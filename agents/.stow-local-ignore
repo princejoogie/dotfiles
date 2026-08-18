@@ -3,6 +3,4 @@
 ^/PLAN\.md$
 ^/mcp$
 ^/\.stow-local-ignore$
-^/\.config/opencode/package\.json$
-^/\.config/opencode/package-lock\.json$
 ^/\.config/opencode/node_modules$

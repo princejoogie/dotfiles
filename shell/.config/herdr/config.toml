@@ -19,6 +19,7 @@ settings = "prefix+comma"
 goto = "prefix+shift+p"
 new_workspace = "prefix+shift+n"
 previous_tab = ""
+switch_tab = ["prefix+1..9", "cmd+1..9"]
 rename_pane = ""
 navigate_workspace_up = ["k", "up"]
 navigate_workspace_down = ["j", "down"]

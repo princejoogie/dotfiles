@@ -1,26 +1,29 @@
 ---
 name: worklog
-description: "Keep a per-PR worklog — a durable record of the notable decisions behind a change (why this path and not another, and the alternatives set aside) that the diff, PR description, and review thread don't preserve, reconstructed from the session's own record rather than written from memory. Opt-in per project: use only when a repo's AGENTS.md/CLAUDE.md asks for worklogs to be kept. Reach for it when producing the worklog for a change or PR, or regenerating one after the work has diverged."
+description: "Keep a per-PR worklog — a durable record of the notable decisions behind a change (why this path and not another, and the alternatives set aside) that the diff, PR description, and review thread don't preserve, reconstructed from the session's own record rather than written from memory. Built up as a journal: started once, then extended by appending an entry covering the work since the last one. Opt-in per project: use only when a repo's AGENTS.md/CLAUDE.md asks for worklogs to be kept. Reach for it when starting the worklog for a change or PR, or bringing an existing one up to date."
 ---
 
 # Worklog
 
-A worklog is a per-PR markdown file that records the **notable decisions** behind a change and the reasoning for them — the *why this and not that*, and the alternatives set aside, that the diff, the PR description, and the review thread don't keep. It is **extracted from this session's record on disk, not written from memory**: memory, especially after a compaction, loses exactly the decisions worth keeping. Produce it by extracting from the record, and commit it with the change; when it needs to keep pace with the work, **regenerate it rather than hand-editing it** (see *Updating a worklog*).
+A worklog is a per-PR markdown file that records the **notable decisions** behind a change and the reasoning for them — the *why this and not that*, and the alternatives set aside, that the diff, the PR description, and the review thread don't keep. It is **extracted from this session's record on disk, not written from memory**: memory, especially after a compaction, loses exactly the decisions worth keeping. Produce it by extracting from the record, and commit it with the change; when it needs to keep pace with the work, **append to it rather than rewriting or hand-editing it** (see *Updating a worklog*).
+
+It is a **journal, not a document**: started once, then extended an entry at a time.
+
 ## When to use this skill — opt-in per project
 
 Worklogs are **off by default**. Keep one only when the project asks for it — the repo's `AGENTS.md` / `CLAUDE.md` says worklogs are kept here, or the user asks. **In a project that doesn't opt in, don't invoke this skill at all.** Each repo keeps its own worklogs under its own `.worklogs/` store, so the record travels with the code.
 
-## Generating a worklog is expensive — spend it deliberately
+## When to write — the project's call, not the skill's
 
-Extracting a worklog is **slow and token-heavy**: a sub-agent reads the whole session transcript to produce it. So generation — and regeneration — is reserved for a few key moments in a change's life, never a reflex or a background loop. Which moments those are is dictated by the specific repo, project, or user.
+Worklogs are written at a few key moments in a change's life, never as a reflex or a background loop. **Which moments those are is dictated by the specific repo, project, or user** — not by this skill.
 
-When such a moment comes, (re)generate only when it would change what the worklog says:
+When such a moment comes, act only when there is something new to record:
 
-- **no worklog yet** → generate one;
-- **the work has drifted** since the current worklog was extracted → regenerate it (see *Updating a worklog*) — an out-of-date worklog going into a landing change is worse than an honest gap;
-- **the work is unchanged** since it was extracted → leave it; regenerating would spend tokens to reproduce what's already there.
+- **no worklog yet** → start one, then append its first entry;
+- **work has happened** since the last entry → append an entry covering it (see *Updating a worklog*) — a worklog that stops short of a landing change is worse than one kept current;
+- **nothing has happened** since the last entry → leave it. The slicer tells you outright when a stretch is empty.
 
-The cost is a reason to *decide* at these moments, not a reason to skip them: where the moment calls for a worklog and the work has moved, regenerating is worth it.
+Each entry costs a sub-agent run, but only over the stretch of the session since the last one — not the whole transcript. That is what makes keeping a worklog current affordable, and why appending often is better than saving it all up: an entry written close to the work it covers is drawn from the record at full detail.
 
 ## One worklog per branch of work
 
@@ -49,47 +52,129 @@ Keep it honest:
 - **Indicative, not authoritative.** The worklog is one datapoint, to be triangulated against the diff, the PR, and the review thread.
 - **Reachable anchors.** Ground each rationale in something any developer can open — this repo, the PR, team services. Where the only anchor is out of reach (an unmerged PR, a local note), put its substance in the worklog itself.
 
+## The shape of the file
+
+Frontmatter, a starting point, then entries:
+
+```markdown
+---
+worklog: 2
+related:
+  - https://github.com/owner/repo/pull/935
+date: 2026-06-29
+sources:
+  - harness: claude-code
+    session: 75168430-de92-4f65-908f-4d413eff4609
+    through: 2026-06-29T06:41:22.918Z    # how far the record has been read
+---
+
+# Worklog: Storybook prototyping scaffolding
+
+## Starting point
+
+Where the work started: what was asked for at the outset. Written once; never rewritten.
+
+## 2026-06-29T04:12Z — initial build
+
+### Place stories under `components/prototypes/` to reuse the existing glob
+…
+
+## 2026-06-29T06:41Z — review round 1
+
+### Prototypes move to a dedicated `prototype/` area
+Reverses the placement decision in the entry above. Review restructured it so …
+```
+
+Three rules hold the format together:
+
+- **Entries are never edited.** When a later epoch reverses an earlier decision, the new entry **says so and points back**. The reversal is the highest-signal thing a worklog holds; rewriting the old entry destroys it and leaves a record that reads as though the final answer was always the answer.
+- **An entry heading is a locator, not a summary** — a timestamp and a few factual words about which thread of work this epoch covered. **No prose stands between an entry heading and its first decision.** An entry contains decisions and nothing else; a narrative gloss at the top of an entry is how a decision journal decays back into a story of the work.
+- **The template is the shape.** Follow the scaffolded file and this section; **don't read other worklogs to see how it's done.** The store holds worklogs written to older shapes, and copying one reproduces a format that has since been deliberately changed.
+
 ## Method
 
 Run this to produce a worklog. The bundled scripts (in `${CLAUDE_SKILL_DIR}/scripts/`) hide the harness-specific mechanics, so the steps are the same on any harness — "this session", "a sub-agent". If `${CLAUDE_SKILL_DIR}` comes through unexpanded you're not on Claude Code: treat it as an indicator that the scripts live in *this skill's* directory and run them from the skill base directory your harness provides.
 
-1. **Scaffold the worklog file:**
+### Once per PR — start the worklog
 
-   ```bash
-   "${CLAUDE_SKILL_DIR}/scripts/new-worklog.ts" --title "<short title>" \
-     --related <pr-url> --related <ticket-url>
-   ```
-
-   It writes the three-section template into `.worklogs/<slug>.md` and prints the path. Note it — you'll pass it to the sub-agent in step 4.
-
-2. **Identify this session** — run:
+1. **Identify this session:**
 
    ```bash
    "${CLAUDE_SKILL_DIR}/scripts/find-current-session.ts"
    ```
 
-   On Claude Code this prints `session: <id>` straight away (the session id is in the environment). On a harness that doesn't expose one (OpenCode, Pi) it instead **marks this session** and prints the exact command to run next — `find-current-session.ts --marker <token>` — so run that as a second call to get `session: <id>`. Just follow what the script tells you. (If the lookup prints **CANDIDATES**, the marker didn't match yet — retry per its guidance, or pick by hand.)
+   On Claude Code this prints `session: <id>` straight away. On a harness that doesn't expose one it instead **marks this session** and prints the exact command to run next — `find-current-session.ts --marker <token>` — so run that as a second call. Just follow what the script tells you. (If the lookup prints **CANDIDATES**, the marker didn't match yet — retry per its guidance, or pick by hand.)
 
-3. **Get this session's transcript:**
+2. **Scaffold the file:**
 
    ```bash
-   "${CLAUDE_SKILL_DIR}/scripts/get-session-transcript.ts" <id>
+   "${CLAUDE_SKILL_DIR}/scripts/new-worklog.ts" --session <id> --title "<short title>" \
+     --related <pr-url> --related <ticket-url>
    ```
 
-   It prints the path to a readable transcript file.
+   It writes the template into `.worklogs/<slug>.md`, seeds the `sources` bookmark, and prints the path. Note it — every later step takes it.
 
-4. **Extract via a sub-agent.** Take the brief template at `${CLAUDE_SKILL_DIR}/assets/extraction-brief.md`, fill `{{CHANGE}}` (a one-line description, e.g. the PR title), `{{TRANSCRIPT_PATH}}` (from step 3) and `{{WORKLOG_PATH}}` (from step 1), and dispatch a **fresh sub-agent** with it. The sub-agent reads the transcript and writes the decisions into the worklog file. Use a sub-agent deliberately: a fresh one has no memory of the work to fill gaps with, so extraction stays honest, and the large transcript stays out of your own context.
+3. **Write the `## Starting point`** yourself, in a few lines: **where the work started** — what was asked for at the outset, and anything already true that shaped it.
 
-5. **Triangulate and commit.** Skim the result against the diff and the PR; fix any anchor a reader couldn't open. Commit the worklog with the change.
+   It is a snapshot of one moment, not a summary of the brief as it finally stood. **Anything that arrived later belongs to the entry for the stretch it arrived in** — an amended or expanded brief, a new requirement, a change of direction. Those are among the most valuable things a worklog holds, and folding them up into the Starting point loses both when they arrived and that they were a change at all.
+
+   The tell: if you're writing about something that happened *after* the work began, it isn't the starting point.
+
+### Append an entry
+
+Everything below is the repeatable part: run it to add the first entry, and again at each later moment the project calls for (see *When to write*).
+
+4. **Slice the record since the bookmark.** Take `through` from the worklog's `sources` for this session, then:
+
+   ```bash
+   "${CLAUDE_SKILL_DIR}/scripts/get-session-transcript.ts" <id> --since <through>
+   ```
+
+   It prints the slice path, the record count, and the new `through` instant. If it reports **NOTHING NEW**, stop — there is nothing to record yet.
+
+5. **Extract via a sub-agent.** Take the brief template at `${CLAUDE_SKILL_DIR}/assets/extraction-brief.md`, fill `{{CHANGE}}`, `{{SLICE_PATH}}` (step 4), `{{WORKLOG_PATH}}` and `{{ENTRY_PATH}}` (a scratch file to write to), and dispatch a **fresh sub-agent** with it. It reads the slice and writes the entry's decisions to `{{ENTRY_PATH}}`.
+
+   Use a sub-agent deliberately: a fresh one has no memory of the work to fill gaps with, so extraction stays honest, and the transcript stays out of your own context. It writes to a scratch file, not the worklog, so it cannot touch entries already there.
+
+6. **Append it:**
+
+   ```bash
+   "${CLAUDE_SKILL_DIR}/scripts/append-entry.ts" --worklog <worklog> --entry <entry-file> \
+     --session <id> --through <through-from-step-4> --label "<short locator>"
+   ```
+
+   This adds the entry and advances the bookmark as one operation — so an epoch can never be skipped by a bookmark that moved without its entry landing.
+
+7. **Check and commit:**
+
+   ```bash
+   "${CLAUDE_SKILL_DIR}/scripts/validate-worklog.ts" <worklog>
+   ```
+
+   Then skim the entry against the diff and the PR, fix any anchor a reader couldn't open, and commit the worklog with the change.
+
+### No record, no worklog
+
+A worklog is **not possible without the raw session transcript**. If the session can't be located or its transcript can't be read — a harness that keeps sessions server-side, a cloud agent, a store that isn't there — **stop and say so**. Do not write one from context: an entry written from memory isn't a degraded worklog, it's a different and untrustworthy artifact wearing the name, and it is the exact failure this skill exists to prevent. The scripts exit non-zero rather than fall back, and `validate-worklog.ts` fails any entry that isn't covered by a bookmark.
+
+Slicing is implemented for **Claude Code** and **OpenCode**. On Pi, `find-current-session.ts` and `get-session-transcript.ts` still locate a session and its transcript, but `--since` fails rather than silently handing back the whole thing.
 
 ## Updating a worklog
 
-Updating a worklog means **regenerating it, never hand-patching it.** A worklog is an extraction from the session record; editing it by hand readmits memory and invention — the very failure modes the extraction exists to prevent — so patching is a violation of the process, not a shortcut within it. To update one, re-run the Method above: it rebuilds the file wholesale from the current record.
+Updating a worklog means **appending an entry — never hand-patching it, and never regenerating it.** Both alternatives fail, for different reasons.
+
+**Hand-patching** readmits memory and invention — the very failure modes extraction exists to prevent — so it is a violation of the process, not a shortcut within it. To add to a worklog, re-run *Append an entry* above: the sub-agent extracts from the record, and it writes to a scratch file that `append-entry.ts` appends, so nothing is ever edited by hand.
+
+**Regenerating** — rebuilding the file wholesale — destroys the record it is meant to keep. When a decision is superseded, a regenerated worklog overwrites the original with its replacement, and the reasoning behind the first is gone; the file then reads as though the final answer was always the answer. Appending keeps the reversal *as* a reversal, which is the highest-signal thing a worklog holds. It is also why entries already in the file are never touched.
 
 ## Naming and location
 
 Worklogs live in `.worklogs/` at the repo root, one file per PR, named with a random human-readable slug (the same collision-avoidance Changesets uses) so concurrent PRs in a monorepo never clash. **Always scaffold via `new-worklog.ts`** — it guarantees a free name and writes the correct template. The store is per-repo: the scaffolder locates it via `git rev-parse --show-toplevel`.
 
+`worklog: 2` in the frontmatter marks this format. A worklog with no `worklog` field is v1 — the older whole-document format, written before the field existed; those are left as they are and are not appended to.
+
 ## Worklog vs the PR description
 
 The PR description is the curated, after-the-fact framing written for a reviewer: what shipped and a broad why. The worklog is its complement — the decisions and the reasoning behind them, at a resolution the description isn't meant to carry, plus the alternatives it never mentions. Write both; they serve different readers and deliberately don't overlap. This skill produces the worklog, not the PR description.
+
+A worklog is a record, not a document anyone sits down to read. It exists to be accurate and to be referenced later. Where accuracy and readability pull apart, accuracy wins.

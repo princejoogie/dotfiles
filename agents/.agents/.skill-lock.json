@@ -24,27 +24,18 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/mattpocock/skills.git",
       "skillPath": "skills/productivity/handoff/SKILL.md",
-      "skillFolderHash": "184d485ae68a2132893a94239b2b85d253e6152b",
+      "skillFolderHash": "2242e8f05424b8c2ae94194a90d97b88d16108ec",
       "installedAt": "2026-05-21T20:15:23.552Z",
-      "updatedAt": "2026-08-08T17:14:34.624Z"
+      "updatedAt": "2026-08-18T04:41:03.316Z"
     },
     "improve-codebase-architecture": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/mattpocock/skills.git",
       "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
-      "skillFolderHash": "6a971d1f5b109ac817e18c0f0419c2a32d60f26a",
+      "skillFolderHash": "db546af0f3419a8bd261a83708d4cb33d2a915cd",
       "installedAt": "2026-05-21T20:15:23.554Z",
-      "updatedAt": "2026-08-08T17:14:37.761Z"
-    },
-    "prototype": {
-      "source": "mattpocock/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/mattpocock/skills.git",
-      "skillPath": "skills/engineering/prototype/SKILL.md",
-      "skillFolderHash": "57569dda16077a016b8fb82494dbf9f6430d7cc4",
-      "installedAt": "2026-05-21T20:15:23.554Z",
-      "updatedAt": "2026-08-08T17:14:40.089Z"
+      "updatedAt": "2026-08-18T04:41:05.419Z"
     },
     "conventional-commit": {
       "source": "github/awesome-copilot",
@@ -55,50 +46,14 @@
       "installedAt": "2026-05-21T20:21:40.445Z",
       "updatedAt": "2026-05-21T20:21:40.445Z"
     },
-    "remotion-best-practices": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-best-practices/SKILL.md",
-      "skillFolderHash": "7538922dc09561eedbd29265fc6b7dc2bddcfd90",
-      "installedAt": "2026-05-21T20:23:18.713Z",
-      "updatedAt": "2026-08-08T17:14:47.758Z"
-    },
     "turborepo": {
       "source": "vercel/turborepo",
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel/turborepo.git",
       "skillPath": "skills/turborepo/SKILL.md",
-      "skillFolderHash": "439f586b421147775c7cc707b57a6141684fcbef",
+      "skillFolderHash": "d830e83a21ce885d2efc8e044765a5cd1f2c3964",
       "installedAt": "2026-05-21T20:23:26.198Z",
-      "updatedAt": "2026-08-08T17:15:24.737Z"
-    },
-    "vercel-react-best-practices": {
-      "source": "vercel-labs/agent-skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/vercel-labs/agent-skills.git",
-      "skillPath": "skills/react-best-practices/SKILL.md",
-      "skillFolderHash": "343db72180d05814949fef7d46be96b5c6ee86b3",
-      "installedAt": "2026-05-21T20:24:08.185Z",
-      "updatedAt": "2026-05-21T20:24:08.185Z"
-    },
-    "vercel-composition-patterns": {
-      "source": "vercel-labs/agent-skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/vercel-labs/agent-skills.git",
-      "skillPath": "skills/composition-patterns/SKILL.md",
-      "skillFolderHash": "bf90d0a4b83ea054653350f9c67f6de235d3a368",
-      "installedAt": "2026-05-21T20:24:16.207Z",
-      "updatedAt": "2026-05-21T20:24:16.207Z"
-    },
-    "web-design-guidelines": {
-      "source": "vercel-labs/agent-skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/vercel-labs/agent-skills.git",
-      "skillPath": "skills/web-design-guidelines/SKILL.md",
-      "skillFolderHash": "3116f3e62dbd02b44a598b1aa690d2a8938e8f89",
-      "installedAt": "2026-05-21T20:24:20.177Z",
-      "updatedAt": "2026-05-21T20:24:20.177Z"
+      "updatedAt": "2026-08-18T04:41:41.378Z"
     },
     "shadcn": {
       "source": "shadcn/ui",
@@ -109,24 +64,6 @@
       "installedAt": "2026-05-21T20:38:53.242Z",
       "updatedAt": "2026-08-08T17:15:31.733Z"
     },
-    "gpt-image-2": {
-      "source": "agentspace-so/agent-skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/agentspace-so/agent-skills.git",
-      "skillPath": "gpt-image-2/SKILL.md",
-      "skillFolderHash": "15b3a48babf955f2460520833bc82c772ce71417",
-      "installedAt": "2026-05-21T20:38:55.717Z",
-      "updatedAt": "2026-05-21T20:38:55.717Z"
-    },
-    "grill-me": {
-      "source": "mattpocock/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/mattpocock/skills.git",
-      "skillPath": "skills/productivity/grill-me/SKILL.md",
-      "skillFolderHash": "c817f6f36acd483294144694a935a76d3e3eb101",
-      "installedAt": "2026-05-28T03:38:04.708Z",
-      "updatedAt": "2026-08-08T17:14:41.956Z"
-    },
     "terminal-control": {
       "source": "anomalyco/terminal-control",
       "sourceType": "github",
@@ -135,15 +72,6 @@
       "skillFolderHash": "652efdccf2cc06c20550238e9df85788d3fc1d3b",
       "installedAt": "2026-06-04T06:38:44.244Z",
       "updatedAt": "2026-07-27T18:06:51.420Z"
-    },
-    "teach": {
-      "source": "mattpocock/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/mattpocock/skills.git",
-      "skillPath": "skills/productivity/teach/SKILL.md",
-      "skillFolderHash": "15f8c86d39ef834e643d092733ca899b59049067",
-      "installedAt": "2026-06-09T15:37:14.334Z",
-      "updatedAt": "2026-08-08T17:14:44.047Z"
     },
     "git-merge": {
       "source": "vervio-digital/vervio-agentics",
@@ -159,108 +87,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/vervio-digital/vervio-agentics.git",
       "skillPath": "plugins/worklog/skills/worklog/SKILL.md",
-      "skillFolderHash": "57c073e9cc040f70c2faaf28239a84611a22324b",
+      "skillFolderHash": "be7479f974c1f6647bf4e12e8c6c3d6e5777e45c",
       "installedAt": "2026-06-29T06:56:58.441Z",
-      "updatedAt": "2026-08-08T17:15:39.318Z"
-    },
-    "remotion-captions": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-captions/SKILL.md",
-      "skillFolderHash": "d7a28d0c07320e4808769ad88ba2573284544c87",
-      "installedAt": "2026-08-07T01:18:11.333Z",
-      "updatedAt": "2026-08-08T17:14:52.220Z"
-    },
-    "remotion-create": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-create/SKILL.md",
-      "skillFolderHash": "d59534967e21ba452566246f25814378de63dc2e",
-      "installedAt": "2026-08-07T01:18:11.333Z",
-      "updatedAt": "2026-08-08T17:14:54.675Z"
-    },
-    "remotion-docs": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-docs/SKILL.md",
-      "skillFolderHash": "ebf42b011b55e600cabe07f0f50c09698b86c8f8",
-      "installedAt": "2026-08-07T01:18:11.334Z",
-      "updatedAt": "2026-08-08T17:14:56.996Z"
-    },
-    "remotion-interactivity": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-interactivity/SKILL.md",
-      "skillFolderHash": "a8cafbdfd5ec9e46e07ea9b424b2872b9cafd58b",
-      "installedAt": "2026-08-07T01:18:11.335Z",
-      "updatedAt": "2026-08-08T17:14:59.396Z"
-    },
-    "remotion-maps": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-maps/SKILL.md",
-      "skillFolderHash": "05f696a8e0245772603940b4c11568a85674b976",
-      "installedAt": "2026-08-07T01:18:11.335Z",
-      "updatedAt": "2026-08-08T17:15:02.439Z"
-    },
-    "remotion-markup": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-markup/SKILL.md",
-      "skillFolderHash": "bbe4cdd69a57a7538c910040d35c494ad59c97c8",
-      "installedAt": "2026-08-07T01:18:11.336Z",
-      "updatedAt": "2026-08-08T17:15:05.671Z"
-    },
-    "remotion-multimedia": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-multimedia/SKILL.md",
-      "skillFolderHash": "ffa3aeffdd50ad95648b30cb60ebe490e2120512",
-      "installedAt": "2026-08-07T01:18:11.336Z",
-      "updatedAt": "2026-08-08T17:15:08.734Z"
-    },
-    "remotion-render": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-render/SKILL.md",
-      "skillFolderHash": "4d25474d3076aab7cfeb28c75a5399999bc53bd1",
-      "installedAt": "2026-08-07T01:18:11.337Z",
-      "updatedAt": "2026-08-08T17:15:11.633Z"
-    },
-    "remotion-saas": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-saas/SKILL.md",
-      "skillFolderHash": "cbf5c809b52f732209bbd38620d67df73b238c72",
-      "installedAt": "2026-08-07T01:18:11.337Z",
-      "updatedAt": "2026-08-08T17:15:14.283Z"
-    },
-    "remotion-studio": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-studio/SKILL.md",
-      "skillFolderHash": "92849c3fce3541f1c82d2b3456d5e85c06da6b2e",
-      "installedAt": "2026-08-07T01:18:11.338Z",
-      "updatedAt": "2026-08-08T17:15:18.449Z"
-    },
-    "remotion-upgrade": {
-      "source": "remotion-dev/skills",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/remotion-dev/skills.git",
-      "skillPath": "skills/remotion-upgrade/SKILL.md",
-      "skillFolderHash": "b9d73c403c815324472dc9ae408ddbcf426de36c",
-      "installedAt": "2026-08-07T01:18:11.338Z",
-      "updatedAt": "2026-08-08T17:15:21.420Z"
+      "updatedAt": "2026-08-18T04:41:45.094Z"
     },
     "herdr": {
       "source": "herdrdev/herdr",
@@ -285,9 +114,18 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/humanlayer/skills.git",
       "skillPath": "plugins/show-me/skills/show-me/SKILL.md",
-      "skillFolderHash": "ee8b69d19e57a73b6b163d11c40760a805cdcb39",
+      "skillFolderHash": "0bdb821a21e793a4f6f82a7078c052154447e5cc",
       "installedAt": "2026-08-12T17:07:43.400Z",
-      "updatedAt": "2026-08-12T17:07:43.400Z"
+      "updatedAt": "2026-08-18T04:41:47.224Z"
+    },
+    "calldiff": {
+      "source": "tanishqkancharla/calldiff",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/tanishqkancharla/calldiff.git",
+      "skillPath": "skills/calldiff/SKILL.md",
+      "skillFolderHash": "646b1b9baa88cfc3bcec3c40ec324b9049a34357",
+      "installedAt": "2026-08-18T03:38:41.998Z",
+      "updatedAt": "2026-08-18T03:38:41.998Z"
     }
   },
   "dismissed": {

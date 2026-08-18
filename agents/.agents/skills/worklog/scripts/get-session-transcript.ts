@@ -3,27 +3,41 @@
  * Get a session's transcript as a readable file on disk — pass 2 of 2. Given a session id (from
  * find-current-session.ts), produce its transcript and print the file path, which a sub-agent then
  * reads to extract the worklog. By harness:
- *   - OpenCode: runs `opencode export <id>` to a temp JSON file and prints that path.
+ *   - OpenCode: reads timestamped messages and parts from its local SQLite store.
  *   - Claude Code: locates the on-disk JSONL under ~/.claude/projects and prints it.
  *   - Pi: resolves the id to its JSONL under the cwd's session directory and prints it.
  *
  * Usage:
- *   .../scripts/get-session-transcript.ts <session-id> [--cwd PATH]
+ *   .../scripts/get-session-transcript.ts <session-id> [--cwd PATH] [--since ISO] [--until ISO]
  *
- * Prints the transcript path on stdout (nothing else), so the caller can use it directly.
+ * With --since (and/or --until) it writes a SLICE of the transcript — only the records in that
+ * instant range — and prints its path plus the `through` instant of the last record in the slice.
+ * That is what makes an appended worklog entry cheap: each epoch of the session is read once,
+ * rather than the whole transcript being re-read on every regeneration. The `through` it prints is
+ * the bookmark to hand to append-entry.ts.
+ *
+ * Slicing is implemented for Claude Code and OpenCode. On any other harness it fails rather than
+ * quietly handing back the whole transcript, which would silently reintroduce the cost slicing removes.
+ *
+ * Output — the transcript (or slice) path on the first line, so a caller can still take line 1
+ * directly; when slicing, a `through:` and a `records:` line follow.
  */
 
-import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { execFileSync, spawn } from 'node:child_process';
+import { once } from 'node:events';
+import { createWriteStream, existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import process from 'node:process';
+import { createInterface } from 'node:readline';
 
 type Harness = 'claude' | 'opencode' | 'pi';
 
 interface Args {
   id: string;
   cwd: string;
+  since?: string;
+  until?: string;
 }
 
 function die(message: string): never {
@@ -35,20 +49,34 @@ function expandTilde(p: string): string {
   return p.startsWith('~') ? join(homedir(), p.slice(1)) : p;
 }
 
+function parseInstant(raw: string, flag: string): string {
+  if (Number.isNaN(Date.parse(raw))) {
+    die(`${flag} must be an ISO-8601 instant (e.g. 2026-06-29T06:41:22.918Z), got: ${raw}`);
+  }
+  return raw;
+}
+
 function parseArgs(): Args {
   const argv = process.argv.slice(2);
   let id = '';
   let cwd = process.cwd();
+  let since: string | undefined;
+  let until: string | undefined;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     const next = (): string => (i + 1 < argv.length ? argv[++i] : die(`${arg} requires a value`));
     if (arg === '--cwd') cwd = resolve(next());
     else if (arg === '--session' || arg === '--id') id = next();
+    else if (arg === '--since') since = parseInstant(next(), '--since');
+    else if (arg === '--until') until = parseInstant(next(), '--until');
     else if (!arg.startsWith('--') && !id) id = arg;
     else die(`unexpected argument: ${arg}`);
   }
-  if (!id) die('usage: get-session-transcript.ts <session-id> [--cwd PATH]');
-  return { id, cwd };
+  if (!id) die('usage: get-session-transcript.ts <session-id> [--cwd PATH] [--since ISO] [--until ISO]');
+  if (since && until && Date.parse(since) >= Date.parse(until)) {
+    die(`--since (${since}) must be earlier than --until (${until})`);
+  }
+  return { id, cwd, since, until };
 }
 
 function detectHarness(): Harness {
@@ -70,15 +98,112 @@ function claudeTranscript(id: string): string {
   return die(`no Claude transcript on disk for session ${id}`);
 }
 
-// ── OpenCode ── export the SQLite-stored session to a stable temp file.
-function opencodeTranscript(id: string): string {
-  const out = join(tmpdir(), `worklog-session-${id}.json`);
+// ── OpenCode ── messages and parts are timestamped independently in the local SQLite store.
+interface OpenCodeRecord {
+  id: string;
+  kind: 'message' | 'part';
+  message_id?: string;
+  time_created: number;
+  data: string;
+}
+
+function opencodeDbPath(): string {
+  const base = (process.env.OPENCODE_DATA_DIR?.split(',')[0] || join(homedir(), '.local', 'share', 'opencode')).trim();
+  return join(base, 'opencode.db');
+}
+
+function sqliteString(value: string): string {
+  return value.replace(/'/g, "''");
+}
+
+function opencodeSessionExists(db: string, id: string): boolean {
   try {
-    const data = execFileSync('opencode', ['export', id], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-    writeFileSync(out, data);
+    return execFileSync('sqlite3', [db, `SELECT count(*) FROM session WHERE id='${sqliteString(id)}';`], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).trim() === '1';
   } catch (err) {
-    return die(`\`opencode export ${id}\` failed: ${(err as Error).message}`);
+    return die(`could not inspect OpenCode session storage at ${db}: ${(err as Error).message}`);
   }
+}
+
+async function writeOpenCodeJsonl(
+  id: string,
+  since: string | undefined,
+  until: string | undefined,
+  out: string,
+): Promise<{ records: number; through?: string }> {
+  const db = opencodeDbPath();
+  if (!existsSync(db)) die(`no OpenCode session database at ${db}`);
+  if (!opencodeSessionExists(db, id)) die(`no OpenCode session ${id} in ${db}`);
+
+  const session = sqliteString(id);
+  const interval = [
+    `session_id='${session}'`,
+    ...(since ? [`time_created > ${Date.parse(since)}`] : []),
+    ...(until ? [`time_created <= ${Date.parse(until)}`] : []),
+  ].join(' AND ');
+  const query =
+    `SELECT json_object('id', id, 'kind', kind, 'message_id', message_id, 'time_created', time_created, 'data', data) ` +
+    'FROM (' +
+    `SELECT id, 'message' AS kind, NULL AS message_id, time_created, data FROM message WHERE ${interval} ` +
+    `UNION ALL SELECT id, 'part' AS kind, message_id, time_created, data FROM part WHERE ${interval}` +
+    ') ORDER BY time_created, kind, id;';
+
+  const child = spawn('sqlite3', ['-noheader', db, query], { stdio: ['ignore', 'pipe', 'pipe'] });
+  let stderr = '';
+  child.stderr.setEncoding('utf8');
+  child.stderr.on('data', (chunk: string) => {
+    stderr += chunk;
+  });
+  const exited = new Promise<void>((resolveExit, rejectExit) => {
+    child.once('error', rejectExit);
+    child.once('close', (code) => {
+      if (code === 0) resolveExit();
+      else rejectExit(new Error(stderr.trim() || `sqlite3 exited with status ${code}`));
+    });
+  });
+
+  const file = createWriteStream(out, { encoding: 'utf8' });
+  let records = 0;
+  let through: string | undefined;
+  try {
+    for await (const rawRecord of createInterface({ input: child.stdout })) {
+      let record: OpenCodeRecord;
+      try {
+        record = JSON.parse(rawRecord) as OpenCodeRecord;
+      } catch {
+        die(`OpenCode session ${id} has an unsupported record shape in ${db}`);
+      }
+      if (!Number.isFinite(record.time_created) || !record.id || (record.kind !== 'message' && record.kind !== 'part')) {
+        die(`OpenCode session ${id} has an unsupported record shape in ${db}`);
+      }
+      const timestamp = new Date(record.time_created).toISOString();
+      let data: unknown;
+      try {
+        data = JSON.parse(record.data);
+      } catch {
+        die(`OpenCode session ${id} has unreadable ${record.kind} record ${record.id} in ${db}`);
+      }
+      if (!file.write(`${JSON.stringify({ id: record.id, type: record.kind, ...(record.message_id ? { messageId: record.message_id } : {}), timestamp, data })}\n`)) {
+        await once(file, 'drain');
+      }
+      records++;
+      if (through === undefined || timestamp > through) through = timestamp;
+    }
+    await exited;
+  } catch (err) {
+    return die(`could not read OpenCode session ${id} from ${db}: ${(err as Error).message}`);
+  } finally {
+    file.end();
+    await once(file, 'finish');
+  }
+  return { records, through };
+}
+
+async function opencodeTranscript(id: string): Promise<string> {
+  const out = join(tmpdir(), `worklog-session-${id}.jsonl`);
+  await writeOpenCodeJsonl(id, undefined, undefined, out);
   return out;
 }
 
@@ -110,16 +235,95 @@ function piTranscript(id: string, cwd: string): string {
   return die(`no Pi transcript for ${id} under ${dir}`);
 }
 
-function main(): void {
-  const args = parseArgs();
-  const harness = detectHarness();
-  const path =
-    harness === 'claude'
-      ? claudeTranscript(args.id)
-      : harness === 'opencode'
-        ? opencodeTranscript(args.id)
-        : piTranscript(args.id, args.cwd);
-  console.log(path);
+// ── Slicing ── keep only the records in an instant range, so an appended entry reads one epoch.
+//
+// The bookmark is exclusive at the `--since` end (`t > since`) and inclusive at `--until`, so
+// consecutive slices tile the session without re-reading or skipping a record.
+
+/** Claude Code writes one JSON record per line, each carrying an ISO-8601 `timestamp`. */
+function sliceClaudeJsonl(path: string, since: string | undefined, until: string | undefined): { lines: string[]; through?: string } {
+  const from = since ? Date.parse(since) : Number.NEGATIVE_INFINITY;
+  const to = until ? Date.parse(until) : Number.POSITIVE_INFINITY;
+  const lines: string[] = [];
+  let through: string | undefined;
+  for (const line of readFileSync(path, 'utf8').split('\n')) {
+    if (!line.trim()) continue;
+    let stamp: string | undefined;
+    try {
+      stamp = (JSON.parse(line) as { timestamp?: string }).timestamp;
+    } catch {
+      continue; // a partially-flushed trailing line; skip it rather than fail the slice
+    }
+    // Records with no timestamp (session metadata) can't be placed in time, so they stay out of
+    // every slice but the first, which has no lower bound to exclude them.
+    if (!stamp) {
+      if (since === undefined) lines.push(line);
+      continue;
+    }
+    const t = Date.parse(stamp);
+    if (Number.isNaN(t) || t <= from || t > to) continue;
+    lines.push(line);
+    if (through === undefined || t > Date.parse(through)) through = stamp;
+  }
+  return { lines, through };
 }
 
-main();
+async function main(): Promise<void> {
+  const args = parseArgs();
+  const harness = detectHarness();
+  const slicing = args.since !== undefined || args.until !== undefined;
+
+  if (!slicing) {
+    let path: string;
+    switch (harness) {
+      case 'claude':
+        path = claudeTranscript(args.id);
+        break;
+      case 'opencode':
+        path = await opencodeTranscript(args.id);
+        break;
+      case 'pi':
+        path = piTranscript(args.id, args.cwd);
+        break;
+    }
+    console.log(path);
+    return;
+  }
+
+  const stamp = (args.since ?? 'start').replace(/[:.]/g, '-');
+  const out = join(tmpdir(), `worklog-slice-${args.id}-${stamp}.jsonl`);
+  let slice: { records: number; through?: string };
+  switch (harness) {
+    case 'claude': {
+      const { lines, through } = sliceClaudeJsonl(claudeTranscript(args.id), args.since, args.until);
+      writeFileSync(out, lines.length > 0 ? `${lines.join('\n')}\n` : '');
+      slice = { records: lines.length, through };
+      break;
+    }
+    case 'opencode':
+      slice = await writeOpenCodeJsonl(args.id, args.since, args.until, out);
+      break;
+    case 'pi':
+      die(
+        'slicing (--since/--until) is implemented for Claude Code and OpenCode, not Pi.\n' +
+          '  Falling back to the whole transcript would silently undo the saving slicing exists for,\n' +
+          '  so this stops here. Add a Pi adapter, or run the worklog on Claude Code.',
+      );
+  }
+  const { records, through } = slice;
+
+  console.log(out);
+  console.log(`records: ${records}`);
+  if (records === 0) {
+    console.log(`through: ${args.since ?? ''}`);
+    console.log(
+      '\nNOTHING NEW — no records in this range, so this epoch is empty.' +
+        '\nDo not append an entry and do not move the bookmark; there is nothing to record yet.',
+    );
+    return;
+  }
+  console.log(`through: ${through}`);
+  console.log(`\nnext: extract this slice into an entry, then append it with:\n  append-entry.ts --worklog <path> --entry <file> --session ${args.id} --through ${through} --label "<short locator>"`);
+}
+
+void main();

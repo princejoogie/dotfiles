@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@opencode-ai/plugin": "1.18.18",
     "@opentui/solid": "0.5.3",
     "opencode-openai-codex-auth": "github:code-yeongyu/opencode-openai-codex-auth#fix/orphaned-function-call-output-with-tools",
     "solid-js": "1.9.12"
