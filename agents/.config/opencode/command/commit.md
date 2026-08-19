@@ -27,3 +27,7 @@ if there are conflicts, use my `git-merge` skill and resolve them before continu
 ## GIT STATUS --short
 
 !`git status --short`
+
+---
+
+you dont need to run any diffing commands, i've already provided them for you above.
