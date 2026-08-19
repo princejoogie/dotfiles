@@ -37,7 +37,7 @@
     }
   },
   "mcp": {
-    "grep_app": {
+    "grep-app": {
       "type": "remote",
       "url": "https://mcp.grep.app"
     },
@@ -47,10 +47,10 @@
     },
     "computer-use": {
       "type": "local",
-      "command": ["/Users/pjuguilon/.local/bin/cua-driver", "mcp"],
+      "command": ["cua-driver", "mcp"],
       "enabled": true
     },
-    "opentelemetry-mcp": {
+    "otel-mcp": {
       "type": "local",
       "command": ["uvx", "opentelemetry-mcp"],
       "enabled": true,
