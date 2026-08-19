@@ -101,15 +101,6 @@
       "installedAt": "2026-08-08T17:14:06.954Z",
       "updatedAt": "2026-08-08T17:14:06.954Z"
     },
-    "open-computer-use": {
-      "source": "QwenLM/open-computer-use",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/QwenLM/open-computer-use.git",
-      "skillPath": "skills/open-computer-use/SKILL.md",
-      "skillFolderHash": "ffa74f179b7e65521292d9f33dc5c06e11ddcd80",
-      "installedAt": "2026-08-08T17:55:17.600Z",
-      "updatedAt": "2026-08-08T17:55:17.600Z"
-    },
     "show-me": {
       "source": "humanlayer/skills",
       "sourceType": "github",
