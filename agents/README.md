@@ -25,3 +25,6 @@ renders the per-tool formats:
 - opencode → `.mcp` in `.config/opencode/opencode.json`
 - Claude   → `.mcpServers` in `~/.claude.json`
 - Codex    → `[mcp_servers.*]` block in `~/.codex/config.toml`
+
+Use `clientAliases.<client>.<server>` in `mcp/servers.json` when a client has a
+conflicting built-in server name.

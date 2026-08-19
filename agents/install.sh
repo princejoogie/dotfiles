@@ -111,8 +111,10 @@ else
   END="# <<< agents-mcp <<<"
   block=$(jq -r '
     def esc: gsub("\\\\";"\\\\") | gsub("\"";"\\\"");
+    . as $root |
     .mcpServers | to_entries[] |
-    "[mcp_servers.\(.key)]",
+    ($root.clientAliases.codex[.key] // .key) as $name |
+    "[mcp_servers.\($name)]",
     ( .value as $v |
       if ($v.type=="http" or $v.type=="sse" or ($v|has("url")))
       then "url = \"\($v.url|esc)\""

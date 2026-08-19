@@ -1,9 +1,7 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "permission": "allow",
-  "plugin": [
-    "opencode-with-claude"
-  ],
+  "plugin": ["opencode-with-claude"],
   "provider": {
     "openai": {
       "models": {
@@ -28,18 +26,6 @@
         "baseURL": "http://127.0.0.1:3456",
         "apiKey": "dummy"
       }
-    },
-    "mlx": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "MLX (local)",
-      "options": {
-        "baseURL": "http://127.0.0.1:8080/v1"
-      },
-      "models": {
-        "default_model": {
-          "name": "Default MLX Model"
-        }
-      }
     }
   },
   "agent": {
@@ -59,20 +45,14 @@
       "type": "remote",
       "url": "https://mcp.context7.com/mcp"
     },
-    "open-computer-use": {
+    "computer-use": {
       "type": "local",
-      "command": [
-        "open-computer-use",
-        "mcp"
-      ],
+      "command": ["/Users/pjuguilon/.local/bin/cua-driver", "mcp"],
       "enabled": true
     },
     "opentelemetry-mcp": {
       "type": "local",
-      "command": [
-        "uvx",
-        "opentelemetry-mcp"
-      ],
+      "command": ["uvx", "opentelemetry-mcp"],
       "enabled": true,
       "environment": {
         "BACKEND_TYPE": "jaeger",

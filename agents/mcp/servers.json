@@ -1,4 +1,9 @@
 {
+  "clientAliases": {
+    "codex": {
+      "computer-use": "cua-driver"
+    }
+  },
   "mcpServers": {
     "grep_app": {
       "type": "http",
@@ -8,9 +13,9 @@
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
     },
-    "open-computer-use": {
+    "computer-use": {
       "type": "stdio",
-      "command": "open-computer-use",
+      "command": "/Users/pjuguilon/.local/bin/cua-driver",
       "args": ["mcp"]
     },
     "opentelemetry-mcp": {
