@@ -115,6 +115,13 @@ function die(message: string): never {
   return process.exit(1);
 }
 
+function detectHarness(): string {
+  if (process.env.CLAUDE_CODE_SESSION_ID || process.env.CLAUDECODE) return 'claude-code';
+  if (process.env.OPENCODE_TERMINAL) return 'opencode-v2';
+  if (process.env.PI_CODING_AGENT) return 'pi';
+  return 'claude-code';
+}
+
 /** Locate the worklog store: <repo-root>/.worklogs, or an explicit --dir; errors outside git. */
 function findStore(explicit: string | undefined): string {
   if (explicit) {
@@ -206,7 +213,7 @@ function main(): void {
   let title = '';
   let dir: string | undefined;
   let session = '';
-  let harness = 'claude-code';
+  let harness = detectHarness();
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     const next = (): string => (i + 1 < args.length ? args[++i] : die(`${arg} requires a value`));

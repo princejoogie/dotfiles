@@ -103,7 +103,7 @@ Run this to produce a worklog. The bundled scripts (in `${CLAUDE_SKILL_DIR}/scri
    "${CLAUDE_SKILL_DIR}/scripts/find-current-session.ts"
    ```
 
-   On Claude Code this prints `session: <id>` straight away. On a harness that doesn't expose one it instead **marks this session** and prints the exact command to run next — `find-current-session.ts --marker <token>` — so run that as a second call. Just follow what the script tells you. (If the lookup prints **CANDIDATES**, the marker didn't match yet — retry per its guidance, or pick by hand.)
+   On Claude Code this prints `session: <id>` from the environment. On OpenCode V2 it uses `opencode2 api` to query the authenticated background service and normally resolves the active session for this directory immediately. If multiple OpenCode sessions are active, or when running on Pi, it instead **marks this session** and prints the exact command to run next — `find-current-session.ts --marker <token>` — so run that as a second call. Just follow what the script tells you. (If the lookup prints **CANDIDATES**, the marker didn't match yet — retry per its guidance, or pick by hand.)
 
 2. **Scaffold the file:**
 
@@ -131,6 +131,8 @@ Everything below is the repeatable part: run it to add the first entry, and agai
    ```
 
    It prints the slice path, the record count, and the new `through` instant. If it reports **NOTHING NEW**, stop — there is nothing to record yet.
+
+   OpenCode V2 reads the supported session export through `opencode2 api`, not the service database. Its slice records preserve timestamps from individual assistant content items, so a bookmark at an earlier item cannot skip later tool activity in the same assistant message.
 
 5. **Extract via a sub-agent.** Take the brief template at `${CLAUDE_SKILL_DIR}/assets/extraction-brief.md`, fill `{{CHANGE}}`, `{{SLICE_PATH}}` (step 4), `{{WORKLOG_PATH}}` and `{{ENTRY_PATH}}` (a scratch file to write to), and dispatch a **fresh sub-agent** with it. It reads the slice and writes the entry's decisions to `{{ENTRY_PATH}}`.
 

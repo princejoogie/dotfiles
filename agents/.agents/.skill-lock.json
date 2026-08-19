@@ -86,10 +86,11 @@
       "source": "vervio-digital/vervio-agentics",
       "sourceType": "github",
       "sourceUrl": "https://github.com/vervio-digital/vervio-agentics.git",
+      "ref": "fix/worklog-opencode-v2",
       "skillPath": "plugins/worklog/skills/worklog/SKILL.md",
-      "skillFolderHash": "be7479f974c1f6647bf4e12e8c6c3d6e5777e45c",
+      "skillFolderHash": "45437efad73d684b893ffd46ebdf83c46c7a3cb9",
       "installedAt": "2026-06-29T06:56:58.441Z",
-      "updatedAt": "2026-08-18T04:41:45.094Z"
+      "updatedAt": "2026-08-19T01:10:57.568Z"
     },
     "herdr": {
       "source": "herdrdev/herdr",
