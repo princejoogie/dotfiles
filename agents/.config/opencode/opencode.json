@@ -32,12 +32,12 @@
     "design": {
       "mode": "subagent",
       "description": "Designs elegant and intuitive user interfaces",
-      "model": "google/gemini-3.1-pro-preview",
+      "model": "xai/grok-4.6",
       "options": {}
     }
   },
   "mcp": {
-    "grep-app": {
+    "grep_app": {
       "type": "remote",
       "url": "https://mcp.grep.app"
     },
