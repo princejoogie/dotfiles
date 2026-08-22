@@ -4,6 +4,10 @@ local cmd = utils.cmd
 
 return {
   "dlyongemallo/diffview-plus.nvim",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "nvim-tree/nvim-web-devicons",
+  },
   cmd = "DiffviewOpen",
   keys = {
     {

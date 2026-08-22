@@ -44,6 +44,7 @@ alias pip=pip3
 alias wt=". _wt"
 alias claude="claude --dangerously-skip-permissions"
 alias om="opencode2 mini"
+alias nd='nvim -u "$HOME/.config/nvim/diffview.lua" +DiffviewOpen "+tabclose 1"'
 ask() {
   opencode2 run --model "xai/grok-4.6#low" "$*"
 }
