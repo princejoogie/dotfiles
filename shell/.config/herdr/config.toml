@@ -103,6 +103,12 @@ type = "plugin_action"
 command = "princejoogie.repo-picker.open"
 description = "open repository as a workspace"
 
+[[keys.command]]
+key = "prefix+d"
+type = "shell"
+command = 'tab=$($HERDR_BIN_PATH tab create --workspace "$HERDR_ACTIVE_WORKSPACE_ID" --cwd "$HERDR_ACTIVE_PANE_CWD" --focus) && pane=$(printf "%s" "$tab" | jq -r ".result.root_pane.pane_id") && "$HERDR_BIN_PATH" pane run "$pane" nd'
+description = "open Diffview in a new tab"
+
 [ui.toast]
 delivery = "herdr"
 

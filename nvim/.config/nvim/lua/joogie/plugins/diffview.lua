@@ -3,12 +3,23 @@ local toggle_diffview = utils.toggle_diffview
 local cmd = utils.cmd
 
 return {
-  "dlyongemallo/diffview-plus.nvim",
+  "princejoogie/diffview-plus.nvim",
+  dir = "~/Documents/codes/github/diffview-plus.nvim",
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-tree/nvim-web-devicons",
   },
   cmd = "DiffviewOpen",
+  opts = {
+    view = {
+      cycle_layouts = {
+        default = { "diff2_horizontal", "diff1_inline" },
+      },
+      inline = {
+        fold_unchanged = true,
+      },
+    },
+  },
   keys = {
     {
       "<leader>dO",
