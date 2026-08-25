@@ -1,4 +1,3 @@
-require("joogie.autocmds.node-exec")
 require("joogie.autocmds.super-zen")
 require("joogie.autocmds.annotate")
 require("joogie.autocmds.mermaid")
