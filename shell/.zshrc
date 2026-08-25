@@ -1,19 +1,10 @@
 # oh-my-zsh
-autoload -U compinit
-compinit
-
 export DISABLE_AUTO_UPDATE="true"
 
 export ZSH="$HOME/.oh-my-zsh"
 
 plugins=(
   z
-  gh
-  aws
-  fnm
-  git
-  tmux
-  docker
   vi-mode
   zsh-autosuggestions
   zsh-syntax-highlighting
@@ -39,15 +30,15 @@ alias so=source
 alias x=exit
 alias G=git
 alias t=tmux
-alias lta="ls -ltar --human-readable | grep -vE '^\.| \.$| \.\.$'"
-alias pip=pip3
 alias wt=". _wt"
 alias claude="claude --dangerously-skip-permissions"
 alias om="opencode2 mini"
 alias nd='nvim -u "$HOME/.config/nvim/diffview.lua" +DiffviewOpen "+tabclose 1"'
+
 ask() {
   opencode2 run --model "xai/grok-4.6#low" "$*"
 }
+
 alias ask="noglob ask"
 
 claudex() {
@@ -80,6 +71,7 @@ export PATH=$PATH:$HOME/.duckdb/cli/latest
 export PATH=$PATH:$HOME/.opencode/bin
 export PATH=$PATH:$HOME/.lmstudio/bin
 export PATH=$PATH:$HOME/.maestro/bin
+export PATH=$PATH:$HOME/.grok/bin
 export PATH=$PATH:$HOME/go/bin
 
 if [[ -f "$HOME/.private.sh" ]]; then
@@ -99,22 +91,6 @@ if [[ -x "$(command -v fnm)" ]]; then
 fi
 # fnm end
 
-# uv
-if [[ -x "$(command -v uv)" ]]; then
-  eval "$(uv generate-shell-completion zsh)"
-fi
-
-if [[ -x "$(command -v uvx)" ]]; then
-  eval "$(uvx --generate-shell-completion zsh)"
-fi
-# uv end
-
-# direnv
-if [[ -x "$(command -v direnv)" ]]; then
-  eval "$(direnv hook zsh)"
-fi
-# direnv end
-
 # bun
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 export BUN_INSTALL="$HOME/.bun"
@@ -122,14 +98,3 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # bun end
 
 source $ZSH/oh-my-zsh.sh
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/pjuguilon/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
-# End of Docker CLI completions
-
-# >>> grok installer >>>
-export PATH="$HOME/.grok/bin:$PATH"
-fpath=(~/.grok/completions/zsh $fpath)
-autoload -Uz compinit && compinit -C
-# <<< grok installer <<<

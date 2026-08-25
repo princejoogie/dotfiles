@@ -21,6 +21,8 @@ const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", 
 type UsageWindow = {
   usedPercent: number;
   resetsAt?: number;
+  windowMinutes?: number;
+  startsAt?: number;
 };
 
 type UsageSnapshot = {
@@ -34,6 +36,14 @@ type ProviderState =
   | { status: "loading" }
   | { status: "ready"; snapshot: UsageSnapshot }
   | { status: "error"; message: string };
+
+type UsageState = {
+  codex: ProviderState;
+  xai: ProviderState;
+  refreshing: boolean;
+  updatedAt: number;
+  open: boolean;
+};
 
 type Context = {
   theme: {
@@ -53,13 +63,20 @@ type Context = {
     slot(input: {
       append: "sidebar.content";
       render(props: { sessionID: string }): JSX.Element;
-    }): void;
+    }): () => void;
+  };
+  storage: {
+    memory<T>(
+      key: string,
+      options: { initial: T },
+    ): [T, (update: (draft: T) => void) => void];
   };
 };
 
 type CodexRateWindow = {
   usedPercent?: number;
   resetsAt?: number | null;
+  windowDurationMins?: number | null;
 };
 
 type CodexRateLimits = {
@@ -80,12 +97,13 @@ type XaiCredential = {
 
 type XaiBillingConfig = {
   creditUsagePercent?: number;
-  currentPeriod?: { end?: string };
+  currentPeriod?: { start?: string; end?: string };
   monthlyLimit?: { val?: number };
   used?: { val?: number };
   onDemandCap?: { val?: number };
   onDemandUsed?: { val?: number };
   prepaidBalance?: { val?: number };
+  billingPeriodStart?: string;
   billingPeriodEnd?: string;
 };
 
@@ -143,6 +161,33 @@ function resetText(window: UsageWindow, now: number) {
   const remaining = window.resetsAt - now;
   if (remaining <= 0) return "Resetting";
   return `Resets in ${formatDuration(remaining)}`;
+}
+
+function pace(window: UsageWindow, now: number) {
+  if (!window.resetsAt || !window.windowMinutes) return undefined;
+  const duration = window.windowMinutes * 60_000;
+  const start = window.startsAt ?? window.resetsAt - duration;
+  const elapsed = Math.max(0, Math.min(duration, now - start));
+  if (elapsed <= 0) return undefined;
+
+  const expected = (elapsed / duration) * 100;
+  const delta = window.usedPercent - expected;
+  const remaining = Math.max(0, window.resetsAt - now);
+  const eta =
+    window.usedPercent > 0
+      ? ((100 - window.usedPercent) * elapsed) / window.usedPercent
+      : Infinity;
+  const willLast = eta >= remaining;
+  const position =
+    !willLast || delta >= 5
+      ? `${Math.max(1, Math.round(delta))}% over pace`
+      : delta <= -5
+        ? `${Math.round(-delta)}% under pace`
+        : "On pace";
+  return {
+    text: `${position} · ${willLast ? "lasts to reset" : `empty in ${formatDuration(eta)}`}`,
+    warning: !willLast || delta >= 5,
+  };
 }
 
 function requestCodexUsage(signal: AbortSignal) {
@@ -252,6 +297,7 @@ async function fetchCodexUsage(signal: AbortSignal): Promise<UsageSnapshot> {
     .map((window) => ({
       usedPercent: clampPercent(window.usedPercent ?? 0),
       resetsAt: window.resetsAt ? window.resetsAt * 1_000 : undefined,
+      windowMinutes: window.windowDurationMins ?? undefined,
     }));
   if (!windows.length) throw new Error("Codex did not return a usage window");
 
@@ -367,10 +413,19 @@ async function fetchXaiUsage(signal: AbortSignal): Promise<UsageSnapshot> {
       );
       const config = (billing.config ?? billing) as XaiBillingConfig;
       const period = config.currentPeriod;
+      const startsAt = period?.start
+        ? Date.parse(period.start)
+        : config.billingPeriodStart
+          ? Date.parse(config.billingPeriodStart)
+          : undefined;
       const resetsAt = period?.end
         ? Date.parse(period.end)
         : config.billingPeriodEnd
           ? Date.parse(config.billingPeriodEnd)
+          : undefined;
+      const windowMinutes =
+        startsAt && resetsAt
+          ? Math.round((resetsAt - startsAt) / 60_000)
           : undefined;
       const legacyLimit = config.monthlyLimit?.val;
       const usedPercent = Number.isFinite(config.creditUsagePercent)
@@ -398,7 +453,9 @@ async function fetchXaiUsage(signal: AbortSignal): Promise<UsageSnapshot> {
         windows: [
           {
             usedPercent: clampPercent(usedPercent!),
+            startsAt,
             resetsAt,
+            windowMinutes,
           },
         ],
         credits: config.prepaidBalance?.val,
@@ -455,6 +512,7 @@ function ProviderCard(props: {
             <For each={snapshot().windows}>
               {(window) => {
                 const used = () => Math.round(window.usedPercent);
+                const pacing = () => pace(window, props.now);
                 return (
                   <box>
                     <box width="100%" height={1} flexDirection="row">
@@ -462,18 +520,29 @@ function ProviderCard(props: {
                         height={1}
                         flexBasis={0}
                         flexGrow={used()}
-                        backgroundColor={
-                          used() >= 85
-                            ? theme.text.feedback.warning.default
-                            : theme.markdown.link
-                        }
-                      />
+                        overflow="hidden"
+                      >
+                        <text
+                          fg={
+                            used() >= 85
+                              ? theme.text.feedback.warning.default
+                              : theme.markdown.link
+                          }
+                          wrapMode="none"
+                        >
+                          {"▄".repeat(100)}
+                        </text>
+                      </box>
                       <box
                         height={1}
                         flexBasis={0}
                         flexGrow={100 - used()}
-                        backgroundColor={mutedBarColor(theme)}
-                      />
+                        overflow="hidden"
+                      >
+                        <text fg={mutedBarColor(theme)} wrapMode="none">
+                          {"▄".repeat(100)}
+                        </text>
+                      </box>
                     </box>
                     <box flexDirection="row" justifyContent="space-between">
                       <text fg={theme.text.subdued}>
@@ -481,6 +550,19 @@ function ProviderCard(props: {
                       </text>
                       <text fg={theme.text.subdued}>{used()}% used</text>
                     </box>
+                    <Show when={pacing()}>
+                      {(item) => (
+                        <text
+                          fg={
+                            item().warning
+                              ? theme.text.feedback.warning.default
+                              : theme.text.feedback.success.default
+                          }
+                        >
+                          {item().text}
+                        </text>
+                      )}
+                    </Show>
                   </box>
                 );
               }}
@@ -497,53 +579,25 @@ function ProviderCard(props: {
   );
 }
 
-function View(props: { context: Context }) {
+function View(props: {
+  context: Context;
+  state: UsageState;
+  refresh: () => Promise<void>;
+  setOpen: (open: boolean) => void;
+}) {
   const theme = props.context.theme;
-  const [codex, setCodex] = createSignal<ProviderState>({ status: "loading" });
-  const [xai, setXai] = createSignal<ProviderState>({ status: "loading" });
-  const [refreshing, setRefreshing] = createSignal(false);
   const [spinnerFrame, setSpinnerFrame] = createSignal(0);
   const [now, setNow] = createSignal(Date.now());
-  const [open, setOpen] = createSignal(true);
-  let controller: AbortController | undefined;
-  let refreshTimer: ReturnType<typeof setTimeout> | undefined;
 
   const connected = createMemo(
-    () => [codex(), xai()].filter((state) => state.status === "ready").length,
+    () =>
+      [props.state.codex, props.state.xai].filter(
+        (state) => state.status === "ready",
+      ).length,
   );
 
-  const schedule = () => {
-    clearTimeout(refreshTimer);
-    refreshTimer = setTimeout(() => void refresh(), REFRESH_MS);
-    refreshTimer.unref?.();
-  };
-  const refresh = async () => {
-    controller?.abort();
-    controller = new AbortController();
-    const signal = controller.signal;
-    setRefreshing(true);
-    const [codexResult, xaiResult] = await Promise.allSettled([
-      fetchCodexUsage(signal),
-      fetchXaiUsage(signal),
-    ]);
-    if (signal.aborted) return;
-    setCodex(
-      codexResult.status === "fulfilled"
-        ? { status: "ready", snapshot: codexResult.value }
-        : { status: "error", message: errorMessage(codexResult.reason) },
-    );
-    setXai(
-      xaiResult.status === "fulfilled"
-        ? { status: "ready", snapshot: xaiResult.value }
-        : { status: "error", message: errorMessage(xaiResult.reason) },
-    );
-    setNow(Date.now());
-    setRefreshing(false);
-    schedule();
-  };
-
   createEffect(() => {
-    if (!refreshing()) {
+    if (!props.state.refreshing) {
       setSpinnerFrame(0);
       return;
     }
@@ -557,12 +611,7 @@ function View(props: { context: Context }) {
 
   const clock = setInterval(() => setNow(Date.now()), 60_000);
   clock.unref?.();
-  void refresh();
-  onCleanup(() => {
-    controller?.abort();
-    clearTimeout(refreshTimer);
-    clearInterval(clock);
-  });
+  onCleanup(() => clearInterval(clock));
 
   return (
     <box>
@@ -570,9 +619,9 @@ function View(props: { context: Context }) {
         <box
           flexDirection="row"
           gap={1}
-          onMouseDown={() => setOpen((value) => !value)}
+          onMouseDown={() => props.setOpen(!props.state.open)}
         >
-          <text fg={theme.text.default}>{open() ? "▼" : "▶"}</text>
+          <text fg={theme.text.default}>{props.state.open ? "▼" : "▶"}</text>
           <text fg={theme.text.default}>
             <b>Usage</b>
             <span style={{ fg: theme.text.subdued }}> ({connected()}/2)</span>
@@ -580,26 +629,26 @@ function View(props: { context: Context }) {
         </box>
         <text
           fg={
-            refreshing()
+            props.state.refreshing
               ? theme.text.feedback.warning.default
               : theme.text.subdued
           }
-          onMouseUp={() => void refresh()}
+          onMouseUp={() => void props.refresh()}
         >
-          {refreshing() ? SPINNER_FRAMES[spinnerFrame()] : "󰑐"}
+          {props.state.refreshing ? SPINNER_FRAMES[spinnerFrame()] : "󰑐"}
         </text>
       </box>
-      <Show when={open()}>
+      <Show when={props.state.open}>
         <ProviderCard
           context={props.context}
           name="OpenAI Codex"
-          state={codex()}
+          state={props.state.codex}
           now={now()}
         />
         <ProviderCard
           context={props.context}
           name="xAI Grok"
-          state={xai()}
+          state={props.state.xai}
           now={now()}
         />
       </Show>
@@ -610,10 +659,78 @@ function View(props: { context: Context }) {
 const plugin = {
   id: "dotfiles.ai-usage-sidebar",
   setup(context: Context) {
-    context.ui.slot({
-      append: "sidebar.content",
-      render: () => <View context={context} />,
+    const [state, updateState] = context.storage.memory<UsageState>("usage", {
+      initial: {
+        codex: { status: "loading" },
+        xai: { status: "loading" },
+        refreshing: false,
+        updatedAt: 0,
+        open: true,
+      },
     });
+    updateState((draft) => {
+      draft.refreshing = false;
+    });
+    let controller: AbortController | undefined;
+    let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const schedule = (delay = REFRESH_MS) => {
+      clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(() => void refresh(), delay);
+      refreshTimer.unref?.();
+    };
+    const refresh = async () => {
+      controller?.abort();
+      controller = new AbortController();
+      const signal = controller.signal;
+      updateState((draft) => {
+        draft.refreshing = true;
+      });
+      const [codexResult, xaiResult] = await Promise.allSettled([
+        fetchCodexUsage(signal),
+        fetchXaiUsage(signal),
+      ]);
+      if (signal.aborted) return;
+      updateState((draft) => {
+        draft.codex =
+          codexResult.status === "fulfilled"
+            ? { status: "ready", snapshot: codexResult.value }
+            : { status: "error", message: errorMessage(codexResult.reason) };
+        draft.xai =
+          xaiResult.status === "fulfilled"
+            ? { status: "ready", snapshot: xaiResult.value }
+            : { status: "error", message: errorMessage(xaiResult.reason) };
+        draft.refreshing = false;
+        draft.updatedAt = Date.now();
+      });
+      schedule();
+    };
+
+    const unregister = context.ui.slot({
+      append: "sidebar.content",
+      render: () => (
+        <View
+          context={context}
+          state={state}
+          refresh={refresh}
+          setOpen={(open) =>
+            updateState((draft) => {
+              draft.open = open;
+            })
+          }
+        />
+      ),
+    });
+
+    const age = Date.now() - state.updatedAt;
+    if (state.updatedAt && age < REFRESH_MS) schedule(REFRESH_MS - age);
+    else void refresh();
+
+    return () => {
+      controller?.abort();
+      clearTimeout(refreshTimer);
+      unregister();
+    };
   },
 };
 
