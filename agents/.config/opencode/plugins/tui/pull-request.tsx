@@ -49,6 +49,16 @@ type CommandResult = {
   code: number
 }
 
+type ProjectState = {
+  pullRequest: PullRequest | undefined
+  pullRequestOpen: boolean
+  checksOpen: boolean
+  warning: boolean
+  updatedAt: number
+}
+
+type PullRequestCache = Record<string, ProjectState>
+
 function run(command: string, args: string[], cwd: string, signal: AbortSignal, accepted = [0]) {
   return new Promise<CommandResult>((resolve, reject) => {
     const child = spawn(command, args, {
@@ -108,17 +118,44 @@ function label(value: string, fallback: string) {
     .join(" ")
 }
 
-function View(props: { context: Context; sessionID: string }) {
+function initialProjectState(): ProjectState {
+  return {
+    pullRequest: undefined,
+    pullRequestOpen: true,
+    checksOpen: false,
+    warning: false,
+    updatedAt: 0,
+  }
+}
+
+function View(props: {
+  context: Context
+  sessionID: string
+  cache: PullRequestCache
+  updateCache: (update: (draft: PullRequestCache) => void) => void
+}) {
   const theme = props.context.theme
-  const [pullRequest, setPullRequest] = createSignal<PullRequest>()
-  const [pullRequestOpen, setPullRequestOpen] = createSignal(true)
-  const [checksOpen, setChecksOpen] = createSignal(false)
   const [refreshing, setRefreshing] = createSignal(false)
   const [spinnerFrame, setSpinnerFrame] = createSignal(0)
-  const [warning, setWarning] = createSignal(false)
   const session = createMemo(() => props.context.data.session.get(props.sessionID))
   const location = createMemo(() => session()?.location)
   const branch = createMemo(() => props.context.data.location.vcs.info(location())?.branch.current)
+  const cacheKey = createMemo(
+    () => `${location()?.directory ?? ""}\0${location()?.workspaceID ?? ""}\0${branch() ?? ""}`,
+  )
+  const project = createMemo(() => props.cache[cacheKey()])
+  const pullRequest = () => project()?.pullRequest
+  const pullRequestOpen = () => project()?.pullRequestOpen ?? true
+  const checksOpen = () => project()?.checksOpen ?? false
+  const warning = () => project()?.warning ?? false
+  const updateProject = (update: (draft: ProjectState) => void) => {
+    const key = cacheKey()
+    if (!location()) return
+    props.updateCache((draft) => {
+      const current = draft[key] ?? (draft[key] = initialProjectState())
+      update(current)
+    })
+  }
   const refreshCommands = new Set<string>()
   let timer: ReturnType<typeof setTimeout> | undefined
   let controller: AbortController | undefined
@@ -183,8 +220,11 @@ function View(props: { context: Context; sessionID: string }) {
 
       if (currentGeneration !== generation || currentRequest !== request) return
       if (!item) {
-        setPullRequest(undefined)
-        setWarning(false)
+        updateProject((draft) => {
+          draft.pullRequest = undefined
+          draft.warning = false
+          draft.updatedAt = Date.now()
+        })
         schedule(IDLE_REFRESH_MS)
         return
       }
@@ -202,12 +242,18 @@ function View(props: { context: Context; sessionID: string }) {
       }
 
       if (currentGeneration !== generation || currentRequest !== request) return
-      setPullRequest({ ...item, checks })
-      setWarning(false)
+      updateProject((draft) => {
+        draft.pullRequest = { ...item, checks }
+        draft.warning = false
+        draft.updatedAt = Date.now()
+      })
       schedule(checks.some((check) => check.bucket === "pending") ? PENDING_REFRESH_MS : IDLE_REFRESH_MS)
     } catch (error) {
       if (signal.aborted || currentGeneration !== generation || currentRequest !== request) return
-      setWarning(Boolean(pullRequest()))
+      updateProject((draft) => {
+        draft.warning = Boolean(draft.pullRequest)
+        draft.updatedAt = Date.now()
+      })
       const pending = pullRequest()?.checks.some((check) => check.bucket === "pending")
       schedule(pending ? PENDING_REFRESH_MS : IDLE_REFRESH_MS)
     } finally {
@@ -227,20 +273,22 @@ function View(props: { context: Context; sessionID: string }) {
 
   createEffect(
     on(
-      () => `${location()?.directory ?? ""}\0${location()?.workspaceID ?? ""}\0${branch() ?? ""}`,
+      cacheKey,
       () => {
         generation++
         request++
         controller?.abort()
         clearTimer()
-        setPullRequest(undefined)
-        setWarning(false)
-        setPullRequestOpen(true)
-        setChecksOpen(false)
         const current = location()
         if (!current) return
         void props.context.data.location.vcs.sync(current)
-        void refresh()
+        const cached = project()
+        const delay = cached?.pullRequest?.checks.some((check) => check.bucket === "pending")
+          ? PENDING_REFRESH_MS
+          : IDLE_REFRESH_MS
+        const age = Date.now() - (cached?.updatedAt ?? 0)
+        if (cached?.updatedAt && age < delay) schedule(delay - age)
+        else void refresh()
       },
     ),
   )
@@ -260,8 +308,8 @@ function View(props: { context: Context; sessionID: string }) {
       refreshCommands.add(event.data.info.id)
     }),
     props.context.data.on("shell.exited", (event) => {
-      const refresh = refreshCommands.delete(event.data.id)
-      if (!refresh || event.data.status !== "exited" || event.data.exit !== 0) return
+      const shouldRefresh = refreshCommands.delete(event.data.id)
+      if (!shouldRefresh || event.data.status !== "exited" || event.data.exit !== 0) return
       void refresh()
     }),
     props.context.data.on("shell.deleted", (event) => refreshCommands.delete(event.data.id)),
@@ -325,7 +373,12 @@ function View(props: { context: Context; sessionID: string }) {
         <box
           flexDirection="row"
           gap={1}
-          onMouseDown={() => pullRequest() && setPullRequestOpen((value) => !value)}
+          onMouseDown={() =>
+            pullRequest() &&
+            updateProject((draft) => {
+              draft.pullRequestOpen = !draft.pullRequestOpen
+            })
+          }
         >
           <Show when={pullRequest()}>
             <text fg={refreshing() ? theme.text.subdued : theme.text.default}>{pullRequestOpen() ? "▼" : "▶"}</text>
@@ -393,7 +446,15 @@ function View(props: { context: Context; sessionID: string }) {
 
             <Show when={item().state === "OPEN"}>
               <box paddingTop={1}>
-                <box flexDirection="row" gap={1} onMouseDown={() => setChecksOpen((value) => !value)}>
+                <box
+                  flexDirection="row"
+                  gap={1}
+                  onMouseDown={() =>
+                    updateProject((draft) => {
+                      draft.checksOpen = !draft.checksOpen
+                    })
+                  }
+                >
                   <text fg={theme.text.default}>{checksOpen() ? "▼" : "▶"}</text>
                   <text fg={theme.text.default}>
                     <b>Checks</b>
@@ -453,9 +514,12 @@ function View(props: { context: Context; sessionID: string }) {
 export default {
   id: "dotfiles.pull-request-sidebar",
   setup(context) {
-    context.ui.slot({
+    const [cache, updateCache] = context.storage.memory<PullRequestCache>("projects", { initial: {} })
+    return context.ui.slot({
       append: "sidebar.content",
-      render: (props) => <View context={context} sessionID={props.sessionID} />,
+      render: (props) => (
+        <View context={context} sessionID={props.sessionID} cache={cache} updateCache={updateCache} />
+      ),
     })
   },
 }

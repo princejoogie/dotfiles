@@ -12,6 +12,7 @@ return {
   cmd = "DiffviewOpen",
   opts = {
     view = {
+      default = { layout = "diff1_inline" },
       cycle_layouts = {
         default = { "diff2_horizontal", "diff1_inline" },
       },
