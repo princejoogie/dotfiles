@@ -14,8 +14,8 @@
   },
   "animations": true,
   "keybinds": {
-    "session.tab.next": "ctrl+tab,<leader>right,<leader>j,alt+shift+]",
-    "session.tab.previous": "ctrl+shift+tab,<leader>left,<leader>k,alt+shift+["
+    "session.tab.next": "<leader>j",
+    "session.tab.previous": "<leader>k"
   },
   "tabs": {
     "enabled": false,
