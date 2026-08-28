@@ -5,7 +5,7 @@
     }
   },
   "mcpServers": {
-    "grep_app": {
+    "grep-app": {
       "type": "http",
       "url": "https://mcp.grep.app"
     },
@@ -13,12 +13,17 @@
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
     },
+    "shadcn": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
+    },
     "computer-use": {
       "type": "stdio",
       "command": "/Users/pjuguilon/.local/bin/cua-driver",
       "args": ["mcp"]
     },
-    "opentelemetry-mcp": {
+    "otel-mcp": {
       "type": "stdio",
       "command": "uvx",
       "args": ["opentelemetry-mcp"],
