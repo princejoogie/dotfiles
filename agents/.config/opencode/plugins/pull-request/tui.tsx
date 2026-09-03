@@ -4,90 +4,19 @@ import type { Context } from "@opencode-ai/plugin/tui/context"
 import { For, Show, createEffect, createMemo, createSignal, on, onCleanup } from "solid-js"
 import { spawn } from "node:child_process"
 import { isAbsolute, relative } from "node:path"
+import { PullRequestRpc } from "./rpc"
+import type { Check, PullRequest, PullRequestResponse, Review } from "./rpc"
 
 const IDLE_REFRESH_MS = 30 * 60 * 1000
 const PENDING_REFRESH_MS = 10 * 1000
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 
-type PullRequest = {
-  number: number
-  title: string
-  url: string
-  state: "OPEN" | "CLOSED" | "MERGED"
-  isDraft: boolean
-  headRefName: string
-  baseRefName: string
-  additions: number
-  deletions: number
-  changedFiles: number
-  mergeable: string
-  reviewDecision: string
-  reviews: Review[]
-  checks: Check[]
-}
-
-type Review = {
-  author: { login: string }
-  state: string
-  submittedAt: string
-}
-
-type Check = {
-  name: string
-  state: string
-  bucket: "pass" | "fail" | "pending" | "skipping" | "cancel"
-  link: string
-}
-
-type PullRequestResult = Omit<PullRequest, "checks"> & {
-  headRepositoryOwner?: { login: string }
-}
-
-type CommandResult = {
-  stdout: string
-  stderr: string
-  code: number
-}
-
 type ProjectState = {
-  pullRequest: PullRequest | undefined
   pullRequestOpen: boolean
   checksOpen: boolean
-  warning: boolean
-  updatedAt: number
 }
 
-type PullRequestCache = Record<string, ProjectState>
-
-function run(command: string, args: string[], cwd: string, signal: AbortSignal, accepted = [0]) {
-  return new Promise<CommandResult>((resolve, reject) => {
-    const child = spawn(command, args, {
-      cwd,
-      signal,
-      stdio: ["ignore", "pipe", "pipe"],
-    })
-    let stdout = ""
-    let stderr = ""
-    let settled = false
-
-    child.stdout.setEncoding("utf8")
-    child.stderr.setEncoding("utf8")
-    child.stdout.on("data", (chunk) => (stdout += chunk))
-    child.stderr.on("data", (chunk) => (stderr += chunk))
-    child.once("error", (error) => {
-      if (settled) return
-      settled = true
-      reject(error)
-    })
-    child.once("close", (code) => {
-      if (settled) return
-      settled = true
-      const exit = code ?? 1
-      if (accepted.includes(exit)) return resolve({ stdout: stdout.trim(), stderr: stderr.trim(), code: exit })
-      reject(new Error(stderr.trim() || `${command} exited with code ${exit}`))
-    })
-  })
-}
+type ProjectStateCache = Record<string, ProjectState>
 
 function openURL(url: string) {
   const command = process.platform === "darwin" ? "open" : process.platform === "win32" ? "cmd" : "xdg-open"
@@ -105,10 +34,6 @@ function pullRequestCreate(command: string) {
   return /\bgh\b(?:\s+(?:"[^"]*"|'[^']*'|[^\s;&|]+))*\s+pr\s+create\b/.test(command)
 }
 
-function remoteOwner(remote: string) {
-  return remote.replace(/\/$/, "").match(/[:/]([^/:]+)\/[^/]+(?:\.git)?$/)?.[1]
-}
-
 function label(value: string, fallback: string) {
   if (!value) return fallback
   return value
@@ -120,21 +45,20 @@ function label(value: string, fallback: string) {
 
 function initialProjectState(): ProjectState {
   return {
-    pullRequest: undefined,
     pullRequestOpen: true,
     checksOpen: false,
-    warning: false,
-    updatedAt: 0,
   }
 }
 
 function View(props: {
   context: Context
   sessionID: string
-  cache: PullRequestCache
-  updateCache: (update: (draft: PullRequestCache) => void) => void
+  cache: ProjectStateCache
+  updateCache: (update: (draft: ProjectStateCache) => void) => void
 }) {
   const theme = props.context.theme
+  const rpc = props.context.client.rpc(PullRequestRpc)
+  const [result, setResult] = createSignal<PullRequestResponse>()
   const [refreshing, setRefreshing] = createSignal(false)
   const [spinnerFrame, setSpinnerFrame] = createSignal(0)
   const session = createMemo(() => props.context.data.session.get(props.sessionID))
@@ -144,10 +68,10 @@ function View(props: {
     () => `${location()?.directory ?? ""}\0${location()?.workspaceID ?? ""}\0${branch() ?? ""}`,
   )
   const project = createMemo(() => props.cache[cacheKey()])
-  const pullRequest = () => project()?.pullRequest
+  const pullRequest = () => result()?.pullRequest ?? undefined
   const pullRequestOpen = () => project()?.pullRequestOpen ?? true
   const checksOpen = () => project()?.checksOpen ?? false
-  const warning = () => project()?.warning ?? false
+  const warning = () => result()?.warning ?? false
   const updateProject = (update: (draft: ProjectState) => void) => {
     const key = cacheKey()
     if (!location()) return
@@ -170,13 +94,16 @@ function View(props: {
 
   const schedule = (delay: number) => {
     clearTimer()
-    timer = setTimeout(() => void refresh(), delay)
+    timer = setTimeout(() => void refresh(true), delay)
     timer.unref?.()
   }
 
-  const refresh = async () => {
-    const cwd = location()?.directory
-    if (!cwd) return
+  const delayFor = (item: PullRequest | null | undefined) =>
+    item?.checks.some((check) => check.bucket === "pending") ? PENDING_REFRESH_MS : IDLE_REFRESH_MS
+
+  const refresh = async (force: boolean) => {
+    const current = location()
+    if (!current) return
 
     clearTimer()
     controller?.abort()
@@ -184,78 +111,39 @@ function View(props: {
     const signal = controller.signal
     const currentGeneration = generation
     const currentRequest = ++request
+    const currentBranch = branch()
     setRefreshing(true)
 
     try {
-      const branchResult = await run("git", ["branch", "--show-current"], cwd, signal)
-      if (!branchResult.stdout) throw new Error("No branch is checked out")
-      const originResult = await run("git", ["remote", "get-url", "origin"], cwd, signal)
-      const owner = remoteOwner(originResult.stdout)
-      if (!owner) throw new Error("Could not identify the origin owner")
-
-      const fields = [
-        "number",
-        "title",
-        "url",
-        "state",
-        "isDraft",
-        "headRefName",
-        "baseRefName",
-        "additions",
-        "deletions",
-        "changedFiles",
-        "mergeable",
-        "reviewDecision",
-        "reviews",
-        "headRepositoryOwner",
-      ].join(",")
-      const result = await run(
-        "gh",
-        ["pr", "list", "--head", branchResult.stdout, "--state", "all", "--limit", "100", "--json", fields],
-        cwd,
-        signal,
-      )
-      const list = JSON.parse(result.stdout) as PullRequestResult[]
-      const item = list.find((candidate) => candidate.headRepositoryOwner?.login === owner)
-
+      const response = (await rpc.get(
+        { refresh: force, ...(currentBranch ? { branch: currentBranch } : {}) },
+        {
+          signal,
+          location: {
+            directory: current.directory,
+            ...(current.workspaceID ? { workspace: current.workspaceID } : {}),
+          },
+        },
+      )) as PullRequestResponse
       if (currentGeneration !== generation || currentRequest !== request) return
-      if (!item) {
-        updateProject((draft) => {
-          draft.pullRequest = undefined
-          draft.warning = false
-          draft.updatedAt = Date.now()
-        })
-        schedule(IDLE_REFRESH_MS)
+      setResult(response)
+      const delay = delayFor(response.pullRequest)
+      const age = Date.now() - response.updatedAt
+      if (!force && age >= delay) {
+        void refresh(true)
         return
       }
-
-      let checks: Check[] = []
-      if (item.state === "OPEN") {
-        const checkResult = await run(
-          "gh",
-          ["pr", "checks", String(item.number), "--json", "name,state,bucket,link"],
-          cwd,
-          signal,
-          [0, 8],
-        )
-        checks = JSON.parse(checkResult.stdout || "[]") as Check[]
-      }
-
-      if (currentGeneration !== generation || currentRequest !== request) return
-      updateProject((draft) => {
-        draft.pullRequest = { ...item, checks }
-        draft.warning = false
-        draft.updatedAt = Date.now()
-      })
-      schedule(checks.some((check) => check.bucket === "pending") ? PENDING_REFRESH_MS : IDLE_REFRESH_MS)
-    } catch (error) {
+      schedule(Math.max(0, delay - age))
+    } catch {
       if (signal.aborted || currentGeneration !== generation || currentRequest !== request) return
-      updateProject((draft) => {
-        draft.warning = Boolean(draft.pullRequest)
-        draft.updatedAt = Date.now()
-      })
-      const pending = pullRequest()?.checks.some((check) => check.bucket === "pending")
-      schedule(pending ? PENDING_REFRESH_MS : IDLE_REFRESH_MS)
+      const currentResult = result()
+      const failed = {
+        pullRequest: currentResult?.pullRequest ?? null,
+        warning: Boolean(currentResult?.pullRequest),
+        updatedAt: Date.now(),
+      }
+      setResult(failed)
+      schedule(delayFor(failed.pullRequest))
     } finally {
       if (currentRequest === request) setRefreshing(false)
     }
@@ -279,16 +167,11 @@ function View(props: {
         request++
         controller?.abort()
         clearTimer()
+        setResult(undefined)
         const current = location()
         if (!current) return
         void props.context.data.location.vcs.sync(current)
-        const cached = project()
-        const delay = cached?.pullRequest?.checks.some((check) => check.bucket === "pending")
-          ? PENDING_REFRESH_MS
-          : IDLE_REFRESH_MS
-        const age = Date.now() - (cached?.updatedAt ?? 0)
-        if (cached?.updatedAt && age < delay) schedule(delay - age)
-        else void refresh()
+        void refresh(false)
       },
     ),
   )
@@ -310,7 +193,7 @@ function View(props: {
     props.context.data.on("shell.exited", (event) => {
       const shouldRefresh = refreshCommands.delete(event.data.id)
       if (!shouldRefresh || event.data.status !== "exited" || event.data.exit !== 0) return
-      void refresh()
+      void refresh(true)
     }),
     props.context.data.on("shell.deleted", (event) => refreshCommands.delete(event.data.id)),
   ]
@@ -399,7 +282,7 @@ function View(props: {
           </Show>
           <text
             fg={refreshing() ? theme.text.feedback.warning.default : theme.text.subdued}
-            onMouseUp={() => void refresh()}
+            onMouseUp={() => void refresh(true)}
           >
             {refreshing() ? SPINNER_FRAMES[spinnerFrame()] : "󰑐"}
           </text>
@@ -512,9 +395,9 @@ function View(props: {
 }
 
 export default {
-  id: "dotfiles.pull-request-sidebar",
-  setup(context) {
-    const [cache, updateCache] = context.storage.memory<PullRequestCache>("projects", { initial: {} })
+  id: "dotfiles.pull-request",
+  setup(context: Context) {
+    const [cache, updateCache] = context.storage.memory<ProjectStateCache>("projects", { initial: {} })
     return context.ui.slot({
       append: "sidebar.content",
       render: (props) => (
