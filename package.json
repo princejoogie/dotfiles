@@ -1,0 +1,16 @@
+{
+  "name": "opencode-usage",
+  "version": "0.1.0",
+  "description": "Shows OpenAI Codex and xAI Grok usage in the OpenCode sidebar.",
+  "type": "module",
+  "exports": {
+    ".": "./server.ts",
+    "./tui": "./tui.tsx",
+    "./rpc": "./rpc.ts"
+  },
+  "files": [
+    "server.ts",
+    "tui.tsx",
+    "rpc.ts"
+  ]
+}
