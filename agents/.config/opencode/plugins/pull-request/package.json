@@ -1,0 +1,16 @@
+{
+  "name": "opencode-pull-request",
+  "version": "0.1.0",
+  "description": "Shows the current branch's GitHub pull request, reviews, and checks in the OpenCode sidebar.",
+  "type": "module",
+  "exports": {
+    ".": "./server.ts",
+    "./tui": "./tui.tsx",
+    "./rpc": "./rpc.ts"
+  },
+  "files": [
+    "server.ts",
+    "tui.tsx",
+    "rpc.ts"
+  ]
+}
