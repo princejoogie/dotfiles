@@ -1,0 +1,29 @@
+name: Publish OpenCode plugin branches
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - agents/.config/opencode/plugins/pull-request/**
+      - agents/.config/opencode/plugins/usage/**
+      - .github/workflows/publish-opencode-plugins.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+      - name: Publish pull request plugin
+        run: |
+          git subtree split --prefix=agents/.config/opencode/plugins/pull-request -b publish-pull-request
+          git push origin publish-pull-request:opencode-plugin-pull-request --force
+      - name: Publish usage plugin
+        run: |
+          git subtree split --prefix=agents/.config/opencode/plugins/usage -b publish-usage
+          git push origin publish-usage:opencode-plugin-usage --force
