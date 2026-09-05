@@ -18,7 +18,7 @@
       "command": "npx",
       "args": ["shadcn@latest", "mcp"]
     },
-    "computer-use": {
+    "cua-driver": {
       "type": "stdio",
       "command": "/Users/pjuguilon/.local/bin/cua-driver",
       "args": ["mcp"]
