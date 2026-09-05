@@ -73,26 +73,26 @@ description = "navigate right across Neovim and Herdr panes"
 [[keys.command]]
 key = "ctrl+left"
 type = "shell"
-command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direction left'
-description = "resize pane left"
+command = 'herdr_resize left'
+description = "resize left across Neovim and Herdr panes"
 
 [[keys.command]]
 key = "ctrl+down"
 type = "shell"
-command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direction down'
-description = "resize pane down"
+command = 'herdr_resize down'
+description = "resize down across Neovim and Herdr panes"
 
 [[keys.command]]
 key = "ctrl+up"
 type = "shell"
-command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direction up'
-description = "resize pane up"
+command = 'herdr_resize up'
+description = "resize up across Neovim and Herdr panes"
 
 [[keys.command]]
 key = "ctrl+right"
 type = "shell"
-command = '"$HERDR_BIN_PATH" pane resize --pane "$HERDR_ACTIVE_PANE_ID" --direction right'
-description = "resize pane right"
+command = 'herdr_resize right'
+description = "resize right across Neovim and Herdr panes"
 
 [[keys.command]]
 key = "prefix+cmd+b"

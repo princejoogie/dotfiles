@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -eu
+
+direction=${1:?usage: herdr_resize left|down|up|right}
+
+case "$direction" in
+  left) key=ctrl+left ;;
+  down) key=ctrl+down ;;
+  up) key=ctrl+up ;;
+  right) key=ctrl+right ;;
+  *)
+    printf 'herdr_resize: invalid direction: %s\n' "$direction" >&2
+    exit 2
+    ;;
+esac
+
+herdr=${HERDR_BIN_PATH:-herdr}
+pane_id=${HERDR_ACTIVE_PANE_ID:-${HERDR_PANE_ID:-}}
+
+if [ -z "$pane_id" ]; then
+  printf 'herdr_resize: missing Herdr pane ID\n' >&2
+  exit 1
+fi
+
+process_info=$("$herdr" pane process-info --pane "$pane_id")
+
+if printf '%s\n' "$process_info" | jq -e '
+  any(
+    .result.process_info.foreground_processes[]?;
+    ((.name // "") | test("^(g?view|n?vim)(diff)?$"; "i")) or
+    ((.argv0 // "") | split("/") | last | test("^(g?view|n?vim)(diff)?$"; "i"))
+  )
+' >/dev/null; then
+  "$herdr" pane send-keys "$pane_id" "$key" >/dev/null
+else
+  "$herdr" pane resize --pane "$pane_id" --direction "$direction" >/dev/null
+fi
