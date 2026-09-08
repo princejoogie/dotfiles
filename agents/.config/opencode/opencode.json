@@ -54,7 +54,7 @@
       ],
       "enabled": true
     },
-    "computer-use": {
+    "cua-driver": {
       "type": "local",
       "command": [
         "/Users/pjuguilon/.local/bin/cua-driver",

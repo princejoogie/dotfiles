@@ -1,9 +1,4 @@
 {
-  "clientAliases": {
-    "codex": {
-      "computer-use": "cua-driver"
-    }
-  },
   "mcpServers": {
     "grep-app": {
       "type": "http",
@@ -21,7 +16,8 @@
     "cua-driver": {
       "type": "stdio",
       "command": "/Users/pjuguilon/.local/bin/cua-driver",
-      "args": ["mcp"]
+      "args": ["mcp"],
+      "clients": ["opencode"]
     },
     "otel-mcp": {
       "type": "stdio",

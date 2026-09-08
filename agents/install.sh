@@ -83,7 +83,9 @@ else
   jq --slurpfile src "$SRC" '
     def fixenv: gsub("\\$\\{(?<v>[A-Za-z_][A-Za-z0-9_]*)\\}"; "{env:\(.v)}");
     def fixval: if type=="string" then fixenv else . end;
-    .mcp = ($src[0].mcpServers | with_entries(.value |= (
+    .mcp = ($src[0].mcpServers | with_entries(
+      select((.value.clients // ["opencode", "claude", "codex"]) | index("opencode")) |
+      .value |= (
       if (.type=="http" or .type=="sse" or has("url"))
       then {type:"remote", url:(.url|fixenv)}
            + (if .headers then {headers:(.headers|map_values(fixval))} else {} end)
@@ -97,9 +99,15 @@ else
   CJ="$HOME/.claude.json"
   if [ -f "$CJ" ]; then
     cp "$CJ" "$CJ.agents-bak"
-    jq --slurpfile src "$SRC" '.mcpServers = $src[0].mcpServers' "$CJ" >"$CJ.tmp" && mv "$CJ.tmp" "$CJ"
+    jq --slurpfile src "$SRC" '
+      .mcpServers = ($src[0].mcpServers | with_entries(
+        select((.value.clients // ["opencode", "claude", "codex"]) | index("claude")) |
+        .value |= del(.clients)))
+    ' "$CJ" >"$CJ.tmp" && mv "$CJ.tmp" "$CJ"
   else
-    jq -n --slurpfile src "$SRC" '{mcpServers: $src[0].mcpServers}' >"$CJ"
+    jq -n --slurpfile src "$SRC" '{mcpServers: ($src[0].mcpServers | with_entries(
+      select((.value.clients // ["opencode", "claude", "codex"]) | index("claude")) |
+      .value |= del(.clients)))}' >"$CJ"
   fi
   log "claude: $(jq '.mcpServers|length' "$CJ") servers -> ~/.claude.json"
 
@@ -112,7 +120,9 @@ else
   block=$(jq -r '
     def esc: gsub("\\\\";"\\\\") | gsub("\"";"\\\"");
     . as $root |
-    .mcpServers | to_entries[] |
+    .mcpServers |
+    with_entries(select((.value.clients // ["opencode", "claude", "codex"]) | index("codex"))) |
+    to_entries[] |
     ($root.clientAliases.codex[.key] // .key) as $name |
     "[mcp_servers.\($name)]",
     ( .value as $v |
@@ -129,7 +139,7 @@ else
   awk -v b="$BEGIN" -v e="$END" '$0==b{s=1} s&&$0==e{s=0;next} !s{print}' "$CC" >"$CC.tmp"
   { cat "$CC.tmp"; printf '\n%s\n%s\n%s\n' "$BEGIN" "$block" "$END"; } >"$CC"
   rm -f "$CC.tmp"
-  log "codex: $(jq '.mcpServers|length' "$SRC") servers -> ~/.codex/config.toml block"
+  log "codex: $(jq '[.mcpServers[] | select((.clients // ["opencode", "claude", "codex"]) | index("codex"))] | length' "$SRC") servers -> ~/.codex/config.toml block"
 fi
 
 hdr "done"

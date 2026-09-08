@@ -28,3 +28,10 @@ renders the per-tool formats:
 
 Use `clientAliases.<client>.<server>` in `mcp/servers.json` when a client has a
 conflicting built-in server name.
+
+To limit a server to specific clients, add a `clients` allowlist. Servers without
+one are installed for all clients:
+
+```json
+"clients": ["opencode"]
+```
