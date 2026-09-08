@@ -18,6 +18,20 @@
             "input": 922000,
             "output": 128000
           }
+        },
+        "gpt-6-astra": {
+          "limit": {
+            "context": 1050000,
+            "input": 922000,
+            "output": 128000
+          }
+        },
+        "gpt-6-astra-fast": {
+          "limit": {
+            "context": 1050000,
+            "input": 922000,
+            "output": 128000
+          }
         }
       }
     },
