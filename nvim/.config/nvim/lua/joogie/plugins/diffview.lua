@@ -3,8 +3,7 @@ local toggle_diffview = utils.toggle_diffview
 local cmd = utils.cmd
 
 return {
-  "princejoogie/diffview-plus.nvim",
-  dir = "~/Documents/codes/github/diffview-plus.nvim",
+  "dlyongemallo/diffview-plus.nvim",
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-tree/nvim-web-devicons",
