@@ -121,9 +121,6 @@ kitty_graphics = true
 [worktrees]
 directory = "~/.worktrees"
 
-[[worktrees.hooks.after_create]]
-command = ["sh", "-c", "if [ -f scripts/setup-worktree.sh ]; then bash scripts/setup-worktree.sh; fi"]
-
 [theme]
 name = "vesper"
 auto_switch = false
