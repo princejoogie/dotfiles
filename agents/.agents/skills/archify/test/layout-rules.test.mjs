@@ -214,6 +214,9 @@ const CASES = [
     (d) => { d.messages[0].y = 9000; }, ['outside the readable timeline', 'keep y between']],
   ['sequence: segment to <= from', 'sequence',
     (d) => { d.segments = [{ from: 400, to: 300, label: 'bad' }]; }, ['invalid y range', 'greater than']],
+  ['sequence: segment label exceeds segment frame available width', 'sequence',
+    (d) => { d.segments[0].label = 'Long Segment Label '.repeat(10); },
+    ['exceeds the segment frame\'s available width', 'increase meta.viewBox[0]']],
   ['sequence: participant sublabel wider than its legible minimum', 'sequence',
     (d) => { d.participants[0].sublabel = 'This supporting sentence is far too long for one sequence participant'; },
     ['Sublabel', 'legible', 'shorten the sublabel']],
@@ -554,7 +557,10 @@ test('architecture: boundary title masks cannot obscure connection labels', () =
 const SHRINK_CASES = [
   // [mode, mutate(doc), preferredFontSize, selector for the sublabel <text>]
   ['architecture', (d) => { d.components[0].sublabel = 'Browser and mobile apps'; }, 9],
-  ['sequence', (d) => { d.participants[0].sublabel = 'long browser session'; }, 7],
+  ['sequence', (d) => {
+    d.meta.column_fit = 'fixed';
+    d.participants[0].sublabel = 'long browser session';
+  }, 7],
   ['dataflow', (d) => { d.nodes[0].sublabel = 'browser SDK and mobile SDK'; }, 7],
   ['lifecycle', (d) => { d.states[0].sublabel = 'request accepted and queued'; }, 7],
 ];
@@ -582,7 +588,7 @@ const TAG_SHRINK_CASES = [
   ['architecture', 'components', 'owner: platform operations team', 7],
   ['dataflow', 'nodes', 'owner: analytics platform', 7],
   ['lifecycle', 'states', 'owner: platform operations pod', 7],
-  ['workflow', 'nodes', 'owner: runtime squad A', 7],
+  ['workflow', 'nodes', 'owner: runtime execution squad A', 7],
 ];
 
 for (const [mode, collection, tag, preferred] of TAG_SHRINK_CASES) {
@@ -928,6 +934,7 @@ test('workflow: explicit labelAt remains authoritative on an automatic one-bend 
 
 test('workflow: bounded font fitting keeps an ordinary long sublabel inside its node', () => {
   const d = load('workflow');
+  d.nodes[0].width = 92;
   d.nodes[0].sublabel = 'shell / browser / MCP';
   const { code, stderr, outPath } = render('workflow', d);
   assert.equal(code, 0, stderr);
@@ -1011,12 +1018,34 @@ test('architecture: showcase rejects a connection label that hides another route
 });
 
 test('workflow: showcase rejects an edge label that hides another route', () => {
-  const d = load('workflow');
-  d.edges.find((edge) => edge.id === 'plan-request').labelAt = [562, 491];
+  const d = {
+    schema_version: 1,
+    diagram_type: 'workflow',
+    meta: {
+      title: 'Workflow label-route clearance',
+      quality_profile: 'showcase',
+      viewBox: [720, 400],
+      legend: { mode: 'hidden' },
+    },
+    lanes: [
+      { id: 'label', label: 'Label owner' },
+      { id: 'route', label: 'Other route' },
+    ],
+    nodes: [
+      { id: 'a', lane: 'label', col: 0, type: 'backend', label: 'A' },
+      { id: 'b', lane: 'label', col: 2, type: 'backend', label: 'B' },
+      { id: 'c', lane: 'route', col: 0, type: 'backend', label: 'C' },
+      { id: 'd', lane: 'route', col: 2, type: 'backend', label: 'D' },
+    ],
+    edges: [
+      { id: 'labeled-edge', from: 'a', to: 'b', label: 'plan', labelAt: [200, 243] },
+      { id: 'other-route', from: 'c', to: 'd' },
+    ],
+  };
   const { code, stderr } = render('workflow', d);
   assert.notEqual(code, 0, `expected non-zero exit; stderr:\n${stderr}`);
   assert.match(stderr, /\[composition\/label-route-clearance\] showcase workflow/);
-  assert.match(stderr, /plan.*retry-request/);
+  assert.match(stderr, /plan.*other-route/);
 });
 
 test('lifecycle: showcase rejects a transition label that hides another route', () => {
@@ -1194,6 +1223,32 @@ test('architecture: showcase rejects an unrelated proper edge crossing', () => {
   assert.match(stderr, /route\/via|fromSide\/toSide/);
 });
 
+test('architecture: showcase preserves a straight-through explicit waypoint as an authored touch', () => {
+  const d = {
+    schema_version: 1,
+    diagram_type: 'architecture',
+    meta: {
+      title: 'Forward-collinear waypoint compatibility',
+      quality_profile: 'showcase',
+      viewBox: [600, 320],
+      legend: { mode: 'hidden' },
+    },
+    components: [
+      { id: 'a', type: 'backend', label: 'A', pos: [50, 100], size: [80, 60] },
+      { id: 'b', type: 'backend', label: 'B', pos: [450, 100], size: [80, 60] },
+      { id: 'c', type: 'backend', label: 'C', pos: [260, 0], size: [80, 60] },
+      { id: 'd', type: 'backend', label: 'D', pos: [260, 200], size: [80, 60] },
+    ],
+    connections: [
+      { id: 'horizontal', from: 'a', to: 'b', via: [[300, 130]] },
+      { id: 'vertical', from: 'c', to: 'd' },
+    ],
+  };
+
+  const { code, stderr } = render('architecture', d);
+  assert.equal(code, 0, stderr);
+});
+
 test('architecture: standard keeps the same proper crossing renderable', () => {
   const d = {
     schema_version: 1,
@@ -1299,7 +1354,7 @@ test('dataflow: stage border run is blocking and the inter-stage gutter passes',
 
 test('sequence: a message cannot masquerade as a time-segment border', () => {
   const d = load('sequence');
-  d.messages.find((message) => message.id === 'cache-read').y = 315;
+  d.messages.find((message) => message.id === 'cache-read').y = d.segments[1].from;
   const { code, stderr } = render('sequence', d);
   assert.notEqual(code, 0);
   assert.match(stderr, /\[composition\/container-border-run\] sequence messages\[4\] id "cache-read"/);
@@ -1395,6 +1450,49 @@ test('sequence: segment title badge clears a nearby first message label', () => 
     && segmentY < messageY + messageH
     && segmentY + segmentH > messageY;
   assert.equal(overlaps, false, 'segment title badge must not cover the first message label');
+});
+
+test('sequence: segment label exceeding segment frame available width fails layout validation with remediation', () => {
+  const d = load('sequence');
+  d.meta.viewBox[0] = 820;
+  d.meta.column_fit = 'fixed';
+  d.segments[0].label = 'Phase 1: Dual-Certificate mTLS Handshake & Distributed Token Verification Protocol Negotiation'.repeat(2);
+
+  const { code, stderr } = render('sequence', d);
+  assert.equal(code, 1);
+  assert.match(stderr, /Segment "Phase 1: Dual-Certificate mTLS Handshake & Distributed Token Verification Protocol NegotiationPhase 1: Dual-Certificate mTLS Handshake & Distributed Token Verification Protocol Negotiation" label \(~992px\) exceeds the segment frame's available width \(716px\) — shorten the label or increase meta\.viewBox\[0\] to at least 1096\./);
+
+  // Remediating by increasing viewBox[0] to the suggested minimum allows it to pass cleanly
+  d.meta.viewBox[0] = 1096;
+  const fixed = render('sequence', d);
+  assert.equal(fixed.code, 0, fixed.stderr);
+});
+
+test('sequence: segment label boundary containment within canvas vs segment frame and exact-fit', () => {
+  // Available width in this fixed-column boundary scenario (viewBox[0] = 820):
+  // frame right edge = 820 - 48 = 772
+  // labelBox.x = 56
+  // availableWidth = 772 - 56 = 716px
+  // 135 ASCII units -> labelW = 135 * 5.2 + 14 = 716px -> label right edge = 56 + 716 = 772px (exact fit)
+  // 136 ASCII units -> labelW = 136 * 5.2 + 14 = 721.2px -> label right edge = 56 + 721.2 = 777.2px
+  // (777.2px <= 820 canvas width, but > 772 segment frame edge)
+
+  // 1. Fits within canvas (777.2 <= 820) but exceeds segment frame (777.2 > 772)
+  const dExceed = load('sequence');
+  dExceed.meta.viewBox[0] = 820;
+  dExceed.meta.column_fit = 'fixed';
+  dExceed.segments[0].label = 'A'.repeat(136);
+  const resExceed = render('sequence', dExceed);
+  assert.equal(resExceed.code, 1, 'label exceeding segment frame must fail even if within canvas');
+  assert.match(resExceed.stderr, /label \(~721px\) exceeds the segment frame's available width \(716px\) — shorten the label or increase meta\.viewBox\[0\] to at least 826\./);
+
+  // 2. Exact-fit case at the frame's right edge (56 + 716 = 772 === 820 - 48)
+  const dExact = load('sequence');
+  dExact.meta.viewBox[0] = 820;
+  dExact.meta.column_fit = 'fixed';
+  dExact.segments[0].label = 'A'.repeat(135);
+  const resExact = render('sequence', dExact);
+  assert.equal(resExact.code, 0, `exact-fit label at segment frame boundary must pass cleanly: ${resExact.stderr}`);
 });
 
 process.on('exit', () => fs.rmSync(tmp, { recursive: true, force: true }));

@@ -6,8 +6,8 @@
  *   - Claude Code exposes the session id in the environment, so a plain call resolves immediately:
  *       find-current-session.ts            → prints `session: <id>`
  *
- *   - OpenCode V2 resolves the active session for the cwd through its authenticated service API. If
- *     that is ambiguous, and on Pi, it's a two-call dance the script walks you through. The first
+ *   - OpenCode V2 resolves the active session for the cwd through its authenticated service API.
+ *     OpenCode V1 and Pi, and ambiguous V2 sessions, use a two-call dance. The first
  *     call MARKS this session — it prints a unique token (which the harness records as this
  *     command's result in the transcript) and the exact command to run next:
  *       find-current-session.ts            → "session marked; now run: … --marker <token>"
@@ -22,7 +22,8 @@
  *     recency, model), labelled to be VALIDATED — printed when the marker matched none (e.g. not yet
  *     flushed) so you can retry or pick by hand. `--limit` widens the net.
  *
- * Marker mechanism (OpenCode via session exports; Pi via the cwd-derived session dir): session
+ * Marker mechanism (OpenCode V1 via SQLite, V2 via session exports, Pi via the cwd-derived session
+ * dir): session
  * lists are recency-sorted, so the current session is only *near* the top, never provably the top
  * when sessions share a cwd — the marker (recorded by the mark call's own output) is what makes the
  * match deterministic. Verified that shell-command output is persisted on Claude Code, OpenCode, Pi.
@@ -35,6 +36,7 @@ import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 import process from 'node:process';
 import { readOpenCodeApi, type OpenCodeMessage } from './opencode-v2.ts';
+import { isOpenCodeV1 } from './opencode-version.ts';
 
 type Harness = 'claude' | 'opencode' | 'pi';
 
@@ -85,7 +87,7 @@ function parseArgs(): Args {
 
 function detectHarness(): Harness {
   if (process.env.CLAUDE_CODE_SESSION_ID || process.env.CLAUDECODE) return 'claude';
-  if (process.env.OPENCODE_TERMINAL) return 'opencode';
+  if (process.env.OPENCODE || process.env.OPENCODE_RUN_ID || process.env.OPENCODE_TERMINAL) return 'opencode';
   if (process.env.PI_CODING_AGENT || existsSync(join(homedir(), '.pi', 'agent', 'sessions'))) return 'pi';
   return die('could not detect the harness — run this inside a Claude Code, OpenCode, or Pi session');
 }
@@ -97,6 +99,128 @@ function claudeCurrent(_args: Args): Result {
   return die('CLAUDE_CODE_SESSION_ID is not set — cannot identify the current Claude session');
 }
 
+// ── OpenCode V1 ── enumerate the cwd's sessions, disambiguating by marker through SQLite.
+function opencodeV1(cmdArgs: string[]): string {
+  return execFileSync('opencode', cmdArgs, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+}
+
+function opencodeDbPath(): string {
+  const base = (process.env.OPENCODE_DATA_DIR?.split(',')[0] || join(homedir(), '.local', 'share', 'opencode')).trim();
+  return join(base, 'opencode.db');
+}
+
+function matchesCwd(dir: string | undefined, cwd: string): boolean {
+  if (!dir) return false;
+  return dir === cwd || cwd.startsWith(dir.endsWith('/') ? dir : `${dir}/`);
+}
+
+function parseModel(raw: string): string | undefined {
+  if (!raw) return undefined;
+  try {
+    return (JSON.parse(raw) as { id?: string }).id ?? raw;
+  } catch {
+    return raw;
+  }
+}
+
+function opencodeV1CliCandidates(cwd: string): Candidate[] {
+  let raw: string;
+  try {
+    raw = opencodeV1(['session', 'list', '--format', 'json', '-n', '50']);
+  } catch {
+    return [];
+  }
+  if (!raw.trim()) return [];
+  let rows: Array<Record<string, unknown>>;
+  try {
+    rows = JSON.parse(raw);
+  } catch {
+    return [];
+  }
+  return rows
+    .map((row) => ({
+      id: String(row.id),
+      title: row.title ? String(row.title) : undefined,
+      updated: typeof row.updated === 'number' ? row.updated : undefined,
+      created: typeof row.created === 'number' ? row.created : undefined,
+      model: row.model ? String(row.model) : undefined,
+      directory: row.directory ? String(row.directory) : undefined,
+    }))
+    .filter((candidate) => matchesCwd(candidate.directory, cwd))
+    .map(({ directory: _omit, ...candidate }) => candidate);
+}
+
+function opencodeV1DbCandidates(cwd: string): Candidate[] {
+  const db = opencodeDbPath();
+  if (!existsSync(db)) return [];
+  const sep = String.fromCharCode(31);
+  const query =
+    `SELECT id||char(31)||coalesce(title,'')||char(31)||coalesce(model,'')` +
+    `||char(31)||time_updated||char(31)||time_created||char(31)||directory ` +
+    `FROM session ORDER BY time_updated DESC LIMIT 200;`;
+  let raw: string;
+  try {
+    raw = execFileSync('sqlite3', [db, query], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+  } catch {
+    return [];
+  }
+  return raw
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => {
+      const [id, title, model, updated, created, directory] = line.split(sep);
+      return {
+        id,
+        title: title || undefined,
+        model: parseModel(model),
+        updated: Number(updated) || undefined,
+        created: Number(created) || undefined,
+        directory: directory || undefined,
+      };
+    })
+    .filter((candidate) => matchesCwd(candidate.directory, cwd))
+    .map(({ directory: _omit, ...candidate }) => candidate);
+}
+
+function opencodeV1MarkerHits(ids: string[], marker: string): string[] {
+  const db = opencodeDbPath();
+  if (!existsSync(db)) return [];
+  const like = marker.replace(/'/g, "''");
+  const hits: string[] = [];
+  for (const id of ids) {
+    const safeId = id.replace(/'/g, "''");
+    try {
+      const count = execFileSync(
+        'sqlite3',
+        [
+          db,
+          `SELECT count(*) FROM part WHERE message_id IN (SELECT id FROM message WHERE session_id='${safeId}') AND data LIKE '%${like}%' LIMIT 1;`,
+        ],
+        { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+      ).trim();
+      if (Number(count) > 0) hits.push(id);
+    } catch {
+      /* skip */
+    }
+  }
+  return hits;
+}
+
+function opencodeV1Current(args: Args): Result {
+  const cli = opencodeV1CliCandidates(args.cwd);
+  const all = (cli.length > 0 ? cli : opencodeV1DbCandidates(args.cwd)).sort(
+    (a, b) => (b.updated ?? 0) - (a.updated ?? 0),
+  );
+  if (all.length === 0) return die('no OpenCode sessions found for this directory');
+  if (all.length === 1) return { resolved: all[0].id, how: 'single candidate for cwd' };
+  const pool = all.slice(0, args.limit);
+  if (args.marker) {
+    const hits = opencodeV1MarkerHits(pool.map((candidate) => candidate.id), args.marker);
+    if (hits.length === 1) return { resolved: hits[0], how: 'unique marker match' };
+  }
+  return { candidates: pool };
+}
+
 // ── OpenCode V2 ── discover and authenticate through `opencode2 api`.
 interface OpenCodeSession {
   id: string;
@@ -105,7 +229,7 @@ interface OpenCodeSession {
   time?: { created?: number; updated?: number };
 }
 
-function opencodeCandidates(cwd: string, limit: number): Candidate[] {
+function opencodeV2Candidates(cwd: string, limit: number): Candidate[] {
   const response = readOpenCodeApi<{ data?: OpenCodeSession[] }>(
     `/api/session?directory=${encodeURIComponent(cwd)}&limit=${limit}&order=desc`,
   );
@@ -119,12 +243,12 @@ function opencodeCandidates(cwd: string, limit: number): Candidate[] {
   }));
 }
 
-function opencodeActiveIds(): Set<string> {
+function opencodeV2ActiveIds(): Set<string> {
   const response = readOpenCodeApi<{ data?: Record<string, unknown> }>('/api/session/active');
   return new Set(Object.keys(response.data ?? {}));
 }
 
-function opencodeMarkerHits(ids: string[], marker: string): string[] {
+function opencodeV2MarkerHits(ids: string[], marker: string): string[] {
   const hits: string[] = [];
   for (const id of ids) {
     try {
@@ -137,12 +261,12 @@ function opencodeMarkerHits(ids: string[], marker: string): string[] {
   return hits;
 }
 
-function opencodeCurrent(args: Args): Result {
+function opencodeV2Current(args: Args): Result {
   let all: Candidate[];
   let active: Set<string>;
   try {
-    all = opencodeCandidates(args.cwd, Math.max(50, args.limit));
-    active = opencodeActiveIds();
+    all = opencodeV2Candidates(args.cwd, Math.max(50, args.limit));
+    active = opencodeV2ActiveIds();
   } catch (err) {
     return die(`could not query the OpenCode V2 service: ${(err as Error).message}`);
   }
@@ -152,7 +276,7 @@ function opencodeCurrent(args: Args): Result {
   if (all.length === 1) return { resolved: all[0].id, how: 'single candidate for cwd' };
   const pool = (activeHere.length > 0 ? activeHere : all).slice(0, args.limit);
   if (args.marker) {
-    const hits = opencodeMarkerHits(pool.map((c) => c.id), args.marker);
+    const hits = opencodeV2MarkerHits(pool.map((c) => c.id), args.marker);
     if (hits.length === 1) return { resolved: hits[0], how: 'unique marker match' };
   }
   return { candidates: pool };
@@ -256,7 +380,12 @@ function main(): void {
     return;
   }
   if (harness === 'opencode') {
-    const result = opencodeCurrent(args);
+    if (isOpenCodeV1()) {
+      if (!args.marker) markSession(args);
+      else report(harness, opencodeV1Current(args), args);
+      return;
+    }
+    const result = opencodeV2Current(args);
     if (result.resolved || args.marker) report(harness, result, args);
     else markSession(args);
     return;

@@ -15,9 +15,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel-labs/agent-browser.git",
       "skillPath": "skills/agent-browser/SKILL.md",
-      "skillFolderHash": "037e8078db4b20b4aa25c04f21c6de7d335ec449",
+      "skillFolderHash": "82def67855a0d2aad7794207951820fa5422fdb0",
       "installedAt": "2026-05-20T06:32:38.789Z",
-      "updatedAt": "2026-08-08T17:14:32.330Z"
+      "updatedAt": "2026-09-09T17:40:20.009Z"
     },
     "handoff": {
       "source": "mattpocock/skills",
@@ -33,45 +33,36 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/mattpocock/skills.git",
       "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
-      "skillFolderHash": "db546af0f3419a8bd261a83708d4cb33d2a915cd",
+      "skillFolderHash": "3d35cd438f4067b03c8b3792e038960e4ac11526",
       "installedAt": "2026-05-21T20:15:23.554Z",
-      "updatedAt": "2026-08-18T04:41:05.419Z"
-    },
-    "conventional-commit": {
-      "source": "github/awesome-copilot",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/github/awesome-copilot.git",
-      "skillPath": "skills/conventional-commit/SKILL.md",
-      "skillFolderHash": "2dd6528ab4c12198e4805ea62739f7c51d0dd51d",
-      "installedAt": "2026-05-21T20:21:40.445Z",
-      "updatedAt": "2026-05-21T20:21:40.445Z"
+      "updatedAt": "2026-09-09T17:40:22.516Z"
     },
     "turborepo": {
       "source": "vercel/turborepo",
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel/turborepo.git",
       "skillPath": "skills/turborepo/SKILL.md",
-      "skillFolderHash": "d830e83a21ce885d2efc8e044765a5cd1f2c3964",
+      "skillFolderHash": "ce334e94726ebc03b0d67914e1ae3b631c15915c",
       "installedAt": "2026-05-21T20:23:26.198Z",
-      "updatedAt": "2026-08-18T04:41:41.378Z"
+      "updatedAt": "2026-09-09T17:40:26.297Z"
     },
     "shadcn": {
       "source": "shadcn/ui",
       "sourceType": "github",
       "sourceUrl": "https://github.com/shadcn/ui.git",
       "skillPath": "skills/shadcn/SKILL.md",
-      "skillFolderHash": "0a31c3c2535a62b22bf23a1b10a142178a6b7dbf",
+      "skillFolderHash": "b5791523e07794a4deb201e78eab3f3adbd022c0",
       "installedAt": "2026-05-21T20:38:53.242Z",
-      "updatedAt": "2026-08-08T17:15:31.733Z"
+      "updatedAt": "2026-09-09T17:41:10.420Z"
     },
     "terminal-control": {
       "source": "anomalyco/terminal-control",
       "sourceType": "github",
       "sourceUrl": "https://github.com/anomalyco/terminal-control.git",
       "skillPath": "skills/terminal-control/SKILL.md",
-      "skillFolderHash": "652efdccf2cc06c20550238e9df85788d3fc1d3b",
+      "skillFolderHash": "c16be9531955ba7619f9650e0c1b4d236b0ab0e4",
       "installedAt": "2026-06-04T06:38:44.244Z",
-      "updatedAt": "2026-07-27T18:06:51.420Z"
+      "updatedAt": "2026-09-09T17:41:13.534Z"
     },
     "git-merge": {
       "source": "vervio-digital/vervio-agentics",
@@ -88,18 +79,18 @@
       "sourceUrl": "https://github.com/vervio-digital/vervio-agentics.git",
       "ref": "fix/worklog-opencode-v2",
       "skillPath": "plugins/worklog/skills/worklog/SKILL.md",
-      "skillFolderHash": "45437efad73d684b893ffd46ebdf83c46c7a3cb9",
+      "skillFolderHash": "f6b8825202fb27302fbb0741370f20063ca1d110",
       "installedAt": "2026-06-29T06:56:58.441Z",
-      "updatedAt": "2026-08-19T01:10:57.568Z"
+      "updatedAt": "2026-09-09T17:41:20.157Z"
     },
     "herdr": {
       "source": "herdrdev/herdr",
       "sourceType": "github",
       "sourceUrl": "https://github.com/herdrdev/herdr.git",
       "skillPath": "skills/herdr/SKILL.md",
-      "skillFolderHash": "4821f1d39ccae24b9b274b03184edaaf198a3994",
+      "skillFolderHash": "b9dcfddcfa7ce43e2e4cf60e724c519be553f149",
       "installedAt": "2026-08-08T17:14:06.954Z",
-      "updatedAt": "2026-08-08T17:14:06.954Z"
+      "updatedAt": "2026-09-09T17:41:40.119Z"
     },
     "show-me": {
       "source": "humanlayer/skills",
@@ -124,9 +115,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/tt-a1i/archify.git",
       "skillPath": "archify/SKILL.md",
-      "skillFolderHash": "f49f3864c6c03888717f5c7a1c0d0c5f1b8e8f91",
+      "skillFolderHash": "8aa4cadc3cde102db4009f23f951cb4cf1e28d61",
       "installedAt": "2026-08-28T02:19:57.948Z",
-      "updatedAt": "2026-08-28T02:19:57.948Z"
+      "updatedAt": "2026-09-09T17:42:15.976Z"
     }
   },
   "dismissed": {

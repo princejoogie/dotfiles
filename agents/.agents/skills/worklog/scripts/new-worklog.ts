@@ -198,7 +198,7 @@ expanded brief, a new requirement, a change of direction. If you are writing abo
 that happened after the work began, it is not the starting point.
 
 Then append the first entry:
-  get-session-transcript.ts ${session} --since ${through}
+  get-session-transcript.ts ${session} --since ${through} --output "$(git rev-parse --show-toplevel)/.tmp/worklog/session-${session}.jsonl"
   → extract the slice into an entry via a sub-agent (assets/extraction-brief.md)
   → append-entry.ts --worklog ${path} --entry <file> --session ${session} --through <new> --label "<locator>"
 

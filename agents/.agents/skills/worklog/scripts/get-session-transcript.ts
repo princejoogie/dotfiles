@@ -1,33 +1,37 @@
 #!/usr/bin/env -S npx tsx
 /**
- * Get a session's transcript as a readable file on disk — pass 2 of 2. Given a session id (from
- * find-current-session.ts), produce its transcript and print the file path, which a sub-agent then
- * reads to extract the worklog. By harness:
- *   - OpenCode: exports projected messages through its authenticated V2 service API.
- *   - Claude Code: locates the on-disk JSONL under ~/.claude/projects and prints it.
- *   - Pi: resolves the id to its JSONL under the cwd's session directory and prints it.
+ * Get a session's transcript — pass 2 of 2. Given a session id (from find-current-session.ts),
+ * produce its transcript for extraction. By harness:
+ *   - OpenCode 1: reads timestamped messages and parts from its local SQLite store.
+ *   - OpenCode 2: exports projected messages through its authenticated service API.
+ *   - Claude Code: locates the on-disk JSONL under ~/.claude/projects.
+ *   - Pi: resolves the id to its JSONL under the cwd's session directory.
  *
  * Usage:
- *   .../scripts/get-session-transcript.ts <session-id> [--cwd PATH] [--since ISO] [--until ISO]
+ *   .../scripts/get-session-transcript.ts <session-id> [--cwd PATH] [--since ISO] [--until ISO] [--output PATH]
  *
- * With --since (and/or --until) it writes a SLICE of the transcript — only the records in that
- * instant range — and prints its path plus the `through` instant of the last record in the slice.
+ * With --since (and/or --until) it produces a SLICE of the transcript — only the records in that
+ * instant range — and reports the `through` instant of the last record in the slice.
  * That is what makes an appended worklog entry cheap: each epoch of the session is read once,
  * rather than the whole transcript being re-read on every regeneration. The `through` it prints is
  * the bookmark to hand to append-entry.ts.
  *
- * Slicing is implemented for Claude Code and OpenCode. On any other harness it fails rather than
- * quietly handing back the whole transcript, which would silently reintroduce the cost slicing removes.
+ * Output: with --output, writes the transcript or slice to PATH (creating its parent directory) and
+ * prints PATH. Sliced file output additionally prints `records:` and `through:` metadata. Without
+ * --output, JSONL is written to stdout; sliced metadata goes to stderr, keeping stdout redirectable.
  *
- * Output — the transcript (or slice) path on the first line, so a caller can still take line 1
- * directly; when slicing, a `through:` and a `records:` line follow.
+ * This replaces the old implicit tmpdir() file output.
  */
 
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { homedir, tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { execFileSync, spawn } from 'node:child_process';
+import { once } from 'node:events';
+import { copyFileSync, createReadStream, createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
 import process from 'node:process';
+import { createInterface } from 'node:readline';
 import { projectOpenCodeMessages, readOpenCodeApi, sliceOpenCodeRecords, type OpenCodeMessage } from './opencode-v2.ts';
+import { isOpenCodeV1 } from './opencode-version.ts';
 
 type Harness = 'claude' | 'opencode' | 'pi';
 
@@ -36,6 +40,7 @@ interface Args {
   cwd: string;
   since?: string;
   until?: string;
+  output?: string;
 }
 
 function die(message: string): never {
@@ -60,6 +65,7 @@ function parseArgs(): Args {
   let cwd = process.cwd();
   let since: string | undefined;
   let until: string | undefined;
+  let output: string | undefined;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     const next = (): string => (i + 1 < argv.length ? argv[++i] : die(`${arg} requires a value`));
@@ -67,19 +73,20 @@ function parseArgs(): Args {
     else if (arg === '--session' || arg === '--id') id = next();
     else if (arg === '--since') since = parseInstant(next(), '--since');
     else if (arg === '--until') until = parseInstant(next(), '--until');
+    else if (arg === '--output') output = resolve(next());
     else if (!arg.startsWith('--') && !id) id = arg;
     else die(`unexpected argument: ${arg}`);
   }
-  if (!id) die('usage: get-session-transcript.ts <session-id> [--cwd PATH] [--since ISO] [--until ISO]');
+  if (!id) die('usage: get-session-transcript.ts <session-id> [--cwd PATH] [--since ISO] [--until ISO] [--output PATH]');
   if (since && until && Date.parse(since) >= Date.parse(until)) {
     die(`--since (${since}) must be earlier than --until (${until})`);
   }
-  return { id, cwd, since, until };
+  return { id, cwd, since, until, output };
 }
 
 function detectHarness(): Harness {
   if (process.env.CLAUDE_CODE_SESSION_ID || process.env.CLAUDECODE) return 'claude';
-  if (process.env.OPENCODE_TERMINAL) return 'opencode';
+  if (process.env.OPENCODE || process.env.OPENCODE_RUN_ID || process.env.OPENCODE_TERMINAL) return 'opencode';
   if (process.env.PI_CODING_AGENT || existsSync(join(homedir(), '.pi', 'agent', 'sessions'))) return 'pi';
   return die('could not detect the harness — run this inside a Claude Code, OpenCode, or Pi session');
 }
@@ -96,13 +103,112 @@ function claudeTranscript(id: string): string {
   return die(`no Claude transcript on disk for session ${id}`);
 }
 
-// ── OpenCode V2 ── projected exports preserve timestamps on individual assistant content items.
-function writeOpenCodeJsonl(
+// ── OpenCode V1 ── messages and parts are timestamped independently in the local SQLite store.
+interface OpenCodeV1Record {
+  id: string;
+  kind: 'message' | 'part';
+  message_id?: string;
+  time_created: number;
+  data: string;
+}
+
+function opencodeDbPath(): string {
+  const base = (process.env.OPENCODE_DATA_DIR?.split(',')[0] || join(homedir(), '.local', 'share', 'opencode')).trim();
+  return join(base, 'opencode.db');
+}
+
+function sqliteString(value: string): string {
+  return value.replace(/'/g, "''");
+}
+
+function opencodeSessionExists(db: string, id: string): boolean {
+  try {
+    return execFileSync('sqlite3', [db, `SELECT count(*) FROM session WHERE id='${sqliteString(id)}';`], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).trim() === '1';
+  } catch (err) {
+    return die(`could not inspect OpenCode session storage at ${db}: ${(err as Error).message}`);
+  }
+}
+
+async function writeOpenCodeV1Jsonl(
   id: string,
   since: string | undefined,
   until: string | undefined,
-  out: string,
-): { records: number; through?: string } {
+  output: NodeJS.WritableStream,
+): Promise<{ records: number; through?: string }> {
+  const db = opencodeDbPath();
+  if (!existsSync(db)) die(`no OpenCode session database at ${db}`);
+  if (!opencodeSessionExists(db, id)) die(`no OpenCode session ${id} in ${db}`);
+
+  const session = sqliteString(id);
+  const interval = [
+    `session_id='${session}'`,
+    ...(since ? [`time_created > ${Date.parse(since)}`] : []),
+    ...(until ? [`time_created <= ${Date.parse(until)}`] : []),
+  ].join(' AND ');
+  const query =
+    `SELECT json_object('id', id, 'kind', kind, 'message_id', message_id, 'time_created', time_created, 'data', data) ` +
+    'FROM (' +
+    `SELECT id, 'message' AS kind, NULL AS message_id, time_created, data FROM message WHERE ${interval} ` +
+    `UNION ALL SELECT id, 'part' AS kind, message_id, time_created, data FROM part WHERE ${interval}` +
+    ') ORDER BY time_created, kind, id;';
+
+  const child = spawn('sqlite3', ['-noheader', db, query], { stdio: ['ignore', 'pipe', 'pipe'] });
+  let stderr = '';
+  child.stderr.setEncoding('utf8');
+  child.stderr.on('data', (chunk: string) => {
+    stderr += chunk;
+  });
+  const exited = new Promise<void>((resolveExit, rejectExit) => {
+    child.once('error', rejectExit);
+    child.once('close', (code) => {
+      if (code === 0) resolveExit();
+      else rejectExit(new Error(stderr.trim() || `sqlite3 exited with status ${code}`));
+    });
+  });
+
+  let records = 0;
+  let through: string | undefined;
+  try {
+    for await (const rawRecord of createInterface({ input: child.stdout })) {
+      let record: OpenCodeV1Record;
+      try {
+        record = JSON.parse(rawRecord) as OpenCodeV1Record;
+      } catch {
+        die(`OpenCode session ${id} has an unsupported record shape in ${db}`);
+      }
+      if (!Number.isFinite(record.time_created) || !record.id || (record.kind !== 'message' && record.kind !== 'part')) {
+        die(`OpenCode session ${id} has an unsupported record shape in ${db}`);
+      }
+      const timestamp = new Date(record.time_created).toISOString();
+      let data: unknown;
+      try {
+        data = JSON.parse(record.data);
+      } catch {
+        die(`OpenCode session ${id} has unreadable ${record.kind} record ${record.id} in ${db}`);
+      }
+      if (!output.write(`${JSON.stringify({ id: record.id, type: record.kind, ...(record.message_id ? { messageId: record.message_id } : {}), timestamp, data })}\n`)) {
+        await once(output, 'drain');
+      }
+      records++;
+      if (through === undefined || timestamp > through) through = timestamp;
+    }
+    await exited;
+  } catch (err) {
+    return die(`could not read OpenCode session ${id} from ${db}: ${(err as Error).message}`);
+  }
+  return { records, through };
+}
+
+// ── OpenCode V2 ── projected exports preserve timestamps on individual assistant content items.
+async function writeOpenCodeV2Jsonl(
+  id: string,
+  since: string | undefined,
+  until: string | undefined,
+  output: NodeJS.WritableStream,
+): Promise<{ records: number; through?: string }> {
   try {
     const response = readOpenCodeApi<{ data?: { info?: { id?: string }; messages?: OpenCodeMessage[] } }>(
       `/api/session/${id}/export`,
@@ -111,17 +217,29 @@ function writeOpenCodeJsonl(
       return die(`OpenCode session ${id} export has an unsupported response`);
     }
     const slice = sliceOpenCodeRecords(projectOpenCodeMessages(response.data.messages), since, until);
-    writeFileSync(out, slice.records.map((record) => JSON.stringify(record)).join('\n') + (slice.records.length ? '\n' : ''));
+    const content = slice.records.map((record) => JSON.stringify(record)).join('\n') + (slice.records.length ? '\n' : '');
+    if (content && !output.write(content)) await once(output, 'drain');
     return { records: slice.records.length, through: slice.through };
   } catch (err) {
     return die(`could not export OpenCode session ${id}: ${(err as Error).message}`);
   }
 }
 
-function opencodeTranscript(id: string): string {
-  const out = join(tmpdir(), `worklog-session-${id}.jsonl`);
-  writeOpenCodeJsonl(id, undefined, undefined, out);
-  return out;
+async function writeOpenCodeTranscript(
+  id: string,
+  since: string | undefined,
+  until: string | undefined,
+  output: string | undefined,
+): Promise<{ records: number; through?: string }> {
+  const destination = output ? fileOutput(output) : process.stdout;
+  try {
+    return await (isOpenCodeV1() ? writeOpenCodeV1Jsonl : writeOpenCodeV2Jsonl)(id, since, until, destination);
+  } finally {
+    if (output) {
+      destination.end();
+      await once(destination, 'finish');
+    }
+  }
 }
 
 // ── Pi ── resolve the id (filename stem, or a path) to its JSONL under the cwd's session dir.
@@ -157,8 +275,8 @@ function piTranscript(id: string, cwd: string): string {
 // The bookmark is exclusive at the `--since` end (`t > since`) and inclusive at `--until`, so
 // consecutive slices tile the session without re-reading or skipping a record.
 
-/** Claude Code writes one JSON record per line, each carrying an ISO-8601 `timestamp`. */
-function sliceClaudeJsonl(path: string, since: string | undefined, until: string | undefined): { lines: string[]; through?: string } {
+/** Native timestamped JSONL records carry an ISO-8601 `timestamp`. */
+function sliceTimestampedJsonl(path: string, since: string | undefined, until: string | undefined): { lines: string[]; through?: string } {
   const from = since ? Date.parse(since) : Number.NEGATIVE_INFINITY;
   const to = until ? Date.parse(until) : Number.POSITIVE_INFINITY;
   const lines: string[] = [];
@@ -185,62 +303,86 @@ function sliceClaudeJsonl(path: string, since: string | undefined, until: string
   return { lines, through };
 }
 
-function main(): void {
+function fileOutput(path: string) {
+  mkdirSync(dirname(path), { recursive: true });
+  return createWriteStream(path, { encoding: 'utf8' });
+}
+
+async function streamTranscript(path: string): Promise<void> {
+  const input = createReadStream(path);
+  input.pipe(process.stdout, { end: false });
+  await once(input, 'end');
+}
+
+async function writeNativeTranscript(source: string, output: string | undefined): Promise<void> {
+  if (output) {
+    mkdirSync(dirname(output), { recursive: true });
+    if (resolve(source) !== output) copyFileSync(source, output);
+    return;
+  }
+  await streamTranscript(source);
+}
+
+function reportSlice(output: string | undefined, records: number, through: string | undefined, since: string | undefined): void {
+  const report = output ? console.log : console.error;
+  if (output) console.log(output);
+  report(`records: ${records}`);
+  report(`through: ${records === 0 ? since ?? '' : through}`);
+}
+
+async function main(): Promise<void> {
   const args = parseArgs();
   const harness = detectHarness();
   const slicing = args.since !== undefined || args.until !== undefined;
 
   if (!slicing) {
-    let path: string;
     switch (harness) {
       case 'claude':
-        path = claudeTranscript(args.id);
+        await writeNativeTranscript(claudeTranscript(args.id), args.output);
         break;
       case 'opencode':
-        path = opencodeTranscript(args.id);
+        await writeOpenCodeTranscript(args.id, undefined, undefined, args.output);
         break;
       case 'pi':
-        path = piTranscript(args.id, args.cwd);
+        await writeNativeTranscript(piTranscript(args.id, args.cwd), args.output);
         break;
     }
-    console.log(path);
+    if (args.output) console.log(args.output);
     return;
   }
 
-  const stamp = (args.since ?? 'start').replace(/[:.]/g, '-');
-  const out = join(tmpdir(), `worklog-slice-${args.id}-${stamp}.jsonl`);
   let slice: { records: number; through?: string };
   switch (harness) {
     case 'claude': {
-      const { lines, through } = sliceClaudeJsonl(claudeTranscript(args.id), args.since, args.until);
-      writeFileSync(out, lines.length > 0 ? `${lines.join('\n')}\n` : '');
+      const { lines, through } = sliceTimestampedJsonl(claudeTranscript(args.id), args.since, args.until);
+      const content = lines.length > 0 ? `${lines.join('\n')}\n` : '';
+      if (args.output) {
+        mkdirSync(dirname(args.output), { recursive: true });
+        writeFileSync(args.output, content);
+      } else {
+        process.stdout.write(content);
+      }
       slice = { records: lines.length, through };
       break;
     }
     case 'opencode':
-      slice = writeOpenCodeJsonl(args.id, args.since, args.until, out);
+      slice = await writeOpenCodeTranscript(args.id, args.since, args.until, args.output);
       break;
-    case 'pi':
-      die(
-        'slicing (--since/--until) is implemented for Claude Code and OpenCode, not Pi.\n' +
-          '  Falling back to the whole transcript would silently undo the saving slicing exists for,\n' +
-          '  so this stops here. Add a Pi adapter, or run the worklog on Claude Code.',
-      );
+    case 'pi': {
+      const { lines, through } = sliceTimestampedJsonl(piTranscript(args.id, args.cwd), args.since, args.until);
+      const content = lines.length > 0 ? `${lines.join('\n')}\n` : '';
+      if (args.output) {
+        mkdirSync(dirname(args.output), { recursive: true });
+        writeFileSync(args.output, content);
+      } else {
+        process.stdout.write(content);
+      }
+      slice = { records: lines.length, through };
+      break;
+    }
   }
   const { records, through } = slice;
-
-  console.log(out);
-  console.log(`records: ${records}`);
-  if (records === 0) {
-    console.log(`through: ${args.since ?? ''}`);
-    console.log(
-      '\nNOTHING NEW — no records in this range, so this epoch is empty.' +
-        '\nDo not append an entry and do not move the bookmark; there is nothing to record yet.',
-    );
-    return;
-  }
-  console.log(`through: ${through}`);
-  console.log(`\nnext: extract this slice into an entry, then append it with:\n  append-entry.ts --worklog <path> --entry <file> --session ${args.id} --through ${through} --label "<short locator>"`);
+  reportSlice(args.output, records, through, args.since);
 }
 
-main();
+void main();

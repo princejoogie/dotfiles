@@ -113,6 +113,19 @@ function messageRouteBox(message) {
   };
 }
 
+function segmentLabelBox(segment) {
+  const labelW = Math.max(42, textUnits(segment.label) * 5.2 + 14);
+  const occupied = asArray(sequence.messages)
+    .flatMap((message) => [messageLabelBox(message), messageRouteBox(message)])
+    .filter(Boolean);
+  const label = { x: 56, y: segment.from - 22, width: labelW, height: 18 };
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    if (!occupied.some((rect) => rectsOverlap(label, rect, 2))) break;
+    label.y -= 22;
+  }
+  return label;
+}
+
 const compositionFrames = asArray(sequence.segments).map((segment, index) => ({
   id: index,
   label: segment.label,
@@ -134,20 +147,7 @@ function messagePath(message) {
 
 function validateSequence() {
   const problems = [];
-  if (sequence.schema_version !== 1) problems.push('Sequence files must set "schema_version": 1.');
-  if (sequence.diagram_type !== 'sequence') problems.push('Sequence files must set "diagram_type": "sequence".');
-  if (!sequence.meta?.title) problems.push('Sequence files must include meta.title.');
-  if (!Array.isArray(sequence.participants) || sequence.participants.length < 2) {
-    problems.push('Sequence diagrams need at least two participants.');
-  }
   if (participants.size !== asArray(sequence.participants).length) problems.push('Participant ids must be unique.');
-  if (!Array.isArray(sequence.messages) || sequence.messages.length < 1) {
-    problems.push('Sequence diagrams need at least one message.');
-  }
-  if (sequence.cards !== undefined && !Array.isArray(sequence.cards)) problems.push('Sequence "cards" must be an array.');
-  for (const arr of ['segments', 'activations']) {
-    if (sequence[arr] !== undefined && !Array.isArray(sequence[arr])) problems.push(`Sequence "${arr}" must be an array.`);
-  }
 
   if (layout.lifelineBottom - layout.lifelineTop < 120) {
     problems.push(`viewBox height ${viewBox[1]} leaves under 120px of timeline — set meta.viewBox[1] to at least ${layout.lifelineTop + 120 + 65}.`);
@@ -188,13 +188,11 @@ function validateSequence() {
   // segment bands remain intentional pass-through geometry and are excluded.
   problems.push(...cleanFlowProblems({
     relations: sequence.messages,
-    endpointIds: new Set(participants.keys()),
     obstacles: participants.values(),
     pathFor: messagePath,
     diagramType: 'sequence',
     relationCollection: 'messages',
     obstacleKind: 'participant header',
-    profile: sequence.meta?.quality_profile,
     clearance: 0,
     routeHint: 'move the message y below the participant headers or reorder participants'
   }));
@@ -285,6 +283,12 @@ function validateSequence() {
     if (segment.from < layout.topY || segment.to > layout.lifelineBottom + 20) {
       problems.push(`Segment "${segment.label}" extends outside the canvas — keep its y range between ${layout.topY} and ${layout.lifelineBottom + 20}.`);
     }
+    const labelBox = segmentLabelBox(segment);
+    const availableWidth = Math.max(0, viewBox[0] - 48 - labelBox.x);
+    if (labelBox.x + labelBox.width > viewBox[0] - 48) {
+      const requiredWidth = Math.ceil(labelBox.x + labelBox.width + 48);
+      problems.push(`Segment "${segment.label}" label (~${Math.round(labelBox.width)}px) exceeds the segment frame's available width (${availableWidth}px) — shorten the label or increase meta.viewBox[0] to at least ${requiredWidth}.`);
+    }
   }
 
   for (const activation of asArray(sequence.activations)) {
@@ -337,15 +341,7 @@ function renderSegment(segment, index) {
 }
 
 function renderSegmentLabel(segment, index) {
-  const labelW = Math.max(42, textUnits(segment.label) * 5.2 + 14);
-  const occupied = asArray(sequence.messages)
-    .flatMap((message) => [messageLabelBox(message), messageRouteBox(message)])
-    .filter(Boolean);
-  const label = { x: 56, y: segment.from - 22, width: labelW, height: 18 };
-  for (let attempt = 0; attempt < 4; attempt += 1) {
-    if (!occupied.some((rect) => rectsOverlap(label, rect, 2))) break;
-    label.y -= 22;
-  }
+  const label = segmentLabelBox(segment);
   return `        <g data-graph-role="segment-label" data-segment-id="${index}">
           <rect x="${label.x}" y="${label.y}" width="${label.width}" height="${label.height}" rx="3" class="c-mask"/>
           <text x="${label.x + 6}" y="${label.y + 13}" class="t-dim" font-size="9" font-weight="600">${esc(segment.label)}</text>
@@ -427,7 +423,7 @@ function renderLegend() {
 
 function renderSvg() {
   const participantList = [...participants.values()];
-  return `      <svg viewBox="0 0 ${viewBox[0]} ${viewBox[1]}" ${svgRootAttrs(sequence.meta, 'sequence diagram')}>
+  return `      <svg viewBox="0 0 ${viewBox[0]} ${viewBox[1]}" ${svgRootAttrs(sequence.meta)}>
 ${svgAccessibleText(sequence.meta, 'sequence')}
 ${renderDefinitions()}
 

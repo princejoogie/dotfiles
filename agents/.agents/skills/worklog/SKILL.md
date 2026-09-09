@@ -103,7 +103,7 @@ Run this to produce a worklog. The bundled scripts (in `${CLAUDE_SKILL_DIR}/scri
    "${CLAUDE_SKILL_DIR}/scripts/find-current-session.ts"
    ```
 
-   On Claude Code this prints `session: <id>` from the environment. On OpenCode V2 it uses `opencode2 api` to query the authenticated background service and normally resolves the active session for this directory immediately. If multiple OpenCode sessions are active, or when running on Pi, it instead **marks this session** and prints the exact command to run next — `find-current-session.ts --marker <token>` — so run that as a second call. Just follow what the script tells you. (If the lookup prints **CANDIDATES**, the marker didn't match yet — retry per its guidance, or pick by hand.)
+   On Claude Code this prints `session: <id>` from the environment. On OpenCode 2 it normally resolves the active session through the authenticated service API. OpenCode 1, Pi, and ambiguous OpenCode 2 sessions instead **mark this session** and print the exact command to run next — `find-current-session.ts --marker <token>` — so run that as a second call. Just follow what the script tells you. (If the lookup prints **CANDIDATES**, the marker didn't match yet — retry per its guidance, or pick by hand.)
 
 2. **Scaffold the file:**
 
@@ -126,15 +126,19 @@ Everything below is the repeatable part: run it to add the first entry, and agai
 
 4. **Slice the record since the bookmark.** Take `through` from the worklog's `sources` for this session, then:
 
-   ```bash
-   "${CLAUDE_SKILL_DIR}/scripts/get-session-transcript.ts" <id> --since <through>
-   ```
+    ```bash
+    REPO="$(git rev-parse --show-toplevel)"
+    "${CLAUDE_SKILL_DIR}/scripts/get-session-transcript.ts" <id> --since <through> \
+      --output "$REPO/.tmp/worklog/session-<id>.jsonl"
+    ```
 
-   It prints the slice path, the record count, and the new `through` instant. If it reports **NOTHING NEW**, stop — there is nothing to record yet.
+    File mode writes the slice to that path, then prints the path, the record count, and the new `through` instant; it does **not** print transcript contents. If `records: 0`, stop — there is nothing to record yet. Keep both the slice and entry scratch files under the gitignored `$REPO/.tmp/worklog/`: workspace-local scratch paths keep fresh subagents inside their permission boundary.
 
-   OpenCode V2 reads the supported session export through `opencode2 api`, not the service database. Its slice records preserve timestamps from individual assistant content items, so a bookmark at an earlier item cannot skip later tool activity in the same assistant message.
+    **Compatibility:** `get-session-transcript.ts` no longer chooses an implicit system-temp file. Omit `--output` only when you want transcript JSONL streamed to stdout (for example, to redirect it); for a slice, its `records:` and `through:` metadata is written to stderr so stdout remains valid JSONL.
 
-5. **Extract via a sub-agent.** Take the brief template at `${CLAUDE_SKILL_DIR}/assets/extraction-brief.md`, fill `{{CHANGE}}`, `{{SLICE_PATH}}` (step 4), `{{WORKLOG_PATH}}` and `{{ENTRY_PATH}}` (a scratch file to write to), and dispatch a **fresh sub-agent** with it. It reads the slice and writes the entry's decisions to `{{ENTRY_PATH}}`.
+    The scripts inspect `opencode --version`. OpenCode `1.x.x` keeps the legacy CLI/SQLite implementation from the main branch; every other result uses the OpenCode 2 session export through `opencode2 api`. OpenCode 2 slice records preserve timestamps from individual assistant content items, so a bookmark at an earlier item cannot skip later tool activity in the same assistant message.
+
+5. **Extract via a sub-agent.** Set `ENTRY_PATH="$REPO/.tmp/worklog/entry-<id>.md"`. Take the brief template at `${CLAUDE_SKILL_DIR}/assets/extraction-brief.md`, fill `{{CHANGE}}`, `{{SLICE_PATH}}` (the file from step 4), `{{WORKLOG_PATH}}` and `{{ENTRY_PATH}}`, and dispatch a **fresh sub-agent** with it. It reads the slice and writes the entry's decisions to `{{ENTRY_PATH}}`.
 
    Use a sub-agent deliberately: a fresh one has no memory of the work to fill gaps with, so extraction stays honest, and the transcript stays out of your own context. It writes to a scratch file, not the worklog, so it cannot touch entries already there.
 
@@ -159,7 +163,7 @@ Everything below is the repeatable part: run it to add the first entry, and agai
 
 A worklog is **not possible without the raw session transcript**. If the session can't be located or its transcript can't be read — a harness that keeps sessions server-side, a cloud agent, a store that isn't there — **stop and say so**. Do not write one from context: an entry written from memory isn't a degraded worklog, it's a different and untrustworthy artifact wearing the name, and it is the exact failure this skill exists to prevent. The scripts exit non-zero rather than fall back, and `validate-worklog.ts` fails any entry that isn't covered by a bookmark.
 
-Slicing is implemented for **Claude Code** and **OpenCode**. On Pi, `find-current-session.ts` and `get-session-transcript.ts` still locate a session and its transcript, but `--since` fails rather than silently handing back the whole thing.
+Slicing is implemented for **Claude Code**, **OpenCode**, and **Pi**.
 
 ## Updating a worklog
 
