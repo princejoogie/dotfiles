@@ -6,6 +6,7 @@ set -euo pipefail
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 PKG="agents"
 AGENTS_SKILLS="$HOME/.agents/skills"
+ARGENT_VERSION="0.25.0"
 
 # Agents that do NOT read ~/.agents/skills get a per-skill symlink farm here.
 BRIDGE_DIRS=( "$HOME/.claude/skills" )
@@ -19,6 +20,9 @@ log() { printf '   %s\n' "$*"; }
 hdr "prereqs"
 mkdir -p "$HOME/.claude/skills" "$HOME/.config/opencode" "$HOME/.codex"
 log "ensured ~/.claude/skills, ~/.config/opencode, ~/.codex"
+
+npm install --global "@swmansion/argent@$ARGENT_VERSION"
+log "installed Argent $ARGENT_VERSION"
 
 OC_SOURCE="$DOTFILES/$PKG/.config/opencode"
 if [ -f "$OC_SOURCE/package-lock.json" ]; then

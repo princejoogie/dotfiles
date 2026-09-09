@@ -3,4 +3,7 @@
 ^/PLAN\.md$
 ^/mcp$
 ^/\.stow-local-ignore$
+^/\.DS_Store$
+^/\.claude/skills$
+^/\.config/opencode/cli\.json$
 ^/\.config/opencode/node_modules$
