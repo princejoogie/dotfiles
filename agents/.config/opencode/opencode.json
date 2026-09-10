@@ -79,7 +79,7 @@
     "cua-driver": {
       "type": "local",
       "command": [
-        "/Users/pjuguilon/.local/bin/cua-driver",
+        "cua-driver",
         "mcp"
       ],
       "enabled": true

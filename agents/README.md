@@ -9,9 +9,9 @@ command. See [PLAN.md](./PLAN.md) for the full design and rationale.
 ~/dotfiles/agents/install.sh        # idempotent: stow + claude bridge + codex flag + mcp
 ```
 
-This also installs the pinned Argent CLI used by the shared `argent` MCP server.
-Node.js 20.12 or newer is required. Xcode is required for iOS/tvOS targets;
-Android targets require `adb` on `PATH`.
+This also installs the pinned Argent and Cua Driver CLIs used by their MCP
+servers. Node.js 20.12 or newer is required. Xcode is required for iOS/tvOS
+targets; Android targets require `adb` on `PATH`.
 
 ## Add a skill
 
