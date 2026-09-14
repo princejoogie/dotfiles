@@ -20,7 +20,7 @@
     },
     "cua-driver": {
       "type": "stdio",
-      "command": "/Users/pjuguilon/.local/bin/cua-driver",
+      "command": "cua-driver",
       "args": ["mcp"],
       "clients": ["opencode"]
     },

@@ -7,6 +7,7 @@ DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 PKG="agents"
 AGENTS_SKILLS="$HOME/.agents/skills"
 ARGENT_VERSION="0.25.0"
+CUA_DRIVER_VERSION="0.25.0"
 
 # Agents that do NOT read ~/.agents/skills get a per-skill symlink farm here.
 BRIDGE_DIRS=( "$HOME/.claude/skills" )
@@ -23,6 +24,10 @@ log "ensured ~/.claude/skills, ~/.config/opencode, ~/.codex"
 
 npm install --global "@swmansion/argent@$ARGENT_VERSION"
 log "installed Argent $ARGENT_VERSION"
+
+CUA_DRIVER_RS_VERSION="$CUA_DRIVER_VERSION" \
+  /bin/bash -c "$(curl -fsSL https://cua.ai/driver/install.sh)"
+log "installed Cua Driver $CUA_DRIVER_VERSION"
 
 OC_SOURCE="$DOTFILES/$PKG/.config/opencode"
 if [ -f "$OC_SOURCE/package-lock.json" ]; then
