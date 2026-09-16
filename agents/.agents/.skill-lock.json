@@ -118,6 +118,105 @@
       "skillFolderHash": "8aa4cadc3cde102db4009f23f951cb4cf1e28d61",
       "installedAt": "2026-08-28T02:19:57.948Z",
       "updatedAt": "2026-09-09T17:42:15.976Z"
+    },
+    "better-accessibility": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/jakubkrehel/skills.git",
+      "skillPath": "skills/better-accessibility/SKILL.md",
+      "skillFolderHash": "ebf9388ad7f6acc424584674ac97406e2118616f",
+      "installedAt": "2026-09-14T19:49:54.141Z",
+      "updatedAt": "2026-09-14T19:49:54.141Z"
+    },
+    "better-colors": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/jakubkrehel/skills.git",
+      "skillPath": "skills/better-colors/SKILL.md",
+      "skillFolderHash": "2bf09c8493b760bc4449fed26079244368eaaa16",
+      "installedAt": "2026-09-14T19:49:54.163Z",
+      "updatedAt": "2026-09-14T19:49:54.163Z"
+    },
+    "better-interface": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/jakubkrehel/skills.git",
+      "skillPath": "skills/better-interface/SKILL.md",
+      "skillFolderHash": "828b477582842f5890fe307b4f95cdf05bd88d92",
+      "installedAt": "2026-09-14T19:49:54.166Z",
+      "updatedAt": "2026-09-14T19:49:54.166Z"
+    },
+    "better-layout": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/jakubkrehel/skills.git",
+      "skillPath": "skills/better-layout/SKILL.md",
+      "skillFolderHash": "8f1f1b163848cec18aea8143b9fe10cfb3226874",
+      "installedAt": "2026-09-14T19:49:54.167Z",
+      "updatedAt": "2026-09-14T19:49:54.167Z"
+    },
+    "better-typography": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/jakubkrehel/skills.git",
+      "skillPath": "skills/better-typography/SKILL.md",
+      "skillFolderHash": "b0c51ed316e9cca63f5182bc569066985b25b9c0",
+      "installedAt": "2026-09-14T19:49:54.168Z",
+      "updatedAt": "2026-09-14T19:49:54.168Z"
+    },
+    "better-ui": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/jakubkrehel/skills.git",
+      "skillPath": "skills/better-ui/SKILL.md",
+      "skillFolderHash": "710b8e9a1b4086594d24050bbb6768dbc421e9dc",
+      "installedAt": "2026-09-14T19:49:54.183Z",
+      "updatedAt": "2026-09-14T19:49:54.183Z"
+    },
+    "better-writing": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/jakubkrehel/skills.git",
+      "skillPath": "skills/better-writing/SKILL.md",
+      "skillFolderHash": "f0637167d46253f6f5d2d09776552df4979ea562",
+      "installedAt": "2026-09-14T19:49:54.207Z",
+      "updatedAt": "2026-09-14T19:49:54.207Z"
+    },
+    "break": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/jakubkrehel/skills.git",
+      "skillPath": "skills/break/SKILL.md",
+      "skillFolderHash": "7a748aa03499cc6974278099154358596c3635c9",
+      "installedAt": "2026-09-14T19:49:54.218Z",
+      "updatedAt": "2026-09-14T19:49:54.218Z"
+    },
+    "explain-interface": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/jakubkrehel/skills.git",
+      "skillPath": "skills/explain-interface/SKILL.md",
+      "skillFolderHash": "1d56e70e250e711690fdf95baa04546d9ad36020",
+      "installedAt": "2026-09-14T19:49:54.220Z",
+      "updatedAt": "2026-09-14T19:49:54.220Z"
+    },
+    "interface-review": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/jakubkrehel/skills.git",
+      "skillPath": "skills/interface-review/SKILL.md",
+      "skillFolderHash": "af8fbfa0733bb1c16f7e6c625161cdbef18aefda",
+      "installedAt": "2026-09-14T19:49:54.221Z",
+      "updatedAt": "2026-09-14T19:49:54.221Z"
+    },
+    "emil-design-eng": {
+      "source": "emilkowalski/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/emilkowalski/skills.git",
+      "skillPath": "skills/emil-design-eng/SKILL.md",
+      "skillFolderHash": "175725745e70946d891b93a1694d7c9ebb71b69d",
+      "installedAt": "2026-09-14T19:50:27.863Z",
+      "updatedAt": "2026-09-14T19:50:27.863Z"
     }
   },
   "dismissed": {
@@ -125,14 +224,13 @@
   },
   "lastSelectedAgents": [
     "amp",
-    "antigravity",
-    "antigravity-cli",
     "cline",
     "codex",
     "cursor",
-    "deepagents",
+    "droid",
     "gemini-cli",
     "github-copilot",
+    "kilo",
     "kimi-code-cli",
     "opencode",
     "warp",

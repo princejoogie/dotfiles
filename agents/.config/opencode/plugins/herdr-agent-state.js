@@ -2,7 +2,7 @@
 // managed by herdr; reinstalling or updating the integration overwrites this file.
 // add custom hooks/plugins beside this file instead of editing it.
 // HERDR_INTEGRATION_ID=opencode
-// HERDR_INTEGRATION_VERSION=9
+// HERDR_INTEGRATION_VERSION=11
 
 import net from "node:net";
 
@@ -13,8 +13,8 @@ let requestChain = Promise.resolve();
 let reportedRootSessionID;
 
 // Track child sessions so their events cannot replace the pane's root session.
-// Their user prompts still project state without attaching the child session id.
-const childSessions = new Set();
+// User prompts carry the root id to preserve its identity and cross-talk guard.
+const childSessions = new Map();
 const CHILD_EVENT_STATES = new Map([
   ["permission.asked", "blocked"],
   ["question.asked", "blocked"],
@@ -102,15 +102,11 @@ function requestOnce(method, params) {
   });
 }
 
-function reportSession(sessionID, sessionStartSource) {
+function reportSession(sessionID) {
   if (!sessionID) {
     return Promise.resolve();
   }
-  const params = { agent_session_id: sessionID };
-  if (sessionStartSource) {
-    params.session_start_source = sessionStartSource;
-  }
-  return request("pane.report_agent_session", params);
+  return request("pane.report_agent_session", { agent_session_id: sessionID });
 }
 
 function reportState(state, sessionID) {
@@ -145,22 +141,25 @@ export const HerdrAgentStatePlugin = async () => {
 
       const info = properties.info;
       if (info?.id && info.parentID) {
-        childSessions.add(info.id);
+        childSessions.set(info.id, info.parentID);
       }
       if (sessionID && childSessions.has(sessionID)) {
         const state = CHILD_EVENT_STATES.get(type);
         if (state) {
-          await reportState(state);
+          let rootSessionID = sessionID;
+          while (childSessions.has(rootSessionID)) {
+            rootSessionID = childSessions.get(rootSessionID);
+          }
+          await reportState(state, rootSessionID);
         }
         return;
       }
 
       switch (type) {
         case "session.created":
-          // A root session.created is a genuine new-session start (subagent
-          // creates are dropped above). Signal it so herdr replaces the pane's
-          // prior session id instead of treating the change as cross-talk.
-          await reportSession(sessionID, "new");
+          // Creation is server-global, so an attached client may own it. The
+          // TUI plugin separately reports the root selected in this pane.
+          reportedRootSessionID = sessionID;
           break;
         case "session.updated":
           if (sessionID && sessionID !== reportedRootSessionID) {
