@@ -1,27 +1,27 @@
 format = """
-(#a6adc8)\
-[ 󰘧 ](bg:#a6adc8 fg:#11111b)\
-[](bg:#89b4fa fg:#a6adc8)\
+(#969eaa)\
+[ 󰘧 ](bg:#969eaa fg:#0b0e14)\
+[](bg:#59c2ff fg:#969eaa)\
 $directory\
 ${custom.git_repo_name}\
-[](fg:#89b4fa bg:#313244)\
+[](fg:#59c2ff bg:#1b1f29)\
 $git_branch\
 $git_status\
-[](fg:#313244 bg:#181825)\
+[](fg:#1b1f29 bg:#141821)\
 $nodejs\
 $python\
 $rust\
 $golang\
 $php\
-[ ](fg:#181825)\
+[ ](fg:#141821)\
 \n$character"""
 
 [directory]
-style = "fg:#15161E bg:#89b4fa"
+style = "fg:#0b0e14 bg:#59c2ff"
 format = "[ $path ]($style)"
-before_repo_root_style = "fg:#15161E bg:#89b4fa"
+before_repo_root_style = "fg:#0b0e14 bg:#59c2ff"
 repo_root_format = ""
-repo_root_style = "fg:#15161E bg:#89b4fa"
+repo_root_style = "fg:#0b0e14 bg:#59c2ff"
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -38,17 +38,17 @@ printf '%s' "${repo%.git}"
 '''
 require_repo = true
 when = true
-style = "fg:#15161E bg:#89b4fa"
+style = "fg:#0b0e14 bg:#59c2ff"
 format = "[ $output ]($style)"
 
 [git_branch]
 symbol = ""
-style = "bg:#313244"
-format = '[[ $symbol $branch ](fg:#89b4fa bg:#313244)]($style)'
+style = "bg:#1b1f29"
+format = '[[ $symbol $branch ](fg:#59c2ff bg:#1b1f29)]($style)'
 
 [git_status]
-style = "bg:#313244"
-format = '[[($all_status$ahead_behind)](fg:#89b4fa bg:#313244)]($style)'
+style = "bg:#1b1f29"
+format = '[[($all_status$ahead_behind)](fg:#59c2ff bg:#1b1f29)]($style)'
 ahead = '⇡${count} '
 diverged = '⇕⇡${ahead_count}⇣${behind_count} '
 behind = '⇣${count} '
@@ -61,27 +61,27 @@ deleted = '✘${count} '
 
 [nodejs]
 symbol = ""
-style = "bg:#181825"
-format = '[[ $symbol ($version) ](fg:#89b4fa bg:#181825)]($style)'
+style = "bg:#141821"
+format = '[[ $symbol ($version) ](fg:#59c2ff bg:#141821)]($style)'
 
 [rust]
 symbol = ""
-style = "bg:#181825"
-format = '[[ $symbol ($version) ](fg:#89b4fa bg:#181825)]($style)'
+style = "bg:#141821"
+format = '[[ $symbol ($version) ](fg:#59c2ff bg:#141821)]($style)'
 
 [python]
 symbol = " "
 detect_extensions = []
 detect_files = []
-style = "bg:#181825"
-format = '[[ $symbol ($version) ($virtualenv)](fg:#89b4fa bg:#181825)]($style)'
+style = "bg:#141821"
+format = '[[ $symbol ($version) ($virtualenv)](fg:#59c2ff bg:#141821)]($style)'
 
 [golang]
 symbol = ""
-style = "bg:#181825"
-format = '[[ $symbol ($version) ](fg:#89b4fa bg:#181825)]($style)'
+style = "bg:#141821"
+format = '[[ $symbol ($version) ](fg:#59c2ff bg:#141821)]($style)'
 
 [php]
 symbol = ""
-style = "bg:#181825"
-format = '[[ $symbol ($version) ](fg:#89b4fa bg:#181825)]($style)'
+style = "bg:#141821"
+format = '[[ $symbol ($version) ](fg:#59c2ff bg:#141821)]($style)'

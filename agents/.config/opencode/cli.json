@@ -1,6 +1,7 @@
 {
   "theme": {
-    "name": "ayu-transparent"
+    "name": "ayu-black",
+    "mode": "dark"
   },
   "diffs": {
     "wrap": "none",

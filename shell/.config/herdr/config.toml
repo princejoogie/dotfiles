@@ -120,8 +120,30 @@ kitty_graphics = true
 directory = "~/.worktrees"
 
 [theme]
-name = "catppuccin"
+name = "terminal"
 auto_switch = false
+
+# Ayu Dark palette, matching Ghostty's Ayu terminal colors.
+[theme.custom]
+accent = "#e6b450"
+panel_bg = "#000000"
+sidebar_bg = "#000000"
+active_row_bg = "#161a24"
+selection_bg = "#1c212b"
+surface0 = "#161a24"
+surface1 = "#1b1f29"
+surface_dim = "#11151c"
+overlay0 = "#5a6378"
+overlay1 = "#6c7380"
+text = "#bfbdb6"
+subtext0 = "#969eaa"
+mauve = "#d2a6ff"
+green = "#aad94c"
+yellow = "#ffb454"
+red = "#f07178"
+blue = "#59c2ff"
+teal = "#95e6cb"
+peach = "#ff8f40"
 
 [update]
 channel = "preview"
