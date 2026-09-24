@@ -1,6 +1,6 @@
 /** @jsxImportSource @opentui/solid */
 
-import type { Context } from "@opencode-ai/plugin/tui/context"
+import type { Context } from "@opencode/plugin/tui/context"
 import { For, Show, createEffect, createMemo, createSignal, on, onCleanup } from "solid-js"
 import { spawn } from "node:child_process"
 import { isAbsolute, relative } from "node:path"
@@ -64,9 +64,7 @@ function View(props: {
   const session = createMemo(() => props.context.data.session.get(props.sessionID))
   const location = createMemo(() => session()?.location)
   const branch = createMemo(() => props.context.data.location.vcs.info(location())?.branch.current)
-  const cacheKey = createMemo(
-    () => `${location()?.directory ?? ""}\0${location()?.workspaceID ?? ""}\0${branch() ?? ""}`,
-  )
+  const cacheKey = createMemo(() => `${location()?.directory ?? ""}\0${branch() ?? ""}`)
   const project = createMemo(() => props.cache[cacheKey()])
   const pullRequest = () => result()?.pullRequest ?? undefined
   const pullRequestOpen = () => project()?.pullRequestOpen ?? true
@@ -121,7 +119,6 @@ function View(props: {
           signal,
           location: {
             directory: current.directory,
-            ...(current.workspaceID ? { workspace: current.workspaceID } : {}),
           },
         },
       )) as PullRequestResponse
@@ -176,10 +173,9 @@ function View(props: {
     ),
   )
 
-  const sameWorkspace = (cwd: string, eventLocation?: { directory: string; workspaceID?: string }) => {
+  const sameWorkspace = (cwd: string) => {
     const current = location()
     if (!current) return false
-    if (current.workspaceID && eventLocation?.workspaceID) return current.workspaceID === eventLocation.workspaceID
     const path = relative(current.directory, cwd)
     return path === "" || (!path.startsWith("..") && !isAbsolute(path))
   }
@@ -187,7 +183,7 @@ function View(props: {
   const dispose = [
     props.context.data.on("shell.created", (event) => {
       const command = event.data.info.command
-      if ((!gitPush(command) && !pullRequestCreate(command)) || !sameWorkspace(event.data.info.cwd, event.location)) return
+      if ((!gitPush(command) && !pullRequestCreate(command)) || !sameWorkspace(event.data.info.cwd)) return
       refreshCommands.add(event.data.info.id)
     }),
     props.context.data.on("shell.exited", (event) => {
@@ -215,21 +211,21 @@ function View(props: {
     return ""
   }
   const stateColor = (item: PullRequest) => {
-    if (item.state === "MERGED") return theme.text.feedback.success.default
-    if (item.state === "CLOSED") return theme.text.subdued
-    if (item.isDraft) return theme.text.feedback.warning.default
-    return theme.text.feedback.success.default
+    if (item.state === "MERGED") return theme.text.feedback.success.base
+    if (item.state === "CLOSED") return theme.text.muted
+    if (item.isDraft) return theme.text.feedback.warning.base
+    return theme.text.feedback.success.base
   }
   const checkColor = (check: Check) => {
-    if (check.bucket === "pass") return theme.text.feedback.success.default
-    if (check.bucket === "fail" || check.bucket === "cancel") return theme.text.feedback.error.default
-    if (check.bucket === "pending") return theme.text.feedback.warning.default
-    return theme.text.subdued
+    if (check.bucket === "pass") return theme.text.feedback.success.base
+    if (check.bucket === "fail" || check.bucket === "cancel") return theme.text.feedback.error.base
+    if (check.bucket === "pending") return theme.text.feedback.warning.base
+    return theme.text.muted
   }
   const reviewColor = (decision: string) => {
-    if (decision === "APPROVED") return theme.text.feedback.success.default
-    if (decision === "CHANGES_REQUESTED") return theme.text.feedback.error.default
-    return theme.text.feedback.warning.default
+    if (decision === "APPROVED") return theme.text.feedback.success.base
+    if (decision === "CHANGES_REQUESTED") return theme.text.feedback.error.base
+    return theme.text.feedback.warning.base
   }
   const reviewDecision = (item: PullRequest) => {
     if (item.reviewDecision) return item.reviewDecision
@@ -264,24 +260,24 @@ function View(props: {
           }
         >
           <Show when={pullRequest()}>
-            <text fg={refreshing() ? theme.text.subdued : theme.text.default}>{pullRequestOpen() ? "▼" : "▶"}</text>
+            <text fg={refreshing() ? theme.text.muted : theme.text.base}>{pullRequestOpen() ? "▼" : "▶"}</text>
           </Show>
-          <text fg={pullRequest() && !refreshing() ? theme.text.default : theme.text.subdued}>
+          <text fg={pullRequest() && !refreshing() ? theme.text.base : theme.text.muted}>
             <b>Pull Request</b>
             <Show
               when={pullRequest()}
-              fallback={<span style={{ fg: theme.text.subdued }}> ({refreshing() ? "Checking..." : "No pull request"})</span>}
+              fallback={<span style={{ fg: theme.text.muted }}> ({refreshing() ? "Checking..." : "No pull request"})</span>}
             >
-              {(item) => <span style={{ fg: theme.text.subdued }}> (#{item().number})</span>}
+              {(item) => <span style={{ fg: theme.text.muted }}> (#{item().number})</span>}
             </Show>
           </text>
         </box>
         <box flexDirection="row" gap={1}>
           <Show when={warning()}>
-            <text fg={theme.text.feedback.warning.default}></text>
+            <text fg={theme.text.feedback.warning.base}></text>
           </Show>
           <text
-            fg={refreshing() ? theme.text.feedback.warning.default : theme.text.subdued}
+            fg={refreshing() ? theme.text.feedback.warning.base : theme.text.muted}
             onMouseUp={() => void refresh(true)}
           >
             {refreshing() ? SPINNER_FRAMES[spinnerFrame()] : "󰑐"}
@@ -297,10 +293,10 @@ function View(props: {
                 <b>{item().title}</b>
               </a>
             </text>
-            <text fg={theme.text.subdued} wrapMode="word">
+            <text fg={theme.text.muted} wrapMode="word">
                {item().headRefName} → {item().baseRefName}
             </text>
-            <text fg={theme.text.subdued} wrapMode="word">
+            <text fg={theme.text.muted} wrapMode="word">
               <span style={{ fg: stateColor(item()) }}>
                 {stateIcon(item())} {state(item())}
               </span>
@@ -316,13 +312,13 @@ function View(props: {
               </Show>
             </text>
             <text>
-              <span style={{ fg: theme.text.subdued }}></span>
+              <span style={{ fg: theme.text.muted }}></span>
               {" "}
               <span style={{ fg: theme.diff.text.added }}>+{item().additions.toLocaleString()}</span>
               {" "}
               <span style={{ fg: theme.diff.text.removed }}>-{item().deletions.toLocaleString()}</span>
               {" "}
-              <span style={{ fg: theme.text.subdued }}>
+              <span style={{ fg: theme.text.muted }}>
                 {item().changedFiles.toLocaleString()} {item().changedFiles === 1 ? "file" : "files"}
               </span>
             </text>
@@ -338,27 +334,27 @@ function View(props: {
                     })
                   }
                 >
-                  <text fg={theme.text.default}>{checksOpen() ? "▼" : "▶"}</text>
-                  <text fg={theme.text.default}>
+                  <text fg={theme.text.base}>{checksOpen() ? "▼" : "▶"}</text>
+                  <text fg={theme.text.base}>
                     <b>Checks</b>
                     <Show when={!checksOpen()}>
                       <Show when={item().checks.some((check) => check.bucket === "pass")}>
-                        <span style={{ fg: theme.text.feedback.success.default }}>
+                        <span style={{ fg: theme.text.feedback.success.base }}>
                           {`   ${item().checks.filter((check) => check.bucket === "pass").length}`}
                         </span>
                       </Show>
                       <Show when={item().checks.some((check) => check.bucket === "fail" || check.bucket === "cancel")}>
-                        <span style={{ fg: theme.text.feedback.error.default }}>
+                        <span style={{ fg: theme.text.feedback.error.base }}>
                           {`   ${item().checks.filter((check) => check.bucket === "fail" || check.bucket === "cancel").length}`}
                         </span>
                       </Show>
                       <Show when={item().checks.some((check) => check.bucket === "pending")}>
-                        <span style={{ fg: theme.text.feedback.warning.default }}>
+                        <span style={{ fg: theme.text.feedback.warning.base }}>
                           {`   ${item().checks.filter((check) => check.bucket === "pending").length}`}
                         </span>
                       </Show>
                       <Show when={item().checks.some((check) => check.bucket === "skipping")}>
-                        <span style={{ fg: theme.text.subdued }}>
+                        <span style={{ fg: theme.text.muted }}>
                           {`   ${item().checks.filter((check) => check.bucket === "skipping").length}`}
                         </span>
                       </Show>
@@ -366,7 +362,7 @@ function View(props: {
                   </text>
                 </box>
                 <Show when={checksOpen()}>
-                  <Show when={item().checks.length > 0} fallback={<text fg={theme.text.subdued}>No checks</text>}>
+                  <Show when={item().checks.length > 0} fallback={<text fg={theme.text.muted}>No checks</text>}>
                     <For each={item().checks}>
                       {(check) => (
                         <box flexDirection="row" gap={1}>
