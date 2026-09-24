@@ -1,6 +1,7 @@
 theme = Ayu
 background = #000000
 macos-icon = xray
+macos-titlebar-style = hidden
 adjust-cell-height = 20%
 
 keybind = cmd+h=csi:104;9u
