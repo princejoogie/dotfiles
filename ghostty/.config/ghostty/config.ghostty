@@ -1,6 +1,6 @@
 theme = Ayu
-background-opacity = 0.8
-background-blur-radius = 30
+background-opacity = 0.95
+background-blur-radius = 40
 macos-icon = xray
 adjust-cell-height = 20%
 
