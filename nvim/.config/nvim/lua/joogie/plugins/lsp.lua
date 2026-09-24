@@ -37,10 +37,19 @@ local setup_autocmds = function()
   vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("joogie-lsp-attach", { clear = true }),
     callback = function(event)
-      -- local client = vim.lsp.get_client_by_id(event.data.client_id)
+      local client = vim.lsp.get_client_by_id(event.data.client_id)
       local map = function(keys, func, desc, mode)
         mode = mode or "n"
         vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+      end
+
+      if client and client_supports_method(client, "textDocument/foldingRange", event.buf) then
+        for _, win in ipairs(vim.fn.win_findbuf(event.buf)) do
+          vim.wo[win].foldmethod = "expr"
+          vim.wo[win].foldexpr = "v:lua.vim.lsp.foldexpr()"
+          vim.wo[win].foldtext = "v:lua.vim.lsp.foldtext()"
+          vim.wo[win].foldlevel = 99
+        end
       end
 
       map("K", vim.lsp.buf.hover, "Hover Action")

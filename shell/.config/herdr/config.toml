@@ -2,12 +2,10 @@ onboarding = false
 
 [ui]
 pane_gaps = false
+show_agent_labels_on_pane_borders = true
 
-show_agent_labels_on_pane_borders = false
 [keys]
 prefix = "ctrl+a"
-
-# Match tmux's window and split creation bindings.
 new_tab = "prefix+c"
 split_vertical = "prefix+backslash"
 split_horizontal = "prefix+="
@@ -122,7 +120,7 @@ kitty_graphics = true
 directory = "~/.worktrees"
 
 [theme]
-name = "tokyo-night"
+name = "catppuccin"
 auto_switch = false
 
 [update]

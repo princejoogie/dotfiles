@@ -1,4 +1,4 @@
-import type { Plugin } from "@opencode-ai/plugin/promise/plugin"
+import type { Plugin } from "@opencode/plugin/promise/plugin"
 import { spawn } from "node:child_process"
 import { PullRequestRpc } from "./rpc"
 import type { Check, PullRequest, PullRequestRequest, PullRequestResponse } from "./rpc"

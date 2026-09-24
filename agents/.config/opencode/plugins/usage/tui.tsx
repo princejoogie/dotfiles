@@ -1,7 +1,7 @@
 /** @jsxImportSource @opentui/solid */
 
-import type { Context } from "@opencode-ai/plugin/tui/context"
-import type { Definition } from "@opencode-ai/plugin/tui/plugin"
+import type { Context } from "@opencode/plugin/tui/context"
+import type { Definition } from "@opencode/plugin/tui/plugin"
 import { RGBA } from "@opentui/core"
 import { For, Show, createEffect, createMemo, createSignal, onCleanup } from "solid-js"
 import { UsageRpc } from "./rpc"
@@ -27,8 +27,8 @@ function errorMessage(error: unknown) {
 }
 
 function mutedBarColor(theme: Context["theme"]) {
-  const foreground = theme.text.subdued.toInts()
-  const background = theme.background.default.toInts()
+  const foreground = theme.text.muted.toInts()
+  const background = theme.background.base.toInts()
   return RGBA.fromInts(
     Math.round(background[0] + (foreground[0] - background[0]) * 0.25),
     Math.round(background[1] + (foreground[1] - background[1]) * 0.25),
@@ -102,7 +102,7 @@ function ProviderCard(props: {
         when={props.state.status === "ready" ? props.state.snapshot : undefined}
         fallback={
           <text
-            fg={props.state.status === "error" ? theme.text.feedback.error.default : theme.text.subdued}
+            fg={props.state.status === "error" ? theme.text.feedback.error.base : theme.text.muted}
             wrapMode="word"
           >
             <b>{props.name}</b>
@@ -113,11 +113,11 @@ function ProviderCard(props: {
         {(snapshot) => (
           <>
             <box flexDirection="row" justifyContent="space-between">
-              <text fg={theme.text.default}>
+              <text fg={theme.text.base}>
                 <b>{props.name}</b>
               </text>
               <Show when={snapshot().plan}>
-                {(plan) => <text fg={theme.text.subdued}>{formatPlan(plan())}</text>}
+                {(plan) => <text fg={theme.text.muted}>{formatPlan(plan())}</text>}
               </Show>
             </box>
             <For each={snapshot().windows}>
@@ -129,7 +129,7 @@ function ProviderCard(props: {
                     <box width="100%" height={1} flexDirection="row">
                       <box height={1} flexBasis={0} flexGrow={used()} overflow="hidden">
                         <text
-                          fg={used() >= 85 ? theme.text.feedback.warning.default : theme.markdown.link}
+                          fg={used() >= 85 ? theme.text.feedback.warning.base : theme.markdown.link}
                           wrapMode="none"
                         >
                           {"▄".repeat(100)}
@@ -142,16 +142,16 @@ function ProviderCard(props: {
                       </box>
                     </box>
                     <box flexDirection="row" justifyContent="space-between">
-                      <text fg={theme.text.subdued}>{resetText(window, props.now)}</text>
-                      <text fg={theme.text.subdued}>{used()}% used</text>
+                      <text fg={theme.text.muted}>{resetText(window, props.now)}</text>
+                      <text fg={theme.text.muted}>{used()}% used</text>
                     </box>
                     <Show when={pacing()}>
                       {(item) => (
                         <text
                           fg={
                             item().warning
-                              ? theme.text.feedback.warning.default
-                              : theme.text.feedback.success.default
+                              ? theme.text.feedback.warning.base
+                              : theme.text.feedback.success.base
                           }
                         >
                           {item().text}
@@ -163,7 +163,7 @@ function ProviderCard(props: {
               }}
             </For>
             <Show when={(snapshot().credits ?? 0) > 0}>
-              <text fg={theme.text.subdued}>
+              <text fg={theme.text.muted}>
                 Extra credits ${((snapshot().credits ?? 0) / 100).toFixed(2)}
               </text>
             </Show>
@@ -205,14 +205,14 @@ function View(props: {
     <box>
       <box flexDirection="row" justifyContent="space-between">
         <box flexDirection="row" gap={1} onMouseDown={() => props.setOpen(!props.state.open)}>
-          <text fg={theme.text.default}>{props.state.open ? "▼" : "▶"}</text>
-          <text fg={theme.text.default}>
+          <text fg={theme.text.base}>{props.state.open ? "▼" : "▶"}</text>
+          <text fg={theme.text.base}>
             <b>Usage</b>
-            <span style={{ fg: theme.text.subdued }}> ({connected()}/2)</span>
+            <span style={{ fg: theme.text.muted }}> ({connected()}/2)</span>
           </text>
         </box>
         <text
-          fg={props.state.refreshing ? theme.text.feedback.warning.default : theme.text.subdued}
+          fg={props.state.refreshing ? theme.text.feedback.warning.base : theme.text.muted}
           onMouseUp={() => void props.refresh(true)}
         >
           {props.state.refreshing ? SPINNER_FRAMES[spinnerFrame()] : "󰑐"}

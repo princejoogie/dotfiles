@@ -1,4 +1,4 @@
-import type { Context, Plugin } from "@opencode-ai/plugin/promise/plugin"
+import type { Context, Plugin } from "@opencode/plugin/promise/plugin"
 import { spawn } from "node:child_process"
 import { readFile } from "node:fs/promises"
 import { homedir } from "node:os"

@@ -66,7 +66,10 @@ Use `stow` to link the configurations to your home directory:
 stow hyprland
 stow nvim
 stow shell
+stow ghostty
 ```
+
+Ghostty reads `~/.config/ghostty/config.ghostty`, linked from `ghostty/.config/ghostty/config.ghostty`.
 
 > [!NOTE]
 > For SDDM theme installation, refer to the scripts within the `sddm/` directory.

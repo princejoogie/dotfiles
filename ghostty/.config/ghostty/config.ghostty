@@ -1,0 +1,19 @@
+theme = Ayu
+background-opacity = 0.8
+background-blur-radius = 30
+macos-icon = xray
+adjust-cell-height = 20%
+
+keybind = cmd+h=csi:104;9u
+keybind = cmd+j=csi:106;9u
+keybind = cmd+k=csi:107;9u
+keybind = cmd+l=csi:108;9u
+keybind = cmd+digit_1=csi:49;9u
+keybind = cmd+digit_2=csi:50;9u
+keybind = cmd+digit_3=csi:51;9u
+keybind = cmd+digit_4=csi:52;9u
+keybind = cmd+digit_5=csi:53;9u
+keybind = cmd+digit_6=csi:54;9u
+keybind = cmd+digit_7=csi:55;9u
+keybind = cmd+digit_8=csi:56;9u
+keybind = cmd+digit_9=csi:57;9u
