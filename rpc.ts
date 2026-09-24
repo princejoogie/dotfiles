@@ -1,4 +1,4 @@
-import type { Rpc } from "@opencode-ai/schema/rpc"
+import type { Rpc } from "@opencode/plugin/rpc"
 
 export type UsageWindow = {
   usedPercent: number
