@@ -23,7 +23,8 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "title"
+        "title",
+        "output"
       ],
       "properties": {
         "title": {
@@ -33,11 +34,14 @@
         "locale": {
           "$ref": "common.schema.json#/$defs/locale"
         },
+        "translations": {
+          "$ref": "common.schema.json#/$defs/translations"
+        },
         "subtitle": {
           "type": "string"
         },
         "output": {
-          "type": "string"
+          "$ref": "common.schema.json#/$defs/portableOutputPath"
         },
         "animation": {
           "$ref": "common.schema.json#/$defs/animation"
@@ -47,6 +51,9 @@
         },
         "quality_profile": {
           "$ref": "common.schema.json#/$defs/qualityProfile"
+        },
+        "repository": {
+          "$ref": "common.schema.json#/$defs/repository"
         },
         "views": {
           "$ref": "common.schema.json#/$defs/guidedViews"
@@ -135,8 +142,12 @@
           "tag": {
             "type": "string"
           },
+          "icon": { "$ref": "common.schema.json#/$defs/nodeIcon" },
           "brand": {
             "$ref": "common.schema.json#/$defs/brandMark"
+          },
+          "sources": {
+            "$ref": "common.schema.json#/$defs/sourceReferences"
           },
           "stage": {
             "type": "integer",

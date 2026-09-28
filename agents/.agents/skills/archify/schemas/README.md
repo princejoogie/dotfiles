@@ -15,18 +15,31 @@ against one of the schemas in this folder before any layout work happens.
 | `common.schema.json` | shared `$defs` only (no top-level document) | — |
 
 Every diagram schema requires `schema_version`, `diagram_type`, `meta` (with
-`title`), and its structural arrays — except `segments`, `activations`, and
+`title` and a durable portable `output`), and its structural arrays — except `segments`, `activations`, and
 `cards`, which are optional — and sets `additionalProperties: false` at every
 level, so unknown fields are rejected rather than silently ignored.
 
 Every `meta` object also accepts `animation: "trace"` for opt-in SVG/CSS motion
 in generated HTML. Omit it, or set `"none"`, for the default static output.
-It also accepts `locale: "en" | "zh-CN"`. The field selects the fixed Viewer
-UI, renderer-owned default legend and accessibility copy, document-title
-suffix, and `<html lang>` value; it does not translate authored strings.
-Omitting it preserves legacy behavior and resolves to English. Unsupported
-locale values fail schema validation instead of being guessed or silently
-rewritten.
+It also accepts `locale`, any well-formed language tag (schema pattern
+`^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$`). The field selects the fixed Viewer UI,
+renderer-owned default legend and accessibility copy, document-title suffix,
+and `<html lang>` value; it does not translate authored strings. `en` and
+`zh-CN` are built-in catalogs; any other tag needs a matching `translations`
+object (see below) or the renderer falls back to English and discloses it.
+Omitting `locale` preserves legacy behavior and resolves to English.
+Malformed locale tags fail schema validation instead of being guessed or
+silently rewritten.
+
+`meta.translations` supplies the Viewer message catalog for a `locale` with no
+built-in catalog, as data: an object mapping canonical message keys (see
+`catalogKeys()` in `renderers/shared/i18n.mjs`) to translated strings whose
+`{placeholder}` tokens match the English source. A key that is missing,
+unrecognized, or has mismatched placeholders falls back to English rather than
+failing the render; `validate`/`render`/`deliver` report the resulting
+coverage to stderr. Spanish uses the reusable `examples/locales/es.json`
+catalog; dev inputs that previously used only `locale: "es"` now need this
+object in `meta.translations` to retain Spanish UI.
 `visual_preset` accepts `classic` (the stable default), `signal-flow` (luminous
 motion-forward presentation), `blueprint` (high-contrast engineering review),
 or `editorial` (warm publication-style design review and documentation).
@@ -38,9 +51,8 @@ diagram renders at the same coordinates no matter how wide its viewBox is.
 wide canvas into column distance and label room rather than empty space on the
 right. Lane order, IDs, and message semantics are unchanged either way.
 
-It may also include up to five guided `views`. Each view has a unique `id`, a
-reader-facing `label`, a non-empty `focus` list of existing semantic node IDs,
-and an optional short `note`.
+`meta.views` is retired. The schemas still accept the old guided-view shape so
+existing files keep validating, but renderers ignore it; do not author it.
 
 ### Legend presentation contract
 
@@ -112,7 +124,19 @@ output.
 Workflow supports schema versions 1 and 2. Version 1 remains the fixed-layout
 compatibility contract; version 2 opts into the readable workflow compiler and
 can be produced explicitly with `archify migrate workflow ... --to-schema 2`.
-The other four diagram schemas keep `schema_version` pinned to `1`.
+Lifecycle also supports versions 1 and 2 with the same fields. Version 1 keeps
+the fixed three-band layout; version 2 renders one row per lane on a shared
+column grid (see the [lifecycle renderer](../renderers/lifecycle/README.md)).
+Lifecycle has no migration command: to adopt v2, set `schema_version: 2`,
+re-place lower-lane `col` values on the shared grid (v1 column `N` sat under
+main column `N + 2`), and drop coordinates authored for the v1 canvas
+(`viewBox`, `via`, `channelX`, `channelY`, `labelAt`).
+The other three diagram schemas keep `schema_version` pinned to `1`; they have
+no schema-version migration command. For any of the five diagram types, repair
+a legacy missing or nonportable `meta.output` in the source and run `validate`.
+For a workflow v1-to-v2 migration specifically, `migrate workflow` also accepts
+`--output reports/diagram.html` to put that portable value in the separate v2
+destination without changing the legacy source.
 
 Workflow also accepts optional `semanticChecks`. `allowedRoots` and
 `allowedTerminals` close the set of intentional graph sources and sinks;
@@ -124,7 +148,13 @@ workflow behavior and including a satisfied contract does not change SVG or
 layout-receipt bytes.
 
 A file that validates today must keep validating and rendering within its
-declared version throughout the 2.x release line. Additive viewer,
+declared version throughout the 2.x release line. The explicitly reviewed
+portable-output hardening is the one exception: older v1 documents that omit
+`meta.output` must add a portable POSIX-relative `.html` path (for example,
+`reports/diagram.html`); ordinary explicit CLI output arguments do not replace
+this durable authored value. The workflow-only v1-to-v2 migration command may
+instead receive that value explicitly as `--output reports/diagram.html`; it
+writes the value only to its separate validated destination. Additive viewer,
 accessibility, and presentation improvements may enhance generated HTML, but
 they must not reinterpret authored IR or turn a previously valid profile-less
 v1 file into a new hard layout failure. Breaking IR changes require a new
@@ -138,17 +168,28 @@ The five diagram schemas reference `common.schema.json#/$defs/...`:
 - `point` — an `[x, y]` pair of numbers (used by `via` and `labelAt`)
 - `componentType` — `frontend`, `backend`, `database`, `cloud`, `security`,
   `messagebus`, `external`
-- `locale` — the bounded renderer locale, `en` or `zh-CN`
+- `locale` — a well-formed renderer locale tag (`en` and `zh-CN` are built in;
+  any other tag needs a matching `translations` object)
+- `translations` — canonical message key → translated string, for a `locale`
+  with no built-in catalog
+- `portableOutputPath` — the portable POSIX-relative `.html` path used by
+  `meta.output`; see the two output-path boundaries in the
+  [delivery contract](../references/delivery-contract.md#output-path-contracts)
 - `brandMark` — one optional built-in brand ID or explicit HTTP(S) site URL
 - `variant` — `default`, `emphasis`, `security`, `dashed` (sequence messages
   extend this list locally with `return`)
 - `legendMode` and `legendEntry` — the shared strict mode and label/visibility
   override shapes used by each renderer-owned key map
-- `guidedViews` — the bounded, read-only reader paths accepted by `meta.views`
+- `guidedViews` — the retired `meta.views` shape, still accepted and ignored
 - `cards` — the summary-card blocks rendered below the SVG
 
 Lifecycle state `type` is mode-specific (`start`/`active`/`waiting`/...) and
 stays in `lifecycle.schema.json`.
+
+The JSON Schema definition is the portable contract's structurally expressible
+preflight. The shipped generated validator wrapper and CLI additionally enforce
+byte-based component limits and the complete runtime path contract; consumers
+that need the same cross-platform acceptance boundary should use that wrapper.
 
 ## Runtime validation
 
@@ -163,10 +204,14 @@ express cleanly here: duplicate view IDs, duplicate focus IDs, focus IDs that do
 not exist in the diagram's semantic collection, and duplicate authored
 relationship IDs within the mode's relationship collection.
 
-Architecture additionally supports opt-in, revision-pinned repository evidence.
-`meta.repository` names a public GitHub URL and full commit SHA; a component may
-carry one to three `sources` with repo-relative POSIX paths, optional line
-ranges, and optional labels. Shape is schema-checked, then the renderer requires
+All five modes support opt-in, revision-pinned repository evidence.
+`meta.repository` names the repository URL and full commit SHA, with optional
+`provider` (`github` or `gitee`) and `link_mode` (`web` or `local-only`; see the
+authoring contract); a node may carry one to three `sources` with repo-relative POSIX paths, optional line
+ranges, and optional labels. Sources are authored on the mode's own node
+collection — Architecture `components`, Workflow and Data Flow `nodes`,
+Sequence `participants`, Lifecycle `states` — and the verified payload is keyed
+by node id. Shape is schema-checked, then the renderer requires
 `--repo-root`: the local Git origin must match, and Git must prove the commit,
 blobs, and requested lines. Verified evidence is embedded outside the canonical
 SVG for the Semantic Passport and Node Finder; ordinary documents and visual

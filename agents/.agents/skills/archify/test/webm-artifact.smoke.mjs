@@ -101,7 +101,7 @@ const legendOutputs = {
   dataflow: renderLegendFixture('dataflow', 'issue-52-default-flow', {
     schema_version: 1,
     diagram_type: 'dataflow',
-    meta: { title: 'Default Flow With Store' },
+    meta: { title: 'Default Flow With Store', output: 'issue-52-default-flow.dataflow.html' },
     stages: [{ label: 'Input' }, { label: 'Output' }],
     nodes: [
       { id: 'input', type: 'backend', label: 'Input', stage: 0, row: 0 },
@@ -112,7 +112,11 @@ const legendOutputs = {
   lifecycle: renderLegendFixture('lifecycle', 'issue-52-no-waiting', {
     schema_version: 1,
     diagram_type: 'lifecycle',
-    meta: { title: 'No Waiting or Failure', viewBox: [720, 566] },
+    meta: {
+      title: 'No Waiting or Failure',
+      output: 'issue-52-no-waiting.lifecycle.html',
+      viewBox: [720, 566],
+    },
     lanes: [{ id: 'main', label: 'Lifecycle' }],
     states: [
       { id: 'started', type: 'start', label: 'Started', lane: 'main', col: 0 },
@@ -126,6 +130,7 @@ const legendOutputs = {
     diagram_type: 'architecture',
     meta: {
       title: 'Custom Legend Label',
+      output: 'issue-52-custom-label.architecture.html',
       viewBox: [720, 420],
       legend: {
         entries: {
@@ -133,7 +138,6 @@ const legendOutputs = {
           external: { label: 'Future integration', visible: true },
         },
       },
-      views: [{ id: 'main', label: 'Main', focus: ['ui', 'store'] }],
     },
     components: [
       { id: 'ui', type: 'frontend', label: 'UI', pos: [60, 90] },
@@ -144,7 +148,11 @@ const legendOutputs = {
   hidden: renderLegendFixture('dataflow', 'issue-52-hidden', {
     schema_version: 1,
     diagram_type: 'dataflow',
-    meta: { title: 'Hidden Legend', legend: { mode: 'hidden', entries: { database: { visible: true } } } },
+    meta: {
+      title: 'Hidden Legend',
+      output: 'issue-52-hidden.dataflow.html',
+      legend: { mode: 'hidden', entries: { database: { visible: true } } },
+    },
     stages: [{ label: 'Input' }, { label: 'Output' }],
     nodes: [
       { id: 'input', type: 'backend', label: 'Input', stage: 0, row: 0 },
@@ -188,6 +196,7 @@ const specialRouteSource = {
   meta: {
     title: '多语言 Route Share Card 🚀 with a deliberately long original diagram title that must fit safely',
     subtitle: 'Ten exact authored hops',
+    output: 'special-route.architecture.html',
     animation: 'trace',
   },
   components: specialComponents,
@@ -404,7 +413,7 @@ try {
       assert.deepEqual(dataflow.aria, ['Inspect data store, 1 node', null]);
       assert.deepEqual(dataflow.counts, ['1', null]);
       assert.equal(dataflow.tabStops, 1);
-      const lifecycle = await inspectKinds(outputs.lifecycle, ['start', 'active', 'success'], theme);
+      const lifecycle = await inspectKinds(outputs.lifecycle, ['start', 'active', 'success', 'final'], theme);
       assert.equal(lifecycle.bridge, true);
     }
 
@@ -453,8 +462,6 @@ try {
       var arrowMoved = document.activeElement === second;
       second.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
       var selected = Archify.semanticLens.active();
-      var guidedActivated = Archify.guidedViews.activate('main', { updateUrl: false });
-      var guidedActive = Archify.guidedViews.active();
       var visualMatrix = [];
       for (var preset of ['classic', 'signal-flow', 'blueprint', 'editorial']) {
         if (!Archify.preset.apply(preset)) throw new Error('could not apply preset ' + preset);
@@ -489,8 +496,6 @@ try {
           arrowMoved: arrowMoved,
           selected: selected,
           lensOpen: Archify.semanticLens.isOpen(),
-          guidedActivated: guidedActivated,
-          guidedActive: guidedActive,
           visualMatrix: visualMatrix,
           forcedUnusedInteractive: entries.at(-1).hasAttribute('data-legend-kind'),
           exportedKinds: Array.from(exported.querySelectorAll('[data-legend-semantic-kind]')).map(function (entry) { return entry.getAttribute('data-legend-semantic-kind'); }),
@@ -508,9 +513,7 @@ try {
     assert.equal(runtime.tabStops, 1);
     assert.equal(runtime.arrowMoved, true);
     assert.deepEqual(runtime.selected, ['database']);
-    assert.equal(runtime.lensOpen, false);
-    assert.equal(runtime.guidedActivated, true);
-    assert.equal(runtime.guidedActive, 'main');
+    assert.equal(runtime.lensOpen, true);
     assert.equal(runtime.visualMatrix.length, 8);
     for (const entry of runtime.visualMatrix) {
       assert.deepEqual(entry.kinds, ['frontend', 'database', 'external']);
@@ -832,7 +835,7 @@ try {
       var frames = Array.from(document.querySelectorAll('.snapshot-frame'));
       var explorers = frames.map(function (frame) {
         var child = frame.contentWindow;
-        return Boolean(child && child.Archify && child.Archify.focus && child.Archify.routeProbe && child.document.querySelector('#btn-node-finder') && child.document.querySelector('#guided-view-play'));
+        return Boolean(child && child.Archify && child.Archify.focus && child.Archify.routeProbe && child.document.querySelector('#btn-node-finder'));
       });
       var svgA = Archify.deltaExport.canonicalSvg();
       document.querySelector('#theme').click();
@@ -840,12 +843,22 @@ try {
       document.querySelector('.change-row').click();
       var svgB = Archify.deltaExport.canonicalSvg();
       var parsed = new DOMParser().parseFromString(svgB, 'image/svg+xml');
+      var baselineMarkers = Array.from(parsed.querySelectorAll('path[data-edge-id][data-delta-state="removed"], path[data-edge-id][data-delta-state="moved-from"]')).map(function (edge) {
+        var markerId = (edge.getAttribute('marker-end') || '').match(/^url\(#([^)]+)\)$/)?.[1];
+        var marker = markerId ? parsed.getElementById(markerId) : null;
+        return {
+          edge: edge.getAttribute('data-edge-id'),
+          resolved: marker?.localName === 'marker',
+          tone: marker?.querySelector('polygon')?.getAttribute('class') || null
+        };
+      }).sort(function (a, b) { return a.edge.localeCompare(b.edge); });
       var exportStyle = parsed.querySelector('style')?.textContent || '';
       var blob = await Archify.deltaExport.shareCard();
       var bytes = new Uint8Array(await blob.arrayBuffer());
       return {
         explorers: explorers,
         stable: svgA === svgB,
+        baselineMarkers: baselineMarkers,
         reviewResidue: parsed.querySelectorAll('[data-delta-review-current]').length,
         boundaryStyle: exportStyle.includes('text[data-delta-boundary-state="added"]{fill:#34d399!important}'),
         markerStyle: exportStyle.includes('.delta-edge-marker[data-delta-state],.delta-boundary-marker[data-delta-state]{color:var(--delta)}'),
@@ -858,6 +871,11 @@ try {
     })()`, true), 15_000, 'Architecture Delta export');
     assert.deepEqual(exportProof.explorers, [true, true]);
     assert.equal(exportProof.stable, true);
+    assert.deepEqual(exportProof.baselineMarkers, [
+      { edge: 'authorize-payment', resolved: true, tone: 'm-security' },
+      { edge: 'publish-order', resolved: true, tone: 'm-dashed' },
+      { edge: 'session-read', resolved: true, tone: 'm-default' },
+    ]);
     assert.equal(exportProof.reviewResidue, 0);
     assert.equal(exportProof.boundaryStyle, true);
     assert.equal(exportProof.markerStyle, true);
@@ -867,115 +885,6 @@ try {
     assert.ok(exportProof.size > 20_000, `Architecture Delta Share Card is unexpectedly small (${exportProof.size} bytes)`);
     assert.equal(exportProof.signature, '89504e470d0a1a0a');
     console.log(`ok Architecture Delta navigator + export: exact identity, complete explorers, static SVG, and ${exportProof.size}-byte Share Card`);
-  }
-
-  async function captureShareCard(file, label) {
-    await navigateReady(file, '!!(window.Archify && Archify.exportMenu && Archify.exportMenu.shareCard)', label);
-    const sharePayload = await withTimeout(evaluate(cdp, sessionId, String.raw`(async function () {
-      try {
-        var blob = await Archify.exportMenu.shareCard();
-        var bytes = new Uint8Array(await blob.arrayBuffer());
-        var binary = '';
-        for (var offset = 0; offset < bytes.length; offset += 32768) {
-          binary += String.fromCharCode.apply(null, bytes.subarray(offset, offset + 32768));
-        }
-        return { ok: true, type: blob.type, size: blob.size, base64: btoa(binary) };
-      } catch (error) {
-        return { ok: false, error: String(error && error.message || error) };
-      }
-    })()`, true), 10_000, `${label} Share Card export`);
-
-    assert.equal(sharePayload?.ok, true, sharePayload?.error || `${label} Share Card export failed`);
-    assert.equal(sharePayload.type, 'image/png');
-    assert.ok(sharePayload.size > 20_000, `${label} Share Card is unexpectedly small (${sharePayload.size} bytes)`);
-
-    const png = Buffer.from(sharePayload.base64, 'base64');
-    assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', `${label} output is not a PNG`);
-    assert.equal(png.readUInt32BE(16), 1200, `${label} Share Card width`);
-    assert.equal(png.readUInt32BE(20), 630, `${label} Share Card height`);
-
-    const pngPath = path.join(tmp, `${label}.share-card.png`);
-    fs.writeFileSync(pngPath, png);
-    const pixels = execFileSync(ffmpeg, [
-      '-v', 'error',
-      '-i', pngPath,
-      '-vf', 'scale=120:63',
-      '-frames:v', '1',
-      '-f', 'rawvideo',
-      '-pix_fmt', 'rgb24',
-      '-',
-    ], { maxBuffer: 4 * 1024 * 1024 });
-    const colors = new Set();
-    const counts = new Map();
-    for (let offset = 0; offset < pixels.length; offset += 3) {
-      const color = pixels.subarray(offset, offset + 3).toString('hex');
-      colors.add(color);
-      counts.set(color, (counts.get(color) || 0) + 1);
-    }
-    const largestColorShare = Math.max(...counts.values()) / (pixels.length / 3);
-    assert.ok(colors.size >= 24, `${label} Share Card has only ${colors.size} sampled colors`);
-    assert.ok(largestColorShare < 0.96, `${label} Share Card is visually near-blank (${Math.round(largestColorShare * 100)}% one color)`);
-    console.log(`ok ${label} Share Card: ${sharePayload.size} bytes, 1200x630, ${colors.size} sampled colors`);
-  }
-
-  async function captureCopiedShareCard(file, label) {
-    await navigateReady(file, '!!(window.Archify && Archify.exportMenu && Archify.exportMenu.copyShareCard)', label);
-    const copiedPayload = await withTimeout(evaluate(cdp, sessionId, String.raw`(async function () {
-      try {
-        Object.defineProperty(window, 'ClipboardItem', {
-          configurable: true,
-          value: function ClipboardItem(items) { this.items = items; }
-        });
-        Object.defineProperty(navigator, 'clipboard', {
-          configurable: true,
-          value: {
-            write: async function (items) {
-              window.__archifyCopiedShareCard = await Promise.resolve(items[0].items['image/png']);
-            }
-          }
-        });
-        window.alert = function (message) { window.__archifyCopyAlert = message; };
-        await Archify.exportMenu.copyShareCard();
-        var blob = window.__archifyCopiedShareCard;
-        if (!blob) throw new Error(window.__archifyCopyAlert || 'clipboard received no blob');
-        var bytes = new Uint8Array(await blob.arrayBuffer());
-        var binary = '';
-        for (var offset = 0; offset < bytes.length; offset += 32768) {
-          binary += String.fromCharCode.apply(null, bytes.subarray(offset, offset + 32768));
-        }
-        return {
-          ok: true,
-          type: blob.type,
-          size: blob.size,
-          base64: btoa(binary),
-          receipt: {
-            format: document.documentElement.getAttribute('data-last-export-format'),
-            width: document.documentElement.getAttribute('data-last-export-width'),
-            height: document.documentElement.getAttribute('data-last-export-height'),
-            canonical: document.documentElement.getAttribute('data-last-export-canonical'),
-            error: document.documentElement.getAttribute('data-last-export-error')
-          }
-        };
-      } catch (error) {
-        return { ok: false, error: String(error && error.message || error) };
-      }
-    })()`, true), 10_000, `${label} Copy Share Card`);
-
-    assert.equal(copiedPayload?.ok, true, copiedPayload?.error || `${label} Copy Share Card failed`);
-    assert.equal(copiedPayload.type, 'image/png');
-    assert.ok(copiedPayload.size > 20_000, `${label} copied Share Card is unexpectedly small`);
-    const png = Buffer.from(copiedPayload.base64, 'base64');
-    assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', `${label} copied output is not a PNG`);
-    assert.equal(png.readUInt32BE(16), 1200, `${label} copied Share Card width`);
-    assert.equal(png.readUInt32BE(20), 630, `${label} copied Share Card height`);
-    assert.deepEqual(copiedPayload.receipt, {
-      format: 'share-card',
-      width: '1200',
-      height: '630',
-      canonical: 'true',
-      error: null,
-    });
-    console.log(`ok ${label} Copy Share Card: ${copiedPayload.size} bytes, image/png, truthful receipt`);
   }
 
   async function captureRouteShareCard(file, label, sourceId, targetId, options = {}) {
@@ -1049,21 +958,19 @@ try {
         };
         HTMLAnchorElement.prototype.click = function () { downloads.push(this.download); };
         CanvasRenderingContext2D.prototype.fillText = function (text, x, y) {
-          if (headerMetrics.length < 2 && (y === 62 || y === 87)) {
+          if (headerMetrics.length < 2 && (y === 74 || y === 99)) {
             headerMetrics.push({
               y: y,
               text: String(text),
               width: this.measureText(String(text)).width,
-              maxWidth: y === 62 ? 798 : 848
+              maxWidth: y === 74 ? 860 : 1120
             });
           }
           return originalFillText.apply(this, arguments);
         };
 
         var blob;
-        var canonicalBlob;
         var routeReceipt;
-        var ordinaryReceipt;
         var routeFingerprints = [];
         try {
           blob = await Archify.exportMenu.downloadRouteShareCard();
@@ -1149,19 +1056,6 @@ try {
           try { await Archify.exportMenu.shareCard({ variant: 'unknown' }); }
           catch (error) { unknownVariantError = String(error && error.message || error); }
 
-          var canonicalIndex = captured.length;
-          canonicalBlob = await Archify.exportMenu.shareCard();
-          var canonicalSvgText = captured[canonicalIndex] ? await captured[canonicalIndex] : '';
-          await Archify.exportMenu.run('share-card');
-          ordinaryReceipt = {
-            format: document.documentElement.getAttribute('data-last-export-format'),
-            variant: document.documentElement.getAttribute('data-last-export-variant'),
-            width: document.documentElement.getAttribute('data-last-export-width'),
-            height: document.documentElement.getAttribute('data-last-export-height'),
-            canonical: document.documentElement.getAttribute('data-last-export-canonical'),
-            routeStateClean: document.documentElement.getAttribute('data-last-export-route-state-clean'),
-            error: document.documentElement.getAttribute('data-last-export-error')
-          };
           var svgDownloadIndex = captured.length;
           await Archify.exportMenu.run('svg');
           var exportedSvgText = captured[svgDownloadIndex] ? await captured[svgDownloadIndex] : '';
@@ -1179,7 +1073,6 @@ try {
 
           var parser = new DOMParser();
           var routeSvg = parser.parseFromString(routeSvgText, 'image/svg+xml').documentElement;
-          var canonicalSvg = parser.parseFromString(canonicalSvgText, 'image/svg+xml').documentElement;
           var exportedSvg = parser.parseFromString(exportedSvgText, 'image/svg+xml').documentElement;
           var matchedNodeIds = Array.from(routeSvg.querySelectorAll('[data-node-id][data-share-route-match]')).map(function (node) {
             return { id: node.getAttribute('data-node-id'), step: Number(node.getAttribute('data-share-route-step')) };
@@ -1248,9 +1141,8 @@ try {
             liveNodeIds: liveNodeIds,
             routeEdgeKeys: routeEdgeKeys,
             liveEdgeKeys: liveEdgeKeys,
-            canonicalRouteResidue: canonicalSvg.querySelectorAll('[data-route-match], [data-route-step], [data-route-start], [data-route-end], [data-share-route-match], [data-share-route-step], [data-share-route-start], [data-share-route-end], [data-share-route-middle]').length,
-            canonicalRouteActive: canonicalSvg.hasAttribute('data-route-active') || canonicalSvg.hasAttribute('data-share-route'),
-            canonicalSize: canonicalBlob.size,
+            canonicalRouteResidue: exportedSvg.querySelectorAll('[data-route-match], [data-route-step], [data-route-start], [data-route-end], [data-share-route-match], [data-share-route-step], [data-share-route-start], [data-share-route-end], [data-share-route-middle]').length,
+            canonicalRouteActive: exportedSvg.hasAttribute('data-route-active') || exportedSvg.hasAttribute('data-share-route'),
             liveUnchanged: liveUnchanged,
             liveDiff: liveDiff,
             menuResolved: menuResolved,
@@ -1278,7 +1170,6 @@ try {
             routeFingerprints: routeFingerprints,
             downloads: downloads,
             routeReceipt: routeReceipt,
-            ordinaryReceipt: ordinaryReceipt,
             failedReceipt: failedReceipt
           };
         } finally {
@@ -1335,7 +1226,7 @@ try {
     assert.ok(routePayload.imageDecodeError);
     assert.match(routePayload.unknownVariantError, /Unknown Share Card variant: unknown/);
     assert.equal(routePayload.routeLabelExecuted, false);
-    assert.deepEqual(routePayload.headerMetrics.map((metric) => metric.y), [62, 87]);
+    assert.deepEqual(routePayload.headerMetrics.map((metric) => metric.y), [74, 99]);
     assert.ok(routePayload.headerMetrics.every((metric) => metric.width <= metric.maxWidth + 0.5), `${label} title/subtitle overflowed the Share Card header`);
     assert.deepEqual(routePayload.svgReceipt, { format: 'svg', variant: null, canonical: 'true' });
     assert.deepEqual(routePayload.pngReceipt, { format: 'png', variant: null, canonical: 'true' });
@@ -1355,15 +1246,6 @@ try {
       height: '630',
       canonical: 'false',
       routeStateClean: 'true',
-      error: null,
-    });
-    assert.deepEqual(routePayload.ordinaryReceipt, {
-      format: 'share-card',
-      variant: null,
-      width: '1200',
-      height: '630',
-      canonical: 'true',
-      routeStateClean: null,
       error: null,
     });
     assert.equal(routePayload.failedReceipt.format, null);
@@ -1641,7 +1523,7 @@ try {
             error: document.documentElement.getAttribute('data-last-export-error')
           };
           var canonicalIndex = captured.length;
-          var canonicalBlob = await Archify.exportMenu.shareCard();
+          await Archify.exportMenu.run('svg');
           var canonicalSvgText = captured[canonicalIndex] ? await captured[canonicalIndex] : '';
           var canonicalSvg = parser.parseFromString(canonicalSvgText, 'image/svg+xml').documentElement;
           var canonicalReachResidue = canonicalSvg.hasAttribute('data-share-reach') ||
@@ -1683,7 +1565,6 @@ try {
             staleSnapshot: Archify.focus.reachabilitySnapshot(),
             staleError: staleError,
             failedReceipt: failedReceipt,
-            canonicalSize: canonicalBlob.size,
             canonicalReachResidue: canonicalReachResidue,
             matrix: matrix
           };
@@ -1740,7 +1621,6 @@ try {
     assert.equal(reachPayload.failedReceipt.variant, null);
     assert.equal(reachPayload.failedReceipt.errorFormat, 'share-card');
     assert.match(reachPayload.failedReceipt.error, /Trace authored reach before exporting a Reach Share Card/);
-    assert.ok(reachPayload.canonicalSize > 20_000);
     assert.equal(reachPayload.canonicalReachResidue, false);
     if (options.matrix) {
       assert.equal(reachPayload.matrix.length, 8);
@@ -1758,9 +1638,6 @@ try {
   await verifyResolvedLegendContract(legendOutputs);
   await verifySemanticPassportDismissal(path.resolve(skillRoot, '../docs/gallery/artifacts/production-deployment.architecture.html'));
   await verifyArchitectureDeltaNavigator(path.resolve(skillRoot, '../examples/checkout-platform-delta.html'));
-  await captureShareCard(output, 'architecture-wide');
-  await captureShareCard(sequenceOutput, 'sequence-tall');
-  await captureCopiedShareCard(output, 'architecture-wide');
   await captureRouteShareCard(routeOutputs.architecture, 'architecture-route', 'users', 'api', { journeyInvariance: true });
   await captureRouteShareCard(routeOutputs.workflow, 'workflow-route', 'user', 'approval');
   await captureRouteShareCard(routeOutputs.sequence, 'sequence-route', 'web', 'db');

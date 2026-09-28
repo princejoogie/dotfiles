@@ -1,11 +1,13 @@
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { throwDiagnosticError } from './diagnostics.mjs';
+import { throwDiagnosticError, withDiagnosticRecordingSuppressed } from './diagnostics.mjs';
+import { sameEntry } from './path-semantics.mjs';
 import { parseRepositoryRemote, redactRepositoryRemote, repositorySourceHref } from './repository-location.mjs';
 
 const FULL_SHA_RE = /^[a-f0-9]{40}$/i;
 const CONTROL_CHARACTER_RE = /[\u0000-\u001f\u007f]/;
+const MAX_SOURCE_BYTES = 16 * 1024 * 1024;
 
 function evidenceFailure(code, message, { subject = {}, evidence = {}, supportedFixes = [] } = {}) {
   throwDiagnosticError(message, [{
@@ -19,15 +21,66 @@ function evidenceFailure(code, message, { subject = {}, evidence = {}, supported
 }
 
 function runGit(repoRoot, args) {
-  const result = spawnSync('git', ['-C', repoRoot, ...args], {
+  // 固定 SHA 的来源必须读取原始对象，不能使用本地 replacement refs 的替换内容。
+  const result = spawnSync('git', ['--no-replace-objects', '-C', repoRoot, ...args], {
     encoding: 'utf8',
-    maxBuffer: 16 * 1024 * 1024,
+    maxBuffer: MAX_SOURCE_BYTES,
   });
   if (result.error) evidenceFailure('repository-evidence/git-unavailable', `Could not run Git: ${result.error.message}`, {
     evidence: { reason: result.error.message },
     supportedFixes: ['install Git and ensure it is available on PATH'],
   });
   return result;
+}
+
+// Check types in one session, then read only blobs whose cited lines need
+// verification. Path-only references never require loading the file contents.
+function prefetchBlobs(repoRoot, objectNeedsContent) {
+  const blobs = readBatchObjects(repoRoot, [...objectNeedsContent.keys()], false);
+  if (!blobs) return null;
+  const readable = [...objectNeedsContent].filter(([object, needsContent]) => {
+    const blob = blobs.get(object);
+    return needsContent && blob?.type === 'blob' && blob.size <= MAX_SOURCE_BYTES;
+  }).map(([object]) => object);
+  const contents = readBatchObjects(repoRoot, readable, true);
+  if (contents) for (const [object, blob] of contents) blobs.set(object, blob);
+  // Failed or oversized reads fall back in source order to the original
+  // per-file path, preserving its size limit and diagnostic behavior.
+  return blobs;
+}
+
+function readBatchObjects(repoRoot, objects, includeContent) {
+  if (!objects.length) return new Map();
+  const mode = includeContent ? '--batch' : '--batch-check';
+  const result = spawnSync('git', ['--no-replace-objects', '-C', repoRoot, 'cat-file', mode], {
+    input: objects.join('\n') + '\n',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  if (result.error || result.status !== 0 || !Buffer.isBuffer(result.stdout)) return null;
+  const buffer = result.stdout;
+  const blobs = new Map();
+  let cursor = 0;
+  for (const object of objects) {
+    const newline = buffer.indexOf(0x0a, cursor);
+    if (newline < 0) return null;
+    const header = buffer.toString('utf8', cursor, newline);
+    cursor = newline + 1;
+    if (header.endsWith(' missing')) {
+      blobs.set(object, { missing: true });
+      continue;
+    }
+    const parts = header.split(' ');
+    const size = Number(parts[2]);
+    if (parts.length !== 3 || !Number.isSafeInteger(size) || size < 0) return null;
+    const blob = { type: parts[1], size };
+    if (includeContent) {
+      if (cursor + size >= buffer.length || buffer[cursor + size] !== 0x0a) return null;
+      blob.content = buffer.toString('utf8', cursor, cursor + size);
+      cursor += size + 1;
+    }
+    blobs.set(object, blob);
+  }
+  return blobs;
 }
 
 function gitValue(repoRoot, args, failure) {
@@ -41,6 +94,7 @@ function gitValue(repoRoot, args, failure) {
 
 function verifiedSourcePath(value, where) {
   const sourcePath = String(value || '');
+  // path-contract-allow: git-path -- Git tree entries use repository-relative POSIX syntax.
   if (!sourcePath || sourcePath.startsWith('/') || sourcePath.includes('\\') || CONTROL_CHARACTER_RE.test(sourcePath)) {
     evidenceFailure('repository-evidence/path-invalid', `${where} must be a repo-relative POSIX path.`, {
       subject: { path: where },
@@ -65,23 +119,38 @@ function sourceLineCount(content) {
   return lines.length - (/(?:\r\n|\n|\r)$/.test(content) ? 1 : 0);
 }
 
+// Every diagram type carries its nodes under a different property name, and
+// source evidence is authored on those nodes. One table keeps the verification
+// below identical for all five types instead of branching per type: the only
+// per-type fact is which array to read and which JSON pointer to quote back.
+const EVIDENCE_NODE_COLLECTIONS = {
+  architecture: 'components',
+  workflow: 'nodes',
+  sequence: 'participants',
+  dataflow: 'nodes',
+  lifecycle: 'states',
+};
+
+function evidenceNodes(diagramType, diagram) {
+  const collection = EVIDENCE_NODE_COLLECTIONS[diagramType];
+  if (!collection) return null;
+  return { collection, nodes: Array.isArray(diagram?.[collection]) ? diagram[collection] : [] };
+}
+
 export function hasRepositoryEvidence(diagramType, diagram) {
-  if (diagramType !== 'architecture') return false;
-  const components = Array.isArray(diagram?.components) ? diagram.components : [];
-  return Boolean(diagram?.meta?.repository) || components.some((component) => Array.isArray(component?.sources) && component.sources.length);
+  const authored = evidenceNodes(diagramType, diagram);
+  if (!authored) return false;
+  return Boolean(diagram?.meta?.repository) || authored.nodes.some((node) => Array.isArray(node?.sources) && node.sources.length);
 }
 
 export function verifyRepositoryEvidence(diagramType, diagram, repoRootInput) {
   if (!hasRepositoryEvidence(diagramType, diagram)) return null;
-  if (diagramType !== 'architecture') evidenceFailure('repository-evidence/type-unsupported', 'Repository evidence is currently supported for architecture diagrams only.', {
-    subject: { diagramType },
-    supportedFixes: ['use architecture mode or remove repository evidence'],
-  });
+  const { collection, nodes: authoredNodes } = evidenceNodes(diagramType, diagram);
 
   const repository = diagram.meta?.repository;
   if (!repository) evidenceFailure('repository-evidence/repository-required', 'Repository evidence requires /meta/repository.', {
-    subject: { path: '/meta/repository' },
-    supportedFixes: ['add the pinned repository metadata or remove component sources'],
+    subject: { path: '/meta/repository', diagramType, collection },
+    supportedFixes: [`add the pinned repository metadata or remove /${collection} sources`],
   });
   if (!FULL_SHA_RE.test(repository.revision || '')) {
     evidenceFailure('repository-evidence/revision-invalid', '/meta/repository/revision must be a full 40-character commit SHA.', {
@@ -92,9 +161,13 @@ export function verifyRepositoryEvidence(diagramType, diagram, repoRootInput) {
   }
   const location = parseRepositoryRemote(repository.url, { authored: true });
   if (!location) {
+    // A filesystem path is the common authoring mistake: the field carries the
+    // remote origin identity, which `git remote get-url origin` reports.
+    const filesystemPath = /^(?:[\\/]|~|\.{1,2}(?:[\\/]|$)|[A-Za-z]:[\\/])/.test(String(repository.url ?? ''));
     evidenceFailure('repository-evidence/url-invalid', '/meta/repository/url must be a credential-free HTTP(S) or Git SSH repository address without query, fragment, or dot segments.', {
       subject: { path: '/meta/repository/url' },
-      supportedFixes: ['declare the matching repository address without credentials; use link_mode: local-only for internal repositories'],
+      evidence: filesystemPath ? { authoredValueLooksLike: 'local filesystem path; the expected value is the remote origin address' } : {},
+      supportedFixes: ['run `git remote get-url origin` inside --repo-root and declare that credential-free address', 'use link_mode: local-only for internal repositories'],
     });
   }
   const linkMode = repository.link_mode ?? 'web';
@@ -130,7 +203,15 @@ export function verifyRepositoryEvidence(diagramType, diagram, repoRootInput) {
     });
   }
   const gitRoot = gitValue(realRoot, ['rev-parse', '--show-toplevel'], `Evidence root "${realRoot}" is not a Git repository.`);
-  if (fs.realpathSync(gitRoot) !== realRoot) {
+  const rootIdentity = sameEntry(realRoot, gitRoot);
+  if (rootIdentity.status === 'unknown') {
+    evidenceFailure('repository-evidence/root-identity-indeterminate', 'Could not determine whether the evidence root is the Git top-level directory.', {
+      subject: { repoRoot: realRoot },
+      evidence: { gitTopLevel: gitRoot, relation: rootIdentity.reason },
+      supportedFixes: ['pass the readable Git top-level directory using its canonical filesystem path'],
+    });
+  }
+  if (rootIdentity.status === 'different') {
     evidenceFailure('repository-evidence/root-not-top-level', `Evidence root must be the Git top-level directory: ${gitRoot}`, {
       subject: { repoRoot: realRoot },
       evidence: { gitTopLevel: gitRoot },
@@ -157,14 +238,39 @@ export function verifyRepositoryEvidence(diagramType, diagram, repoRootInput) {
     });
   }
 
+  // The batch is an optimization only: every path, line-range, file and line
+  // check still runs in source order in the verification loop below, so a
+  // citation the batch cannot answer for never reorders the first diagnostic.
+  const citedObjects = new Map();
+  for (const [nodeIndex, node] of authoredNodes.entries()) {
+    if (!Array.isArray(node.sources) || node.sources.length === 0) continue;
+    for (const [sourceIndex, authored] of node.sources.entries()) {
+      const at = `/${collection}/${nodeIndex}/sources/${sourceIndex}`;
+      let sourcePath;
+      try {
+        sourcePath = withDiagnosticRecordingSuppressed(() => verifiedSourcePath(authored.path, `${at}/path`));
+      } catch {
+        continue;
+      }
+      const object = `${revision}:${sourcePath}`;
+      citedObjects.set(object, citedObjects.get(object) || Boolean(authored.line));
+    }
+  }
+  const prefetchedBlobs = prefetchBlobs(realRoot, citedObjects);
+
   const nodes = Object.create(null);
   let referenceCount = 0;
-  const components = Array.isArray(diagram.components) ? diagram.components : [];
-  for (const [componentIndex, component] of components.entries()) {
-    if (!Array.isArray(component.sources) || component.sources.length === 0) continue;
+  for (const [nodeIndex, node] of authoredNodes.entries()) {
+    if (!Array.isArray(node.sources) || node.sources.length === 0) continue;
+    // `componentId` shipped with the architecture-only path; keep it beside the
+    // type-neutral `nodeId` so existing agent handling stays valid.
+    const nodeSubject = collection === 'components'
+      ? { diagramType, collection, nodeId: node.id, componentId: node.id }
+      : { diagramType, collection, nodeId: node.id };
     const verified = [];
-    for (const [sourceIndex, authored] of component.sources.entries()) {
-      const where = `/components/${componentIndex}/sources/${sourceIndex}/path`;
+    for (const [sourceIndex, authored] of node.sources.entries()) {
+      const at = `/${collection}/${nodeIndex}/sources/${sourceIndex}`;
+      const where = `${at}/path`;
       const source = {
         path: verifiedSourcePath(authored.path, where),
         ...(authored.line ? { line: authored.line } : {}),
@@ -172,39 +278,47 @@ export function verifyRepositoryEvidence(diagramType, diagram, repoRootInput) {
         ...(authored.label ? { label: authored.label } : {}),
       };
       if (source.endLine && !source.line) {
-        evidenceFailure('repository-evidence/line-required', `/components/${componentIndex}/sources/${sourceIndex}/end_line requires line.`, {
-          subject: { path: `/components/${componentIndex}/sources/${sourceIndex}/end_line`, componentId: component.id },
+        evidenceFailure('repository-evidence/line-required', `${at}/end_line requires line.`, {
+          subject: { path: `${at}/end_line`, ...nodeSubject },
           supportedFixes: ['add line or remove end_line'],
         });
       }
       if (source.endLine && source.endLine < source.line) {
-        evidenceFailure('repository-evidence/line-range-invalid', `/components/${componentIndex}/sources/${sourceIndex}/end_line must be greater than or equal to line.`, {
-          subject: { path: `/components/${componentIndex}/sources/${sourceIndex}`, componentId: component.id },
+        evidenceFailure('repository-evidence/line-range-invalid', `${at}/end_line must be greater than or equal to line.`, {
+          subject: { path: at, ...nodeSubject },
           evidence: { line: source.line, endLine: source.endLine },
           supportedFixes: ['use an end_line greater than or equal to line'],
         });
       }
       const object = `${revision}:${source.path}`;
-      const type = runGit(realRoot, ['cat-file', '-t', object]);
-      if (type.status !== 0 || type.stdout.trim() !== 'blob') {
+      const prefetched = prefetchedBlobs ? prefetchedBlobs.get(object) : undefined;
+      const objectIsBlob = prefetched
+        ? !prefetched.missing && prefetched.type === 'blob'
+        : (() => {
+          const type = runGit(realRoot, ['cat-file', '-t', object]);
+          return type.status === 0 && type.stdout.trim() === 'blob';
+        })();
+      if (!objectIsBlob) {
         evidenceFailure('repository-evidence/file-missing', `${where} does not identify a file at revision ${revision}.`, {
-          subject: { path: where, componentId: component.id },
+          subject: { path: where, ...nodeSubject },
           evidence: { sourcePath: source.path, revision },
           supportedFixes: ['use a file path that exists at the pinned revision'],
         });
       }
       if (source.line) {
-        const content = runGit(realRoot, ['show', object]);
+        const content = prefetched && Object.hasOwn(prefetched, 'content')
+          ? { status: 0, stdout: prefetched.content }
+          : runGit(realRoot, ['show', object]);
         if (content.status !== 0) evidenceFailure('repository-evidence/file-unreadable', `${where} could not be read at revision ${revision}.`, {
-          subject: { path: where, componentId: component.id },
+          subject: { path: where, ...nodeSubject },
           evidence: { sourcePath: source.path, revision },
           supportedFixes: ['verify the pinned blob is readable in the local checkout'],
         });
         const lineCount = sourceLineCount(content.stdout);
         const requestedLine = source.endLine || source.line;
         if (requestedLine > lineCount) {
-          evidenceFailure('repository-evidence/line-out-of-range', `/components/${componentIndex}/sources/${sourceIndex} requests line ${requestedLine}, but ${source.path} has ${lineCount} lines at revision ${revision}.`, {
-            subject: { path: `/components/${componentIndex}/sources/${sourceIndex}`, componentId: component.id },
+          evidenceFailure('repository-evidence/line-out-of-range', `${at} requests line ${requestedLine}, but ${source.path} has ${lineCount} lines at revision ${revision}.`, {
+            subject: { path: at, ...nodeSubject },
             evidence: { sourcePath: source.path, requestedLine, lineCount, revision },
             supportedFixes: ['use a line range that exists at the pinned revision'],
           });
@@ -213,12 +327,12 @@ export function verifyRepositoryEvidence(diagramType, diagram, repoRootInput) {
       verified.push({ ...source, ...(linkMode === 'web' ? { href: repositorySourceHref(location.provider, location.url, revision, source) } : {}) });
       referenceCount += 1;
     }
-    nodes[component.id] = verified;
+    nodes[node.id] = verified;
   }
   if (referenceCount === 0) {
-    evidenceFailure('repository-evidence/source-required', '/meta/repository requires at least one component source reference.', {
-      subject: { path: '/meta/repository' },
-      supportedFixes: ['add at least one verified component source or remove repository metadata'],
+    evidenceFailure('repository-evidence/source-required', `/meta/repository requires at least one /${collection} source reference.`, {
+      subject: { path: '/meta/repository', diagramType, collection },
+      supportedFixes: [`add at least one verified /${collection} source or remove repository metadata`],
     });
   }
 

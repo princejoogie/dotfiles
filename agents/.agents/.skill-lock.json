@@ -42,9 +42,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel/turborepo.git",
       "skillPath": "skills/turborepo/SKILL.md",
-      "skillFolderHash": "ce334e94726ebc03b0d67914e1ae3b631c15915c",
+      "skillFolderHash": "a1bae26a81bbc79e6eb14b4e7ec4d36694e6e94a",
       "installedAt": "2026-05-21T20:23:26.198Z",
-      "updatedAt": "2026-09-09T17:40:26.297Z"
+      "updatedAt": "2026-09-28T16:04:53.235Z"
     },
     "shadcn": {
       "source": "shadcn/ui",
@@ -88,18 +88,18 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/herdrdev/herdr.git",
       "skillPath": "skills/herdr/SKILL.md",
-      "skillFolderHash": "b9dcfddcfa7ce43e2e4cf60e724c519be553f149",
+      "skillFolderHash": "6985a5e8418d43171c45c2a9e04b02de7308e1d8",
       "installedAt": "2026-08-08T17:14:06.954Z",
-      "updatedAt": "2026-09-09T17:41:40.119Z"
+      "updatedAt": "2026-09-28T16:05:01.455Z"
     },
     "show-me": {
       "source": "humanlayer/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/humanlayer/skills.git",
       "skillPath": "plugins/show-me/skills/show-me/SKILL.md",
-      "skillFolderHash": "0bdb821a21e793a4f6f82a7078c052154447e5cc",
+      "skillFolderHash": "362200ac2fb3c17b765049444e88de73767e6d08",
       "installedAt": "2026-08-12T17:07:43.400Z",
-      "updatedAt": "2026-08-18T04:41:47.224Z"
+      "updatedAt": "2026-09-28T16:05:04.293Z"
     },
     "calldiff": {
       "source": "tanishqkancharla/calldiff",
@@ -115,9 +115,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/tt-a1i/archify.git",
       "skillPath": "archify/SKILL.md",
-      "skillFolderHash": "8aa4cadc3cde102db4009f23f951cb4cf1e28d61",
+      "skillFolderHash": "7dcd73a73672d5da4f85d4c612017b478547303b",
       "installedAt": "2026-08-28T02:19:57.948Z",
-      "updatedAt": "2026-09-09T17:42:15.976Z"
+      "updatedAt": "2026-09-28T16:05:43.919Z"
     },
     "better-accessibility": {
       "source": "jakubkrehel/skills",
@@ -214,9 +214,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/emilkowalski/skills.git",
       "skillPath": "skills/emil-design-eng/SKILL.md",
-      "skillFolderHash": "175725745e70946d891b93a1694d7c9ebb71b69d",
+      "skillFolderHash": "db7a20dc1d8ad26a0307dcb45ebc79fc372f5c69",
       "installedAt": "2026-09-14T19:50:27.863Z",
-      "updatedAt": "2026-09-14T19:50:27.863Z"
+      "updatedAt": "2026-09-28T16:05:47.204Z"
     }
   },
   "dismissed": {

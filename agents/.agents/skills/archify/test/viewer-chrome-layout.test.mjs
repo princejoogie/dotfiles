@@ -694,7 +694,12 @@ test('zoomed camera restores its bounded desktop rail after crossing the mobile 
     assert.ok(Math.abs(restored.reserve - baseline.reserve) <= 1, JSON.stringify({ baseline, zoomed, restored }));
     assert.equal(restored.receiptReserve, restored.reserve, JSON.stringify(restored));
     assert.equal(restored.receiptEligible, true, JSON.stringify(restored));
-    assert.ok(restored.scrollHeight <= restored.innerHeight, JSON.stringify(restored));
+    // Reading-size preservation may require ordinary page scroll before zoom.
+    // Crossing the breakpoint must restore that same layout, not grow it.
+    assert.ok(Math.abs(restored.scrollHeight - baseline.scrollHeight) <= 1, JSON.stringify({ baseline, restored }));
+    assert.ok(Math.abs(restored.containerHeight - baseline.containerHeight) <= 1, JSON.stringify({ baseline, restored }));
+    assert.ok(restored.scrollWidth <= restored.innerWidth, JSON.stringify(restored));
+    assert.equal(restored.dockStageIntersectionArea, 0, JSON.stringify(restored));
   } finally {
     await browser.close();
   }
@@ -864,6 +869,284 @@ test('mobile, embed, and print keep zero reserve while hidden Legends retain the
     await waitForLayout(browser, sessionId);
     receipt = await finalGeometry(browser, sessionId);
     assert.equal(receipt.reserve, 0, `print: ${JSON.stringify(receipt)}`);
+  } finally {
+    await browser.close();
+  }
+});
+
+
+test('Chrome Layout preserves scheduling, mode restoration and Reader handoffs', {
+  skip: chromePath ? false : 'Set ARCHIFY_CHROME to run the real browser regression.',
+}, async (t) => {
+  const browser = new ChromeVisualBrowser(chromePath);
+  t.after(() => browser.close());
+  const evidence = process.env.ARCHIFY_CHROME_LAYOUT_EVIDENCE;
+  if (evidence) fs.mkdirSync(evidence, { recursive: true });
+  const observations = [];
+  const file = render('architecture', CASES.architecture);
+  const session = await browser.sessionPromise;
+  const send = (method, params = {}) => browser.cdp.send(method, params, session);
+  const run = (expression, awaitPromise = false) => evaluate(browser, session, expression, awaitPromise);
+  await send('Page.addScriptToEvaluateOnNewDocument', {
+    source: `window.chromeLayoutErrors = [];
+      addEventListener('error', e => chromeLayoutErrors.push(e.message));
+      addEventListener('unhandledrejection', e => chromeLayoutErrors.push(String(e.reason)));`,
+  });
+  async function resize(width, height = 900) {
+    await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: false });
+    await waitForLayout(browser, session);
+  }
+  async function state(label) {
+    // Read DOM first, without receipt(), measure() or public stability methods.
+    // This ensures those methods cannot make a missed automatic event pass.
+    const raw = await run(`(() => {
+      const html = document.documentElement;
+      const container = document.querySelector('.diagram-container');
+      const svg = container.querySelector(':scope > svg');
+      return {
+        reserve: parseFloat(container.style.getPropertyValue('--archify-nav-reserve')) || 0,
+        rootRail: html.getAttribute('data-nav-stage-rail'), rail: container.getAttribute('data-nav-stage-rail'),
+        reader: html.getAttribute('data-reader-layout'), width: innerWidth,
+        viewBox: svg.getAttribute('viewBox'),
+        errors: chromeLayoutErrors,
+        external: performance.getEntriesByType('resource').map(e => e.name).filter(n => /^https?:/.test(n))
+      };
+    })()`);
+    assert.deepEqual(raw.errors, [], label);
+    assert.deepEqual(raw.external, [], label);
+    const geometry = await finalGeometry(browser, session);
+    assert.equal(raw.reserve, geometry.receiptReserve, `${label}: observation must not repair stale state`);
+    assert.equal(raw.rootRail, raw.reserve ? 'true' : null, label);
+    assert.equal(raw.rail, raw.rootRail, label);
+    observations.push({ label, ...raw, geometry });
+    return { ...raw, geometry };
+  }
+  function zero(value) {
+    assert.equal(value.reserve, 0);
+    assert.equal(value.rail, null);
+    assert.equal(value.rootRail, null);
+  }
+  function clearStage(value) {
+    assert.equal(value.geometry.dockStageIntersectionArea, 0, JSON.stringify(value));
+    assert.ok(value.geometry.stageGap >= 9, JSON.stringify(value));
+  }
+  function variant(name, source) {
+    const original = fs.readFileSync(file, 'utf8');
+    const html = original.replace('  <script>\n    var Archify = {};',
+      () => `  <script>${source}</script>\n  <script>\n    var Archify = {};`);
+    assert.notEqual(html, original);
+    const output = path.join(tmp, `chrome-${name}.html`);
+    fs.writeFileSync(output, html);
+    return output;
+  }
+  try {
+    await t.test('automatic resize crosses Chrome and Reader thresholds without reserve accumulation', async () => {
+      await load(browser, file);
+      const initial = await state('threshold-initial');
+      for (const width of [719, 720, 721, 1023, 1024, 1025, 720, 1440]) {
+        await resize(width);
+        const current = await state(`threshold-${width}-${observations.length}`);
+        assert.equal(current.geometry.receiptEligible, width > 720);
+        assert.equal(current.reader, width >= 1024 ? 'adaptive' : null);
+        assert.equal(current.viewBox, initial.viewBox);
+        if (width <= 720) zero(current);
+        else clearStage(current);
+        if (width === 1440) assert.equal(current.reserve, initial.reserve);
+      }
+    });
+
+    await t.test('automatic observer callbacks handle navigation size, visibility and content changes', async () => {
+      await load(browser, file);
+      const initial = await state('observer-initial');
+      await run(`document.querySelector('.diagram-nav').style.display = 'none'`);
+      await waitForLayout(browser, session);
+      zero(await state('observer-nav-hidden'));
+      await run(`document.querySelector('.diagram-nav').style.display = ''`);
+      await waitForLayout(browser, session);
+      const restored = await state('observer-nav-restored');
+      assert.equal(restored.reserve, initial.reserve);
+      await run(`document.querySelector('.diagram-nav').style.height = '120px'`);
+      await waitForLayout(browser, session);
+      const taller = await state('observer-nav-taller');
+      assert.ok(taller.reserve > initial.reserve);
+      clearStage(taller);
+      // A legend mutation drives the existing MutationObserver. Font/preset
+      // rules remain the production rules; no public layout method is invoked.
+      await run(`document.querySelector('[data-legend]').setAttribute('transform', 'translate(0,-20)')`);
+      await waitForLayout(browser, session);
+      clearStage(await state('observer-legend-changed'));
+      await run(`document.querySelector('.diagram-nav').style.height = ''; window.dispatchEvent(new Event('resize'))`);
+      await waitForLayout(browser, session);
+      assert.equal((await state('observer-returned')).reserve, initial.reserve);
+      await run(`document.querySelector('.diagram-nav').style.bottom = '-200px'; window.dispatchEvent(new Event('resize'))`);
+      await waitForLayout(browser, session);
+      zero(await state('no-reserve-needed'));
+    });
+
+    await t.test('embed and print restore a zoomed rail, while Presentation remains eligible', async () => {
+      for (const mode of ['embed', 'print']) {
+        if (mode === 'print') await send('Emulation.setEmulatedMedia', { media: 'print' });
+        await load(browser, file, { query: mode === 'embed' ? '?embed=1' : '' });
+        zero(await state(`${mode}-initial`));
+        await send('Emulation.setEmulatedMedia', { media: '' });
+        await load(browser, file);
+        const initial = await state(`${mode}-ordinary`);
+        await run('Archify.view.zoomIn()');
+        await waitForLayout(browser, session);
+        for (let cycle = 0; cycle < 2; cycle += 1) {
+          if (mode === 'embed') await run(`document.documentElement.setAttribute('data-embed', 'true')`);
+          else {
+            await send('Emulation.setEmulatedMedia', { media: 'print' });
+            await run(`window.dispatchEvent(new Event('beforeprint'))`);
+          }
+          await waitForLayout(browser, session);
+          zero(await state(`${mode}-enter-${cycle}`));
+          if (mode === 'embed') await run(`document.documentElement.removeAttribute('data-embed')`);
+          else {
+            await send('Emulation.setEmulatedMedia', { media: '' });
+            await run(`window.dispatchEvent(new Event('afterprint'))`);
+          }
+          await waitForLayout(browser, session);
+          const restored = await state(`${mode}-return-${cycle}`);
+          assert.equal(restored.reserve, initial.reserve);
+          clearStage(restored);
+        }
+      }
+      for (const theme of ['dark', 'light']) {
+        await send('Emulation.setEmulatedMedia', { media: '', features: [
+          { name: 'prefers-reduced-motion', value: theme === 'light' ? 'reduce' : 'no-preference' },
+        ] });
+        await load(browser, file, { query: `?theme=${theme}&present=1` });
+        const present = await state(`presentation-${theme}`);
+        assert.equal(present.geometry.receiptEligible, true);
+        clearStage(present);
+        if (evidence) {
+          const shot = await send('Page.captureScreenshot', { format: 'png' });
+          fs.writeFileSync(path.join(evidence, `presentation-${theme}.png`), Buffer.from(shot.data, 'base64'));
+        }
+        await run('Archify.presentation.exit()');
+        await waitForLayout(browser, session);
+        clearStage(await state(`presentation-return-${theme}`));
+      }
+      await send('Emulation.setEmulatedMedia', { features: [] });
+    });
+
+    await t.test('pending Reader probes coalesce and retain the rail when the camera changes', async () => {
+      for (const reject of [false, true]) {
+        await load(browser, file);
+        const initial = await state(`probe-initial-${reject}`);
+        assert.ok(initial.reserve > 0);
+        const pending = await run(`(() => {
+          const reader = Archify.readerLayout;
+          const original = reader.whenStable;
+          let release;
+          const gate = new Promise((resolve, reject) => { release = ${reject} ? () => reject(new Error('test reader rejection')) : resolve; });
+          reader.whenStable = () => gate;
+          const first = Archify.viewerChromeLayout.reprobe();
+          const second = Archify.viewerChromeLayout.reprobe();
+          const measuring = Archify.viewerChromeLayout.measure();
+          const reserve = document.querySelector('.diagram-container').style.getPropertyValue('--archify-nav-reserve');
+          Archify.view.zoomIn();
+          window.dispatchEvent(new Event('resize'));
+          window.finishChromeProbe = async () => {
+            reader.whenStable = original;
+            release();
+            const result = await first;
+            delete window.finishChromeProbe;
+            return result;
+          };
+          return { same: first === second, measuring, reserve };
+        })()`);
+        assert.deepEqual(pending, { same: true, measuring: null, reserve: '' });
+        assert.equal(await run('finishChromeProbe()', true), true);
+        await waitForLayout(browser, session);
+        const restored = await state(`probe-restored-${reject}`);
+        assert.equal(restored.reserve, initial.reserve);
+        clearStage(restored);
+        await run(`for (let i = 0; i < 20; i++) { Archify.viewerChromeLayout.schedule(); Archify.viewerChromeLayout.reprobe(); window.dispatchEvent(new Event('resize')); }`);
+        await waitForLayout(browser, session);
+        const repeated = await state(`probe-burst-${reject}`);
+        assert.equal(repeated.reserve, initial.reserve);
+        assert.deepEqual(repeated.geometry, restored.geometry);
+      }
+    });
+
+    await t.test('font readiness and optional observers preserve their existing fallbacks', async () => {
+      const noObservers = variant('no-observers', 'window.ResizeObserver = undefined; window.MutationObserver = undefined;');
+      await load(browser, noObservers);
+      const initial = await state('fallback-initial');
+      await resize(720);
+      zero(await state('fallback-mobile'));
+      await resize(1440);
+      assert.equal((await state('fallback-return')).reserve, initial.reserve);
+
+      const delayedFonts = variant('fonts', `window.originalChromeFonts = document.fonts;
+        Object.defineProperty(document, 'fonts', { configurable: true, value: { ready: new Promise(resolve => { window.releaseChromeFonts = resolve; }) } });`);
+      // Bypass load's font/stability wait to observe the deliberately pending gate.
+      const loaded = browser.cdp.waitFor('Page.loadEventFired', session);
+      await send('Page.navigate', { url: pathToFileURL(delayedFonts).href });
+      await loaded;
+      const result = await run(`(async () => {
+        let resolved = false;
+        const stable = Archify.viewerChromeLayout.whenStable().then(() => { resolved = true; });
+        document.querySelector('.diagram-nav').style.height = '100px';
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        const beforeReady = resolved;
+        releaseChromeFonts();
+        await stable;
+        Object.defineProperty(document, 'fonts', { configurable: true, value: originalChromeFonts });
+        return { beforeReady, resolved };
+      })()`, true);
+      assert.deepEqual(result, { beforeReady: false, resolved: true });
+      await waitForLayout(browser, session);
+      clearStage(await state('font-ready'));
+    });
+  } finally {
+    if (evidence) fs.writeFileSync(path.join(evidence, 'observations.json'), JSON.stringify(observations, null, 2) + '\n');
+  }
+});
+
+test('theme switches repaint the page and diagram without dropping the desktop rail', {
+  skip: chromePath ? false : 'Set ARCHIFY_CHROME to run the real browser regression.',
+}, async () => {
+  const file = render('architecture', CASES.architecture);
+  const browser = new ChromeVisualBrowser(chromePath);
+  try {
+    const session = await load(browser, file, { query: '?theme=dark' });
+    for (const theme of ['light', 'dark']) {
+      const result = await evaluate(browser, session, `(async function () {
+        var root = document.documentElement;
+        var panel = document.querySelector('.diagram-container');
+        function sample() {
+          var rect = panel.getBoundingClientRect();
+          return {
+            theme: root.getAttribute('data-theme'),
+            body: getComputedStyle(document.body).backgroundColor,
+            panel: getComputedStyle(panel).backgroundColor,
+            rail: root.getAttribute('data-nav-stage-rail'),
+            width: rect.width,
+            height: rect.height
+          };
+        }
+        var before = sample();
+        document.getElementById('btn-theme').click();
+        var frames = [sample()];
+        for (var i = 0; i < 8; i++) {
+          await new Promise(function (resolve) { requestAnimationFrame(resolve); });
+          frames.push(sample());
+        }
+        return { before: before, frames: frames };
+      })()`, true);
+      assert.equal(result.before.rail, 'true', 'fixture exercises the reserved stage rail');
+      assert.equal(result.frames.at(-1).theme, theme);
+      assert.notEqual(result.before.body, result.frames.at(-1).body);
+      assert.notEqual(result.before.panel, result.frames.at(-1).panel);
+      assert.ok(result.frames.every((frame) => frame.body === result.frames.at(-1).body),
+        'the page background must reach the new theme in the first paint');
+      assert.ok(result.frames.every((frame) => frame.rail === result.before.rail
+        && frame.width === result.before.width && frame.height === result.before.height),
+        'theme switching must not remove the rail or move the diagram');
+    }
   } finally {
     await browser.close();
   }

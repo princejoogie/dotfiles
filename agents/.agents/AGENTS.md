@@ -6,5 +6,6 @@
 - Lean on the dependencies already in the project before writing your own implementation or adding packages. Do not assume a library lacks a capability without checking its documentation and types.
 - Make architectural decisions for the long term. Do not accept a stopgap that only works for now and is meant to be replaced later.
 - Study how established products solve the problem before designing a solution. Adopt their proven patterns and conventions rather than inventing an approach from scratch.
+- Before fixing a reported bug or failure, reproduce it consistently in the relevant environment and verify the actual cause with evidence rather than inference. Tell the user what reproduced, why the evidence identifies that cause, and what you intend to fix before changing code. If you cannot reproduce the problem or confirm its cause, say so and do not present a speculative change as a fix.
 - UI descriptions: Do not add subtitles, helper text, or descriptive copy beneath headings, labels, cards, or settings by default. Prefer one concise, self-explanatory heading or label. Only add supporting copy when the user explicitly asks for it or when it is necessary to prevent misunderstanding or error, and never use it to restate the heading.
 - Do not create test files unless explicitly requested.

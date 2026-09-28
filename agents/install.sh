@@ -121,18 +121,29 @@ else
   log "claude: $(jq '.mcpServers|length' "$CJ") servers -> ~/.claude.json"
 
   # 5c. codex -> managed [mcp_servers.*] block in ~/.codex/config.toml (stateful!)
-  # NOTE: additive — pre-existing [mcp_servers.*] outside the markers are kept.
-  # A server here whose name also exists outside the block = duplicate TOML table.
+  # Preserve pre-existing [mcp_servers.*] outside the markers; do not emit
+  # duplicate tables for those servers in the managed block.
   CC="$HOME/.codex/config.toml"
   BEGIN="# >>> agents-mcp (generated) >>>"
   END="# <<< agents-mcp <<<"
-  block=$(jq -r '
+  [ -f "$CC" ] || : >"$CC"
+  cp "$CC" "$CC.agents-bak"
+  awk -v b="$BEGIN" -v e="$END" '$0==b{s=1} s&&$0==e{s=0;next} !s{print}' "$CC" >"$CC.tmp"
+  existing=$(awk '/^\[mcp_servers\./ {
+    name=$0
+    sub(/^\[mcp_servers\./, "", name)
+    sub(/\].*$/, "", name)
+    sub(/\..*$/, "", name)
+    print name
+  }' "$CC.tmp" | jq -Rsc 'split("\n") | map(select(length > 0))')
+  block=$(jq -r --argjson existing "$existing" '
     def esc: gsub("\\\\";"\\\\") | gsub("\"";"\\\"");
     . as $root |
     .mcpServers |
     with_entries(select((.value.clients // ["opencode", "claude", "codex"]) | index("codex"))) |
     to_entries[] |
     ($root.clientAliases.codex[.key] // .key) as $name |
+    select($existing | index($name) | not) |
     "[mcp_servers.\($name)]",
     ( .value as $v |
       if ($v.type=="http" or $v.type=="sse" or ($v|has("url")))
@@ -143,12 +154,9 @@ else
       end ),
     ""
   ' "$SRC")
-  [ -f "$CC" ] || : >"$CC"
-  cp "$CC" "$CC.agents-bak"
-  awk -v b="$BEGIN" -v e="$END" '$0==b{s=1} s&&$0==e{s=0;next} !s{print}' "$CC" >"$CC.tmp"
-  { cat "$CC.tmp"; printf '\n%s\n%s\n%s\n' "$BEGIN" "$block" "$END"; } >"$CC"
+  printf '%s\n\n%s\n%s\n%s\n' "$(cat "$CC.tmp")" "$BEGIN" "$block" "$END" >"$CC"
   rm -f "$CC.tmp"
-  log "codex: $(jq '[.mcpServers[] | select((.clients // ["opencode", "claude", "codex"]) | index("codex"))] | length' "$SRC") servers -> ~/.codex/config.toml block"
+  log "codex: $(printf '%s\n' "$block" | grep -c '^\[mcp_servers\.' || true) servers -> ~/.codex/config.toml block"
 fi
 
 hdr "done"

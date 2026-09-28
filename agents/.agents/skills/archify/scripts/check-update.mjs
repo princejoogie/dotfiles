@@ -19,13 +19,14 @@ import {
   validateReleaseNotesUrl,
   validateStableUpdateManifest,
 } from './update-contract.mjs';
+import { sameEntry } from '../renderers/shared/path-semantics.mjs';
 
 const OPERATION_STATE_FILE = 'state.json';
 const OPERATION_OWNER_FILE = 'owner.json';
 const ACTIVE_CLAIM_DIRECTORY = 'active-claim';
 const OPERATION_NAME = /^(reserved|pending|committed|fenced|cancelled)-(\d{1,20})$/;
 const MAX_OPERATION_GENERATION = (10n ** 20n) - 1n;
-const CHECK_TTL_MS = 72 * 60 * 60 * 1_000;
+const CHECK_TTL_MS = 24 * 60 * 60 * 1_000;
 const MAX_CACHE_HORIZON_MS = Math.ceil(CHECK_TTL_MS * 1.2);
 const FIRST_FAILURE_DELAY_MS = 6 * 60 * 60 * 1_000;
 const LATER_FAILURE_DELAY_MS = 24 * 60 * 60 * 1_000;
@@ -36,16 +37,21 @@ const MAX_CACHE_STATE_BYTES = 64 * 1_024;
 const MAX_CLAIM_OWNER_BYTES = 1_024;
 const LONGEST_ISO_TIMESTAMP = '+275760-09-13T00:00:00.000Z';
 const LOCK_STALE_MS = 30_000;
-const ACK_LOCK_WAIT_MS = 1_200;
+const PREFERENCE_LOCK_WAIT_MS = 1_200;
 const LOCK_RETRY_DELAY_MS = 20;
 const DIGEST_PATTERN = /^sha256:[a-f0-9]{64}$/;
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const defaultReleasePath = path.resolve(scriptDirectory, '..', 'skill-release.json');
 
 class FileIdentityChangedError extends Error {}
+class ManifestWithdrawnError extends Error {}
 
 function silent(reason) {
   return { status: 'silent', reason };
+}
+
+function updatesDisabled() {
+  return process.env.ARCHIFY_UPDATE_CHECK_DISABLED === '1';
 }
 
 function isPlainObject(value) {
@@ -69,13 +75,14 @@ function validateManifest(value) {
 function validateCachedCandidate(value) {
   if (!isPlainObject(value)
     || !hasOnlyKeys(value, new Set([
-      'version', 'targetDigest', 'severity', 'releaseNotes',
+      'version', 'targetDigest', 'severity', 'releaseNotes', 'checkedAt',
     ]))) return null;
   try {
     if (!isStableCoreVersion(value.version)) return null;
     if (!DIGEST_PATTERN.test(value.targetDigest)
       || !['normal', 'security'].includes(value.severity)) return null;
     validateReleaseNotesUrl(value.releaseNotes, value.version);
+    if (typeof value.checkedAt !== 'string' || !Number.isFinite(Date.parse(value.checkedAt))) return null;
     return { ...value };
   } catch {
     return null;
@@ -84,37 +91,30 @@ function validateCachedCandidate(value) {
 
 function emptyState(installedVersion = null) {
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     skillId: SKILL_ID,
     installedVersion,
     check: {
       nextCheckAt: null,
       consecutiveFailures: 0,
     },
-    notification: {
-      offeredDigests: [],
-      acknowledgedDigests: [],
-    },
+    preferences: [],
   };
+}
+
+function validPreference(value) {
+  return isPlainObject(value)
+    && hasOnlyKeys(value, new Set(['targetDigest', 'version', 'mode', 'until']))
+    && DIGEST_PATTERN.test(value.targetDigest)
+    && isStableCoreVersion(value.version)
+    && ['ignore', 'snooze'].includes(value.mode)
+    && (value.mode === 'ignore' ? value.until === null
+      : typeof value.until === 'string' && Number.isFinite(Date.parse(value.until)));
 }
 
 function encodeBoundedState(state) {
   const encoded = Buffer.from(`${JSON.stringify(state)}\n`, 'utf8');
   return encoded.length <= MAX_CACHE_STATE_BYTES ? encoded : null;
-}
-
-function stateAfterAcknowledgement(state, targetDigest) {
-  const alreadyAcknowledged = state.notification.acknowledgedDigests.includes(targetDigest);
-  return {
-    ...state,
-    notification: {
-      offeredDigests: state.notification.offeredDigests
-        .filter((digest) => digest !== targetDigest),
-      acknowledgedDigests: alreadyAcknowledged
-        ? [...state.notification.acknowledgedDigests]
-        : [...state.notification.acknowledgedDigests, targetDigest],
-    },
-  };
 }
 
 function stateWithFailureCheck(state, nextCheckAt, consecutiveFailures, withdrawCandidate = false) {
@@ -126,20 +126,10 @@ function stateWithFailureCheck(state, nextCheckAt, consecutiveFailures, withdraw
   return failedState;
 }
 
+// A committed state must leave room for its own failure backoff.
 function encodeRecoverableState(state) {
   const encoded = encodeBoundedState(state);
-  if (!encoded) return null;
-  if (!encodeBoundedState(stateWithFailureCheck(state, LONGEST_ISO_TIMESTAMP, 2))) return null;
-  let acknowledgementState = state;
-  for (const targetDigest of state.notification.offeredDigests) {
-    acknowledgementState = stateAfterAcknowledgement(acknowledgementState, targetDigest);
-    if (!encodeBoundedState(acknowledgementState)
-      || !encodeBoundedState(stateWithFailureCheck(
-        acknowledgementState,
-        LONGEST_ISO_TIMESTAMP,
-        2,
-      ))) return null;
-  }
+  if (!encoded || !encodeBoundedState(stateWithFailureCheck(state, LONGEST_ISO_TIMESTAMP, 2))) return null;
   return encoded;
 }
 
@@ -150,14 +140,15 @@ function versionCacheDirectory(cacheDirectory, installedVersion) {
 
 function normalizeState(value, installedVersion) {
   const effectiveInstalledVersion = installedVersion ?? value?.installedVersion ?? null;
-  if (!isPlainObject(value) || value.schemaVersion !== 1 || value.skillId !== SKILL_ID
+  if (!isPlainObject(value) || value.schemaVersion !== 2 || value.skillId !== SKILL_ID
     || (installedVersion !== null && value.installedVersion !== installedVersion)
     || (value.installedVersion !== null && typeof value.installedVersion !== 'string')
     || !isPlainObject(value.check)
     || !(value.check.nextCheckAt === null || typeof value.check.nextCheckAt === 'string')
     || !Number.isSafeInteger(value.check.consecutiveFailures)
     || value.check.consecutiveFailures < 0
-    || !isPlainObject(value.notification)) return null;
+    || !Array.isArray(value.preferences) || value.preferences.length > 32
+    || value.preferences.some((preference) => !validPreference(preference))) return null;
   if (effectiveInstalledVersion !== null) {
     try {
       parseSemver(effectiveInstalledVersion);
@@ -169,28 +160,11 @@ function normalizeState(value, installedVersion) {
   const state = emptyState(effectiveInstalledVersion);
   state.check.nextCheckAt = value.check.nextCheckAt;
   state.check.consecutiveFailures = value.check.consecutiveFailures;
-  const { offeredDigests, acknowledgedDigests } = value.notification;
-  if (!Array.isArray(offeredDigests)
-    || offeredDigests.some((digest) => typeof digest !== 'string' || !DIGEST_PATTERN.test(digest))) {
-    return null;
-  }
-  state.notification.offeredDigests = [...new Set(offeredDigests)];
-
-  if (!Array.isArray(acknowledgedDigests)
-    || acknowledgedDigests.some((digest) => typeof digest !== 'string' || !DIGEST_PATTERN.test(digest))) {
-    return null;
-  }
-  state.notification.acknowledgedDigests = [...new Set(acknowledgedDigests)];
+  state.preferences = value.preferences.map((preference) => ({ ...preference }));
   const hasCandidate = Object.hasOwn(value, 'candidate');
   const candidate = validateCachedCandidate(value.candidate);
   if (hasCandidate && !candidate) return null;
-  if (candidate) {
-    if (effectiveInstalledVersion !== null
-      && compareSemver(candidate.version, effectiveInstalledVersion) > 0
-      && !state.notification.offeredDigests.includes(candidate.targetDigest)
-      && !state.notification.acknowledgedDigests.includes(candidate.targetDigest)) return null;
-    state.candidate = candidate;
-  }
+  if (candidate) state.candidate = candidate;
   return encodeRecoverableState(state) ? state : null;
 }
 
@@ -249,7 +223,28 @@ async function readJsonFile(target, maxBytes, expectedMetadata = null) {
 function isWithinDirectory(directory, target) {
   const relative = path.relative(directory, target);
   return relative === ''
+    // path-contract-allow: lexical-capability -- No-follow snapshots bind this mutation boundary.
     || (!path.isAbsolute(relative) && relative !== '..' && !relative.startsWith(`..${path.sep}`));
+}
+
+async function physicalDirectorySuffix(directory, target) {
+  const absoluteTarget = path.resolve(target);
+  const parsed = path.parse(absoluteTarget);
+  const segments = absoluteTarget.slice(parsed.root.length).split(path.sep).filter(Boolean);
+  let prefix = parsed.root;
+  for (let index = 0; index < segments.length; index += 1) {
+    prefix = path.join(prefix, segments[index]);
+    const relation = sameEntry(directory, prefix);
+    if (relation.status === 'match') {
+      const metadata = await fs.lstat(prefix, { bigint: true });
+      if (metadata.isSymbolicLink()) {
+        throw new Error(`trusted cache prefix is a symbolic link or junction: ${prefix}`);
+      }
+      return segments.slice(index + 1);
+    }
+    if (relation.status === 'unknown' && relation.reason.code === 'entry-missing') break;
+  }
+  return null;
 }
 
 async function canonicalizeTrustedDirectoryPrefix(target) {
@@ -258,10 +253,11 @@ async function canonicalizeTrustedDirectoryPrefix(target) {
     path.resolve(directory)
   )))].sort((left, right) => right.length - left.length);
   for (const trustedDirectory of trustedDirectories) {
-    if (!isWithinDirectory(trustedDirectory, absoluteTarget)) continue;
+    const suffix = await physicalDirectorySuffix(trustedDirectory, absoluteTarget);
+    if (suffix === null) continue;
     try {
       const canonicalDirectory = await fs.realpath(trustedDirectory);
-      return path.resolve(canonicalDirectory, path.relative(trustedDirectory, absoluteTarget));
+      return path.resolve(canonicalDirectory, ...suffix);
     } catch {
       // Fall back to validating the absolute path from its filesystem root.
     }
@@ -331,7 +327,11 @@ function cacheTokenFor(cacheDirectory) {
 
 function resolveCacheTarget(token, target) {
   const resolved = path.resolve(target);
-  if (resolved === token.directory || !isWithinDirectory(token.directory, resolved)) {
+  const relative = path.relative(token.directory, resolved);
+  // This is a lexical capability check, not a physical-containment query. The
+  // async lstat snapshots below bind the prepared directory and every mutation
+  // parent across awaits; following a link here would weaken that no-link rule.
+  if (relative === '' || !isWithinDirectory(token.directory, resolved)) {
     throw invalidateCacheToken(token, 'cache mutation escaped its prepared directory');
   }
   return resolved;
@@ -765,6 +765,19 @@ async function operationIsActive(
             { bigint: true },
           );
           if (!ownerMetadata.isFile() || ownerMetadata.isSymbolicLink()) return false;
+          try {
+            const owner = await readJsonFile(
+              path.join(operation.directory, OPERATION_OWNER_FILE),
+              MAX_CLAIM_OWNER_BYTES,
+              ownerMetadata,
+            );
+            if (Number.isSafeInteger(owner?.pid) && owner.pid > 0 && processIsGone(owner.pid)) {
+              return false;
+            }
+          } catch (error) {
+            if (error instanceof FileIdentityChangedError) throw error;
+            // A malformed owner still gets the hard lease before recovery.
+          }
           return metadataIsWithinLease(ownerMetadata);
         } catch (error) {
           if (error?.code !== 'ENOENT') throw error;
@@ -775,6 +788,15 @@ async function operationIsActive(
   } catch (error) {
     if (error?.code === 'ENOENT') return false;
     throw error;
+  }
+}
+
+function processIsGone(pid) {
+  try {
+    process.kill(pid, 0);
+    return false;
+  } catch (error) {
+    return error?.code === 'ESRCH';
   }
 }
 
@@ -1272,7 +1294,7 @@ function digestForEventKey(eventKey) {
   return DIGEST_PATTERN.test(digest) ? digest : null;
 }
 
-function notification(localRelease, candidate) {
+function notification(localRelease, candidate, source) {
   return {
     status: 'update_available',
     eventKey: eventKeyForDigest(candidate.targetDigest),
@@ -1282,17 +1304,30 @@ function notification(localRelease, candidate) {
     severity: candidate.severity,
     summary: `Archify ${candidate.version} is available; see the official release notes for details.`,
     releaseNotes: candidate.releaseNotes,
+    source,
+    checkedAt: candidate.checkedAt,
+    noticeRequired: true,
   };
 }
 
-function resultForCandidate(localRelease, state) {
-  if (!state.candidate) return silent('cache-valid');
-  const comparison = compareSemver(state.candidate.version, localRelease.version);
-  if (comparison <= 0) return silent('current');
-  if (state.notification.acknowledgedDigests.includes(state.candidate.targetDigest)) {
-    return silent('already-notified');
+function resultForCandidate(localRelease, state, { source = 'cache', nowMs = Date.now() } = {}) {
+  const { candidate } = state;
+  if (!candidate) return silent('cache-valid');
+  if (compareSemver(candidate.version, localRelease.version) <= 0) {
+    return {
+      status: 'current', installedVersion: localRelease.version,
+      availableVersion: candidate.version, checkedAt: candidate.checkedAt,
+      source, noticeRequired: false,
+    };
   }
-  return notification(localRelease, state.candidate);
+  const result = notification(localRelease, candidate, source);
+  const preference = state.preferences?.find((entry) => entry.targetDigest === candidate.targetDigest
+    && entry.version === candidate.version);
+  if (preference?.mode === 'ignore') return { ...result, noticeRequired: false, reason: 'ignored' };
+  if (preference?.mode === 'snooze' && Date.parse(preference.until) > nowMs) {
+    return { ...result, noticeRequired: false, reason: 'snoozed', suppressedUntil: preference.until };
+  }
+  return result;
 }
 
 async function readBoundedBody(response) {
@@ -1364,6 +1399,9 @@ async function fetchCandidate({ fetchImpl, manifestUrl, timeoutMs }) {
     });
     if (response.status !== 200) {
       await cancelResponseBody(response);
+      if (response.status === 404 || response.status === 410) {
+        throw new ManifestWithdrawnError('manifest was withdrawn');
+      }
       throw new Error(`manifest returned HTTP ${response.status}`);
     }
     const mediaType = response.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase();
@@ -1402,19 +1440,15 @@ function freshStateResult(localRelease, state, nowMs) {
   const nextCheckAt = Date.parse(state.check.nextCheckAt || '');
   if (Number.isFinite(nextCheckAt) && nextCheckAt > nowMs
     && nextCheckAt <= nowMs + MAX_CACHE_HORIZON_MS) {
-    return resultForCandidate(localRelease, state);
+    return resultForCandidate(localRelease, state, { nowMs });
   }
   return null;
 }
 
-async function resultAfterLosingOperation(cacheDirectory, operation, localRelease) {
+async function resultAfterLosingOperation(cacheDirectory, operation, localRelease, nowMs) {
   await cancelOperation(cacheDirectory, operation);
   const cached = await readState(cacheDirectory, localRelease.version);
-  if (cached.candidate
-    && cached.notification.offeredDigests.includes(cached.candidate.targetDigest)) {
-    return resultForCandidate(localRelease, cached);
-  }
-  return silent('check-in-progress');
+  return cached.candidate ? resultForCandidate(localRelease, cached, { nowMs }) : silent('check-in-progress');
 }
 
 async function waitUntilRetry(deadline, monotonicNow) {
@@ -1440,6 +1474,7 @@ export async function checkForUpdate({
   random = Math.random,
   timeoutMs = DEFAULT_TIMEOUT_MS,
 } = {}) {
+  if (updatesDisabled()) return silent('disabled');
   if (typeof fetchImpl !== 'function') return silent('runtime-unavailable');
   let localRelease;
   try {
@@ -1470,14 +1505,10 @@ export async function checkForUpdate({
   if (!operation) {
     try {
       const cached = await readState(stateDirectory, localRelease.version);
-      if (cached.candidate
-        && cached.notification.offeredDigests.includes(cached.candidate.targetDigest)) {
-        return resultForCandidate(localRelease, cached);
-      }
+      return cached.candidate ? resultForCandidate(localRelease, cached, { nowMs }) : silent('check-in-progress');
     } catch {
       return silent('cache-unavailable');
     }
-    return silent('check-in-progress');
   }
 
   try {
@@ -1489,12 +1520,12 @@ export async function checkForUpdate({
     }
 
     if (!await operationOwnsActiveClaim(stateDirectory, operation)) {
-      return await resultAfterLosingOperation(stateDirectory, operation, localRelease);
+      return await resultAfterLosingOperation(stateDirectory, operation, localRelease, nowMs);
     }
 
     await verifyCacheToken(cacheTokenFor(stateDirectory));
     if (!await operationOwnsActiveClaim(stateDirectory, operation)) {
-      return await resultAfterLosingOperation(stateDirectory, operation, localRelease);
+      return await resultAfterLosingOperation(stateDirectory, operation, localRelease, nowMs);
     }
     let fetched;
     try {
@@ -1504,24 +1535,33 @@ export async function checkForUpdate({
         timeoutMs,
       });
     } catch (error) {
-      const reason = error instanceof UpdateContractError ? 'invalid-manifest' : 'check-failed';
+      const withdrawn = error instanceof ManifestWithdrawnError;
+      const reason = withdrawn ? 'withdrawn'
+        : error instanceof UpdateContractError ? 'invalid-manifest' : 'check-failed';
+      // Offline or invalid checks keep repeating the last validated candidate.
+      const failedResult = (known) => (!withdrawn && known.candidate
+        ? resultForCandidate(localRelease, known, { nowMs }) : silent(reason));
       try {
         const committed = await commitOperation(
           stateDirectory,
           operation,
           localRelease.version,
           (current) => ({
-            state: stateAfterFailedCheck(current, nowMs),
-            result: silent(reason),
+            state: stateAfterFailedCheck(current, nowMs, withdrawn),
+            result: failedResult(current),
           }),
         );
+        if (committed.fenced) {
+          return await resultAfterLosingOperation(stateDirectory, operation, localRelease, nowMs);
+        }
         return committed.result;
       } catch {
         await cancelOperation(stateDirectory, operation).catch(() => {});
-        return silent('cache-unavailable');
+        return failedResult(state);
       }
     }
 
+    const candidate = { ...fetched.candidate, checkedAt: new Date(nowMs).toISOString() };
     try {
       const committed = await commitOperation(
         stateDirectory,
@@ -1530,36 +1570,27 @@ export async function checkForUpdate({
         (current) => {
           const next = {
             ...current,
-            candidate: fetched.candidate,
+            candidate,
             check: {
               nextCheckAt: nextSuccessfulCheck(nowMs, random),
               consecutiveFailures: 0,
             },
-            notification: {
-              offeredDigests: [...current.notification.offeredDigests],
-              acknowledgedDigests: [...current.notification.acknowledgedDigests],
-            },
           };
-          const result = resultForCandidate(localRelease, next);
-          if (result.status === 'update_available') {
-            if (!next.notification.offeredDigests.includes(next.candidate.targetDigest)) {
-              next.notification.offeredDigests.push(next.candidate.targetDigest);
-            }
-          }
+          const result = resultForCandidate(localRelease, next, { source: 'network', nowMs });
           return {
             state: next,
             result,
-            capacityFallback: {
-              state: stateAfterFailedCheck(current, nowMs, true),
-              result: silent('cache-unavailable'),
-            },
+            capacityFallback: { state: stateAfterFailedCheck(current, nowMs, true), result },
           };
         },
       );
+      if (committed.fenced) {
+        return await resultAfterLosingOperation(stateDirectory, operation, localRelease, nowMs);
+      }
       return committed.result;
     } catch {
       await cancelOperation(stateDirectory, operation).catch(() => {});
-      return silent('cache-unavailable');
+      return resultForCandidate(localRelease, { ...state, candidate }, { source: 'network', nowMs });
     }
   } catch {
     await cancelOperation(stateDirectory, operation).catch(() => {});
@@ -1567,15 +1598,19 @@ export async function checkForUpdate({
   }
 }
 
-export async function acknowledgeUpdate({
+export async function setUpdatePreference({
   releasePath = defaultReleasePath,
   cacheDirectory = defaultCacheDirectory(),
   eventKey,
+  mode,
+  days = 7,
+  now = Date.now,
   monotonicNow = () => performance.now(),
 } = {}) {
   const targetDigest = digestForEventKey(eventKey);
-  if (!targetDigest || typeof monotonicNow !== 'function') {
-    return silent('invalid-acknowledgement');
+  if (!targetDigest || !['snooze', 'ignore'].includes(mode)
+    || (mode === 'snooze' && (!Number.isInteger(days) || days < 1 || days > 365))) {
+    return silent('invalid-preference');
   }
   let localRelease;
   try {
@@ -1589,14 +1624,10 @@ export async function acknowledgeUpdate({
   } catch {
     return silent('cache-unavailable');
   }
-  let deadline;
-  try {
-    deadline = Number(monotonicNow()) + ACK_LOCK_WAIT_MS;
-  } catch {
-    return silent('invalid-acknowledgement');
-  }
-  if (!Number.isFinite(deadline)) return silent('invalid-acknowledgement');
-  while (true) {
+  const nowMs = Number(now());
+  if (!Number.isFinite(nowMs)) return silent('invalid-clock');
+  const deadline = Number(monotonicNow()) + PREFERENCE_LOCK_WAIT_MS;
+  while (Number(monotonicNow()) < deadline) {
     let operation;
     try {
       operation = await acquireOperation(stateDirectory);
@@ -1604,59 +1635,71 @@ export async function acknowledgeUpdate({
       return silent('cache-unavailable');
     }
     if (!operation) {
-      if (!await waitUntilRetry(deadline, monotonicNow)) return silent('check-in-progress');
+      if (!await waitUntilRetry(deadline, monotonicNow)) break;
       continue;
     }
     try {
       const committed = await commitOperation(
-        stateDirectory,
-        operation,
-        localRelease.version,
-        (state) => {
-          const wasOffered = state.notification.offeredDigests.includes(targetDigest);
-          const wasAcknowledged = state.notification.acknowledgedDigests.includes(targetDigest);
-          if (!wasOffered && !wasAcknowledged) {
-            return { state: null, result: silent('invalid-acknowledgement') };
+        stateDirectory, operation, localRelease.version, (state) => {
+          if (!state.candidate || state.candidate.targetDigest !== targetDigest
+            || compareSemver(state.candidate.version, localRelease.version) <= 0) {
+            return { state: null, result: silent('invalid-preference') };
           }
+          const preference = {
+            targetDigest,
+            version: state.candidate.version,
+            mode,
+            until: mode === 'snooze' ? new Date(nowMs + days * 24 * 60 * 60 * 1_000).toISOString() : null,
+          };
+          const preferences = (state.preferences || [])
+            .filter((entry) => entry.targetDigest !== targetDigest)
+            .slice(-30);
+          preferences.push(preference);
           return {
-            state: stateAfterAcknowledgement(state, targetDigest),
-            result: { status: 'acknowledged', eventKey },
+            state: { ...state, preferences },
+            result: { status: mode === 'snooze' ? 'snoozed' : 'ignored', eventKey,
+              ...(preference.until ? { suppressedUntil: preference.until } : {}) },
           };
         },
       );
       if (!committed.fenced) return committed.result;
-      if (!await waitUntilRetry(deadline, monotonicNow)) return silent('check-in-progress');
     } catch {
       await cancelOperation(stateDirectory, operation).catch(() => {});
       return silent('cache-unavailable');
     }
   }
+  return silent('check-in-progress');
 }
 
 async function runCli() {
-  if (process.env.ARCHIFY_UPDATE_CHECK_DISABLED === '1') return silent('disabled');
+  if (updatesDisabled()) return silent('disabled');
   const argumentsList = process.argv.slice(2);
   if (argumentsList.length === 0) return checkForUpdate();
   if (argumentsList.length === 2 && argumentsList[0] === '--ack') {
-    return acknowledgeUpdate({ eventKey: argumentsList[1] });
+    return silent('legacy-ack-no-op');
+  }
+  if (argumentsList.length === 2 && argumentsList[0] === '--snooze') {
+    return setUpdatePreference({ eventKey: argumentsList[1], mode: 'snooze' });
+  }
+  if (argumentsList.length === 2 && argumentsList[0] === '--ignore') {
+    return setUpdatePreference({ eventKey: argumentsList[1], mode: 'ignore' });
   }
   return silent('invalid-arguments');
 }
 
-async function isMainModule() {
-  if (!process.argv[1]) return false;
+export function isMainModule({
+  argvPath = process.argv[1],
+  modulePath = fileURLToPath(import.meta.url),
+} = {}) {
+  if (!argvPath) return false;
   try {
-    const [entryPath, modulePath] = await Promise.all([
-      fs.realpath(path.resolve(process.argv[1])),
-      fs.realpath(fileURLToPath(import.meta.url)),
-    ]);
-    return entryPath === modulePath;
+    return sameEntry(argvPath, modulePath).status === 'match';
   } catch {
-    return path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+    return false;
   }
 }
 
-if (await isMainModule()) {
+if (isMainModule()) {
   let result;
   try {
     result = await runCli();

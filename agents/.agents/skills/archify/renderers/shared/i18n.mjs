@@ -8,7 +8,7 @@ export function escapeHtml(value) {
 }
 
 // One catalog feeds renderer-time SVG/HTML copy and the selected runtime
-// catalog embedded in each standalone artifact. Keeping every locale in one
+// catalog embedded in each standalone artifact. Keeping both built-in locales in one
 // tuple makes missing translations impossible to hide behind an English
 // fallback during development.
 const MESSAGE_PAIRS = {
@@ -41,24 +41,25 @@ const MESSAGE_PAIRS = {
   'legend.workflow.database': ['Context / trace', '上下文 / 追踪'],
   'legend.workflow.cloud': ['Cloud service', '云服务'],
   'legend.workflow.external': ['External system', '外部系统'],
-  'legend.sequence.emphasis': ['request', '请求'],
+  'legend.sequence.emphasis': ['main request', '主路径请求'],
   'legend.sequence.return': ['return', '返回'],
   'legend.sequence.security': ['security', '安全'],
   'legend.sequence.dashed': ['async trace', '异步追踪'],
-  'legend.sequence.default': ['default message', '默认消息'],
+  'legend.sequence.default': ['message', '普通消息'],
   'legend.dataflow.emphasis': ['primary data', '主要数据'],
   'legend.dataflow.security': ['policy / PII', '策略 / PII'],
   'legend.dataflow.dashed': ['async batch', '异步批处理'],
   'legend.dataflow.database': ['data store', '数据存储'],
   'legend.dataflow.default': ['data flow', '数据流'],
-  'legend.lifecycle.start': ['start', '开始'],
-  'legend.lifecycle.active': ['active state', '活动状态'],
+  'legend.lifecycle.start': ['initial state', '起点'],
+  'legend.lifecycle.active': ['active', '进行中'],
   'legend.lifecycle.waiting': ['waiting', '等待'],
   'legend.lifecycle.decision': ['decision', '决策'],
-  'legend.lifecycle.success': ['terminal success', '成功终态'],
+  'legend.lifecycle.success': ['success', '成功'],
   'legend.lifecycle.failure': ['failure / exit', '失败 / 退出'],
   'legend.lifecycle.neutral': ['neutral', '中性状态'],
   'legend.lifecycle.external': ['external', '外部状态'],
+  'legend.lifecycle.final': ['final state', '终态'],
 
   'viewer.kind.frontend': ['Frontend', '前端'],
   'viewer.kind.backend': ['Backend', '后端'],
@@ -86,7 +87,7 @@ const MESSAGE_PAIRS = {
   'viewer.preset.style': ['Style', '风格'],
   'viewer.preset.menu': ['Visual style', '视觉风格'],
   'viewer.preset.identity': ['Visual identity', '视觉表达'],
-  'viewer.preset.cycles': ['S cycles', 'S 循环切换'],
+  'viewer.preset.cycles': ['to cycle', '循环切换'],
   'viewer.preset.classic': ['Classic', '经典'],
   'viewer.preset.classic.short': ['Classic', '经典'],
   'viewer.preset.classic.hint': ['Stable technical default', '稳定的技术默认风格'],
@@ -110,10 +111,6 @@ const MESSAGE_PAIRS = {
   'viewer.motion.hidden': ['Motion paused while this page is hidden', '页面不可见时已暂停动效'],
   'viewer.motion.yielding': ['Pause motion; currently yielding to {owner}', '暂停动效；当前让位于{owner}'],
   'viewer.motion.yielding.title': ['Live preview enabled · yielding to {owner}', '动态预览已启用 · 正在让位于{owner}'],
-  'viewer.owner.story': ['the guided story', '引导故事'],
-  'viewer.owner.chapter': ['the active chapter', '当前章节'],
-  'viewer.owner.chapterPreview': ['the chapter delta preview', '章节差异预览'],
-  'viewer.owner.handoff': ['the chapter handoff', '章节交接'],
   'viewer.owner.route': ['Route Probe', '路径探测'],
   'viewer.owner.lens': ['Semantic Lens', '语义透镜'],
   'viewer.owner.relationship': ['Relationship Preview', '关系预览'],
@@ -137,7 +134,6 @@ const MESSAGE_PAIRS = {
   'viewer.export.shareCard': ['Share Card', '分享卡片'],
   'viewer.export.routeShareCard': ['Route Share Card', '路径分享卡片'],
   'viewer.export.reachShareCard': ['Reach Share Card', '可达范围分享卡片'],
-  'viewer.export.copyShareCard': ['Copy Share Card', '复制分享卡片'],
   'viewer.export.copyDiagram': ['Copy diagram', '复制图表'],
   'viewer.export.clipboardPng': ['PNG to clipboard', '复制 PNG 到剪贴板'],
   'viewer.export.raster': ['Raster images', '位图'],
@@ -148,10 +144,15 @@ const MESSAGE_PAIRS = {
   'viewer.export.vectorMotion': ['Vector and motion', '矢量与动效'],
   'viewer.export.vectorMotion.heading': ['Vector & motion', '矢量与动效'],
   'viewer.export.editable': ['Editable vector', '可编辑矢量图'],
+  'viewer.export.svg.auto': ['SVG · Auto', 'SVG · 自动'],
+  'viewer.export.svg.auto.hint': ['Matches host theme', '匹配宿主主题'],
+  'viewer.export.svg.light': ['SVG · Light', 'SVG · 浅色'],
+  'viewer.export.svg.light.hint': ['Always light', '始终浅色'],
+  'viewer.export.svg.dark': ['SVG · Dark', 'SVG · 深色'],
+  'viewer.export.svg.dark.hint': ['Always dark', '始终深色'],
   'viewer.export.motion6s': ['6s motion', '6 秒动效'],
   'viewer.export.unsupported': ['Not supported by this browser', '当前浏览器不支持'],
   'viewer.export.clipboardUnsupported': ['Clipboard image write not supported by this browser', '当前浏览器不支持写入图片剪贴板'],
-  'viewer.export.clipboardUnsupported.period': ['Clipboard image write not supported by this browser.', '当前浏览器不支持写入图片剪贴板。'],
   'viewer.export.clipboardUnsupported.short': ['Clipboard image write not supported in this browser.', '此浏览器不支持写入图片剪贴板。'],
   'viewer.export.motionUnavailable': ['Motion capture unavailable in this browser', '当前浏览器无法录制动效'],
   'viewer.export.webmUnavailable': ['WebM unavailable in this browser', '当前浏览器不支持 WebM'],
@@ -164,14 +165,12 @@ const MESSAGE_PAIRS = {
   'viewer.export.reachFailed': ['Reach Share Card export failed: {message}', '可达范围分享卡片导出失败：{message}'],
   'viewer.export.copyFailed': ['Copy failed: {message}', '复制失败：{message}'],
   'viewer.export.copiedPng': ['Copied PNG to clipboard', '已将 PNG 复制到剪贴板'],
-  'viewer.export.copiedShare': ['Copied Share Card', '已复制分享卡片'],
-  'viewer.export.downloadedShare': ['Downloaded Share Card', '已下载分享卡片'],
   'viewer.export.downloadedRoute': ['Downloaded Route Share Card', '已下载路径分享卡片'],
   'viewer.export.downloadedReach': ['Downloaded Reach Share Card', '已下载可达范围分享卡片'],
   'viewer.export.downloadedWebm': ['Downloaded WebM', '已下载 WebM'],
   'viewer.export.recording': ['Recording 6 seconds of motion…', '正在录制 6 秒动效…'],
-  'viewer.export.card.routeSummary.one': ['Route: {source} → {target} · {count} directed hop', '路径：{source} → {target} · {count} 个有向跳转'],
-  'viewer.export.card.routeSummary.other': ['Route: {source} → {target} · {count} directed hops', '路径：{source} → {target} · {count} 个有向跳转'],
+  'viewer.export.card.routeSummary.one': ['Path: {source} → {target} · {count} step', '路径：{source} → {target} · {count} 步'],
+  'viewer.export.card.routeSummary.other': ['Path: {source} → {target} · {count} steps', '路径：{source} → {target} · {count} 步'],
   'viewer.export.card.reachSummary': ['Authored {direction} from {origin} · {nodes} · {links} · max {hops}', '从{origin}开始的编写{direction} · {nodes} · {links} · 最深 {hops}'],
   'viewer.export.card.node.one': ['{count} node', '{count} 个节点'],
   'viewer.export.card.node.other': ['{count} nodes', '{count} 个节点'],
@@ -181,7 +180,6 @@ const MESSAGE_PAIRS = {
   'viewer.export.card.hop.other': ['{count} hops', '{count} 跳'],
   'viewer.export.card.routeBadge': ['ARCHIFY · ROUTE · {hops}', 'ARCHIFY · 路径 · {hops}'],
   'viewer.export.card.reachBadge': ['ARCHIFY · {direction} REACH', 'ARCHIFY · {direction}可达范围'],
-  'viewer.export.card.defaultBadge': ['ARCHIFY · {preset} · {theme}', 'ARCHIFY · {preset} · {theme}'],
   'viewer.export.direction.upstream': ['Upstream', '上游'],
   'viewer.export.direction.downstream': ['Downstream', '下游'],
   'viewer.export.error.canvasUnavailable': ['Canvas unavailable for {label}', '无法为{label}使用画布'],
@@ -197,86 +195,8 @@ const MESSAGE_PAIRS = {
   'viewer.export.error.emptyWebm': ['MediaRecorder produced an empty WebM', 'MediaRecorder 生成了空的 WebM'],
   'viewer.export.error.webmBackground': ['SVG background could not be loaded for WebM export', '无法为 WebM 导出加载 SVG 背景'],
 
-  'viewer.guided.region': ['Guided diagram views', '图表引导视图'],
-  'viewer.guided.previous': ['Previous guided view', '上一个引导视图'],
-  'viewer.guided.previous.title': ['Previous guided view ([)', '上一个引导视图（[）'],
-  'viewer.guided.next': ['Next guided view', '下一个引导视图'],
-  'viewer.guided.next.title': ['Next guided view (])', '下一个引导视图（]）'],
-  'viewer.guided.views': ['Guided views', '引导视图'],
-  'viewer.guided.explore': ['Explore this system', '探索此系统'],
-  'viewer.guided.intro': ['Step through curated paths without changing the source diagram.', '沿精选路径逐步查看，而不改变源图表。'],
-  'viewer.guided.trail': ['Story trail', '故事轨迹'],
-  'viewer.guided.beat': ['Beat', '节点'],
-  'viewer.guided.nextBeat': ['Next', '下一步'],
-  'viewer.guided.play': ['Play guided story', '播放引导故事'],
-  'viewer.guided.play.title': ['Play guided story (P)', '播放引导故事（P）'],
-  'viewer.guided.pause': ['Pause guided story', '暂停引导故事'],
-  'viewer.guided.pause.title': ['Pause guided story (P)', '暂停引导故事（P）'],
-  'viewer.guided.replay': ['Replay guided story', '重播引导故事'],
-  'viewer.guided.replay.title': ['Replay guided story (P)', '重播引导故事（P）'],
-  'viewer.guided.playStory': ['Play story', '播放故事'],
-  'viewer.guided.pauseStory': ['Pause', '暂停'],
-  'viewer.guided.replayStory': ['Replay story', '重播故事'],
-  'viewer.guided.motionUnavailable': ['Story playback unavailable while motion is Still', '静态模式下无法播放故事'],
-  'viewer.guided.enableMotion': ['Switch motion to Live to play the guided story', '切换为动态模式以播放引导故事'],
-  'viewer.guided.selectBeatLink': ['Select a Story Beat to copy its exact link', '选择故事节点以复制其精确链接'],
-  'viewer.guided.copyMoment': ['Copy moment', '复制此刻'],
-  'viewer.guided.momentCopied': ['Moment link copied', '已复制时刻链接'],
-  'viewer.guided.momentCopyFailed': ['Could not copy story moment link', '无法复制故事时刻链接'],
-  'viewer.guided.copied': ['Copied', '已复制'],
-  'viewer.guided.copyFailed': ['Copy failed', '复制失败'],
-  'viewer.guided.showAll': ['Show all', '显示全部'],
-  'viewer.guided.showAll.aria': ['Show entire diagram', '显示完整图表'],
-  'viewer.guided.chapters': ['Story chapters', '故事章节'],
-  'viewer.guided.storyTrail': ['Story trail for {label}: {count} beats', '{label}的故事轨迹：{count} 个节点'],
-  'viewer.guided.chapter.open': ['Open chapter {index} of {total}: {label}, {count} stops', '打开第 {index}/{total} 章：{label}，{count} 个停靠点'],
-  'viewer.guided.chapter.current': ['Current chapter {index} of {total}: {label}, {count} stops', '当前第 {index}/{total} 章：{label}，{count} 个停靠点'],
-  'viewer.guided.chapter.selectedNodes': ['{count} selected nodes', '已选择 {count} 个节点'],
-  'viewer.guided.chapter.stops': ['{count} stops', '{count} 个停靠点'],
-  'viewer.guided.chapter.stop.one': ['{count} stop', '{count} 个停靠点'],
-  'viewer.guided.chapter.stop.other': ['{count} stops', '{count} 个停靠点'],
-  'viewer.guided.chapter.current.title': ['{label} — current chapter, {count} stops', '{label} — 当前章节，{count} 个停靠点'],
-  'viewer.guided.chapter.delta.expanded': ['{stay} stay, {enter} enter, {leave} leave', '{stay} 个保留，{enter} 个进入，{leave} 个离开'],
-  'viewer.guided.chapter.delta.aria': ['Open chapter {index} of {total}: {label}. Chapter focus delta: {delta}', '打开第 {index}/{total} 章：{label}。章节聚焦差异：{delta}'],
-  'viewer.guided.chapter.delta.title': ['{label} — {delta} chapter focus', '{label} — 章节聚焦 {delta}'],
-  'viewer.guided.handoff': ['{from} → {to} · via {label}', '{from} → {to} · 经由{label}'],
-  'viewer.guided.share.chapter': ['Chapter {index} / {total}', '章节 {index} / {total}'],
-  'viewer.guided.share.initial': ['Chapter 01 / 01', '章节 01 / 01'],
-  'viewer.guided.share.default': ['Guided chapter', '引导章节'],
-  'viewer.guided.state.ready': ['Ready', '就绪'],
-  'viewer.guided.state.playing': ['Playing', '播放中'],
-  'viewer.guided.state.settled': ['Settled', '已完成'],
-  'viewer.guided.state.paused': ['Paused', '已暂停'],
-  'viewer.guided.state.pinned': ['Pinned', '已固定'],
-  'viewer.guided.state.still': ['Still', '静态'],
-  'viewer.guided.share.step': ['Step {index} / {total} · {label}', '步骤 {index} / {total} · {label}'],
-  'viewer.guided.share.staticMoment': ['{step} · Static moment', '{step} · 静态时刻'],
-  'viewer.guided.share.complete': ['{count} steps complete · {note}', '{count} 个步骤已完成 · {note}'],
-  'viewer.guided.share.settled': ['Path settled for reading.', '路径已稳定，可供阅读。'],
-  'viewer.guided.share.staticPath': ['{count} steps · Static path', '{count} 个步骤 · 静态路径'],
-  'viewer.guided.share.ready': ['{count} steps · Ready', '{count} 个步骤 · 就绪'],
-  'viewer.guided.share.aria': ['{state} chapter {index} of {total}: {label}. {beat}. {route}', '{state}，第 {index}/{total} 章：{label}。{beat}。{route}'],
-  'viewer.guided.beat.start': ['Beat {index} / {total} · {label} · starting point', '节点 {index} / {total} · {label} · 起点'],
-  'viewer.guided.beat.forward': ['Beat {index} / {total} · {from} → {to}', '节点 {index} / {total} · {from} → {to}'],
-  'viewer.guided.beat.reverse': ['Beat {index} / {total} · {from} → {to} · reverse authored link', '节点 {index} / {total} · {from} → {to} · 反向编写连接'],
-  'viewer.guided.beat.multiple': ['Beat {index} / {total} · {from} ⇄ {to} · {count} authored links', '节点 {index} / {total} · {from} ⇄ {to} · {count} 条编写连接'],
-  'viewer.guided.beat.group': ['Beat {index} / {total} · {from} · {to} · grouped · no direct link', '节点 {index} / {total} · {from} · {to} · 分组 · 无直接连接'],
-  'viewer.guided.beat.aria.prefix': ['Story beat {index} of {total}: {label}. ', '故事节点 {index}/{total}：{label}。'],
-  'viewer.guided.beat.aria.start': ['Starting point.', '起点。'],
-  'viewer.guided.beat.aria.forward': ['From {from} through one authored forward relationship.', '从{from}经一条正向编写关系到达。'],
-  'viewer.guided.beat.aria.reverse': ['From {from}; the authored relationship points from {to} to {from}.', '从{from}出发；编写关系实际由{to}指向{from}。'],
-  'viewer.guided.beat.aria.multiple': ['From {from} through {count} authored relationships; shown without arbitrary motion.', '从{from}经 {count} 条编写关系到达；不使用任意动效。'],
-  'viewer.guided.beat.aria.group': ['Grouped from {from} with no direct authored relationship.', '与{from}分组展示，没有直接编写关系。'],
-  'viewer.guided.caption.start': ['Starting point', '起点'],
-  'viewer.guided.caption.grouped': ['Grouped transition · no direct authored link', '分组过渡 · 无直接编写连接'],
-  'viewer.guided.caption.more': [' +{count} more', ' +另外 {count} 条'],
-  'viewer.guided.caption.reverse': ['Reverse authored relationship', '反向编写关系'],
-  'viewer.guided.caption.relationships': ['{count} authored relationships', '{count} 条编写关系'],
-  'viewer.guided.caption.relationship': ['Authored relationship', '编写关系'],
-  'viewer.guided.caption.direction': ['authored direction: {from} → {to}', '编写方向：{from} → {to}'],
-  'viewer.guided.caption.starting': ['Authored starting point', '编写起点'],
-  'viewer.guided.beatLink': ['Copy link to current story moment: Beat {index} of {total}: {label}', '复制当前故事时刻链接：第 {index}/{total} 个节点：{label}'],
-  'viewer.guided.noStory': ['This diagram has no authored guided story.', '此图表没有编写引导故事。'],
+  'viewer.guide.title': ['Explore this system', '探索此系统'],
+  'viewer.focus.selectedNodes': ['{count} selected nodes', '已选择 {count} 个节点'],
 
   'viewer.guide.eyebrow': ['Diagram guide', '图表指南'],
   'viewer.guide.close': ['Close diagram guide', '关闭图表指南'],
@@ -291,8 +211,6 @@ const MESSAGE_PAIRS = {
   'viewer.guide.map.hint': ['Open Semantic Radar with a live viewport and stable nodes.', '打开带实时视口和稳定节点的语义雷达。'],
   'viewer.guide.lens': ['Compare semantic kinds', '比较语义类型'],
   'viewer.guide.lens.hint': ['Count roles, reveal their traffic, and compare direct authored links.', '统计角色、显示流量并比较直接编写的连接。'],
-  'viewer.guide.story': ['Play the guided story', '播放引导故事'],
-  'viewer.guide.story.hint': ['Walk the authored chapters and real relationships.', '浏览已编写的章节和真实关系。'],
   'viewer.guide.present': ['Enter Presentation Stage', '进入演示模式'],
   'viewer.guide.present.hint': ['Give the live diagram the viewport without changing export.', '让实时图表占满视口，同时不改变导出。'],
   'viewer.guide.shortcuts': ['Additional keyboard shortcuts', '其他键盘快捷键'],
@@ -303,18 +221,12 @@ const MESSAGE_PAIRS = {
   'viewer.guide.shortcut.zoomIn': ['Zoom in', '放大'],
   'viewer.guide.shortcut.zoomOut': ['Zoom out', '缩小'],
   'viewer.guide.shortcut.close': ['Close', '关闭'],
-  'viewer.guide.facts': ['{nodes} · {relationships} · {views}', '{nodes} · {relationships} · {views}'],
+  'viewer.guide.facts': ['{nodes} · {relationships}', '{nodes} · {relationships}'],
   'viewer.guide.fact.node.one': ['{count} semantic node', '{count} 个语义节点'],
   'viewer.guide.fact.node.other': ['{count} semantic nodes', '{count} 个语义节点'],
   'viewer.guide.fact.relationship.one': ['{count} relationship', '{count} 条关系'],
   'viewer.guide.fact.relationship.other': ['{count} relationships', '{count} 条关系'],
-  'viewer.guide.fact.view.one': ['{count} guided view', '{count} 个引导视图'],
-  'viewer.guide.fact.view.other': ['{count} guided views', '{count} 个引导视图'],
-  'viewer.guide.story.available.one': ['Walk {count} authored chapter and its real relationships.', '浏览 {count} 个已编写章节及其真实关系。'],
-  'viewer.guide.story.available.other': ['Walk {count} authored chapters and their real relationships.', '浏览 {count} 个已编写章节及其真实关系。'],
-  'viewer.guide.story.unavailable': ['No authored guided story in this diagram.', '此图表没有编写引导故事。'],
   'viewer.guide.open': ['Open diagram guide', '打开图表指南'],
-  'viewer.guide.noStory': ['This diagram has no authored guided story.', '此图表没有编写引导故事。'],
 
   'viewer.finder.title': ['Find a node', '查找节点'],
   'viewer.finder.close': ['Close node finder', '关闭节点查找器'],
@@ -348,6 +260,7 @@ const MESSAGE_PAIRS = {
   'viewer.passport.upstream.trace': ['Trace upstream authored reachability', '追踪上游编写可达性'],
   'viewer.passport.downstream.trace': ['Trace downstream authored reachability', '追踪下游编写可达性'],
   'viewer.passport.close': ['Close semantic passport', '关闭语义护照'],
+  'viewer.passport.move': ['Move semantic passport. Drag, use arrow keys, or press Home to reset.', '移动语义护照。可拖动、使用方向键移动，或按 Home 恢复自动位置。'],
   'viewer.passport.copy': ['Copy link', '复制链接'],
   'viewer.passport.copy.focus': ['Copy link to focused node', '复制聚焦节点的链接'],
   'viewer.passport.relations': ['Relations', '关系'],
@@ -399,17 +312,17 @@ const MESSAGE_PAIRS = {
   'viewer.passport.reach.noDownstream': ['No downstream authored nodes', '没有下游编写节点'],
   'viewer.passport.reach.status': ['{direction} · {nodes} nodes · {links} links · max {hops} hops', '{direction} · {nodes} 个节点 · {links} 条连接 · 最深 {hops} 跳'],
 
-  'viewer.route.eyebrow': ['Route probe', '路径探测'],
-  'viewer.route.start': ['Choose a start node', '选择起点节点'],
+  'viewer.route.eyebrow': ['Path', '路径'],
+  'viewer.route.start': ['Click where the path starts', '点击路径的起点'],
   'viewer.route.start.find': ['Find start', '查找起点'],
   'viewer.route.start.find.aria': ['Find a route start', '查找路径起点'],
   'viewer.route.copy': ['Copy link', '复制链接'],
   'viewer.route.copy.aria': ['Copy link to traced route', '复制已追踪路径的链接'],
   'viewer.route.clear': ['Clear', '清除'],
   'viewer.route.clear.aria': ['Clear route probe', '清除路径探测'],
-  'viewer.route.traced': ['Traced route', '已追踪路径'],
-  'viewer.route.pickTwo': ['Pick two semantic nodes on the diagram', '在图表中选择两个语义节点'],
-  'viewer.route.pickOne': ['Pick a semantic node on the diagram', '在图表中选择一个语义节点'],
+  'viewer.route.traced': ['Path', '路径'],
+  'viewer.route.pickTwo': ['Click two nodes on the diagram', '在图上点两个节点'],
+  'viewer.route.pickOne': ['Click a node on the diagram', '在图上点一个节点'],
   'viewer.route.controls': ['Route journey controls', '路径旅程控制'],
   'viewer.route.previous': ['Previous route position', '上一个路径位置'],
   'viewer.route.play': ['Play route journey', '播放路径旅程'],
@@ -421,32 +334,32 @@ const MESSAGE_PAIRS = {
   'viewer.route.replay.label': ['Replay', '重播'],
   'viewer.route.overview': ['Overview', '总览'],
   'viewer.route.overview.aria': ['Show complete route overview', '显示完整路径总览'],
-  'viewer.route.instructions': ['Choose the source, then the destination. Direction matters.', '先选择来源，再选择目标；方向很重要。'],
-  'viewer.route.destination': ['Choose a destination from {label}', '选择从{label}出发的目标'],
+  'viewer.route.instructions': ['Click a start, then an end. Paths follow the arrows.', '先点起点，再点终点，沿箭头方向找路。'],
+  'viewer.route.destination': ['Where does the path from {label} end?', '从{label}出发，走到哪里？'],
   'viewer.route.destination.find': ['Find target', '查找目标'],
   'viewer.route.destination.find.aria': ['Find a reachable route destination', '查找可达的路径目标'],
   'viewer.route.differentDestination': ['Choose a different destination', '选择其他目标'],
-  'viewer.route.distinct': ['A route needs two distinct semantic nodes.', '一条路径需要两个不同的语义节点。'],
-  'viewer.route.unreachable': ['No directed route to {label}', '没有通往{label}的有向路径'],
-  'viewer.route.unreachable.detail': ['{target} is not reachable from {source}. Pick a highlighted destination.', '从{source}无法到达{target}。请选择高亮的目标。'],
-  'viewer.route.start.instructions': ['Select the source. The next step will reveal only directed destinations.', '选择来源。下一步只会显示有向可达的目标。'],
+  'viewer.route.distinct': ['Pick two different nodes.', '请选两个不同的节点。'],
+  'viewer.route.unreachable': ['Cannot reach {label} from here', '走不到{label}'],
+  'viewer.route.unreachable.detail': ['{target} cannot be reached from {source} along the arrows. Pick a highlighted node.', '沿箭头方向，从{source}走不到{target}。请选一个高亮节点。'],
+  'viewer.route.start.instructions': ['Next, pick the end. Only nodes you can reach will light up.', '接着选终点，能走到的节点会亮起。'],
   'viewer.route.copy.success': ['Traced route link copied', '已复制路径链接'],
   'viewer.route.copy.failed': ['Could not copy traced route link', '无法复制路径链接'],
   'viewer.route.position': ['Route position {index} of {total}: {label}', '路径位置 {index}/{total}：{label}'],
   'viewer.route.step': ['Step {index} of {total} · {phase} · {label}', '第 {index}/{total} 步 · {phase} · {label}'],
   'viewer.route.motionRequired': ['Automatic journey requires Live motion', '自动旅程需要动态模式'],
   'viewer.route.trigger.clear': ['Clear traced route', '清除已追踪路径'],
-  'viewer.route.overview.status': ['{nodes} · {hops} · shortest authored route', '{nodes} · {hops} · 最短编写路径'],
+  'viewer.route.overview.status': ['{nodes} · {hops} · shortest path', '{nodes} · {hops} · 最短路径'],
   'viewer.route.overview.node.one': ['{count} node', '{count} 个节点'],
   'viewer.route.overview.node.other': ['{count} nodes', '{count} 个节点'],
-  'viewer.route.overview.hop.one': ['{count} directed hop', '{count} 个有向跳转'],
-  'viewer.route.overview.hop.other': ['{count} directed hops', '{count} 个有向跳转'],
+  'viewer.route.overview.hop.one': ['{count} step', '{count} 步'],
+  'viewer.route.overview.hop.other': ['{count} steps', '{count} 步'],
   'viewer.route.phase.playing': ['Playing', '播放中'],
   'viewer.route.phase.complete': ['Complete', '已完成'],
   'viewer.route.phase.inspecting': ['Inspecting', '检查中'],
-  'viewer.route.destination.count.one': ['{count} directed destination available. Pick a highlighted node.', '有 {count} 个有向目标可用。请选择高亮节点。'],
-  'viewer.route.destination.count.other': ['{count} directed destinations available. Pick a highlighted node.', '有 {count} 个有向目标可用。请选择高亮节点。'],
-  'viewer.route.noOutgoing': ['No outgoing route starts here. Clear and choose another source.', '此处没有可用的出向路径。请清除后选择其他来源。'],
+  'viewer.route.destination.count.one': ['{count} reachable node is highlighted. Click it.', '有 {count} 个能走到的节点已高亮，点一下。'],
+  'viewer.route.destination.count.other': ['{count} reachable nodes are highlighted. Click one.', '有 {count} 个能走到的节点已高亮，点一个。'],
+  'viewer.route.noOutgoing': ['No arrows lead out of this node. Clear it and pick another start.', '这个节点没有向外的箭头。清除后换一个起点。'],
   'viewer.route.result.title': ['{source} to {target}', '{source} 到 {target}'],
   'viewer.route.finder.source.title': ['Choose route start', '选择路径起点'],
   'viewer.route.finder.source.placeholder': ['Search route sources', '搜索路径来源'],
@@ -517,6 +430,12 @@ const MESSAGE_PAIRS = {
   'viewer.nav.lens.short': ['LENS', '透镜'],
   'viewer.nav.find': ['Find a node', '查找节点'],
   'viewer.nav.find.title': ['Find a node (/)', '查找节点（/）'],
+  'viewer.outline.title': ['Node index', '节点索引'],
+  'viewer.rail.show': ['Notes & index', '要点与索引'],
+  'viewer.rail.controls': ['Side panel', '侧栏'],
+  'viewer.rail.collapse': ['Collapse side panel', '收起侧栏'],
+  'viewer.rail.bottom': ['Move panel below the diagram', '移到图下方'],
+  'viewer.rail.right': ['Move panel beside the diagram', '移到图右侧'],
   'viewer.nav.guide': ['Open diagram guide', '打开图表指南'],
   'viewer.nav.guide.title': ['Diagram guide (?)', '图表指南（?）'],
   'viewer.nav.zoomOut': ['Zoom out', '缩小'],
@@ -553,13 +472,101 @@ for (const [key, messages] of Object.entries(MESSAGE_PAIRS)) {
   }
 }
 
-const CATALOGS = Object.fromEntries(SUPPORTED_LOCALES.map((locale, index) => [
+const BUILTIN_CATALOGS = Object.fromEntries(SUPPORTED_LOCALES.map((locale, index) => [
   locale,
   Object.fromEntries(Object.entries(MESSAGE_PAIRS).map(([key, pair]) => [key, pair[index]])),
 ]));
 
+const EN = BUILTIN_CATALOGS.en;
+
+const CANONICAL_KEYS = Object.keys(EN);
+const PLACEHOLDER_PATTERN = /\{([a-zA-Z0-9_]+)\}/g;
+
+function extractPlaceholders(message) {
+  return new Set([...String(message).matchAll(PLACEHOLDER_PATTERN)].map((match) => match[1]));
+}
+
+const CANONICAL_PLACEHOLDERS = Object.fromEntries(
+  CANONICAL_KEYS.map((key) => [key, extractPlaceholders(EN[key])]),
+);
+
+function placeholdersMatch(expected, actual) {
+  if (expected.size !== actual.size) return false;
+  for (const token of expected) if (!actual.has(token)) return false;
+  return true;
+}
+
+// Runtime catalogs registered by registerLocale(), keyed by whatever locale
+// tag the caller supplied (e.g. an agent-authored 'fr'). Kept separate from
+// BUILTIN_CATALOGS so a caller can never accidentally shadow a shipped
+// catalog with a partial one.
+const RUNTIME_CATALOGS = new Map();
+
+function catalogFor(locale) {
+  return RUNTIME_CATALOGS.get(locale) || BUILTIN_CATALOGS[locale];
+}
+
+// Validates caller-supplied translation data against the canonical (English)
+// message-key set. Pure and side-effect free: registerLocale() calls this
+// and additionally builds/installs the resolved catalog.
+export function validateTranslations(translations = {}) {
+  const supplied = Object.keys(translations || {});
+  const suppliedSet = new Set(supplied);
+  const missingKeys = CANONICAL_KEYS.filter((key) => !suppliedSet.has(key));
+  const unknownKeys = supplied.filter((key) => !Object.hasOwn(CANONICAL_PLACEHOLDERS, key));
+  const placeholderMismatches = [];
+  const usableKeys = [];
+  for (const key of supplied) {
+    if (!Object.hasOwn(CANONICAL_PLACEHOLDERS, key)) continue;
+    const value = translations[key];
+    if (typeof value !== 'string' || value.length === 0) {
+      placeholderMismatches.push({ key, expected: [...CANONICAL_PLACEHOLDERS[key]].sort(), actual: null });
+      continue;
+    }
+    const actual = extractPlaceholders(value);
+    if (placeholdersMatch(CANONICAL_PLACEHOLDERS[key], actual)) {
+      usableKeys.push(key);
+    } else {
+      placeholderMismatches.push({
+        key,
+        expected: [...CANONICAL_PLACEHOLDERS[key]].sort(),
+        actual: [...actual].sort(),
+      });
+    }
+  }
+  return {
+    totalKeys: CANONICAL_KEYS.length,
+    coveredKeys: usableKeys.length,
+    coverage: CANONICAL_KEYS.length ? usableKeys.length / CANONICAL_KEYS.length : 1,
+    missingKeys,
+    unknownKeys,
+    placeholderMismatches,
+  };
+}
+
+// Registers a fully-resolved catalog for an arbitrary locale tag, built by
+// layering validated translations over the English base. A key that is
+// missing, non-string, or whose interpolation placeholders don't match the
+// canonical set falls back to its English string — partial or malformed
+// translation data can never break rendering. Returns the same coverage
+// report validateTranslations() would, for the caller to surface as an
+// explicit fallback/coverage diagnostic before rendering.
+export function registerLocale(locale, translations = {}) {
+  const report = validateTranslations(translations);
+  const catalog = { ...EN };
+  for (const key of CANONICAL_KEYS) {
+    const value = translations?.[key];
+    if (typeof value !== 'string' || value.length === 0) continue;
+    if (placeholdersMatch(CANONICAL_PLACEHOLDERS[key], extractPlaceholders(value))) {
+      catalog[key] = value;
+    }
+  }
+  RUNTIME_CATALOGS.set(locale, catalog);
+  return { locale, ...report };
+}
+
 export function resolveLocale(locale) {
-  return SUPPORTED_LOCALES.includes(locale) ? locale : DEFAULT_LOCALE;
+  return catalogFor(locale) ? locale : DEFAULT_LOCALE;
 }
 
 export function formatMessage(template, values = {}) {
@@ -570,10 +577,11 @@ export function formatMessage(template, values = {}) {
 
 export function translateMessage(locale, key, values = {}) {
   const resolved = resolveLocale(locale);
-  if (!Object.hasOwn(CATALOGS[resolved], key)) {
+  const catalog = catalogFor(resolved);
+  if (!Object.hasOwn(catalog, key)) {
     throw new Error(`Missing Archify i18n message ${JSON.stringify(key)} for ${resolved}`);
   }
-  return formatMessage(CATALOGS[resolved][key], values);
+  return formatMessage(catalog[key], values);
 }
 
 export function translateCount(locale, key, count, values = {}) {
@@ -583,7 +591,7 @@ export function translateCount(locale, key, count, values = {}) {
 
 export function viewerCatalog(locale) {
   const resolved = resolveLocale(locale);
-  return Object.fromEntries(Object.entries(CATALOGS[resolved]).filter(([key]) => key.startsWith('viewer.')));
+  return Object.fromEntries(Object.entries(catalogFor(resolved)).filter(([key]) => key.startsWith('viewer.')));
 }
 
 export function localizeTemplate(template, locale) {
@@ -591,5 +599,5 @@ export function localizeTemplate(template, locale) {
 }
 
 export function catalogKeys() {
-  return Object.keys(MESSAGE_PAIRS);
+  return [...CANONICAL_KEYS];
 }
