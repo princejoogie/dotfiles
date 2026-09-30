@@ -34,6 +34,10 @@ if [ -f "$OC_SOURCE/package-lock.json" ]; then
   npm ci --ignore-scripts --prefix "$OC_SOURCE"
   log "installed OpenCode plugin dependencies"
 fi
+if [ -f "$OC_SOURCE/plugins/orchestrator/package-lock.json" ]; then
+  npm ci --ignore-scripts --prefix "$OC_SOURCE/plugins/orchestrator"
+  log "installed orchestrator plugin dependencies"
+fi
 
 # 2. stow ---------------------------------------------------------------------
 hdr "stow $PKG"

@@ -1,0 +1,14 @@
+{
+  "name": "opencode-orchestrator",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./rpc": "./rpc.ts"
+  },
+  "dependencies": {
+    "@opencode/plugin": "2.0.18",
+    "@opencode/schema": "2.0.18",
+    "effect": "4.0.0-rc.112"
+  }
+}

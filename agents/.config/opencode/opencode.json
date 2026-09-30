@@ -68,6 +68,14 @@
       ],
       "enabled": true
     },
+    "argent": {
+      "type": "local",
+      "command": [
+        "argent",
+        "mcp"
+      ],
+      "enabled": true
+    },
     "cua-driver": {
       "type": "local",
       "command": [

@@ -93,12 +93,6 @@ command = 'herdr_resize right'
 description = "resize right across Neovim and Herdr panes"
 
 [[keys.command]]
-key = "prefix+cmd+b"
-type = "shell"
-command = 'HERDR_PANE_ID="$HERDR_ACTIVE_PANE_ID" terminal-browser open --split right && "$HERDR_BIN_PATH" pane close "$HERDR_ACTIVE_PANE_ID"'
-description = "replace current pane with browser"
-
-[[keys.command]]
 key = "prefix+p"
 type = "plugin_action"
 command = "princejoogie.repo-picker.open"

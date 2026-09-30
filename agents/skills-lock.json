@@ -1,12 +1,6 @@
 {
   "version": 1,
   "skills": {
-    "bro": {
-      "source": "cursor/plugins",
-      "sourceType": "github",
-      "skillPath": "pstack/skills/bro/SKILL.md",
-      "computedHash": "b651827a1c11465d79500780e53414fdccffd12ce3b640138dee2d04133a9a33"
-    },
     "unslop": {
       "source": "cursor/plugins",
       "sourceType": "github",
