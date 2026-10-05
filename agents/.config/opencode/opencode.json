@@ -1,55 +1,13 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "openai/gpt-5.6-sol",
+  "model": "openai/gpt-6.1-sol",
+  "experimental": {
+    "policies": [
+      { "action": "provider.use", "resource": "*", "effect": "deny" },
+      { "action": "provider.use", "resource": "openai", "effect": "allow" }
+    ]
+  },
   "permission": "allow",
-  "provider": {
-    "openai": {
-      "models": {
-        "gpt-5.6-sol": {
-          "limit": {
-            "context": 1050000,
-            "input": 922000,
-            "output": 128000
-          }
-        },
-        "gpt-5.6-sol-fast": {
-          "limit": {
-            "context": 1050000,
-            "input": 922000,
-            "output": 128000
-          }
-        },
-        "gpt-6-astra": {
-          "limit": {
-            "context": 1050000,
-            "input": 922000,
-            "output": 128000
-          }
-        },
-        "gpt-6-astra-fast": {
-          "limit": {
-            "context": 1050000,
-            "input": 922000,
-            "output": 128000
-          }
-        }
-      }
-    },
-    "anthropic": {
-      "options": {
-        "baseURL": "http://127.0.0.1:3456",
-        "apiKey": "dummy"
-      }
-    }
-  },
-  "agent": {
-    "design": {
-      "mode": "subagent",
-      "description": "Designs elegant and intuitive user interfaces",
-      "model": "xai/grok-4.6",
-      "options": {}
-    }
-  },
   "mcp": {
     "grep-app": {
       "type": "remote",
@@ -61,44 +19,27 @@
     },
     "shadcn": {
       "type": "local",
-      "command": [
-        "npx",
-        "--yes",
-        "shadcn@latest",
-        "mcp"
-      ],
+      "command": ["npx", "--yes", "shadcn@latest", "mcp"],
       "enabled": true
     },
     "argent": {
       "type": "local",
-      "command": [
-        "argent",
-        "mcp"
-      ],
+      "command": ["argent", "mcp"],
       "enabled": true
     },
     "cua-driver": {
       "type": "local",
-      "command": [
-        "cua-driver",
-        "mcp"
-      ],
+      "command": ["cua-driver", "mcp"],
       "enabled": true
     },
     "otel-mcp": {
       "type": "local",
-      "command": [
-        "uvx",
-        "opentelemetry-mcp"
-      ],
+      "command": ["uvx", "opentelemetry-mcp"],
       "enabled": true,
       "environment": {
         "BACKEND_TYPE": "jaeger",
         "BACKEND_URL": "http://localhost:16686"
       }
     }
-  },
-  "websearch": {
-    "provider": "random"
   }
 }
