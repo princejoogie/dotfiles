@@ -6,7 +6,6 @@ set -euo pipefail
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 PKG="agents"
 AGENTS_SKILLS="$HOME/.agents/skills"
-ARGENT_VERSION="0.27.0"
 CUA_DRIVER_VERSION="0.33.0"
 
 # Agents that do NOT read ~/.agents/skills get a per-skill symlink farm here.
@@ -21,9 +20,6 @@ log() { printf '   %s\n' "$*"; }
 hdr "prereqs"
 mkdir -p "$HOME/.claude/skills" "$HOME/.config/opencode" "$HOME/.codex"
 log "ensured ~/.claude/skills, ~/.config/opencode, ~/.codex"
-
-npm install --global "@swmansion/argent@$ARGENT_VERSION"
-log "installed Argent $ARGENT_VERSION"
 
 CUA_DRIVER_RS_VERSION="$CUA_DRIVER_VERSION" \
   /bin/bash -c "$(curl -fsSL https://cua.ai/driver/install.sh)"

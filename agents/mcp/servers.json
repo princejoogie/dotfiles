@@ -13,11 +13,6 @@
       "command": "npx",
       "args": ["--yes", "shadcn@latest", "mcp"]
     },
-    "argent": {
-      "type": "stdio",
-      "command": "argent",
-      "args": ["mcp"]
-    },
     "cua-driver": {
       "type": "stdio",
       "command": "cua-driver",

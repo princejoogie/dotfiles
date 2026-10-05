@@ -3,7 +3,7 @@
 ## Deployment
 
 - Run ordinary Stow operations from the repository root. `stow hyprland nvim shell` deploys the home-directory packages; `stow -D <package>` removes one.
-- Treat `agents/install.sh` as the only install, restore, or redeploy path for `agents/`. Besides Stow, it installs the pinned Argent CLI and OpenCode dependencies, rebuilds Claude skill links, enables Codex skills, and fans out MCP configuration.
+- Treat `agents/install.sh` as the only install, restore, or redeploy path for `agents/`. Besides Stow, it installs the pinned Cua Driver CLI and OpenCode dependencies, rebuilds Claude skill links, enables Codex skills, and fans out MCP configuration.
 - `agents/install.sh` defaults `DOTFILES` to `$HOME/dotfiles`; from another clone or worktree use `DOTFILES="$PWD" ./agents/install.sh` or it will deploy the wrong checkout.
 - `stow -D agents` removes only Stow-managed links. It does not undo the installer's global npm package, Claude skill bridge, or edits to `~/.claude.json` and `~/.codex/config.toml`.
 - Do not Stow `sddm/` or `system/`. Run `./sddm/install-dependencies.sh` and `./sddm/link.sh` from the repository root; `link.sh` uses root-relative paths and writes system files with `sudo`. Install `system/udev/99-scyrox-hidraw.rules` using the commands in `README.md`.

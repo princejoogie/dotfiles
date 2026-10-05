@@ -23,7 +23,7 @@ Look for these beyond the obvious lint/test configs, regardless of project type:
 - `dart analyze` — static analysis (Flutter projects)
 - `flutter test <file>` — single test file (Flutter projects)
 - `yarn test --watch` / `flutter test --watch` — reactive test runner
-- Metro hot reload (via `debugger-reload-metro` Argent tool, RN only)
+- Metro hot reload (via the available debugger tool, React Native only)
 - Flutter hot reload / hot restart
 
 **Slower validation tools (agent runs at end of a task):**
