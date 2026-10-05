@@ -11,7 +11,7 @@
     "shadcn": {
       "type": "stdio",
       "command": "npx",
-      "args": ["shadcn@latest", "mcp"]
+      "args": ["--yes", "shadcn@latest", "mcp"]
     },
     "argent": {
       "type": "stdio",

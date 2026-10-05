@@ -6,8 +6,8 @@ set -euo pipefail
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 PKG="agents"
 AGENTS_SKILLS="$HOME/.agents/skills"
-ARGENT_VERSION="0.25.0"
-CUA_DRIVER_VERSION="0.25.0"
+ARGENT_VERSION="0.27.0"
+CUA_DRIVER_VERSION="0.33.0"
 
 # Agents that do NOT read ~/.agents/skills get a per-skill symlink farm here.
 BRIDGE_DIRS=( "$HOME/.claude/skills" )
@@ -28,6 +28,14 @@ log "installed Argent $ARGENT_VERSION"
 CUA_DRIVER_RS_VERSION="$CUA_DRIVER_VERSION" \
   /bin/bash -c "$(curl -fsSL https://cua.ai/driver/install.sh)"
 log "installed Cua Driver $CUA_DRIVER_VERSION"
+
+npx --yes shadcn@latest --version
+log "refreshed shadcn MCP package"
+
+OTEL_MCP_PACKAGE=$(jq -r '.mcpServers["otel-mcp"].args[0]' "$DOTFILES/$PKG/mcp/servers.json")
+uvx --refresh --from "$OTEL_MCP_PACKAGE" python -c \
+  'import importlib.metadata; print("opentelemetry-mcp " + importlib.metadata.version("opentelemetry-mcp"))'
+log "installed $OTEL_MCP_PACKAGE"
 
 OC_SOURCE="$DOTFILES/$PKG/.config/opencode"
 if [ -f "$OC_SOURCE/package-lock.json" ]; then

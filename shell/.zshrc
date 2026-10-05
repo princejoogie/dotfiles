@@ -98,3 +98,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # bun end
 
 source $ZSH/oh-my-zsh.sh
+
+# Added by the cua installer
+export PATH="/Users/pjuguilon/.local/bin:$PATH"
