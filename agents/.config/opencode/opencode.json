@@ -3,8 +3,16 @@
   "model": "openai/gpt-6.1-sol",
   "experimental": {
     "policies": [
-      { "action": "provider.use", "resource": "*", "effect": "deny" },
-      { "action": "provider.use", "resource": "openai", "effect": "allow" }
+      {
+        "action": "provider.use",
+        "resource": "*",
+        "effect": "deny"
+      },
+      {
+        "action": "provider.use",
+        "resource": "openai",
+        "effect": "allow"
+      }
     ]
   },
   "permission": "allow",
@@ -17,19 +25,20 @@
       "type": "remote",
       "url": "https://mcp.context7.com/mcp"
     },
-    "shadcn": {
-      "type": "local",
-      "command": ["npx", "--yes", "shadcn@latest", "mcp"],
-      "enabled": true
-    },
     "cua-driver": {
       "type": "local",
-      "command": ["cua-driver", "mcp"],
+      "command": [
+        "cua-driver",
+        "mcp"
+      ],
       "enabled": true
     },
     "otel-mcp": {
       "type": "local",
-      "command": ["uvx", "opentelemetry-mcp"],
+      "command": [
+        "uvx",
+        "opentelemetry-mcp"
+      ],
       "enabled": true,
       "environment": {
         "BACKEND_TYPE": "jaeger",

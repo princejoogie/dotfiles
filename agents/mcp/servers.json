@@ -8,11 +8,6 @@
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
     },
-    "shadcn": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["--yes", "shadcn@latest", "mcp"]
-    },
     "cua-driver": {
       "type": "stdio",
       "command": "cua-driver",

@@ -37,33 +37,6 @@
       "installedAt": "2026-05-21T20:15:23.554Z",
       "updatedAt": "2026-10-03T17:09:07.413Z"
     },
-    "turborepo": {
-      "source": "vercel/turborepo",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/vercel/turborepo.git",
-      "skillPath": "skills/turborepo/SKILL.md",
-      "skillFolderHash": "a1bae26a81bbc79e6eb14b4e7ec4d36694e6e94a",
-      "installedAt": "2026-05-21T20:23:26.198Z",
-      "updatedAt": "2026-09-28T16:04:53.235Z"
-    },
-    "shadcn": {
-      "source": "shadcn/ui",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/shadcn/ui.git",
-      "skillPath": "skills/shadcn/SKILL.md",
-      "skillFolderHash": "b5791523e07794a4deb201e78eab3f3adbd022c0",
-      "installedAt": "2026-05-21T20:38:53.242Z",
-      "updatedAt": "2026-09-09T17:41:10.420Z"
-    },
-    "terminal-control": {
-      "source": "anomalyco/terminal-control",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/anomalyco/terminal-control.git",
-      "skillPath": "skills/terminal-control/SKILL.md",
-      "skillFolderHash": "c16be9531955ba7619f9650e0c1b4d236b0ab0e4",
-      "installedAt": "2026-06-04T06:38:44.244Z",
-      "updatedAt": "2026-09-09T17:41:13.534Z"
-    },
     "git-merge": {
       "source": "vervio-digital/vervio-agentics",
       "sourceType": "github",

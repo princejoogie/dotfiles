@@ -31,24 +31,6 @@
       "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
       "computedHash": "ac2c94885f34ff8492dc12aa4543182f661f32ea1722b8d6b6c2c7045af33ae3"
     },
-    "turborepo": {
-      "source": "vercel/turborepo",
-      "sourceType": "github",
-      "skillPath": "skills/turborepo/SKILL.md",
-      "computedHash": "c83a6ff75c62092f71da91408164ed3426f11749b032fd23ecc855e27c2fb538"
-    },
-    "shadcn": {
-      "source": "shadcn/ui",
-      "sourceType": "github",
-      "skillPath": "skills/shadcn/SKILL.md",
-      "computedHash": "f615de216e085a84e31593ad0fa9062232adc40cd87b7c7ab2b8e49abf6500be"
-    },
-    "terminal-control": {
-      "source": "anomalyco/terminal-control",
-      "sourceType": "github",
-      "skillPath": "skills/terminal-control/SKILL.md",
-      "computedHash": "2175a5fb1a2fbe6fcff4049c9970018bbe8ca5a870882186a17265c42c8fa19a"
-    },
     "git-merge": {
       "source": "vervio-digital/vervio-agentics",
       "sourceType": "github",

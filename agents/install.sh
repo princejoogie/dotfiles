@@ -21,12 +21,14 @@ hdr "prereqs"
 mkdir -p "$HOME/.claude/skills" "$HOME/.config/opencode" "$HOME/.codex"
 log "ensured ~/.claude/skills, ~/.config/opencode, ~/.codex"
 
-CUA_DRIVER_RS_VERSION="$CUA_DRIVER_VERSION" \
-  /bin/bash -c "$(curl -fsSL https://cua.ai/driver/install.sh)"
-log "installed Cua Driver $CUA_DRIVER_VERSION"
-
-npx --yes shadcn@latest --version
-log "refreshed shadcn MCP package"
+# Replacing an already-current app can leave its daemon using a deleted backup.
+if [ "$(cua-driver --version 2>/dev/null || true)" = "cua-driver $CUA_DRIVER_VERSION" ]; then
+  log "Cua Driver $CUA_DRIVER_VERSION already installed"
+else
+  CUA_DRIVER_RS_VERSION="$CUA_DRIVER_VERSION" \
+    /bin/bash -c "$(curl -fsSL https://cua.ai/driver/install.sh)"
+  log "installed Cua Driver $CUA_DRIVER_VERSION"
+fi
 
 OTEL_MCP_PACKAGE=$(jq -r '.mcpServers["otel-mcp"].args[0]' "$DOTFILES/$PKG/mcp/servers.json")
 uvx --refresh --from "$OTEL_MCP_PACKAGE" python -c \

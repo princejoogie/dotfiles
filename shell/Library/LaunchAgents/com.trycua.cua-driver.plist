@@ -8,14 +8,18 @@
 
   <key>ProgramArguments</key>
   <array>
-    <string>/Applications/CuaDriver.app/Contents/MacOS/cua-driver</string>
+    <string>/usr/bin/open</string>
+    <string>-n</string>
+    <string>-g</string>
+    <string>-a</string>
+    <string>/Applications/CuaDriver.app</string>
+    <string>--args</string>
     <string>serve</string>
   </array>
 
   <key>RunAtLoad</key>
   <true/>
 
-  <key>KeepAlive</key>
-  <true/>
+  <!-- open exits after launching the app; KeepAlive would launch it repeatedly. -->
 </dict>
 </plist>
