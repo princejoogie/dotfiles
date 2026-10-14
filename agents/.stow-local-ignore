@@ -1,7 +1,6 @@
 ^/install\.sh$
 ^/README\.md$
 ^/PLAN\.md$
-^/skills-lock\.json$
 ^/mcp$
 ^/\.stow-local-ignore$
 ^/\.DS_Store$

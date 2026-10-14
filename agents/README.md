@@ -22,11 +22,11 @@ $EDITOR ~/dotfiles/agents/.agents/skills/<name>/SKILL.md   # name + description 
 ~/dotfiles/agents/install.sh                               # redeploy + bridge to Claude
 ```
 
-`skills-lock.json` records the current upstream skills for project restore and
-update commands run from `agents/`. `.agents/.skill-lock.json` retains global
-upstream metadata for active skills. Custom skills stay in the repository, and the
-Cua Driver skill pack matches the pinned CLI release. Preserve local invocation
-rules when refreshing upstream files, including `unslop`'s automatic use.
+`.agents/.skill-lock.json` tracks upstream skills and deploys to
+`~/.agents/.skill-lock.json`. Use global scope (`-g`) for Skills CLI installs and
+updates. Custom skills stay in the repository, and the Cua Driver skill pack
+matches the pinned CLI release. Preserve local invocation rules when refreshing
+upstream files, including `unslop`'s automatic use.
 
 ## Add / change an MCP server
 
