@@ -4,26 +4,21 @@ import type { Context } from "@opencode/plugin/tui/context"
 import type { Definition } from "@opencode/plugin/tui/plugin"
 import { RGBA } from "@opentui/core"
 import { For, Show, createEffect, createMemo, createSignal, onCleanup } from "solid-js"
+import { errorMessage } from "./helpers"
 import { UsageRpc } from "./rpc"
-import type { ProviderState, UsageResponse, UsageWindow } from "./rpc"
+import type { ProviderState, UsageResponse, UsageSnapshot, UsageWindow } from "./rpc"
 
 const REFRESH_MS = 5 * 60 * 1000
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 
 type UsageState = {
   codex: ProviderState | { status: "loading" }
+  claude: ProviderState | { status: "loading" }
   xai: ProviderState | { status: "loading" }
   refreshing: boolean
   updatedAt: number
   open: boolean
-}
-
-function errorMessage(error: unknown) {
-  if (error instanceof Error && error.message) return error.message
-  if (typeof error === "object" && error !== null && "message" in error && typeof error.message === "string")
-    return error.message
-  if (typeof error === "string" && error) return error
-  return "Usage unavailable"
+  expanded: Record<UsageSnapshot["provider"], boolean>
 }
 
 function mutedBarColor(theme: Context["theme"]) {
@@ -34,15 +29,6 @@ function mutedBarColor(theme: Context["theme"]) {
     Math.round(background[1] + (foreground[1] - background[1]) * 0.25),
     Math.round(background[2] + (foreground[2] - background[2]) * 0.25),
   )
-}
-
-function formatPlan(plan?: string) {
-  if (!plan) return ""
-  return plan
-    .replace(/^prolite$/i, "Pro")
-    .split(/[_-]/)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ")
 }
 
 function formatDuration(milliseconds: number) {
@@ -65,7 +51,7 @@ function resetText(window: UsageWindow, now: number) {
 }
 
 function pace(window: UsageWindow, now: number) {
-  if (!window.resetsAt || !window.windowMinutes) return undefined
+  if (window.usedPercent === null || !window.resetsAt || !window.windowMinutes) return undefined
   const duration = window.windowMinutes * 60_000
   const start = window.startsAt ?? window.resetsAt - duration
   const elapsed = Math.max(0, Math.min(duration, now - start))
@@ -73,19 +59,72 @@ function pace(window: UsageWindow, now: number) {
 
   const expected = (elapsed / duration) * 100
   const delta = window.usedPercent - expected
-  const remaining = Math.max(0, window.resetsAt - now)
-  const eta = window.usedPercent > 0 ? ((100 - window.usedPercent) * elapsed) / window.usedPercent : Infinity
-  const willLast = eta >= remaining
-  const position =
-    !willLast || delta >= 5
-      ? `${Math.max(1, Math.round(delta))}% over pace`
-      : delta <= -5
-        ? `${Math.round(-delta)}% under pace`
-        : "On pace"
+  const difference = Math.round(delta)
   return {
-    text: `${position} · ${willLast ? "lasts to reset" : `empty in ${formatDuration(eta)}`}`,
-    warning: !willLast || delta >= 5,
+    text: `${Math.abs(difference)}% ${difference > 0 ? "over" : "under"}`,
+    warning: difference > 0,
   }
+}
+
+function WindowUsage(props: {
+  context: Context
+  title: string
+  window: UsageWindow
+  expanded: boolean
+  now: number
+  onToggle?: () => void
+}) {
+  const theme = props.context.theme
+  const used = () => Math.round(props.window.usedPercent ?? 0)
+  const pacing = () => pace(props.window, props.now)
+  return (
+    <box>
+      <box flexDirection="row" justifyContent="space-between" onMouseDown={props.onToggle}>
+        <box flexDirection="row" gap={1}>
+          <text fg={theme.text.base} wrapMode="none">
+            <b>{props.title}</b>
+          </text>
+          <Show when={props.onToggle}>
+            <text fg={theme.text.muted}>{props.expanded ? "-" : "+"}</text>
+          </Show>
+        </box>
+        <text fg={theme.text.muted} wrapMode="none">
+          {props.window.usedPercent === null ? "Unavailable" : `${used()}% used`}
+        </text>
+      </box>
+      <box width="100%" height={1} flexDirection="row">
+        <box height={1} flexBasis={0} flexGrow={used()} overflow="hidden">
+          <text fg={used() >= 85 ? theme.text.feedback.warning.base : theme.markdown.link} wrapMode="none">
+            {"▄".repeat(100)}
+          </text>
+        </box>
+        <box height={1} flexBasis={0} flexGrow={100 - used()} overflow="hidden">
+          <text fg={mutedBarColor(theme)} wrapMode="none">
+            {"▄".repeat(100)}
+          </text>
+        </box>
+      </box>
+      <Show when={props.expanded}>
+        <box flexDirection="row" justifyContent="space-between">
+          <text fg={theme.text.muted}>{resetText(props.window, props.now)}</text>
+          <Show when={pacing()}>
+            {(item) => (
+              <text fg={item().warning ? theme.text.feedback.warning.base : theme.text.feedback.success.base}>
+                {item().text}
+              </text>
+            )}
+          </Show>
+        </box>
+      </Show>
+    </box>
+  )
+}
+
+function windowTitle(window: UsageWindow) {
+  if (window.label) return window.label
+  if (window.windowMinutes === 300) return "5-hour window"
+  if (window.windowMinutes === 7 * 24 * 60) return "Weekly"
+  return "Usage window"
 }
 
 function ProviderCard(props: {
@@ -93,6 +132,8 @@ function ProviderCard(props: {
   name: string
   state: UsageState["codex"]
   now: number
+  expanded: boolean
+  onToggle: () => void
 }) {
   const theme = props.context.theme
   const fallback = () => (props.state.status === "error" ? ` · ${props.state.message}` : " · Checking...")
@@ -110,65 +151,45 @@ function ProviderCard(props: {
           </text>
         }
       >
-        {(snapshot) => (
-          <>
-            <box flexDirection="row" justifyContent="space-between">
-              <text fg={theme.text.base}>
-                <b>{props.name}</b>
-              </text>
-              <Show when={snapshot().plan}>
-                {(plan) => <text fg={theme.text.muted}>{formatPlan(plan())}</text>}
+        {(snapshot) => {
+          const primary = createMemo(
+            () => snapshot().windows.find((window) => window.windowMinutes === 300) ?? snapshot().windows[0],
+          )
+          return (
+            <>
+              <Show when={primary()}>
+                {(window) => (
+                  <WindowUsage
+                    context={props.context}
+                    title={props.name}
+                    window={window()}
+                    expanded={props.expanded}
+                    now={props.now}
+                    onToggle={props.onToggle}
+                  />
+                )}
               </Show>
-            </box>
-            <For each={snapshot().windows}>
-              {(window) => {
-                const used = () => Math.round(window.usedPercent)
-                const pacing = () => pace(window, props.now)
-                return (
-                  <box>
-                    <box width="100%" height={1} flexDirection="row">
-                      <box height={1} flexBasis={0} flexGrow={used()} overflow="hidden">
-                        <text
-                          fg={used() >= 85 ? theme.text.feedback.warning.base : theme.markdown.link}
-                          wrapMode="none"
-                        >
-                          {"▄".repeat(100)}
-                        </text>
-                      </box>
-                      <box height={1} flexBasis={0} flexGrow={100 - used()} overflow="hidden">
-                        <text fg={mutedBarColor(theme)} wrapMode="none">
-                          {"▄".repeat(100)}
-                        </text>
-                      </box>
-                    </box>
-                    <box flexDirection="row" justifyContent="space-between">
-                      <text fg={theme.text.muted}>{resetText(window, props.now)}</text>
-                      <text fg={theme.text.muted}>{used()}% used</text>
-                    </box>
-                    <Show when={pacing()}>
-                      {(item) => (
-                        <text
-                          fg={
-                            item().warning
-                              ? theme.text.feedback.warning.base
-                              : theme.text.feedback.success.base
-                          }
-                        >
-                          {item().text}
-                        </text>
-                      )}
-                    </Show>
-                  </box>
-                )
-              }}
-            </For>
-            <Show when={(snapshot().credits ?? 0) > 0}>
-              <text fg={theme.text.muted}>
-                Extra credits ${((snapshot().credits ?? 0) / 100).toFixed(2)}
-              </text>
-            </Show>
-          </>
-        )}
+              <Show when={props.expanded}>
+                <For each={snapshot().windows.filter((window) => window !== primary())}>
+                  {(window) => (
+                    <WindowUsage
+                      context={props.context}
+                      title={windowTitle(window)}
+                      window={window}
+                      expanded={true}
+                      now={props.now}
+                    />
+                  )}
+                </For>
+                <Show when={(snapshot().credits ?? 0) > 0}>
+                  <text fg={theme.text.muted}>
+                    Extra credits ${((snapshot().credits ?? 0) / 100).toFixed(2)}
+                  </text>
+                </Show>
+              </Show>
+            </>
+          )
+        }}
       </Show>
     </box>
   )
@@ -179,13 +200,19 @@ function View(props: {
   state: UsageState
   refresh: (force?: boolean) => Promise<void>
   setOpen: (open: boolean) => void
+  setExpanded: (provider: UsageSnapshot["provider"], expanded: boolean) => void
 }) {
   const theme = props.context.theme
   const [spinnerFrame, setSpinnerFrame] = createSignal(0)
   const [now, setNow] = createSignal(Date.now())
-  const connected = createMemo(
-    () => [props.state.codex, props.state.xai].filter((state) => state.status === "ready").length,
+  const providers = createMemo(() =>
+    [
+      { id: "codex" as const, name: "OpenAI Codex", state: props.state.codex },
+      { id: "claude" as const, name: "Claude", state: props.state.claude },
+      { id: "xai" as const, name: "xAI Grok", state: props.state.xai },
+    ].filter(({ state }) => state.status === "ready" || state.status === "error"),
   )
+  const connected = createMemo(() => providers().filter(({ state }) => state.status === "ready").length)
 
   createEffect(() => {
     if (!props.state.refreshing) {
@@ -202,27 +229,41 @@ function View(props: {
   onCleanup(() => clearInterval(clock))
 
   return (
-    <box>
-      <box flexDirection="row" justifyContent="space-between">
-        <box flexDirection="row" gap={1} onMouseDown={() => props.setOpen(!props.state.open)}>
-          <text fg={theme.text.base}>{props.state.open ? "▼" : "▶"}</text>
-          <text fg={theme.text.base}>
-            <b>Usage</b>
-            <span style={{ fg: theme.text.muted }}> ({connected()}/2)</span>
+    <Show when={providers().length > 0}>
+      <box>
+        <box flexDirection="row" justifyContent="space-between">
+          <box flexDirection="row" gap={1} onMouseDown={() => props.setOpen(!props.state.open)}>
+            <text fg={theme.text.base}>{props.state.open ? "▼" : "▶"}</text>
+            <text fg={theme.text.base}>
+              <b>Usage</b>
+              <span style={{ fg: theme.text.muted }}> ({connected()}/{providers().length})</span>
+            </text>
+          </box>
+          <text
+            fg={props.state.refreshing ? theme.text.feedback.warning.base : theme.text.muted}
+            onMouseUp={() => void props.refresh(true)}
+          >
+            {props.state.refreshing ? SPINNER_FRAMES[spinnerFrame()] : "󰑐"}
           </text>
         </box>
-        <text
-          fg={props.state.refreshing ? theme.text.feedback.warning.base : theme.text.muted}
-          onMouseUp={() => void props.refresh(true)}
-        >
-          {props.state.refreshing ? SPINNER_FRAMES[spinnerFrame()] : "󰑐"}
-        </text>
+        <Show when={props.state.open}>
+          <box gap={1}>
+            <For each={providers()}>
+              {(provider) => (
+                <ProviderCard
+                  context={props.context}
+                  name={provider.name}
+                  state={provider.state}
+                  now={now()}
+                  expanded={props.state.expanded[provider.id]}
+                  onToggle={() => props.setExpanded(provider.id, !props.state.expanded[provider.id])}
+                />
+              )}
+            </For>
+          </box>
+        </Show>
       </box>
-      <Show when={props.state.open}>
-        <ProviderCard context={props.context} name="OpenAI Codex" state={props.state.codex} now={now()} />
-        <ProviderCard context={props.context} name="xAI Grok" state={props.state.xai} now={now()} />
-      </Show>
-    </box>
+    </Show>
   )
 }
 
@@ -230,16 +271,22 @@ export default {
   id: "dotfiles.ai-usage-sidebar",
   setup(context) {
     const usage = context.client.rpc(UsageRpc)
-    const [state, updateState] = context.storage.memory<UsageState>("usage", {
+    const [state, updateState] = context.storage.memory<UsageState>("usage-v2", {
       initial: {
         codex: { status: "loading" },
+        claude: { status: "loading" },
         xai: { status: "loading" },
         refreshing: false,
         updatedAt: 0,
         open: true,
+        expanded: { codex: false, claude: false, xai: false },
       },
     })
     updateState((draft) => {
+      draft.expanded ??= { codex: false, claude: false, xai: false }
+      draft.codex = { status: "loading" }
+      draft.claude = { status: "loading" }
+      draft.xai = { status: "loading" }
       draft.refreshing = false
     })
     let controller: AbortController | undefined
@@ -273,6 +320,7 @@ export default {
         if (signal.aborted) return
         updateState((draft) => {
           draft.codex = response.codex
+          draft.claude = response.claude
           draft.xai = response.xai
           draft.refreshing = false
           draft.updatedAt = response.updatedAt
@@ -282,8 +330,11 @@ export default {
         if (signal.aborted) return
         updateState((draft) => {
           const message = errorMessage(error)
-          draft.codex = { status: "error", message }
-          draft.xai = { status: "error", message }
+          for (const provider of ["codex", "claude", "xai"] as const) {
+            if (draft[provider].status === "ready" || draft[provider].status === "error") {
+              draft[provider] = { status: "error", message }
+            }
+          }
           draft.refreshing = false
           draft.updatedAt = Date.now()
         })
@@ -303,13 +354,16 @@ export default {
               draft.open = open
             })
           }
+          setExpanded={(provider, expanded) =>
+            updateState((draft) => {
+              draft.expanded[provider] = expanded
+            })
+          }
         />
       ),
     })
 
-    const age = Date.now() - state.updatedAt
-    if (state.updatedAt && age < REFRESH_MS) schedule(REFRESH_MS - age)
-    else void refresh()
+    void refresh(true)
 
     return () => {
       controller?.abort()

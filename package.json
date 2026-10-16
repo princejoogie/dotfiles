@@ -1,7 +1,7 @@
 {
   "name": "opencode-usage",
   "version": "0.1.0",
-  "description": "Shows OpenAI Codex and xAI Grok usage in the OpenCode sidebar.",
+  "description": "Shows usage for installed Codex, Claude Code, and Grok CLIs in the OpenCode sidebar.",
   "type": "module",
   "exports": {
     ".": "./server.ts",
@@ -9,6 +9,10 @@
     "./rpc": "./rpc.ts"
   },
   "files": [
+    "claude.ts",
+    "codex.ts",
+    "grok.ts",
+    "helpers.ts",
     "server.ts",
     "tui.tsx",
     "rpc.ts"

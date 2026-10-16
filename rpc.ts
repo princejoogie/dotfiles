@@ -1,25 +1,28 @@
 import type { Rpc } from "@opencode/plugin/rpc"
 
 export type UsageWindow = {
-  usedPercent: number
+  label?: string
+  usedPercent: number | null
   resetsAt?: number
   windowMinutes?: number
   startsAt?: number
 }
 
 export type UsageSnapshot = {
-  provider: "codex" | "xai"
+  provider: "codex" | "claude" | "xai"
   plan?: string
   windows: UsageWindow[]
   credits?: number
 }
 
 export type ProviderState =
+  | { status: "unavailable" }
   | { status: "ready"; snapshot: UsageSnapshot }
   | { status: "error"; message: string }
 
 export type UsageResponse = {
   codex: ProviderState
+  claude: ProviderState
   xai: ProviderState
   updatedAt: number
 }
@@ -27,7 +30,8 @@ export type UsageResponse = {
 const window = {
   type: "object",
   properties: {
-    usedPercent: { type: "number" },
+    label: { type: "string" },
+    usedPercent: { type: ["number", "null"] },
     resetsAt: { type: "number" },
     windowMinutes: { type: "number" },
     startsAt: { type: "number" },
@@ -39,7 +43,7 @@ const window = {
 const snapshot = {
   type: "object",
   properties: {
-    provider: { enum: ["codex", "xai"] },
+    provider: { enum: ["codex", "claude", "xai"] },
     plan: { type: "string" },
     windows: { type: "array", items: window },
     credits: { type: "number" },
@@ -50,6 +54,12 @@ const snapshot = {
 
 const provider = {
   oneOf: [
+    {
+      type: "object",
+      properties: { status: { const: "unavailable" } },
+      required: ["status"],
+      additionalProperties: false,
+    },
     {
       type: "object",
       properties: {
@@ -85,10 +95,11 @@ export const UsageRpc = {
         type: "object",
         properties: {
           codex: provider,
+          claude: provider,
           xai: provider,
           updatedAt: { type: "number" },
         },
-        required: ["codex", "xai", "updatedAt"],
+        required: ["codex", "claude", "xai", "updatedAt"],
         additionalProperties: false,
       },
     },
