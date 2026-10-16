@@ -72,7 +72,6 @@ export PATH=$PATH:$HOME/.duckdb/cli/latest
 export PATH=$PATH:$HOME/.opencode/bin
 export PATH=$PATH:$HOME/.lmstudio/bin
 export PATH=$PATH:$HOME/.maestro/bin
-export PATH=$PATH:$HOME/.grok/bin
 export PATH=$PATH:$HOME/go/bin
 
 if [[ -f "$HOME/.private.sh" ]]; then
@@ -99,6 +98,3 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # bun end
 
 source $ZSH/oh-my-zsh.sh
-
-# Added by the cua installer
-export PATH="/Users/pjuguilon/.local/bin:$PATH"
