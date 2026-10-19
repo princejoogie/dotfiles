@@ -18,7 +18,7 @@ pstack skills use Cursor names. Translate them as you go.
 |---|---|
 | `Task`, `subagent_type: generalPurpose` | The harness's native subagent tool. `poteto-agent` exists in Claude Code and OpenCode. In Codex, spawn a default worker and have it read poteto-mode first. |
 | `AskQuestion` | The harness's question tool, else plain text. |
-| Model slugs (`grok-*`, `claude-opus-5-5-xhigh`), `/setup-pstack`, `pstack-models.mdc` | Ignore them. Pick models per **Models through T3**. |
+| Model slugs (`grok-*`, `claude-opus-5-5-xhigh`), `/setup-pstack`, `pstack-models.mdc` | Ignore them. Use the role table in **Models through T3**. |
 | `readonly: true` | A read-only explorer, with "do not edit files" in the brief. |
 | `environment: "cloud"`, Cursor cloud agents | A worktree. Use `delegate_task` with `isolation: "worktree"`, or the harness's own worktree option. |
 | Cursor's `create-skill` | The `writing-for-agents` skill. |
@@ -79,6 +79,30 @@ When the T3 Code tools are available, use them to mix providers.
 - For poteto-mode's multi-model panels (`interrogate`, `arena`, `architect`, second opinions), fill the seats from different providers, such as one Claude model and one Codex model. Agreement across providers is the strong signal.
 - When the user names a model for a task, use it for that task only.
 - Without T3 tools, use the harness's native subagents and note that the panel ran on one provider.
+
+Default model per role. These replace the slugs in pstack skills. Each value is `providerInstanceId/model`, and every role runs at reasoning effort `high` (budget: medium). Panel roles list one seat per subagent. For the arena cross-judge, pick the pool entry whose provider differs from the parent's.
+
+| Role | Model |
+|---|---|
+| feature, refactoring | `codex/gpt-6-astra` |
+| bug-fix | `codex/gpt-6-astra` |
+| perf-issue | `codex/gpt-6-astra` |
+| hillclimb | `codex/gpt-6-astra` |
+| judgment and prose | `claudeAgent/claude-opus-5-5` |
+| hardest tasks | `claudeAgent/claude-opus-5-5` |
+| how explorer | `codex/gpt-6-astra` |
+| how explainer | `claudeAgent/claude-opus-5-5` |
+| why investigators | `codex/gpt-6-astra` |
+| why synthesizer | `claudeAgent/claude-opus-5-5` |
+| reflect tooling | `codex/gpt-6-astra` |
+| reflect judgment, divergent, synthesizer | `claudeAgent/claude-opus-5-5` |
+| arena runners | `claudeAgent/claude-opus-5-5`, `claudeAgent/claude-fable-5-1`, `codex/gpt-6-astra` |
+| arena cross-judge pool | `claudeAgent/claude-opus-5-5`, `codex/gpt-6-astra` |
+| swarm workers | `codex/gpt-6-astra` |
+| architect runners | `claudeAgent/claude-opus-5-5`, `claudeAgent/claude-fable-5-1`, `codex/gpt-6-astra` |
+| interrogate reviewers | `claudeAgent/claude-opus-5-5`, `claudeAgent/claude-fable-5-1`, `codex/gpt-6-astra` |
+
+To change the map, edit this table. Check new IDs against `orchestrator_capabilities` first.
 
 ## Git and PRs
 
