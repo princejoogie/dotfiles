@@ -14,16 +14,75 @@ BRIDGE_DIRS=( "$HOME/.claude/skills" )
 hdr() { printf '\n== %s ==\n' "$*"; }
 log() { printf '   %s\n' "$*"; }
 
+# Windows runs this under Git Bash, which has no Stow.
+case "$(uname -s)" in
+  MINGW* | MSYS* | CYGWIN*) WINDOWS=1 ;;
+  *) WINDOWS= ;;
+esac
+
+if [ -n "$WINDOWS" ]; then
+  # Git Bash's ln -s silently copies unless told to make native symlinks.
+  export MSYS="${MSYS:+$MSYS }winsymlinks:nativestrict"
+  # jq.exe turns LF into CRLF on output unless asked for binary mode.
+  jq() { command jq -b "$@"; }
+  # The Cua installer adds this to the user PATH, which running shells miss.
+  PATH="$(cygpath "$LOCALAPPDATA")/Programs/Cua/cua-driver/bin:$PATH"
+fi
+
+stow_ignored() {
+  local pat
+  while IFS= read -r pat; do
+    case "$pat" in
+      "") ;;
+      */*) [[ $1 =~ $pat ]] && return 0 ;;
+      *) [[ ${1##*/} =~ $pat ]] && return 0 ;;
+    esac
+  done <"$DOTFILES/$PKG/.stow-local-ignore"
+  return 1
+}
+
+# Stow's tree folding: link each entry whose target is free or already ours,
+# and descend into directories that already exist. Links are absolute because
+# the checkout and $HOME can be on different drives.
+stow_tree() (
+  shopt -s dotglob nullglob
+  for src in "$DOTFILES/$PKG$1"/*; do
+    rel="$1/${src##*/}"
+    dst="$HOME$rel"
+    stow_ignored "$rel" && continue
+    if [ -d "$src" ] && [ -d "$dst" ] && [ ! -L "$dst" ]; then
+      stow_tree "$rel"
+    elif { [ ! -e "$dst" ] && [ ! -L "$dst" ]; } || [[ $(readlink "$dst") == "$DOTFILES/$PKG/"* ]]; then
+      ln -sfn "$src" "$dst"
+    else
+      printf 'conflict: %s exists and is not a link into %s\n' "$dst" "$DOTFILES/$PKG" >&2
+      exit 1
+    fi
+  done
+)
+
 # 1. prereqs ------------------------------------------------------------------
 # ~/.claude/skills as a REAL dir keeps the Case-2 child-symlink bridge layout
 # (sidesteps the historical ~/.claude/skills-as-symlink discovery bug).
 hdr "prereqs"
+if [ -n "$WINDOWS" ]; then
+  probe="$HOME/.agents-symlink-probe.$$"
+  if ! ln -s "$DOTFILES/$PKG/install.sh" "$probe" 2>/dev/null; then
+    printf 'Creating symlinks needs Developer Mode (Settings > System > For developers) or an elevated shell.\n' >&2
+    exit 1
+  fi
+  rm -f "$probe"
+fi
 mkdir -p "$HOME/.claude/skills" "$HOME/.config/opencode" "$HOME/.codex"
 log "ensured ~/.claude/skills, ~/.config/opencode, ~/.codex"
 
 # Replacing an already-current app can leave its daemon using a deleted backup.
 if [ "$(cua-driver --version 2>/dev/null || true)" = "cua-driver $CUA_DRIVER_VERSION" ]; then
   log "Cua Driver $CUA_DRIVER_VERSION already installed"
+elif [ -n "$WINDOWS" ]; then
+  CUA_DRIVER_RS_VERSION="$CUA_DRIVER_VERSION" powershell.exe -NoProfile -ExecutionPolicy Bypass \
+    -Command 'irm https://cua.ai/driver/install.ps1 | iex'
+  log "installed Cua Driver $CUA_DRIVER_VERSION"
 else
   CUA_DRIVER_RS_VERSION="$CUA_DRIVER_VERSION" \
     /bin/bash -c "$(curl -fsSL https://cua.ai/driver/install.sh)"
@@ -43,7 +102,11 @@ fi
 
 # 2. stow ---------------------------------------------------------------------
 hdr "stow $PKG"
-stow -d "$DOTFILES" -t "$HOME" -R "$PKG"
+if [ -n "$WINDOWS" ]; then
+  stow_tree ""
+else
+  stow -d "$DOTFILES" -t "$HOME" -R "$PKG"
+fi
 log "~/.agents -> $(readlink "$HOME/.agents")"
 log "~/.agents/skills: $(find "$AGENTS_SKILLS" -maxdepth 1 -mindepth 1 -type d | wc -l | tr -d ' ') skills"
 

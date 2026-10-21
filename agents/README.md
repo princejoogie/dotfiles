@@ -14,6 +14,9 @@ MCP package. Node.js 20.12 or
 newer and `uvx` are required. Xcode is required for iOS/tvOS
 targets; Android targets require `adb` on `PATH`.
 
+On Windows, run it from Git Bash with Developer Mode enabled and `jq` installed
+(`winget install jqlang.jq`). It links the package itself instead of using Stow.
+
 ## Add a skill
 
 ```sh
