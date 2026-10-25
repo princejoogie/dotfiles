@@ -1,3 +1,4 @@
 *.sh text eol=lf
 .stow-local-ignore text eol=lf
 agents/.config/opencode/opencode.json text eol=lf
+shell/.config/starship.toml text eol=lf

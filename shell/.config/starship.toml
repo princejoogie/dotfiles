@@ -4,6 +4,7 @@ format = """
 [](bg:#59c2ff fg:#969eaa)\
 $directory\
 ${custom.git_repo_name}\
+${custom.git_repo_name_windows}\
 [](fg:#59c2ff bg:#1b1f29)\
 $git_branch\
 $git_status\
@@ -26,6 +27,26 @@ truncation_length = 3
 truncation_symbol = "…/"
 
 [custom.git_repo_name]
+os = "unix"
+command = '''
+repo="$(git remote get-url origin 2>/dev/null)"
+if [ -z "$repo" ]; then
+  repo="$(git rev-parse --show-toplevel)"
+fi
+repo="${repo%/}"
+repo="${repo##*/}"
+repo="${repo##*:}"
+printf '%s' "${repo%.git}"
+'''
+require_repo = true
+when = true
+style = "fg:#0b0e14 bg:#59c2ff"
+format = "[ $output ]($style)"
+
+# PowerShell can't run the POSIX script above, so Windows runs it with Git's sh.
+[custom.git_repo_name_windows]
+os = "windows"
+shell = ['C:\Program Files\Git\usr\bin\sh.exe']
 command = '''
 repo="$(git remote get-url origin 2>/dev/null)"
 if [ -z "$repo" ]; then
