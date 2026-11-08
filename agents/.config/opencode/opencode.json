@@ -1,6 +1,33 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "openai/gpt-6.1-sol",
+  "providers": {
+    "cliproxy-codex": {
+      "name": "Codex via CLIProxyAPI",
+      "canonical": "openai",
+      "package": "@opencode/ai/providers/openai-compatible/responses",
+      "settings": {
+        "baseURL": "http://127.0.0.1:8317/v1",
+        "apiKey": "{file:~/.config/opencode/secrets/cliproxyapi-key}"
+      },
+      "models": {
+        "gpt-6.1-sol": {},
+        "gpt-6-astra": {},
+        "gpt-6-sol": {},
+        "gpt-6-luna": {},
+        "gpt-5.6-sol": {},
+        "gpt-5.6-terra": {},
+        "gpt-5.6-luna": {}
+      }
+    },
+    "anthropic": {
+      "name": "Claude via CLIProxyAPI",
+      "settings": {
+        "baseURL": "http://127.0.0.1:8317/v1",
+        "apiKey": "{file:~/.config/opencode/secrets/cliproxyapi-key}"
+      }
+    }
+  },
   "experimental": {
     "policies": [
       {
@@ -11,6 +38,16 @@
       {
         "action": "provider.use",
         "resource": "openai",
+        "effect": "allow"
+      },
+      {
+        "action": "provider.use",
+        "resource": "anthropic",
+        "effect": "allow"
+      },
+      {
+        "action": "provider.use",
+        "resource": "cliproxy-codex",
         "effect": "allow"
       }
     ]
