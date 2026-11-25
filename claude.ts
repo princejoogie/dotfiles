@@ -101,6 +101,7 @@ export async function fetchClaudeUsage(signal: AbortSignal): Promise<UsageSnapsh
   const usage = (await response.json()) as ClaudeUsageResponse
   const session = usage.limits?.find((limit) => limit.kind === "session")
   const weekly = usage.limits?.find((limit) => limit.kind === "weekly_all")
+  const hasFiveHour = usage.five_hour != null || session !== undefined
   // Scoped weekly caps, including Fable, now live in limits rather than seven_day_* fields.
   const fable = usage.limits?.find(
     (limit) => limit.kind === "weekly_scoped" && limit.scope?.model?.display_name?.toLowerCase() === "fable",
@@ -108,31 +109,36 @@ export async function fetchClaudeUsage(signal: AbortSignal): Promise<UsageSnapsh
   const windows = [
     {
       label: "5-hour window",
+      present: hasFiveHour,
       percent: usage.five_hour?.utilization ?? session?.percent,
       reset: usage.five_hour?.resets_at ?? session?.resets_at,
       windowMinutes: 300,
     },
     {
       label: "Weekly",
+      present: usage.seven_day != null || weekly !== undefined,
       percent: usage.seven_day?.utilization ?? weekly?.percent,
       reset: usage.seven_day?.resets_at ?? weekly?.resets_at,
       windowMinutes: 7 * 24 * 60,
     },
     {
       label: "Weekly Fable",
+      present: hasFiveHour && fable !== undefined,
       percent: fable?.percent,
       reset: fable?.resets_at,
       windowMinutes: 7 * 24 * 60,
     },
-  ].map(({ label, percent, reset, windowMinutes }) => {
-    const resetsAt = parseDate(reset ?? undefined)
-    return {
-      label,
-      usedPercent: typeof percent === "number" && Number.isFinite(percent) ? clampPercent(percent) : null,
-      windowMinutes,
-      ...(resetsAt === undefined ? {} : { resetsAt }),
-    }
-  })
+  ]
+    .filter(({ present }) => present)
+    .map(({ label, percent, reset, windowMinutes }) => {
+      const resetsAt = parseDate(reset ?? undefined)
+      return {
+        label,
+        usedPercent: typeof percent === "number" && Number.isFinite(percent) ? clampPercent(percent) : null,
+        windowMinutes,
+        ...(resetsAt === undefined ? {} : { resetsAt }),
+      }
+    })
   if (windows.every((window) => window.usedPercent === null)) {
     throw new Error("Claude did not return a usage window")
   }

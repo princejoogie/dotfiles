@@ -152,16 +152,25 @@ function ProviderCard(props: {
         }
       >
         {(snapshot) => {
-          const primary = createMemo(
-            () => snapshot().windows.find((window) => window.windowMinutes === 300) ?? snapshot().windows[0],
-          )
+          const primary = createMemo(() => {
+            const windows = snapshot().windows
+            return (
+              windows.find((window) => window.windowMinutes === 300 && window.usedPercent !== null) ??
+              windows.find((window) => window.usedPercent !== null) ??
+              windows[0]
+            )
+          })
           return (
             <>
               <Show when={primary()}>
                 {(window) => (
                   <WindowUsage
                     context={props.context}
-                    title={props.name}
+                    title={
+                      window().label && window().windowMinutes !== 300
+                        ? `${props.name} · ${window().label}`
+                        : props.name
+                    }
                     window={window()}
                     expanded={props.expanded}
                     now={props.now}
