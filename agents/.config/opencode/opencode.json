@@ -1,7 +1,16 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "openai/gpt-6.1-sol",
+  "model": "openai/gpt-6.2-sol",
   "providers": {
+    "openai": {
+      "models": {
+        "gpt-6.2-sol": {
+          "settings": {
+            "reasoningEffort": "xhigh"
+          }
+        }
+      }
+    },
     "cliproxy-codex": {
       "name": "Codex via CLIProxyAPI",
       "canonical": "openai",
